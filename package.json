@@ -1,0 +1,9 @@
+{
+  "name": "primecircle-ai-company",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PrimeCircle AI Company starter workspace",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
