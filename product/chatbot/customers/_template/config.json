@@ -1,0 +1,22 @@
+{
+  "businessName": "Voorbeeld Bedrijf",
+  "contactName": "",
+  "phoneDisplay": "",
+  "phoneTel": "",
+  "defaultLang": "nl",
+  "languages": ["nl"],
+  "colors": {
+    "primary": "#21342d",
+    "primarySoft": "#2f4a40",
+    "surface": "#f4f1ea",
+    "ink": "#26302c",
+    "line": "#d9d3c7"
+  },
+  "suggestions": {
+    "nl": [
+      "Wat zijn jullie openingstijden?",
+      "Welke diensten bieden jullie?",
+      "Hoe kan ik contact opnemen?"
+    ]
+  }
+}

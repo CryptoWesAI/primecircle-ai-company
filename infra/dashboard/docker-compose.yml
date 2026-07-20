@@ -1,0 +1,30 @@
+# PrimeCircle VPS Control — PRIVÉ dashboard.
+# BEWUST NIET achter de publieke Traefik: de poort wordt alleen op 127.0.0.1 gepubliceerd
+# en via `tailscale serve` op het privé Tailscale-netwerk gezet (geldige HTTPS, niet op het
+# open internet). Zie DEPLOY.md.
+services:
+  dashboard:
+    build: .
+    image: primecircle-dashboard:latest
+    container_name: dashboard
+    restart: unless-stopped
+    # Alleen op de loopback van de host — nooit publiek. Tailscale Serve proxyt hiernaartoe.
+    ports:
+      - "127.0.0.1:8095:8095"
+    volumes:
+      # Toegang tot de per-project .env-bestanden + waar de backups landen.
+      - /opt:/opt
+      # Nodig om `docker compose up -d` te draaien (= root-equivalent; daarom privé-only).
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Login-hash + sessiesleutel blijven bewaard over herbouw heen.
+      - dashboard-data:/app/data
+    networks:
+      - dashboard
+
+networks:
+  dashboard:
+    name: dashboard
+
+volumes:
+  dashboard-data:
+    name: dashboard-data

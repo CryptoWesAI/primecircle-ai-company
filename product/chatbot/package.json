@@ -1,0 +1,9 @@
+{
+  "name": "ab-uitvaartzorg-chatbot",
+  "version": "0.1.0",
+  "description": "Knowledge-grounded chat assistant for AB Uitvaartzorg (PrimeCircle first build). Reusable vertical-chatbot pattern.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

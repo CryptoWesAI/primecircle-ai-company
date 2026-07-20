@@ -1,0 +1,31 @@
+{
+  "businessName": "Belvanger",
+  "contactName": "",
+  "phoneDisplay": "",
+  "phoneTel": "",
+  "whatsapp": "31646733277",
+  "contactEmail": "info@belvanger.nl",
+  "defaultLang": "nl",
+  "languages": ["nl", "en"],
+  "colors": {
+    "primary": "#16232E",
+    "primarySoft": "#1E3140",
+    "surface": "#FAF9F6",
+    "ink": "#16232E",
+    "line": "#e4e1d8"
+  },
+  "suggestions": {
+    "nl": [
+      "Hoe werkt het?",
+      "Wat kost het?",
+      "Moet ik mijn nummer veranderen?",
+      "Voor welke vakmensen is het?"
+    ],
+    "en": [
+      "How does it work?",
+      "What does it cost?",
+      "Do I have to change my number?",
+      "Who is it for?"
+    ]
+  }
+}

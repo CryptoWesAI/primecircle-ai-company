@@ -1,0 +1,53 @@
+# Geïsoleerd Docker-project: Belvanger (website + chat-assistent in één container).
+# Node-chatbotserver serveert de statische site + /api/chat + /api/config same-origin.
+# Eigen container + eigen netwerk → geen vermenging met andere projecten op de VPS.
+services:
+  belvanger:
+    build: .
+    image: belvanger:latest
+    container_name: belvanger
+    restart: unless-stopped
+    # Achter de bestaande Traefik reverse proxy → domein + automatisch HTTPS.
+    labels:
+      - "traefik.enable=true"
+      # belvanger.primecircle.cloud (oud staging-adres) bewust NIET meer geroute:
+      # zelfde container/code als belvanger.nl, dus tracking/cookies zouden daar
+      # ook meelopen. Uitgezet op 2026-07-21.
+      - "traefik.http.routers.belvanger.rule=Host(`belvanger.nl`) || Host(`www.belvanger.nl`)"
+      - "traefik.http.routers.belvanger.entrypoints=websecure"
+      - "traefik.http.routers.belvanger.tls=true"
+      - "traefik.http.routers.belvanger.tls.certresolver=letsencrypt"
+      - "traefik.http.services.belvanger.loadbalancer.server.port=8092"
+      # bvaanbod.primecircle.cloud: serveert de offer-pagina via dezelfde container; de root
+      # stuurt door naar /aanbod.html. Assets (css/fonts) en andere paden gaan gewoon door.
+      - "traefik.http.routers.bvaanbod.rule=Host(`bvaanbod.primecircle.cloud`)"
+      - "traefik.http.routers.bvaanbod.entrypoints=websecure"
+      - "traefik.http.routers.bvaanbod.tls=true"
+      - "traefik.http.routers.bvaanbod.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.bvaanbod.service=belvanger"
+      - "traefik.http.routers.bvaanbod.middlewares=bvaanbod-root@docker"
+      - "traefik.http.middlewares.bvaanbod-root.redirectregex.regex=^https://bvaanbod.primecircle.cloud/?$$"
+      - "traefik.http.middlewares.bvaanbod-root.redirectregex.replacement=https://bvaanbod.primecircle.cloud/aanbod.html"
+    env_file:
+      - .env
+    environment:
+      PORT: "8092"
+      STATIC_DIR: /app/site
+      CUSTOMER: "belvanger"
+      DATA_DIR: /app/data
+      RATE_LIMIT_PER_MIN: "${RATE_LIMIT_PER_MIN:-30}"
+      LOG_QUESTIONS: "false"
+      DASHBOARD_TOKEN: "${DASHBOARD_TOKEN:-}"
+    volumes:
+      # analytics (JSONL) blijft bewaard over herbouw heen
+      - belvanger-data:/app/data
+    networks:
+      - belvanger
+
+networks:
+  belvanger:
+    name: belvanger
+
+volumes:
+  belvanger-data:
+    name: belvanger-data

@@ -1,0 +1,58 @@
+services:
+  portal-db:
+    image: postgres:17-alpine
+    container_name: belvanger-portal-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: portal
+      POSTGRES_USER: portal
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portal -d portal"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - portal-db:/var/lib/postgresql/data
+    networks:
+      - portal
+
+  portal:
+    build: .
+    image: belvanger-portal:latest
+    container_name: belvanger-portal
+    restart: unless-stopped
+    depends_on:
+      portal-db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "8096"
+      DATABASE_URL: "postgres://portal:${POSTGRES_PASSWORD}@portal-db:5432/portal"
+      COOKIE_SECURE: "true"
+    ports:
+      - "127.0.0.1:8096:8096"
+    networks:
+      - portal
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.belvanger-dashboard.entrypoints: "websecure"
+      traefik.http.routers.belvanger-dashboard.rule: "Host(`dashboard.belvanger.nl`)"
+      traefik.http.routers.belvanger-dashboard.tls: "true"
+      traefik.http.routers.belvanger-dashboard.tls.certresolver: "letsencrypt"
+      traefik.http.routers.belvanger-dashboard.middlewares: "belvanger-dashboard-security"
+      traefik.http.middlewares.belvanger-dashboard-security.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.belvanger-dashboard-security.headers.stsIncludeSubdomains: "true"
+      traefik.http.middlewares.belvanger-dashboard-security.headers.contentTypeNosniff: "true"
+      traefik.http.middlewares.belvanger-dashboard-security.headers.frameDeny: "true"
+      traefik.http.services.belvanger-dashboard.loadbalancer.server.port: "8096"
+
+networks:
+  portal:
+    name: belvanger-portal
+
+volumes:
+  portal-db:
+    name: belvanger-portal-db

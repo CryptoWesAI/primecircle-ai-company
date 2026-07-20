@@ -1,0 +1,56 @@
+# n8n — workflow-orkestratie (self-hosted op de eigen VPS, achter de bestaande Traefik).
+# Draait als losse container met eigen netwerk + persistente volume, net als de andere
+# projecten. HTTPS + domein regelt Traefik via de labels (certresolver=letsencrypt).
+#
+# Deploy:  scp docker-compose.yml root@31.97.123.34:/opt/n8n/  (+ .env, zie .env.example)
+#          ssh root@31.97.123.34 "cd /opt/n8n && docker compose up -d"
+services:
+  n8n:
+    # Versie gepind voor reproduceerbaarheid. Bump bewust (lees de release notes over
+    # breaking migrations) en redeploy met: cd /opt/n8n && docker compose up -d
+    image: docker.n8n.io/n8nio/n8n:2.30.7
+    container_name: n8n
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.n8n.rule=Host(`n8n.primecircle.cloud`)"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - "traefik.http.routers.n8n.tls=true"
+      - "traefik.http.routers.n8n.tls.certresolver=letsencrypt"
+      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
+    env_file:
+      - .env
+    environment:
+      # Publieke URL — cruciaal zodat webhook-URL's die n8n toont https + juist domein zijn.
+      N8N_HOST: "n8n.primecircle.cloud"
+      N8N_PROTOCOL: "https"
+      N8N_PORT: "5678"
+      WEBHOOK_URL: "https://n8n.primecircle.cloud/"
+      N8N_EDITOR_BASE_URL: "https://n8n.primecircle.cloud/"
+      # Tijdzone voor schedules/timestamps.
+      GENERIC_TIMEZONE: "Europe/Amsterdam"
+      TZ: "Europe/Amsterdam"
+      # Sleutel waarmee n8n opgeslagen credentials versleutelt — uit .env, NOOIT committen.
+      # Als deze sleutel verloren gaat, zijn bestaande credentials onleesbaar.
+      N8N_ENCRYPTION_KEY: "${N8N_ENCRYPTION_KEY}"
+      # Privacy: geen telemetrie/personalisatie naar buiten.
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "true"
+      # Aanbevolen defaults (voorkomen deprecation-warnings / rare permissies).
+      N8N_RUNNERS_ENABLED: "true"
+      N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
+      N8N_SECURE_COOKIE: "true"
+    volumes:
+      # Alle n8n-data (SQLite-db, workflows, credentials, settings) blijft hier bewaard.
+      - n8n-data:/home/node/.n8n
+    networks:
+      - n8n
+
+networks:
+  n8n:
+    name: n8n
+
+volumes:
+  n8n-data:
+    name: n8n-data

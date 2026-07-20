@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #21342d; --primary-soft: #2f4a40; --surface: #f4f1ea;
+      --ink: #26302c; --line: #d9d3c7; --muted: #6b6357; --card: #fffdf9;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--surface); color: var(--ink);
+      font-family: "DM Sans", -apple-system, "Segoe UI", Roboto, sans-serif; }
+    h1, h2, .serif { font-family: "Newsreader", Georgia, serif; font-weight: 500; }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 30px 22px 70px; }
+    header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 22px; }
+    h1 { font-size: 26px; margin: 0; }
+    .head-sub { color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .live { display: inline-flex; align-items: center; gap: 12px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #4a9e6f; box-shadow: 0 0 0 0 rgba(74,158,111,.6); animation: pulse 2s infinite; }
+    @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(74,158,111,.5);} 70% { box-shadow: 0 0 0 8px rgba(74,158,111,0);} 100% { box-shadow: 0 0 0 0 rgba(74,158,111,0);} }
+    .live small { color: var(--muted); font-size: 12px; }
+    button { border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 7px 14px; font-size: 13px; cursor: pointer; font-family: inherit; }
+    button:hover { border-color: var(--primary); }
+
+    .summary { background: var(--primary); color: #fff; border-radius: 18px; padding: 20px 24px; margin-bottom: 22px; }
+    .summary h2 { color: #fff; font-size: 18px; margin: 0 0 12px; }
+    .summary ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+    .summary li { display: flex; gap: 10px; align-items: baseline; font-size: 15px; line-height: 1.4; }
+    .summary li::before { content: "•"; color: #9ec6ac; }
+
+    .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-bottom: 22px; }
+    .kpi { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; }
+    .kpi .n { font-size: 30px; font-weight: 600; font-family: "Newsreader", Georgia, serif; }
+    .kpi .l { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .kpi .t { font-size: 12px; margin-top: 4px; }
+    .up { color: #2f8f5b; } .down { color: #b4553a; }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; margin-bottom: 18px; }
+    .card h2 { font-size: 16px; margin: 0 0 16px; }
+    .section-label { font-family: "Newsreader", Georgia, serif; font-size: 20px; margin: 26px 0 12px; color: var(--primary); }
+
+    .bars { display: flex; align-items: flex-end; gap: 5px; height: 130px; }
+    .bar { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; min-width: 0; }
+    .bar .col { width: 100%; max-width: 30px; background: var(--primary); border-radius: 4px 4px 0 0; min-height: 2px; }
+    .bar .col.alt { background: var(--primary-soft); opacity: .55; }
+    .bar .v { font-size: 11px; color: var(--muted); }
+    .bar .d { font-size: 10px; color: var(--muted); white-space: nowrap; }
+    .legend { font-size: 11px; color: var(--muted); margin-top: 8px; display: flex; gap: 14px; }
+    .legend span::before { content: "■ "; color: var(--primary); }
+    .legend .alt::before { color: var(--primary-soft); }
+
+    .rows .row { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 13px; }
+    .rows .lbl { width: 42%; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rows .track { flex: 1; background: var(--surface); border-radius: 6px; height: 12px; overflow: hidden; }
+    .rows .fill { height: 100%; background: var(--primary); }
+    .rows .cnt { width: 40px; text-align: right; color: var(--muted); }
+
+    ul.q { margin: 0; padding: 0; list-style: none; }
+    ul.q li { display: flex; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+    ul.q li:last-child { border-bottom: none; }
+    ul.q li .c { color: var(--primary); min-width: 32px; font-weight: 600; }
+    .muted { color: var(--muted); font-size: 13px; }
+    .footer { margin-top: 30px; color: var(--muted); font-size: 12px; text-align: center; }
+    .err { color: #8a2b2b; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1 id="title">Dashboard</h1>
+        <div class="head-sub" id="sub"></div>
+      </div>
+      <div class="live">
+        <span class="dot" title="Live"></span>
+        <small id="updated"></small>
+        <button id="refresh">Vernieuwen</button>
+      </div>
+    </header>
+    <div id="content"><p class="muted">Laden…</p></div>
+    <div class="footer">Alle gegevens zijn geanonimiseerd — geen IP-adressen, geen berichtinhoud (tenzij expliciet ingeschakeld). Live, ververst automatisch.</div>
+  </div>
+
+  <script>
+    var token = new URLSearchParams(location.search).get("token") || "";
+    var el = function (id) { return document.getElementById(id); };
+    function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML; }
+
+    var LANG = { nl: "Nederlands", en: "Engels" };
+    var DEV = { mobile: "Mobiel", desktop: "Desktop", tablet: "Tablet" };
+
+    function applyColors(c) {
+      c = c || {};
+      var r = document.documentElement.style;
+      if (c.primary) r.setProperty("--primary", c.primary);
+      if (c.primarySoft) r.setProperty("--primary-soft", c.primarySoft);
+      if (c.surface) r.setProperty("--surface", c.surface);
+      if (c.ink) r.setProperty("--ink", c.ink);
+      if (c.line) r.setProperty("--line", c.line);
+    }
+
+    function toRows(obj, mapLabel) {
+      var arr = Array.isArray(obj)
+        ? obj.map(function (x) { return { label: x.label || x.key, count: x.count }; })
+        : Object.keys(obj || {}).map(function (k) { return { label: (mapLabel && mapLabel[k]) || k, count: obj[k] }; });
+      return arr.sort(function (a, b) { return b.count - a.count; });
+    }
+
+    function barsDays(byDay, uniqueByDay) {
+      var days = Object.keys(byDay || {}).sort().slice(-14);
+      if (!days.length) return '<p class="muted">Nog geen gegevens.</p>';
+      var max = Math.max.apply(null, days.map(function (d) { return byDay[d]; }));
+      var html = '<div class="bars">' + days.map(function (d) {
+        var h = Math.round((byDay[d] / max) * 115);
+        var u = uniqueByDay ? (uniqueByDay[d] || 0) : null;
+        var uh = uniqueByDay && max ? Math.round((u / max) * 115) : 0;
+        return '<div class="bar"><span class="v">' + byDay[d] + '</span>' +
+          '<div class="col" style="height:' + h + 'px"></div>' +
+          (uniqueByDay ? '<div class="col alt" style="height:' + uh + 'px;margin-top:-' + Math.min(uh, h) + 'px"></div>' : '') +
+          '<span class="d">' + d.slice(5) + '</span></div>';
+      }).join("") + '</div>';
+      if (uniqueByDay) html += '<div class="legend"><span>weergaven</span><span class="alt">unieke bezoekers</span></div>';
+      return html;
+    }
+
+    function rowBars(rows) {
+      if (!rows.length) return '<p class="muted">Nog geen gegevens.</p>';
+      var max = Math.max.apply(null, rows.map(function (r) { return r.count; }));
+      return '<div class="rows">' + rows.slice(0, 8).map(function (r) {
+        var w = Math.round((r.count / max) * 100);
+        return '<div class="row"><span class="lbl" title="' + esc(r.label) + '">' + esc(r.label) + '</span>' +
+          '<span class="track"><span class="fill" style="width:' + w + '%"></span></span>' +
+          '<span class="cnt">' + r.count + '</span></div>';
+      }).join("") + '</div>';
+    }
+
+    function render(s) {
+      var v = s.visitors || {}, c = s.chat || {};
+      el("title").textContent = (s.businessName || "") + " — Dashboard";
+      el("sub").textContent = "bezoekers van de website + gebruik van de chatassistent";
+      el("updated").textContent = "bijgewerkt " + new Date(s.generatedAt).toLocaleTimeString("nl-NL");
+
+      var refPct = c.total ? Math.round((c.referred / c.total) * 100) : 0;
+
+      var html = "";
+      // Samenvatting
+      html += '<div class="summary"><h2>In één oogopslag</h2><ul>' +
+        (s.insights || []).map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + "</ul></div>";
+
+      // KPI's
+      html += '<div class="kpis">' +
+        kpi(v.uniqueTotal || 0, "unieke bezoekers (totaal)") +
+        kpi((v.total || 0), "paginaweergaven") +
+        kpi(c.total || 0, "chatberichten") +
+        kpi(refPct + "%", "doorverwezen naar bellen") +
+        '</div>';
+
+      // Website
+      html += '<div class="section-label">Website</div>';
+      html += '<div class="card"><h2>Bezoek per dag</h2>' + barsDays(v.byDay, v.uniqueByDay) + '</div>';
+      html += '<div class="grid2">' +
+        '<div class="card"><h2>Populairste pagina\'s</h2>' + rowBars(toRows(v.topPages || [])) + '</div>' +
+        '<div class="card"><h2>Apparaat</h2>' + rowBars(toRows(v.byDevice || {}, DEV)) + '</div>' +
+        '</div>';
+      html += '<div class="grid2">' +
+        '<div class="card"><h2>Herkomst</h2>' + rowBars(toRows((v.topRefs || []).map(function (r) { return { label: r.key === "direct" ? "direct / onbekend" : r.key, count: r.count }; })) ) + '</div>' +
+        '<div class="card"><h2>Taal</h2>' + rowBars(toRows(v.byLang || {}, LANG)) + '</div>' +
+        '</div>';
+
+      // Chatbot
+      html += '<div class="section-label">Chatassistent</div>';
+      html += '<div class="grid2">' +
+        '<div class="card"><h2>Chatberichten per dag</h2>' + barsDays(c.byDay) + '</div>' +
+        '<div class="card"><h2>Taal van de chat</h2>' + rowBars(toRows(c.byLang || {}, LANG)) +
+        '<p class="muted" style="margin-top:12px">Gem. reactietijd: ' + (c.avgMs || 0) + ' ms</p></div>' +
+        '</div>';
+      if (c.hasQuestions) {
+        html += '<div class="card"><h2>Veelgestelde vragen (FAQ-backlog)</h2><ul class="q">' +
+          (c.questions || []).map(function (q) { return '<li><span class="c">' + q.count + '×</span><span>' + esc(q.text) + '</span></li>'; }).join("") + '</ul></div>';
+      } else {
+        html += '<div class="card"><h2>Veelgestelde vragen</h2><p class="muted">Vraagteksten worden niet opgeslagen (privacy). Zet <code>LOG_QUESTIONS=true</code> om een FAQ-backlog op te bouwen — vermeld dit dan in de privacyverklaring.</p></div>';
+      }
+
+      el("content").innerHTML = html;
+    }
+
+    function kpi(n, label, trend) {
+      return '<div class="kpi"><div class="n">' + esc(n) + '</div><div class="l">' + esc(label) + '</div>' +
+        (trend ? '<div class="t ' + trend.cls + '">' + esc(trend.text) + '</div>' : '') + '</div>';
+    }
+
+    function load() {
+      fetch("/api/stats?token=" + encodeURIComponent(token))
+        .then(function (r) { if (!r.ok) throw new Error(r.status === 403 ? "Geen toegang (ongeldige token)." : "Fout " + r.status); return r.json(); })
+        .then(function (s) { applyColors(s.colors); render(s); })
+        .catch(function (e) { el("content").innerHTML = '<p class="err">' + esc(e.message) + '</p>'; });
+    }
+
+    el("refresh").addEventListener("click", load);
+    load();
+    setInterval(load, 20000); // live: elke 20 seconden verversen
+  </script>
+</body>
+</html>

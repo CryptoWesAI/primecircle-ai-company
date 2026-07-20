@@ -1,0 +1,38 @@
+[
+  {
+    "source": "twilio",
+    "event_type": "call.missed",
+    "external_id": "CA_TEST_no-answer",
+    "occurred_at": "2026-07-19T10:00:00Z",
+    "contact": { "phone": "+31612345678" },
+    "message": { "direction": "inbound", "status": "no-answer", "preview": "Oproep niet beantwoord" },
+    "metadata": { "call_sid": "CA_TEST" }
+  },
+  {
+    "source": "twilio",
+    "event_type": "sms.status",
+    "external_id": "SM_TEST_delivered",
+    "occurred_at": "2026-07-19T10:00:08Z",
+    "contact": { "phone": "+31612345678" },
+    "message": { "direction": "outbound", "status": "delivered", "provider_message_id": "SM_TEST" },
+    "metadata": {}
+  },
+  {
+    "source": "email",
+    "event_type": "email.inbound",
+    "external_id": "message-id@example.test",
+    "occurred_at": "2026-07-19T10:30:00Z",
+    "contact": { "name": "Voorbeeld klant", "email": "klant@example.test" },
+    "message": { "direction": "inbound", "status": "received", "subject": "Terugbellen", "preview": "Kunt u mij vanmiddag bellen?" },
+    "metadata": {}
+  },
+  {
+    "source": "website",
+    "event_type": "website.lead",
+    "external_id": "form_TEST",
+    "occurred_at": "2026-07-19T11:00:00Z",
+    "contact": { "name": "Voorbeeld aanvraag", "phone": "+31687654321", "email": "aanvraag@example.test" },
+    "message": { "direction": "inbound", "status": "received", "subject": "Contactformulier", "preview": "Ik ontvang graag een prijsindicatie." },
+    "metadata": { "form": "contact" }
+  }
+]

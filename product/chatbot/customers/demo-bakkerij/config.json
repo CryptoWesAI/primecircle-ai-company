@@ -1,0 +1,22 @@
+{
+  "businessName": "Bakkerij De Korenbloem",
+  "contactName": "het team",
+  "phoneDisplay": "038 123 4567",
+  "phoneTel": "+31381234567",
+  "defaultLang": "nl",
+  "languages": ["nl"],
+  "colors": {
+    "primary": "#5b3a1e",
+    "primarySoft": "#7a5230",
+    "surface": "#faf6ee",
+    "ink": "#2a2118",
+    "line": "#e5dcc9"
+  },
+  "suggestions": {
+    "nl": [
+      "Wat zijn jullie openingstijden?",
+      "Kan ik een taart bestellen?",
+      "Hebben jullie glutenvrij brood?"
+    ]
+  }
+}

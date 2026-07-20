@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>document.documentElement.className += " js";</script>
+  <title>Mis nooit meer een klant. Voor vakmensen | Belvanger</title>
+  <meta name="description" content="Als jij op de steiger staat, gaat de telefoon. Belvanger vangt je gemiste belletjes automatisch op met een bericht, zodat je nooit meer een klus misloopt." />
+  <meta name="theme-color" content="#16232E" />
+  <!-- TIJDELIJK noindex: de site bevat nog placeholders (KvK/telefoon) en de
+       demo-aanvraag bezorgt nog niet. Zet dit terug op "index, follow" zodra
+       die echt zijn — je wilt niet dat Google onjuiste bedrijfsgegevens indexeert. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://belvanger.nl/" />
+  <link rel="alternate" hreflang="nl" href="https://belvanger.nl/" />
+  <link rel="alternate" hreflang="en" href="https://belvanger.nl/en/" />
+  <link rel="alternate" hreflang="x-default" href="https://belvanger.nl/" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Belvanger" />
+  <meta property="og:url" content="https://belvanger.nl/" />
+  <meta property="og:title" content="Mis nooit meer een klant" />
+  <meta property="og:description" content="De belletjes die jij mist, vangen wij op. Automatisch, met een bericht." />
+  <meta property="og:image" content="https://belvanger.nl/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Belvanger: een gemiste oproep wordt automatisch opgevangen met een bericht." />
+  <meta property="og:locale" content="nl_NL" />
+
+  <!-- Twitter/X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Mis nooit meer een klant" />
+  <meta name="twitter:description" content="De belletjes die jij mist, vangen wij op. Automatisch, met een bericht." />
+  <meta name="twitter:image" content="https://belvanger.nl/assets/og-image.png" />
+
+  <!-- Font: self-hosted, geen externe call -->
+  <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=c38b3e92" />
+
+  <!-- Gestructureerde data. Placeholder-telefoonnummer en de harde €99-prijs zijn
+       hier VERWIJDERD (2026-07-17): het nummer bestond niet, en de prijs sprak de
+       zichtbare FAQ tegen ("prijs bespreken we in de demo") — schema moet altijd
+       overeenkomen met wat er zichtbaar op de pagina staat.
+       TODO(founder): contactPoint + prijs terugzetten zodra beide ECHT en gevalideerd zijn. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://belvanger.nl/#organisatie",
+        "name": "Belvanger",
+        "url": "https://belvanger.nl/",
+        "logo": "https://belvanger.nl/favicon.svg",
+        "image": "https://belvanger.nl/assets/og-image.png",
+        "description": "Belvanger vangt gemiste telefoontjes van vakbedrijven automatisch op en levert de lead klaar aan.",
+        "parentOrganization": { "@type": "Organization", "name": "PrimeCircle" }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://belvanger.nl/#website",
+        "url": "https://belvanger.nl/",
+        "name": "Belvanger",
+        "inLanguage": "nl-NL",
+        "publisher": { "@id": "https://belvanger.nl/#organisatie" }
+      },
+      {
+        "@type": "Service",
+        "@id": "https://belvanger.nl/#dienst",
+        "name": "Automatische leadvangst voor vakbedrijven",
+        "serviceType": "Gemiste oproepen automatisch opvangen",
+        "description": "Als een klant belt terwijl je aan het werk bent, stuurt Belvanger de beller automatisch een bericht, legt de lead vast en geeft 'm aan je door.",
+        "provider": { "@id": "https://belvanger.nl/#organisatie" },
+        "areaServed": { "@type": "Country", "name": "Nederland" },
+        "audience": {
+          "@type": "BusinessAudience",
+          "name": "Vakbedrijven: loodgieters, installateurs, dakdekkers, elektriciens, hoveniers, klusbedrijven"
+        },
+        "offers": {
+          "@type": "Offer",
+          "priceCurrency": "EUR",
+          "availability": "https://schema.org/InStock"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "@id": "https://belvanger.nl/#faq",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Moet ik mijn telefoonnummer veranderen?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Nee. Het werkt gewoon op je eigen nummer. We zetten een doorschakeling klaar zodat een gemiste oproep bij ons binnenkomt. Jij merkt er niks van, behalve dat de leads binnenrollen." }
+          },
+          {
+            "@type": "Question",
+            "name": "Moet mijn klant een app installeren?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Nee. Je klant krijgt gewoon een berichtje op zijn telefoon, net als van een vriend. Niks downloaden, niks ingewikkelds." }
+          },
+          {
+            "@type": "Question",
+            "name": "Ik heb al een website. Wat dan?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Dan bouwen we 'm opnieuw, en beter. We plakken de leadvangst niet op een site van iemand anders: dan ben jij afhankelijk van diens hosting, updates en agenda. Alles in één hand gaat sneller en het gaat minder vaak stuk. Je eigen domein neem je gewoon mee." }
+          },
+          {
+            "@type": "Question",
+            "name": "Ben ik ergens aan vastgebonden?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Nee. Maandelijks opzegbaar. Werkt het niet voor je? Dan stop je gewoon." }
+          },
+          {
+            "@type": "Question",
+            "name": "Werkt dit met mijn manier van werken?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Ja. Jij blijft zelf terugbellen. Wij zorgen alleen dat je de klant niet meer kwijtraakt. Geen robot die jouw werk overneemt, wel een vangnet eronder." }
+          },
+          {
+            "@type": "Question",
+            "name": "Wat kost het?",
+            "acceptedAnswer": { "@type": "Answer", "text": "Twee delen: een eenmalige setup (we bouwen je website, AI-chatbot en de automatisering) en daarna €99 per maand voor het draaien, het onderhoud en je dashboard met dagelijkse cijfers. De setup stemmen we af op jouw bedrijf; dat bespreken we in een vrijblijvend gesprek. Maandelijks opzegbaar. Eén extra klus per maand betaalt het ruim terug." }
+          },
+          {
+            "@type": "Question",
+            "name": "Wat doen jullie met de gegevens?",
+            "acceptedAnswer": { "@type": "Answer", "text": "We slaan alleen op wat nodig is om terug te bellen: het telefoonnummer en waar de klus over gaat. We verkopen niets door, en gegevens kunnen op verzoek verwijderd worden." }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#hoofd">Naar de inhoud</a>
+
+  <!-- ══════════════════════════ HEADER ══════════════════════════ -->
+  <header class="site-header" data-header>
+    <div class="wrap header__inner">
+      <a class="brand" href="#" aria-label="Belvanger, naar boven">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path class="brand__arc" d="M6 22a13 13 0 0 1 20-11" fill="none" stroke-width="3.4" stroke-linecap="round"/>
+          <circle class="brand__dot" cx="26.5" cy="9.5" r="4"/>
+        </svg>
+        <span class="brand__name">Belvanger</span>
+      </a>
+
+      <nav class="nav" aria-label="Hoofdmenu">
+        <ul class="nav__list" data-nav>
+          <li><a href="#pijn">Wat het kost</a></li>
+          <li><a href="#hoe">Hoe het werkt</a></li>
+          <li><a href="#prijs">Prijs</a></li>
+          <li><a href="#faq">Vragen</a></li>
+        </ul>
+      </nav>
+
+      <div class="header__actions">
+        <a class="lang-switch" href="en/" hreflang="en" aria-label="English version">EN</a>
+        <a class="btn btn--primary btn--sm" href="#gesprek">Plan een gesprek</a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobielmenu" data-nav-toggle>
+          <span class="nav-toggle__bars" aria-hidden="true"></span>
+          <span class="visually-hidden">Menu</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-menu" id="mobielmenu" data-mobile-menu hidden>
+      <a href="#pijn">Wat het kost</a>
+      <a href="#hoe">Hoe het werkt</a>
+      <a href="#prijs">Prijs</a>
+      <a href="#faq">Vragen</a>
+      <a class="btn btn--primary" href="#gesprek">Plan een gesprek</a>
+      <a class="mobile-menu__lang" href="en/" hreflang="en">English version →</a>
+    </div>
+  </header>
+
+  <main id="hoofd">
+    <!-- ══════════════════════════ HERO ══════════════════════════ -->
+    <section class="hero">
+      <div class="wrap hero__grid">
+        <div class="hero__copy">
+          <p class="eyebrow">Voor de vakman die z'n handen vol heeft</p>
+          <h1 class="hero__title">Mis nooit<br>meer een <span class="mark-underline">klant</span>.</h1>
+          <p class="hero__sub">
+            Als jij op de steiger staat, gaat de telefoon. Neem je niet op, dan belt ruim <strong>de helft</strong>
+            van de klanten gewoon een concurrent, en <strong>44%</strong> probeert het daarna niet nog een keer.
+            Wij vangen ze op. Automatisch.
+          </p>
+          <div class="hero__cta">
+            <a class="btn btn--primary btn--lg" href="#gesprek">Zie het voor jouw bedrijf<span class="btn__arrow" aria-hidden="true">→</span></a>
+            <a class="btn btn--ghost btn--lg" href="#hoe">
+              Zie hoe het werkt
+            </a>
+          </div>
+          <ul class="microtrust">
+            <li>Werkt met je eigen nummer</li>
+            <li>Geen app nodig voor je klant</li>
+            <li>Binnen een week live</li>
+          </ul>
+        </div>
+
+        <!-- ★ SIGNATURE: de vangst gebeurt live in de telefoon -->
+        <div class="hero__demo">
+          <div class="phone-stage">
+          <div class="phone" data-phone data-state="done" role="img"
+               aria-label="Voorbeeld: een gemiste oproep wordt automatisch opgevangen met een bericht, de klant reageert, en de lead komt binnen bij de vakman.">
+            <div class="phone__notch" aria-hidden="true"></div>
+            <div class="phone__screen">
+
+              <!-- Inkomend gesprek: alleen zichtbaar tijdens de simulatie -->
+              <div class="callscreen" data-callscreen aria-hidden="true">
+                <span class="callscreen__label">Inkomende oproep</span>
+                <span class="callscreen__avatar">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>
+                </span>
+                <span class="callscreen__num">06 – 12 34 56 78</span>
+                <span class="callscreen__sub">Onbekend nummer</span>
+                <span class="callscreen__ring" aria-hidden="true"><i></i><i></i><i></i></span>
+                <div class="callscreen__btns" aria-hidden="true">
+                  <span class="cbtn cbtn--decline">✕</span>
+                  <span class="cbtn cbtn--accept">✆</span>
+                </div>
+                <span class="callscreen__hint">Jij staat op de steiger…</span>
+              </div>
+
+              <div class="chat__top">
+                <span class="chat__avatar" aria-hidden="true">JK</span>
+                <span class="chat__who"><b>Onbekend nummer</b><small>via Belvanger</small></span>
+                <span class="chat__wa" aria-hidden="true">Bericht</span>
+              </div>
+              <div class="chat__body">
+                <div class="chat__event" data-step="1">
+                  <svg viewBox="0 0 24 24" class="ico ico--miss" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.24 1z"/></svg>
+                  Gemiste oproep · 14:32
+                </div>
+                <div class="bubble bubble--out" data-step="2">
+                  Sorry, we misten je belletje! Waarmee kunnen we je helpen? Reageer gerust, we bellen zo terug.
+                  <span class="bubble__meta">14:32</span>
+                </div>
+                <div class="typing" data-step="3" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="bubble bubble--in" data-step="4">
+                  Goedemiddag! We zoeken voor een project van 14 woningen een vaste installateur voor de komende maanden. Zijn jullie beschikbaar voor een kennismaking?
+                  <span class="bubble__meta">14:33</span>
+                </div>
+                <div class="typing" data-step="5" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="bubble bubble--out" data-step="6">
+                  Wat goed dat u ons treft! Zulke projecten pakken we graag op. U wordt vandaag nog teruggebeld om kennis te maken en de planning door te nemen. Is dit nummer goed bereikbaar?
+                  <span class="bubble__meta">15:03</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lead-toast" data-step="7" role="status">
+            <span class="lead-toast__dot" aria-hidden="true"></span>
+            <span><b>Nieuwe lead binnen</b>: project 14 woningen, vaste installateur gezocht</span>
+          </div>
+          </div><!-- /.phone-stage -->
+
+          <div class="simctl" data-simctl hidden>
+            <button class="btn btn--ghost btn--sim" type="button" data-sim>
+              <span class="btn--sim__ico" aria-hidden="true"></span>
+              <span data-sim-label>Simuleer een gemist belletje</span>
+            </button>
+            <button class="soundtoggle" type="button" data-sound aria-pressed="true" title="Geluid uitzetten">
+              <svg viewBox="0 0 24 24" class="ico" aria-hidden="true" data-sound-ico><path d="M4 9v6h4l5 5V4L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z"/><path data-sound-slash d="M3 3l18 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+              <span class="visually-hidden">Geluid</span>
+            </button>
+          </div>
+          <p class="phone-note">Voorbeeld ter illustratie, geen echte klant. Bij jou draait het op je eigen nummer, en je test 'm zelf voordat je 'm gebruikt.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ WAAROM / BELIEF ══════════════════════════ -->
+    <section class="belief">
+      <div class="wrap">
+        <p class="belief__text reveal">Jij bent vakman, <em>geen telefoniste</em>. Je zou nooit een klant mogen verliezen door iets doms als een gemist belletje.</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ TRUST STRIP ══════════════════════════ -->
+    <section class="trades" aria-label="Voor welke vakmensen">
+      <div class="wrap trades__inner">
+        <span class="trades__label">Gebouwd voor</span>
+        <ul class="trades__list">
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Loodgieters
+          </li>
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M4 15v-3a6 6 0 0 1 6-6"/><path d="M14 6a6 6 0 0 1 6 6v3"/></svg>Installateurs
+          </li>
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg>Dakdekkers
+          </li>
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Elektriciens
+          </li>
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6.03"/></svg>Hoveniers
+          </li>
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 12l-8.4 8.4a1.9 1.9 0 1 1-2.7-2.7L12.3 9.3"/><path d="M17.6 14.6 22 10.2"/><path d="M21 10.3 13.7 3a5.9 5.9 0 0 0-4.1-1.7L8 1.2l.9.8A6 6 0 0 1 11 8.3v1.5l2 2h1.5a2 2 0 0 1 1.4.6l2 2z"/></svg>Klusbedrijven
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ DE PIJN + REKENMACHINE ══════════════════════════ -->
+    <section class="pijn" id="pijn">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="eyebrow eyebrow--dark">Even eerlijk</p>
+          <h2 class="section-title">Herken je dit?</h2>
+        </header>
+
+        <div class="herken__grid reveal">
+          <blockquote class="herken__card">Je hoort 's avonds pas de voicemail. Je belt terug. De klus is al vergeven.</blockquote>
+          <blockquote class="herken__card">Onbekend nummer gemist. Was dat die grote opdracht, of reclame? Je weet het nooit.</blockquote>
+          <blockquote class="herken__card">Je staat op het dak, de telefoon gaat drie keer. Je kunt gewoon niks.</blockquote>
+        </div>
+
+        <p class="herken__bridge reveal">Belvanger haalt geen nieuwe klanten voor je binnen, dat beloven we niet. Wél zorgen we dat je professioneel overkomt met een strakke website, en dat je de klanten die je al bellen niet kwijtraakt als je even niet kunt opnemen.</p>
+
+        <p class="pijn__transition reveal">Want elk gemist belletje is een gemiste klus. En dat telt op:</p>
+
+        <div class="stats reveal">
+          <div class="stat">
+            <span class="stat__num" data-count="52" data-suffix="%">52%</span>
+            <span class="stat__label">van de klanten belt een concurrent als je niet opneemt</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num" data-count="44" data-suffix="%">44%</span>
+            <span class="stat__label">probeert het daarna niet nog een keer</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num" data-count="5000" data-prefix="€" data-suffix="">€5.000</span>
+            <span class="stat__label">wat één gemiste klus je kan kosten</span>
+          </div>
+        </div>
+        <p class="stats__source reveal">Bron: Infopact, onderzoek telefonische bereikbaarheid in het MKB (Nederland). Cijfers zijn indicatief; reken hieronder je eigen situatie uit.</p>
+
+        <!-- Rekenmachine: laat de bezoeker z'n eigen verlies zien -->
+        <div class="calc reveal" id="rekenmachine">
+          <div class="calc__head">
+            <h3 class="calc__title">Wat kost het jóu?</h3>
+            <p class="calc__note">Schuif naar jouw situatie.</p>
+          </div>
+
+          <div class="calc__controls">
+            <label class="field">
+              <span class="field__top">
+                <span class="field__label"><svg class="field__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2.5"/><path d="M12 18h.01"/></svg>Gemiste belletjes per maand</span>
+                <output class="field__val" data-out="calls">26</output>
+              </span>
+              <input type="range" min="2" max="100" value="26" step="1" data-input="calls" />
+            </label>
+
+            <label class="field">
+              <span class="field__top">
+                <span class="field__label"><svg class="field__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12a7.9 7.9 0 0 0 7.8 8 7.7 7.7 0 0 0 5.2-2"/></svg>Gemiddelde waarde van een klus</span>
+                <output class="field__val" data-out="value">€ 250</output>
+              </span>
+              <input type="range" min="75" max="5000" value="250" step="25" data-input="value" />
+            </label>
+
+            <label class="field">
+              <span class="field__top">
+                <span class="field__label"><svg class="field__ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 8.35V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8.35A2 2 0 0 1 3.26 6.5l8-3.2a2 2 0 0 1 1.48 0l8 3.2A2 2 0 0 1 22 8.35Z"/><path d="M6 18h12"/><path d="M6 14h12"/><path d="M6 10h12"/></svg>Zo veel win je terug met opvangen</span>
+                <output class="field__val" data-out="recover">30%</output>
+              </span>
+              <input type="range" min="10" max="70" value="30" step="5" data-input="recover" />
+            </label>
+          </div>
+
+          <div class="calc__result">
+            <p class="calc__result-label">Geschat misgelopen, per maand</p>
+            <p class="calc__result-num" data-out="loss">€ 3.900</p>
+            <p class="calc__result-sub">
+              Terug te winnen met Belvanger: <strong data-out="won">± € 1.170 per maand</strong>.
+              Reken zelf: <a href="#gesprek">plan een vrijblijvend gesprek →</a>
+            </p>
+            <p class="calc__result-note">Schatting o.b.v. ~60% van gemiste belletjes = echte klus-kans.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ HOE HET WERKT ══════════════════════════ -->
+    <section class="route" id="hoe">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="eyebrow">De route</p>
+          <h2 class="section-title">Van gemiste klant<br>naar vaste klus.</h2>
+        </header>
+
+        <ol class="route__list">
+          <li class="route__step reveal" style="--accent:#6B7078">
+            <span class="route__marker">1</span>
+            <div class="route__card">
+              <h3 class="route__title">Het probleem</h3>
+              <p class="route__text">De telefoon gaat terwijl je aan het werk bent. Je mist 'm.</p>
+            </div>
+          </li>
+          <li class="route__step reveal" style="--accent:#FF5C1A">
+            <span class="route__marker">2</span>
+            <div class="route__card">
+              <h3 class="route__title">Wij vangen 'm op</h3>
+              <p class="route__text">Een gemiste oproep? De beller krijgt automatisch een berichtje, en de lead komt netjes bij jou binnen.</p>
+            </div>
+          </li>
+          <li class="route__step reveal" style="--accent:#2F6FED">
+            <span class="route__marker">3</span>
+            <div class="route__card">
+              <h3 class="route__title">Jij houdt de regie</h3>
+              <p class="route__text">Jij belt terug wanneer het uitkomt, met naam en klus al bekend. Wij draaien alles op de achtergrond.</p>
+            </div>
+          </li>
+          <li class="route__step reveal" style="--accent:#1FA855">
+            <span class="route__marker">4</span>
+            <div class="route__card">
+              <h3 class="route__title">Het resultaat</h3>
+              <p class="route__text">Jij belt terug wanneer het uitkomt. Nooit meer een klus kwijt, wél meer klussen op de planning.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ WAT JE KRIJGT ══════════════════════════ -->
+    <section class="krijgt">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="eyebrow eyebrow--dark">Alles-in, wij bouwen en draaien het</p>
+          <h2 class="section-title">Wat je krijgt</h2>
+        </header>
+
+        <div class="cards">
+          <article class="card reveal">
+            <h3 class="card__title">Een strakke website</h3>
+            <p class="card__text">Wij bouwen 'm zelf, afgestemd op jouw vak en hoe jij werkt. Gemaakt om klanten binnen te halen, niet om mooi te staan. Inclusief contactformulier als tweede voordeur.</p>
+          </article>
+          <article class="card reveal">
+            <h3 class="card__title">Automatische leadvangst</h3>
+            <p class="card__text">Wij zetten de opvang klaar op je eigen nummer: doorschakeling en techniek regelen wij. Jij hoeft niks te installeren of bij te houden.</p>
+          </article>
+          <article class="card reveal">
+            <h3 class="card__title">Een AI-chatbot</h3>
+            <p class="card__text">Beantwoordt de veelgestelde vragen van bezoekers, dag en nacht. Vangt ook 's avonds nog klussen op.</p>
+          </article>
+          <article class="card reveal">
+            <h3 class="card__title">Je eigen dashboard</h3>
+            <p class="card__text">Al je leads én dagelijkse cijfers op één plek: hoeveel bellers opgevangen, hoeveel klussen binnen. Meten is weten.</p>
+          </article>
+        </div>
+
+        <p class="krijgt__foot reveal">Wij bouwen en onderhouden alles. Jij hoeft niets te doen. Behalve terugbellen.</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ PRIJS / ROI ══════════════════════════ -->
+    <section class="prijs" id="prijs">
+      <div class="wrap prijs__grid">
+        <div class="prijs__copy reveal">
+          <p class="eyebrow eyebrow--dark">Reken 't gewoon na</p>
+          <h2 class="section-title">Eén extra klus per maand<br>betaalt het ruim terug.</h2>
+          <p class="section-lead">
+            Twee delen, helder: een eenmalige setup waarin we je website, AI-chatbot en de
+            automatisering bouwen, en daarna een vast maandbedrag voor het draaien, het
+            onderhoud en je dashboard met dagelijkse cijfers. Maandelijks opzegbaar.
+          </p>
+          <ul class="check">
+            <li>Eenmalige setup: website, AI-chatbot en automatisering</li>
+            <li>€99/mnd: draaien, onderhoud en dagelijkse cijfers in je dashboard</li>
+            <li>Maandbedrag pas vanaf je eerste opgevangen klant</li>
+            <li>Maandelijks opzegbaar, geen kleine lettertjes</li>
+          </ul>
+        </div>
+
+        <aside class="pricecard reveal">
+          <p class="pricecard__tag">Founding-tarief · eerste bedrijven</p>
+          <p class="pricecard__price"><span class="pricecard__cur">€</span>99<span class="pricecard__per">/mnd</span></p>
+          <p class="pricecard__setup">draaien, onderhoud en je dashboard met dagelijkse cijfers</p>
+          <p class="pricecard__promise"><strong>Onze belofte:</strong> je maandbedrag gaat pas lopen zodra Belvanger je eerste gemiste klant heeft opgevangen. Eerst werken, dan pas betalen.</p>
+          <a class="btn btn--primary btn--lg btn--block" href="#gesprek">Plan een gesprek</a>
+          <p class="pricecard__fine">+ eenmalige setup (website, AI-chatbot en automatisering), afgestemd op jouw bedrijf. Geen verplichtingen.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ DEMO CTA (hoofdconversie) ══════════════════════════ -->
+    <section class="demo" id="gesprek">
+      <div class="wrap demo__grid">
+        <div class="demo__copy reveal">
+          <h2 class="section-title section-title--light">Klaar om het serieus<br>te bekijken?</h2>
+          <p class="section-lead section-lead--light">
+            Plan een vrijblijvend gesprek. We nemen het hele pakket met je door: website,
+            leadvangst, AI-chatbot en je dashboard, en beantwoorden al je vragen.
+          </p>
+          <ul class="microtrust microtrust--light">
+            <li>Gratis en vrijblijvend</li>
+            <li>Binnen een week live</li>
+            <li>We bellen je terug, niet andersom</li>
+          </ul>
+        </div>
+
+        <form class="demo-form" data-form novalidate>
+          <div class="demo-form__row">
+            <label class="ffield">
+              <span class="ffield__label">Naam</span>
+              <input type="text" name="naam" autocomplete="name" required placeholder="Voor- en achternaam" />
+              <span class="ffield__err" data-err></span>
+            </label>
+          </div>
+          <div class="demo-form__row">
+            <label class="ffield">
+              <span class="ffield__label">E-mailadres</span>
+              <input type="email" name="email" autocomplete="email" required placeholder="jij@bedrijf.nl" />
+              <span class="ffield__err" data-err></span>
+            </label>
+          </div>
+          <div class="demo-form__row">
+            <label class="ffield">
+              <span class="ffield__label">Bedrijfsnaam <span class="ffield__opt">(optioneel)</span></span>
+              <input type="text" name="bedrijf" autocomplete="organization" placeholder="bijv. Jansen Loodgieters" />
+              <span class="ffield__err" data-err></span>
+            </label>
+          </div>
+          <div class="demo-form__row">
+            <label class="ffield">
+              <span class="ffield__label">Je vak</span>
+              <select name="vak" required>
+                <option value="" selected disabled>Kies je vak…</option>
+                <option>Loodgieter</option>
+                <option>Installateur</option>
+                <option>Dakdekker</option>
+                <option>Elektricien</option>
+                <option>Hovenier</option>
+                <option>Klusbedrijf</option>
+                <option>Anders</option>
+              </select>
+              <span class="ffield__err" data-err></span>
+            </label>
+          </div>
+          <div class="demo-form__row">
+            <label class="ffield">
+              <span class="ffield__label">Telefoonnummer</span>
+              <input type="tel" name="telefoon" inputmode="tel" autocomplete="tel" required placeholder="06 12345678" />
+              <span class="ffield__err" data-err></span>
+            </label>
+          </div>
+          <div class="demo-form__row">
+            <label class="ffield">
+              <span class="ffield__label">Je vraag of situatie <span class="ffield__opt">(optioneel)</span></span>
+              <textarea name="vraag" rows="3" placeholder="Waar kunnen we je mee helpen?"></textarea>
+              <span class="ffield__err" data-err></span>
+            </label>
+          </div>
+          <!-- honeypot: onzichtbaar voor mensen, spam-bots vullen 'm -->
+          <div class="hp" aria-hidden="true">
+            <label>Laat dit veld leeg<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Plan mijn gesprek<span class="btn__arrow" aria-hidden="true">→</span></button>
+          <p class="demo-form__legal">
+            Door te versturen ga je akkoord dat we contact met je opnemen over je aanvraag.
+            We gebruiken je gegevens nergens anders voor. <a href="privacy.html">Privacyverklaring</a>.
+          </p>
+          <p class="demo-form__ok" data-form-ok hidden role="status">
+            <b>Bedankt, we hebben je aanvraag ontvangen.</b> We nemen snel contact met je op.
+          </p>
+          <p class="demo-form__fail" data-form-fail hidden role="status">
+            <b>Versturen lukte niet.</b> Mail ons gerust rechtstreeks op
+            <a href="mailto:info@belvanger.nl">info@belvanger.nl</a> of stuur een
+            <a href="https://wa.me/31646733277">WhatsApp</a>.
+          </p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ FAQ ══════════════════════════ -->
+    <section class="faq" id="faq">
+      <div class="wrap faq__inner">
+        <header class="section-head section-head--left reveal">
+          <p class="eyebrow eyebrow--dark">Nog even dit</p>
+          <h2 class="section-title">Veelgestelde vragen</h2>
+        </header>
+
+        <div class="faq__list reveal">
+          <details class="qa">
+            <summary>Moet ik mijn telefoonnummer veranderen?</summary>
+            <div class="qa__a"><p>Nee. Het werkt gewoon op je eigen nummer. We zetten een doorschakeling klaar zodat een gemiste oproep bij ons binnenkomt. Jij merkt er niks van, behalve dat de leads binnenrollen.</p></div>
+          </details>
+          <details class="qa">
+            <summary>Moet mijn klant een app installeren?</summary>
+            <div class="qa__a"><p>Nee. Je klant krijgt gewoon een berichtje op zijn telefoon, net als van een vriend. Niks downloaden, niks ingewikkelds.</p></div>
+          </details>
+          <details class="qa">
+            <summary>Ik heb al een website. Wat dan?</summary>
+            <div class="qa__a"><p>Dan bouwen we 'm opnieuw, en beter. We plakken de leadvangst niet op een site van iemand anders: dan ben jij afhankelijk van diens hosting, updates en agenda. Alles in één hand gaat sneller en het gaat minder vaak stuk. Je eigen domein neem je gewoon mee.</p></div>
+          </details>
+          <details class="qa">
+            <summary>Ben ik ergens aan vastgebonden?</summary>
+            <div class="qa__a"><p>Nee. Maandelijks opzegbaar. Werkt het niet voor je? Dan stop je gewoon.</p></div>
+          </details>
+          <details class="qa">
+            <summary>Werkt dit met mijn manier van werken?</summary>
+            <div class="qa__a"><p>Ja. Jij blijft zelf terugbellen. Wij zorgen alleen dat je de klant niet meer kwijtraakt. Geen robot die jouw werk overneemt, wel een vangnet eronder.</p></div>
+          </details>
+          <details class="qa">
+            <summary>Wat kost het?</summary>
+            <div class="qa__a"><p>Twee delen: een eenmalige setup (we bouwen je website, AI-chatbot en de automatisering) en daarna €99 per maand voor het draaien, het onderhoud en je dashboard met dagelijkse cijfers. De setup stemmen we af op jouw bedrijf; dat bespreken we in een vrijblijvend gesprek. Maandelijks opzegbaar. Eén extra klus per maand betaalt het ruim terug.</p></div>
+          </details>
+          <details class="qa">
+            <summary>Wat doen jullie met de gegevens?</summary>
+            <div class="qa__a"><p>We slaan alleen op wat nodig is om terug te bellen: het telefoonnummer en waar de klus over gaat. We verkopen niets door, en gegevens kunnen op verzoek verwijderd worden.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ SLOT CTA ══════════════════════════ -->
+    <section class="slot">
+      <div class="wrap slot__inner reveal">
+        <h2 class="slot__title">Elke week dat je wacht,<br>belt er een klant de concurrent.</h2>
+        <a class="btn btn--primary btn--xl" href="#gesprek">Zie het voor jouw bedrijf<span class="btn__arrow" aria-hidden="true">→</span></a>
+        <p class="slot__sub">Vrijblijvend gesprek · binnen een week live · maandelijks opzegbaar</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══════════════════════════ FOOTER ══════════════════════════ -->
+  <footer class="site-footer">
+    <div class="wrap footer__inner">
+      <div class="footer__brand">
+        <a class="brand brand--footer" href="#">
+          <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><path class="brand__arc" d="M6 22a13 13 0 0 1 20-11" fill="none" stroke-width="3.4" stroke-linecap="round"/><circle class="brand__dot" cx="26.5" cy="9.5" r="4"/></svg>
+          <span class="brand__name">Belvanger</span>
+        </a>
+        <p class="footer__tag">De belletjes die jij mist, vangen wij op.</p>
+        <p class="footer__by">Een product van PrimeCircle</p>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <div>
+          <h4>Product</h4>
+          <a href="#hoe">Hoe het werkt</a>
+          <a href="#prijs">Prijs</a>
+          <a href="#faq">Vragen</a>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="https://wa.me/31646733277" target="_blank" rel="noopener">Stuur een WhatsApp</a>
+          <a href="mailto:info@belvanger.nl">info@belvanger.nl</a>
+        </div>
+        <div>
+          <h4>Juridisch</h4>
+          <a href="privacy.html">Privacyverklaring</a>
+          <a href="voorwaarden.html">Voorwaarden</a>
+          <a href="#" data-cookie-settings>Cookie-instellingen</a>
+        </div>
+      </nav>
+    </div>
+    <div class="wrap footer__base">
+      <span>© <span data-year>2026</span> Belvanger</span>
+    </div>
+  </footer>
+
+  <!-- Mobiele sticky belbalk -->
+  <div class="mobile-callbar" data-callbar>
+    <a class="btn btn--ghost btn--callbar" href="#hoe">Hoe het werkt</a>
+    <a class="btn btn--primary btn--callbar" href="#gesprek">Plan een gesprek</a>
+  </div>
+
+  <script src="js/cookies.js?v=1" defer></script><script src="js/app.js?v=ab2f48c8" defer></script><script src="assets/ab-chat.js?v=5bf24d39" data-ab-chat data-lang="nl" defer></script></body>
+</html>

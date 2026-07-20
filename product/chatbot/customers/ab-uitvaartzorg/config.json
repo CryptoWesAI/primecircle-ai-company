@@ -1,0 +1,28 @@
+{
+  "businessName": "AB Uitvaartzorg",
+  "contactName": "Alien",
+  "phoneDisplay": "06 4089 4000",
+  "phoneTel": "+31640894000",
+  "defaultLang": "nl",
+  "languages": ["nl", "en"],
+  "colors": {
+    "primary": "#21342d",
+    "primarySoft": "#2f4a40",
+    "surface": "#f4f1ea",
+    "ink": "#26302c",
+    "line": "#d9d3c7"
+  },
+  "suggestions": {
+    "nl": [
+      "Wat moet ik doen bij een overlijden?",
+      "Wat zijn de kosten?",
+      "Wat is het Afscheidshuus?",
+      "Kost een voorgesprek iets?"
+    ],
+    "en": [
+      "What should I do when someone dies?",
+      "What are the costs?",
+      "What is the Afscheidshuus?"
+    ]
+  }
+}

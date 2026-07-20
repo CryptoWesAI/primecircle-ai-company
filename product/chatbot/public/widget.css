@@ -1,0 +1,122 @@
+/* Generiek chat-widget — kleuren komen per klant uit config (CSS-variabelen).
+   De defaults hieronder worden overschreven door de door de widget geïnjecteerde
+   :root/scoped variabelen (zie applyColors in widget.js). */
+:root {
+  --sw-primary: #21342d;
+  --sw-primary-soft: #2f4a40;
+  --sw-surface: #f4f1ea;
+  --sw-ink: #26302c;
+  --sw-line: #d9d3c7;
+}
+
+#ab-chat,
+#ab-chat * {
+  box-sizing: border-box;
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+#ab-chat-toggle {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9998;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 999px;
+  background: var(--sw-primary);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+#ab-chat-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+  width: min(380px, calc(100vw - 32px));
+  height: min(560px, calc(100vh - 40px));
+  display: none;
+  flex-direction: column;
+  background: var(--sw-surface);
+  border: 1px solid var(--sw-line);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.22);
+}
+#ab-chat-panel.ab-open { display: flex; }
+
+.ab-header {
+  background: var(--sw-primary);
+  color: #fff;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.ab-header strong { font-size: 15px; font-weight: 600; }
+.ab-header small { display: block; font-size: 12px; opacity: 0.8; }
+.ab-head-right { display: flex; align-items: center; gap: 10px; }
+.ab-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; background: rgba(255, 255, 255, 0.2); color: #fff; padding: 3px 8px; border-radius: 999px; line-height: 1.3; white-space: nowrap; }
+.ab-close { background: none; border: none; color: #fff; font-size: 22px; line-height: 1; cursor: pointer; }
+
+.ab-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+
+.ab-msg { max-width: 85%; padding: 10px 13px; border-radius: 12px; font-size: 14px; line-height: 1.45; white-space: pre-wrap; }
+.ab-msg.ab-bot { align-self: flex-start; background: #fff; color: var(--sw-ink); border: 1px solid var(--sw-line); }
+.ab-msg.ab-user { align-self: flex-end; background: var(--sw-primary-soft); color: #fff; }
+.ab-msg.ab-note { align-self: stretch; max-width: 100%; background: rgba(33, 52, 45, 0.06); color: #3f3a30; font-size: 12px; line-height: 1.5; text-align: center; padding: 8px 12px; border-radius: 10px; }
+
+.ab-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.ab-chip {
+  border: 1px solid var(--sw-line);
+  background: #fff;
+  color: var(--sw-ink);
+  border-radius: 999px;
+  padding: 6px 11px;
+  font-size: 13px;
+  line-height: 1.2;
+  cursor: pointer;
+  text-align: left;
+}
+.ab-chip:hover { border-color: var(--sw-primary); }
+
+.ab-call {
+  display: block;
+  margin: 0 16px 8px;
+  padding: 10px;
+  text-align: center;
+  background: var(--sw-primary);
+  color: #fff;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ab-input { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--sw-line); background: var(--sw-surface); }
+.ab-input textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid var(--sw-line);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 14px;
+  max-height: 90px;
+  background: #fff;
+  color: var(--sw-ink);
+}
+.ab-input button {
+  border: none;
+  border-radius: 10px;
+  background: var(--sw-primary);
+  color: #fff;
+  padding: 0 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.ab-input button:disabled { opacity: 0.5; cursor: default; }

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0e1a24">
+  <title>Belvanger dashboard</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=20260719-1">
+  <script src="/app.js?v=20260719-1" defer></script>
+</head>
+<body>
+  <section class="login" id="loginView" aria-labelledby="loginTitle">
+    <div class="login__brand" aria-label="Belvanger">
+      <span class="mark" aria-hidden="true"><i></i></span>
+      <span>Belvanger</span>
+    </div>
+    <form class="login__card" id="loginForm">
+      <p class="eyebrow">Klantdashboard</p>
+      <h1 id="loginTitle">Alles wat aandacht nodig heeft, op één plek.</h1>
+      <p class="muted">Log in om gemiste oproepen, berichten en aanvragen te bekijken.</p>
+      <label>Bedrijfscode<input name="tenant" value="belvanger" autocomplete="organization" required></label>
+      <label>E-mailadres<input name="email" type="email" autocomplete="username" required></label>
+      <label>Wachtwoord<input name="password" type="password" autocomplete="current-password" required></label>
+      <p class="form-error" id="loginError" role="alert"></p>
+      <button class="button button--primary" type="submit">Inloggen</button>
+    </form>
+  </section>
+
+  <div class="shell is-hidden" id="appShell">
+    <aside class="sidebar">
+      <a class="sidebar__brand" href="#overview" aria-label="Belvanger dashboard">
+        <span class="mark" aria-hidden="true"><i></i></span><span>Belvanger</span>
+      </a>
+      <nav class="nav" aria-label="Dashboard">
+        <button class="nav__item is-active" data-view="overview"><span aria-hidden="true">⌂</span>Overzicht</button>
+        <button class="nav__item" data-view="contacts"><span aria-hidden="true">◎</span>Contacten</button>
+        <button class="nav__item" data-view="connections"><span aria-hidden="true">↗</span>Kanalen</button>
+        <button class="nav__item is-hidden" id="adminNav" data-view="admin"><span aria-hidden="true">▦</span>Klanten</button>
+        <button class="nav__item is-hidden" id="healthNav" data-view="health"><span aria-hidden="true">✓</span>Systeemcheck</button>
+        <button class="nav__item is-hidden" id="activityNav" data-view="activity"><span aria-hidden="true">◷</span>Activiteitenlog</button>
+      </nav>
+      <div class="sidebar__foot">
+        <div class="account"><span class="account__avatar" id="accountAvatar">B</span><span><b id="accountName">Belvanger</b><small id="accountEmail"></small></span></div>
+        <button class="text-button" id="logoutButton">Uitloggen</button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <button class="menu-button" id="menuButton" aria-label="Menu openen" aria-expanded="false">☰</button>
+        <div><p class="eyebrow" id="todayLabel"></p><h1 id="pageTitle">Goedemorgen</h1></div>
+        <label class="range">Periode<select id="rangeSelect"><option value="24h">24 uur</option><option value="7d" selected>7 dagen</option><option value="30d">30 dagen</option></select></label>
+      </header>
+
+      <main>
+        <section class="view" id="view-overview">
+          <article class="attention-card">
+            <div><p class="eyebrow eyebrow--light">Nu aandacht nodig</p><strong id="attentionCount">0</strong><span>contacten wachten op opvolging</span></div>
+            <button class="button button--light" data-go="contacts">Bekijk de lijst</button>
+          </article>
+
+          <div class="metrics" aria-label="Kerncijfers">
+            <article class="metric"><span class="metric__icon metric__icon--call">↙</span><p>Gemiste oproepen</p><strong id="metricCalls">0</strong><small>geregistreerd</small></article>
+            <article class="metric"><span class="metric__icon metric__icon--sms">↗</span><p>Sms verzonden</p><strong id="metricSms">0</strong><small id="metricSmsDetail">0 afgeleverd</small></article>
+            <article class="metric"><span class="metric__icon metric__icon--reply">↩</span><p>Reacties ontvangen</p><strong id="metricReplies">0</strong><small>via sms en e-mail</small></article>
+            <article class="metric"><span class="metric__icon metric__icon--web">◇</span><p>Website en chat</p><strong id="metricWeb">0</strong><small>nieuwe aanvragen</small></article>
+          </div>
+
+          <div class="overview-grid">
+            <section class="panel panel--queue">
+              <div class="panel__head"><div><p class="eyebrow">Opvolglijst</p><h2>Eerst terugpakken</h2></div><button class="text-button" data-go="contacts">Alles bekijken</button></div>
+              <div class="contact-list" id="attentionList"></div>
+            </section>
+            <section class="panel">
+              <div class="panel__head"><div><p class="eyebrow">Live tijdlijn</p><h2>Laatste activiteit</h2></div></div>
+              <div class="timeline" id="activityList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view is-hidden" id="view-contacts">
+          <div class="section-heading"><div><p class="eyebrow">Gezamenlijke inbox</p><h2>Alle contacten</h2><p class="muted">Oproepen, berichten en aanvragen overzichtelijk bij elkaar.</p></div></div>
+          <section class="panel">
+            <div class="filters">
+              <label class="search"><span aria-hidden="true">⌕</span><input id="contactSearch" type="search" placeholder="Zoek naam, nummer of e-mail"></label>
+              <label>Status<select id="statusFilter"><option value="all">Alle statussen</option><option value="new">Nieuw</option><option value="follow_up">Opvolging nodig</option><option value="contacted">Contact gehad</option><option value="closed">Afgesloten</option></select></label>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Contact</th><th>Laatste kanaal</th><th>Status</th><th>Laatste activiteit</th><th></th></tr></thead><tbody id="contactsBody"></tbody></table></div>
+            <div class="mobile-contact-list" id="mobileContacts"></div>
+          </section>
+        </section>
+
+        <section class="view is-hidden" id="view-connections">
+          <div class="section-heading"><div><p class="eyebrow">Automatisch bijgehouden</p><h2>Uw kanalen</h2><p class="muted">Hier ziet u welke contactmomenten automatisch in uw dashboard verschijnen.</p></div></div>
+          <div class="connection-grid">
+            <article class="connection" data-source-card="website"><span class="connection__mark">W</span><div><h3>Website</h3><p>Nieuwe aanvragen via uw contactformulier en websitechat.</p><span class="connection__status">Nog niet actief</span></div></article>
+            <article class="connection" data-source-card="twilio"><span class="connection__mark">T</span><div><h3>Telefoon en sms</h3><p>Gemiste oproepen, automatisch verstuurde sms'jes en reacties.</p><span class="connection__status">Nog niet actief</span></div></article>
+            <article class="connection" data-source-card="email"><span class="connection__mark">@</span><div><h3>E-mail</h3><p>Nieuwe vragen en reacties uit uw gekoppelde mailbox.</p><span class="connection__status">Nog niet actief</span></div></article>
+          </div>
+          <aside class="explainer"><p class="eyebrow eyebrow--light">Alles komt samen</p><h3>U hoeft niets handmatig over te nemen</h3><p>Nieuwe oproepen, berichten en aanvragen worden automatisch verzameld. Zo ziet u direct wie aandacht nodig heeft en via welk kanaal iemand contact opnam.</p></aside>
+        </section>
+
+        <section class="view is-hidden" id="view-admin">
+          <div class="section-heading admin-heading">
+            <div><p class="eyebrow">Belvanger beheer</p><h2>Klantinstallaties</h2><p class="muted">Elke kaart is een afgesloten omgeving met een eigen login en eigen koppelingen.</p></div>
+            <button class="button button--primary" id="openTenantDialog">Nieuwe klant aanmaken</button>
+          </div>
+          <div class="provision-line" aria-label="Onboardingvolgorde">
+            <span><b>1</b>Klantaccount</span><i></i><span><b>2</b>Opvangnummer</span><i></i><span><b>3</b>Kanalen activeren</span><i></i><span><b>4</b>Live</span>
+          </div>
+          <div class="admin-grid" id="tenantGrid"></div>
+        </section>
+
+        <section class="view is-hidden" id="view-health">
+          <div class="section-heading">
+            <div><p class="eyebrow">Belvanger beheer</p><h2>Systeemcheck</h2><p class="muted">Controleer per klant of telefoon, website en automatisering nog goed werken.</p></div>
+            <button class="button button--primary" id="runHealthcheck">Alles controleren</button>
+          </div>
+          <p class="muted" id="healthMeta">Nog niet gecontroleerd. Klik op "Alles controleren".</p>
+          <div class="admin-grid" id="healthGrid"></div>
+        </section>
+
+        <section class="view is-hidden" id="view-activity">
+          <div class="section-heading">
+            <div><p class="eyebrow">Belvanger beheer</p><h2>Activiteitenlog</h2><p class="muted">Alles wat er aan Belvanger is beslist, gebouwd, gefixt en getest, per dag samengevat.</p></div>
+            <div class="activity-actions">
+              <a class="button button--secondary" href="/api/admin/activity/export" id="exportActivity">Download als Excel</a>
+              <button class="button button--primary" id="openActivityDialog">+ Nieuwe entry</button>
+            </div>
+          </div>
+          <p class="muted" id="activityMeta"></p>
+          <div id="activityTimeline"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog class="detail" id="contactDialog">
+    <div class="detail__head"><div><p class="eyebrow">Contacttijdlijn</p><h2 id="detailName">Contact</h2><p class="muted" id="detailMeta"></p></div><button class="icon-button" id="closeDialog" aria-label="Sluiten">×</button></div>
+    <div class="detail__actions"><a class="button button--primary" id="callLink" href="#">Bellen</a><a class="button button--secondary" id="smsLink" href="#">Sms sturen</a><a class="button button--secondary" id="waLink" href="#" target="_blank" rel="noopener">WhatsApp</a></div>
+    <label class="detail__status">Status<select id="detailStatus"><option value="new">Nieuw</option><option value="follow_up">Opvolging nodig</option><option value="contacted">Contact gehad</option><option value="closed">Afgesloten</option></select></label>
+    <div class="timeline timeline--detail" id="detailTimeline"></div>
+  </dialog>
+
+  <dialog class="password-dialog" id="passwordDialog">
+    <form id="passwordForm">
+      <p class="eyebrow">Eerste keer inloggen</p><h2>Kies een eigen wachtwoord</h2><p class="muted">Gebruik minimaal 12 tekens.</p>
+      <label>Nieuw wachtwoord<input type="password" name="password" minlength="12" autocomplete="new-password" required></label>
+      <p class="form-error" id="passwordError" role="alert"></p>
+      <button class="button button--primary" type="submit">Wachtwoord opslaan</button>
+    </form>
+  </dialog>
+
+  <dialog class="tenant-dialog" id="tenantDialog">
+    <form id="tenantForm">
+      <div class="detail__head"><div><p class="eyebrow">Nieuwe installatie</p><h2>Klant aanmaken</h2><p class="muted">De login en drie kanaalsleutels worden maar één keer getoond.</p></div><button class="icon-button" id="closeTenantDialog" type="button" aria-label="Sluiten">×</button></div>
+      <div class="form-grid">
+        <label>Bedrijfsnaam<input name="name" required maxlength="120" placeholder="Jansen Installatie"></label>
+        <label>Bedrijfscode<input name="slug" required maxlength="50" pattern="[a-z0-9][a-z0-9-]+" placeholder="jansen-installatie"></label>
+        <label>Contactpersoon<input name="contactName" maxlength="120" placeholder="Marco Jansen"></label>
+        <label>Login e-mailadres<input name="email" type="email" required placeholder="marco@bedrijf.nl"></label>
+      </div>
+      <fieldset>
+        <legend>Telefoon en sms — mag later worden ingevuld</legend>
+        <div class="form-grid">
+          <label>Bestaand bedrijfsnummer<input name="businessNumber" type="tel" placeholder="+31..."></label>
+          <label>Nieuw opvangnummer<input name="twilioNumber" type="tel" placeholder="+31..."></label>
+          <label class="form-span">Accountcode telefoonservice<input name="twilioAccountSid" placeholder="AC..."></label>
+        </div>
+      </fieldset>
+      <p class="form-error" id="tenantFormError" role="alert"></p>
+      <button class="button button--primary" type="submit">Klant aanmaken</button>
+    </form>
+    <section class="credential-result is-hidden" id="credentialResult" aria-live="polite">
+      <p class="eyebrow">Klaar voor overdracht</p><h2>Klant is aangemaakt</h2>
+      <p class="muted">Bewaar dit blok nu in je wachtwoordmanager. De sleutels worden daarna niet meer getoond.</p>
+      <pre id="credentialText"></pre>
+      <div class="result-actions"><button class="button button--primary" id="copyCredentials" type="button">Gegevens kopiëren</button><button class="button button--secondary" id="finishTenant" type="button">Sluiten</button></div>
+    </section>
+  </dialog>
+
+  <dialog class="tenant-dialog" id="activityDialog">
+    <form id="activityForm">
+      <div class="detail__head"><div><p class="eyebrow">Activiteitenlog</p><h2>Nieuwe entry</h2><p class="muted">Voeg iets toe dat niet automatisch is gelogd.</p></div><button class="icon-button" id="closeActivityDialog" type="button" aria-label="Sluiten">×</button></div>
+      <div class="form-grid">
+        <label>Datum<input name="logDate" type="date" required></label>
+        <label>Categorie
+          <select name="category" required>
+            <option value="beslissing">Beslissing</option>
+            <option value="bouwwerk" selected>Bouwwerk</option>
+            <option value="fix">Fix</option>
+            <option value="test">Test</option>
+            <option value="onderzoek">Onderzoek</option>
+            <option value="infra">Infra</option>
+          </select>
+        </label>
+        <label class="form-span">Titel<input name="title" required maxlength="200" placeholder="Korte titel"></label>
+        <label class="form-span">Samenvatting<textarea name="summary" rows="4" required maxlength="2000" placeholder="Wat is er gebeurd, en waarom"></textarea></label>
+      </div>
+      <p class="form-error" id="activityFormError" role="alert"></p>
+      <button class="button button--primary" type="submit">Entry opslaan</button>
+    </form>
+  </dialog>
+</body>
+</html>

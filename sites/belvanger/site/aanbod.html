@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>document.documentElement.className += " js";</script>
+  <title>Founding-aanbod | Belvanger</title>
+  <meta name="description" content="Word één van de eerste 10 founding-partners van Belvanger. Setup 50% korting, €99 per maand levenslang vast, je betaalt de maand pas na je eerste opgevangen klant." />
+  <meta name="theme-color" content="#16232E" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=c38b3e92" />
+  <style>
+    .offer-head { border-bottom: 1px solid var(--line); background: var(--surface); }
+    .offer-head__inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+
+    .offer-hero { background: var(--werkblauw); color: var(--krijt); text-align: center; overflow: hidden; position: relative;
+      padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(5rem, 10vw, 8rem); }
+    .offer-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(circle at 82% -5%, rgba(255,92,26,.20), transparent 46%); }
+    .offer-hero .wrap { position: relative; z-index: 1; }
+    .offer-hero__badge { display: inline-block; background: color-mix(in srgb, var(--signaal) 22%, transparent);
+      color: #FF9152; border: 1px solid color-mix(in srgb, var(--signaal) 50%, transparent); font-weight: 800;
+      font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; padding: .45rem 1.05rem; border-radius: 999px; margin-bottom: 1.4rem; }
+    .offer-hero h1 { font-family: var(--display); font-weight: 900; font-stretch: 118%; letter-spacing: -.02em;
+      font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; margin: 0 0 1.1rem; }
+    .offer-hero__sub { max-width: 660px; margin: 0 auto; font-size: clamp(1.05rem, 2.4vw, 1.25rem); line-height: 1.6; color: rgba(250,249,246,.82); }
+
+    .offer-deal { margin-top: clamp(-6rem, -8vw, -4.5rem); position: relative; z-index: 2; }
+    .deal-card { max-width: 720px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line);
+      border-top: 5px solid var(--signaal); border-radius: var(--r-xl); box-shadow: var(--shadow-lg);
+      padding: clamp(1.8rem, 4vw, 2.8rem); text-align: center; }
+    .deal-card__tag { display: inline-block; background: color-mix(in srgb, var(--signaal) 15%, transparent);
+      color: var(--signaal-diep); font-weight: 800; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase;
+      padding: .4rem .9rem; border-radius: 999px; margin: 0 0 1.5rem; }
+    .deal-price { display: flex; align-items: center; justify-content: center; gap: clamp(1rem, 3vw, 2.4rem); flex-wrap: wrap; }
+    .deal-price__block { display: flex; flex-direction: column; align-items: center; }
+    .deal-price__label { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; margin-bottom: .35rem; }
+    .deal-price__old { text-decoration: line-through; color: var(--muted); font-size: 1.3rem; font-weight: 600; line-height: 1; }
+    .deal-price__new { font-family: var(--display); font-weight: 900; font-stretch: 112%; line-height: 1; color: var(--ink);
+      font-size: clamp(2.7rem, 7vw, 3.7rem); }
+    .deal-price__new small { font-size: 1.05rem; font-weight: 700; color: var(--muted); }
+    .deal-price__note { font-size: .8rem; color: var(--vangst); font-weight: 800; margin-top: .35rem; }
+    .deal-price__plus { font-family: var(--display); font-weight: 800; font-size: 2rem; color: var(--muted); align-self: center; }
+    .deal-card__promise { background: color-mix(in srgb, var(--vangst) 12%, var(--surface));
+      border: 1px solid color-mix(in srgb, var(--vangst) 38%, var(--line)); color: var(--ink); border-radius: var(--r);
+      padding: .95rem 1.1rem; font-size: .92rem; line-height: 1.5; margin: clamp(1.6rem, 4vw, 2rem) 0 1.4rem; text-align: left; }
+    .deal-card__promise strong { color: var(--vangst); }
+    .deal-card__fine { font-size: .82rem; color: var(--muted); margin: 1rem 0 0; line-height: 1.5; }
+
+    .offer-gets { padding: var(--sp-section) 0; }
+    .offer-gets__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); margin-top: clamp(1.6rem, 4vw, 2.4rem); }
+
+    .offer-why { background: var(--surface-2); border-block: 1px solid var(--line); padding: var(--sp-section) 0; text-align: center; }
+    .offer-why .wrap { max-width: 720px; }
+    .offer-why__lead { font-size: clamp(1.05rem, 2.4vw, 1.2rem); color: var(--ink-soft); line-height: 1.6; margin: 1rem auto 0; }
+    .offer-why__spots { display: inline-block; margin-top: 1.6rem; background: var(--surface); border: 1px solid var(--line);
+      border-radius: 999px; padding: .55rem 1.1rem; font-weight: 700; color: var(--ink); font-size: .92rem; }
+    .offer-why__spots b { color: var(--signaal-diep); }
+
+    .offer-cta { background: var(--werkblauw); color: var(--krijt); text-align: center; padding: var(--sp-section) 0; }
+    .offer-cta__sub { color: rgba(250,249,246,.75); margin: 1rem 0 1.8rem; font-size: 1.05rem; }
+
+    .offer-foot { text-align: center; padding: 2rem 0; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); }
+    .offer-foot a { color: var(--muted); }
+
+    @media (max-width: 560px) {
+      .offer-gets__grid { grid-template-columns: 1fr; }
+      .deal-price__plus { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+  <header class="offer-head">
+    <div class="wrap offer-head__inner">
+      <a class="brand" href="https://belvanger.nl" aria-label="Belvanger">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><path class="brand__arc" d="M6 22a13 13 0 0 1 20-11" fill="none" stroke-width="3.4" stroke-linecap="round"/><circle class="brand__dot" cx="26.5" cy="9.5" r="4"/></svg>
+        <span class="brand__name">Belvanger</span>
+      </a>
+      <a class="btn btn--primary btn--sm" href="https://belvanger.nl/#gesprek">Plan een gesprek</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="offer-hero">
+      <div class="wrap">
+        <p class="offer-hero__badge">Founding-aanbod · de eerste 10 bedrijven</p>
+        <h1>Word founding-partner<br>van Belvanger.</h1>
+        <p class="offer-hero__sub">Wij bouwen je professionele website, AI-chatbot en het vangnet dat je gemiste klanten opvangt terwijl jij aan het werk bent. De eerste 10 bedrijven bouwen we mee tegen half tarief.</p>
+      </div>
+    </section>
+
+    <!-- DEAL -->
+    <section class="offer-deal">
+      <div class="wrap">
+        <div class="deal-card">
+          <p class="deal-card__tag">Founding-partner</p>
+          <div class="deal-price">
+            <div class="deal-price__block">
+              <span class="deal-price__label">Eenmalige setup</span>
+              <span class="deal-price__old">€1.250</span>
+              <span class="deal-price__new">€625</span>
+              <span class="deal-price__note">50% founding-korting</span>
+            </div>
+            <span class="deal-price__plus" aria-hidden="true">+</span>
+            <div class="deal-price__block">
+              <span class="deal-price__label">Daarna per maand</span>
+              <span class="deal-price__new">€99<small>/mnd</small></span>
+              <span class="deal-price__note">levenslang vast</span>
+            </div>
+          </div>
+          <p class="deal-card__promise"><strong>Onze belofte:</strong> je maandbedrag gaat pas lopen zodra Belvanger je eerste gemiste klant heeft opgevangen. Eerst werken, dan pas betalen.</p>
+          <a class="btn btn--primary btn--lg btn--block" href="https://belvanger.nl/#gesprek">Claim je plek<span class="btn__arrow" aria-hidden="true">→</span></a>
+          <p class="deal-card__fine">In ruil voor het founding-tarief vragen we een eerlijke review als het bevalt, en dat je ons mag aanbevelen. Maandelijks opzegbaar, geen kleine lettertjes.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- WAT JE KRIJGT -->
+    <section class="offer-gets">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow eyebrow--dark">Alles-in, wij bouwen en draaien het</p>
+          <h2 class="section-title">Dit krijg je</h2>
+        </header>
+        <div class="offer-gets__grid">
+          <article class="card">
+            <h3 class="card__title">Een strakke website</h3>
+            <p class="card__text">Door ons gebouwd, afgestemd op jouw vak. Gemaakt om klanten binnen te halen, niet om mooi te staan. Inclusief contactformulier.</p>
+          </article>
+          <article class="card">
+            <h3 class="card__title">Automatische opvang</h3>
+            <p class="card__text">Op je eigen nummer. Mis je een oproep, dan krijgt de beller automatisch een berichtje en komt de lead netjes bij jou binnen.</p>
+          </article>
+          <article class="card">
+            <h3 class="card__title">Een AI-chatbot</h3>
+            <p class="card__text">Beantwoordt de veelgestelde vragen van bezoekers, dag en nacht. Vangt ook 's avonds nog klussen op.</p>
+          </article>
+          <article class="card">
+            <h3 class="card__title">Je eigen dashboard</h3>
+            <p class="card__text">Al je leads en dagelijkse cijfers op één plek: hoeveel bellers opgevangen, hoeveel klussen binnen. Meten is weten.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- WAAROM NU -->
+    <section class="offer-why">
+      <div class="wrap">
+        <header class="section-head">
+          <p class="eyebrow eyebrow--dark">Reken 't gewoon na</p>
+          <h2 class="section-title">Eén teruggewonnen klus<br>betaalt maanden.</h2>
+        </header>
+        <p class="offer-why__lead">Volgens je eigen situatie loop je nu waarschijnlijk honderden euro's per maand mis aan gemiste klussen. Voor €99 per maand vang je die op, plus je komt strak en professioneel over. Belvanger haalt geen nieuwe klanten voor je binnen; we zorgen dat je de klanten die je al bellen niet kwijtraakt.</p>
+        <span class="offer-why__spots">Founding-partner worden kan zolang de <b>eerste 10 plekken</b> vrij zijn.</span>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="offer-cta">
+      <div class="wrap">
+        <header class="section-head">
+          <h2 class="section-title section-title--light">Klaar om geen klant<br>meer te missen?</h2>
+        </header>
+        <p class="offer-cta__sub">Vrijblijvend gesprek. We nemen het hele pakket met je door en beantwoorden al je vragen.</p>
+        <a class="btn btn--primary btn--xl" href="https://belvanger.nl/#gesprek">Plan een gesprek<span class="btn__arrow" aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="offer-foot">
+    <div class="wrap">© <span data-year>2026</span> Belvanger · <a href="https://belvanger.nl">belvanger.nl</a></div>
+  </footer><script src="assets/ab-chat.js?v=5bf24d39" data-ab-chat data-lang="nl" defer></script></body>
+</html>

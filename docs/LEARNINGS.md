@@ -1,0 +1,129 @@
+# Learnings — what we've learned building PrimeCircle
+
+A running journal of **lessons, insights and mistakes-not-to-repeat**, distinct from the
+other records so nothing overlaps:
+
+| File | Answers |
+|---|---|
+| `CURRENT_STATE.md` | Where are we **now**? |
+| `docs/decisions/DECISIONS_LOG.md` | What did we **decide**, and why? |
+| **`docs/LEARNINGS.md`** (this file) | What did we **learn**? |
+| `.claude/skills/*/SKILL.md` (Gotchas) | How do we **do** a recurring task, and what bites us? |
+| `~/.claude/.../memory/` (auto-memory) | Cross-session **facts** about the founder & project |
+
+**How this grows:** add an entry the moment a real lesson lands — a correction, a
+surprise, a trap avoided. Keep each one to *lesson → why → where it's now encoded*. Update
+this at milestones, same discipline as `CURRENT_STATE.md`. Newest first.
+
+---
+
+## 2026-07-18 — Test the RENDERED page, not just the API endpoint
+
+**Lesson:** the dashboard's `index.html` was missing its `<script src="app.js">` tag, so the
+page loaded, styled, and the API answered — but the app never booted (stuck on "Laden…").
+Every server-side check (`curl /api/session`, `/api/projects`) passed; only loading the page
+in a real browser exposed it. Fixed by adding the tag + screenshotting via `web-verify` over
+an SSH tunnel (desktop + mobile) before handing back.
+**Why:** "the API works" and "the endpoint returns 200" are not "the page works." A green
+backend can sit behind a blank screen. **Encoded in:** habit — for any UI, finish with a
+`web-verify` screenshot of the rendered page (tunnel to localhost if it's private), not just
+API curls. Sharpens [the verify-don't-assert entry below].
+
+## 2026-07-18 — `fs.writeFileSync(path, data, {mode})` only sets mode on CREATE
+
+**Lesson:** the `mode` option is ignored when the file **already exists** — Node keeps the
+existing permissions. The VPS-dashboard wrote `.env` files that stayed `644` despite
+`{mode:0o600}`; only an explicit `fs.chmodSync(path, 0o600)` after the write forced `600`.
+**Why:** secrets files silently kept world-readable perms — caught only because the
+end-to-end test checked `stat` (verify-don't-assert, again). **Encoded in:**
+`infra/dashboard/app/server.js` chmods `.env` + backups explicitly after writing.
+
+## 2026-07-18 — A private-only tool can accept "root-equivalent" access it never could publicly
+
+**Lesson:** the secrets dashboard needs the Docker socket + `/opt` (≈ root on the host) to do
+its job. That's only acceptable **because** it's reachable *exclusively* over Tailscale, never
+the public internet (served via `tailscale serve` on `127.0.0.1`, no public Traefik route, no
+public DNS). The access model is what licenses the privilege — flip it to public and the whole
+design is unsafe.
+**Why:** "how powerful may this component be?" is answered by "who can reach it?", not by the
+feature list. **Encoded in:** `infra/dashboard/` (localhost-only publish + Tailscale) and its
+`DEPLOY.md` security-model note; v2 plans privilege-separation to remove the socket.
+
+## 2026-07-18 — Not every "free" library is free to resell
+
+**Lesson:** run a **license gate** before any third-party component lands in billable
+client work. React Bits looks MIT but carries a **Commons Clause** (can't resell the
+library itself). Using it inside a client site you bill as a service is fine; reselling it
+is not.
+**Why:** a wrong assumption here only surfaces as a legal problem *after* you've shipped and
+invoiced. **Encoded in:** `.claude/skills/react-toolkit/` (license gate + per-library notes).
+
+## 2026-07-18 — When you swap an infrastructure layer, enumerate what it did
+
+**Lesson:** replacing one component silently drops the things it used to do. Moving the
+Belvanger container from **nginx → Node** dropped the security headers nginx had been
+setting; only a `curl -sI` caught it.
+**Why:** "it still loads" ≠ "it does everything the old layer did." Before swapping a layer,
+list its responsibilities and re-check each after. **Encoded in:** shared
+`product/chatbot/server.js` now sets the headers itself (travels with the app, not the proxy).
+
+## 2026-07-18 — Verify against reality, not your local resolver
+
+**Lesson:** fresh DNS records and new domains don't resolve everywhere at once. `n8n` and
+`belvanger.nl` both showed NXDOMAIN locally while already live. Prove reachability with
+`curl --resolve` / a public resolver (`8.8.8.8`), not your own machine.
+**Why:** "it doesn't load for me" led to almost-wrong conclusions twice. **Related:** a
+Google **Safe Browsing "Dangerous site"** flag on the fresh n8n subdomain was a
+false-positive (new subdomain + login form on a `.cloud` TLD) — verified the served content
+was clean n8n before reacting, and requested a Search Console review to clear it.
+
+## 2026-07-18 — WhatsApp has hard rules that shape the product
+
+**Lesson:** a business-**initiated** WhatsApp message (we text someone who only *called*)
+requires a **pre-approved Utility template** — you can't just send free text. And the
+message can't come from the trade's exact number (one number = one WhatsApp account); it
+comes from a **separate branded Business profile** (name + logo carry the recognition).
+**Why:** these constraints change the build and the founder's mental model — surface them at
+interview time, not after. **Encoded in:** `docs/build/mvp-missed-call-textback.md`.
+
+## 2026-07-18 — Never ask the user to eyeball what you can prove
+
+**Lesson:** editing web pages "blind" (animation, calculator, icons on Belvanger) produced
+wrong output repeatedly until each change was **screenshotted and looked at**. If you built
+it, you can see it.
+**Why:** reasoning about rendered layout/animation/contrast is unreliable; observation is
+cheap. **Encoded in:** the `web-verify` skill (system-browser screenshots + overflow/console
+checks). This is now a build-method default, not an afterthought.
+
+## 2026-07-18 — Honesty is a product feature, not a nicety
+
+**Lesson:** the first Belvanger build shipped with false claims — a fake phone number
+(incl. in JSON-LD), "100%", "AVG-proof", a fake KvK number, and a hard €99 price that
+contradicted the visible FAQ. All had to be stripped.
+**Why:** false claims on a client-facing site are a legal + trust liability, and structured
+data (schema) **must** match what's visible on the page. Rules now standing: no invented
+facts or prices, label demos as simulations, no result guarantees, keep pilot/no-KvK status
+honest. **Encoded in:** Belvanger legal pages + chatbot system-prompt guardrails.
+
+## 2026-07-16 — Pick niches by volume × value, and charge for the outcome
+
+**Lesson:** the funeral→trades pivot exposed two traps: (1) a **low-volume segment** can't
+hit the revenue goal however good the offer, and (2) the founder's pattern of **giving value
+away / betting on indirect payoff** has to be broken by charging up front and validating
+*before* building.
+**Why:** these are the mistakes most likely to sink a bootstrapped solo business.
+**Encoded in:** the `opportunity-check` skill (Founder Filter → market reality → traps →
+financial reverse-engineering → validate-before-build). See also auto-memory
+`user_founder_selling_weakness`, `project_trades_pivot`.
+
+## Standing principles distilled so far
+
+- **Buy → Integrate → Configure → Automate → Build** — self-hosting n8n on the existing
+  Traefik/Docker pattern beat building an orchestrator; reusing the config-driven chatbot
+  beat one-off client code.
+- **Config-driven reuse > one-offs** — one generic `server.js` + per-customer folder turned
+  a single client build into a sellable product.
+- **Respect the human validation zones** — client production (AB), payments, DNS/VPS and
+  credentials get founder sign-off before the change lands.
+- **Distinguish fact / assumption / recommendation**, and end real work with the
+  highest-leverage next action.

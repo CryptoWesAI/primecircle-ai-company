@@ -2,3 +2,18 @@ node_modules/
 .DS_Store
 .vscode/
 *.log
+
+# Secrets — nooit committen (o.a. sites/belvanger/.env met de OpenRouter-sleutel)
+.env
+!.env.example
+
+# Gegenereerd door de chatbot-assemble (widget-kopieën + gebouwde app/)
+sites/belvanger/app/
+sites/belvanger/site/assets/ab-chat.js
+sites/belvanger/site/assets/ab-chat.css
+
+# Alien's client project = eigen privé-repo (CryptoWesAI/ABUitvaart), niet hier
+clients/ab-uitvaartzorg/deploy/
+
+# Dashboard runtime-data (login-hash + sessiesleutel) — nooit committen
+infra/dashboard/app/data/

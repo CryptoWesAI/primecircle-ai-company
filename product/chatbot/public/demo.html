@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chatbot demo — AB Uitvaartzorg</title>
+  <style>
+    body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: #f4f1ea; color: #26302c; }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 48px 24px; }
+    h1 { font-weight: 600; }
+    .hint { color: #6b6357; line-height: 1.5; }
+    code { background: #e7e2d7; padding: 1px 5px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Testpagina — digitale assistent</h1>
+    <p class="hint">
+      Dit is een lokale testomgeving voor de chatbot van AB Uitvaartzorg. Klik
+      rechtsonder op <strong>“Stel een vraag”</strong> om te beginnen.
+      Probeer bijvoorbeeld: <em>“Wat zijn de kosten?”</em>,
+      <em>“Wat is het Afscheidshuus?”</em>, of <em>“Wat moet ik doen als iemand is overleden?”</em>.
+    </p>
+    <p class="hint">
+      Zorg dat de server draait (<code>npm start</code>) en dat
+      <code>ANTHROPIC_API_KEY</code> is ingesteld.
+    </p>
+  </div>
+  <script src="widget.js" data-ab-chat data-lang="nl" defer></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+STATUS.md
+deploy-to-vps.sh
+.dockerignore
+Dockerfile
+docker-compose.yml
+node_modules
+**/node_modules
+**/package*.json
+.git

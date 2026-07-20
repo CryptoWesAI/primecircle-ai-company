@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>PrimeCircle · VPS Control</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="12" fill="none" stroke="url(#g)" stroke-width="3"/>
+        <circle cx="16" cy="4" r="3" fill="#F0CB6B"/>
+        <defs><linearGradient id="g" x1="0" y1="0" x2="32" y2="32">
+          <stop offset="0" stop-color="#18BFFF"/><stop offset="1" stop-color="#17A3EC"/>
+        </linearGradient></defs>
+      </svg>
+      <div><strong>PrimeCircle</strong><span>VPS Control</span></div>
+    </div>
+    <button id="logout" class="btn btn--ghost" hidden>Uitloggen</button>
+  </header>
+
+  <main id="app" class="wrap"><div class="loading">Laden…</div></main>
+
+  <footer class="foot">
+    Privé-dashboard · alleen bereikbaar via je Tailscale-netwerk · wijzigingen worden geback-upt vóór opslaan.
+  </footer>
+  <script src="app.js" defer></script>
+</body>
+</html>
