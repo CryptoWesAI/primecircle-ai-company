@@ -31,7 +31,12 @@ fi
 SSHOPT=(-i "$KEY" -o StrictHostKeyChecking=accept-new)
 
 echo "Deploy: $SRC  ->  $HOST:$DIR   (maakt eerst een backup op de VPS)"
-tar czf - -C "$SRC" --exclude=deploy-to-vps.sh --exclude=STATUS.md --exclude=.git . \
+# film/ = 67 MB bronmateriaal voor de promotiefilm (frames, clips, de mp4). De container
+# gebruikt het niet (Dockerfile kopieert alleen app/ en site/), maar het werd wél elke
+# deploy geüpload EN daarna nog eens gekopieerd in de backup op de VPS. Bij 71 backups
+# loopt dat hard op. Hoort in git, niet op de server. Idem tests/ en het rollbackscript.
+tar czf - -C "$SRC" --exclude=deploy-to-vps.sh --exclude=rollback-to-vps.sh --exclude=STATUS.md \
+      --exclude=./film --exclude=./tests --exclude=.git . \
   | ssh "${SSHOPT[@]}" "$HOST" \
       "mkdir -p /opt/belvanger-backups && \
        [ -d '$DIR' ] && cp -a '$DIR' \"/opt/belvanger-backups/pre-deploy-\$(date +%Y%m%d-%H%M%S)\"; \

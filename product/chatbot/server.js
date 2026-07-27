@@ -1156,17 +1156,45 @@ function serveStatic(req, res) {
     res.end("Forbidden");
     return;
   }
+  const isHead = req.method === "HEAD";
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      res.writeHead(404);
-      res.end("Not found");
+      serveNotFound(res, urlPath, isHead);
       return;
     }
     const ext = path.extname(filePath).toLowerCase();
-    if (ext === ".html") recordPageview(req, urlPath); // alleen echte pagina's tellen
-    res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream" });
-    res.end(data);
+    // Alleen echte pagina's tellen, en alleen een GET: een monitor die elke minuut HEAD
+    // doet zou de bezoekcijfers anders volledig verzinnen.
+    if (ext === ".html" && !isHead) recordPageview(req, urlPath);
+    res.writeHead(200, { "Content-Type": MIME[ext] || "application/octet-stream", "Content-Length": data.length });
+    res.end(isHead ? undefined : data);
   });
+}
+
+// Onbekend pad: geef de eigen 404-pagina van de site terug in plaats van kale tekst.
+// Belvanger had een volledig vormgegeven 404.html die NOOIT werd geserveerd; wie een URL
+// verkeerd typte kreeg "Not found" in de standaardletter van de browser. Voor een pad onder
+// /en/ pakken we eerst de Engelse variant, zodat een Engelse bezoeker geen Nederlandse
+// pagina krijgt. Heeft een site geen 404.html (andere klanten), dan blijft het gedrag
+// precies zoals het was.
+// Let op: een 404-pagina wordt bij een WILLEKEURIGE URL geserveerd, dus haar eigen
+// verwijzingen naar css/js/fonts moeten root-absoluut zijn (/css/...), nooit relatief.
+function serveNotFound(res, urlPath, isHead) {
+  const ext = path.extname(urlPath).toLowerCase();
+  const isAsset = ext && ext !== ".html" && ext !== ".htm"; // geen HTML terugsturen voor een missende afbeelding
+  const kandidaten = isAsset ? [] : urlPath.startsWith("/en/") ? ["en/404.html", "404.html"] : ["404.html"];
+  (function volgende(i) {
+    if (i >= kandidaten.length) {
+      res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
+      res.end(isHead ? undefined : "Not found");
+      return;
+    }
+    fs.readFile(path.join(STATIC_DIR, kandidaten[i]), (err, data) => {
+      if (err) return volgende(i + 1);
+      res.writeHead(404, { "Content-Type": "text/html; charset=utf-8", "Content-Length": data.length });
+      res.end(isHead ? undefined : data);
+    });
+  })(0);
 }
 
 http
@@ -1254,7 +1282,10 @@ http
       });
       return;
     }
-    if (req.method === "GET") return serveStatic(req, res);
+    // HEAD moet mee: elke uptime-monitor, linkchecker en een deel van de social crawlers
+    // vraagt HEAD. Zonder dit kreeg belvanger.nl 405 op ELKE pagina, ook op /, en zou een
+    // monitor de site als kapot melden terwijl er niets aan de hand is.
+    if (req.method === "GET" || req.method === "HEAD") return serveStatic(req, res);
     res.writeHead(405);
     res.end("Method not allowed");
   })

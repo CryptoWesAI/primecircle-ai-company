@@ -17,6 +17,40 @@ this at milestones, same discipline as `CURRENT_STATE.md`. Newest first.
 
 ---
 
+## 2026-07-27 — Check the error paths and the other HTTP methods, not just GET /
+
+**Lesson:** "check everything" on the Belvanger site turned up three defects that every
+happy-path check passes: (1) a fully designed `404.html` sat in the repo but the server never
+served it, so a mistyped URL returned plain-text "Not found"; (2) `HEAD` returned **405 on
+every page including `/`**, so any uptime monitor would report the site as down; (3) the deploy
+shipped 67 MB of promo-film source the container never uses, and `cp -a` copied it into every
+`pre-deploy` backup, 71 and counting.
+**Why:** you only find these by asking for the paths and verbs nobody types in a browser.
+`curl -sI` (HEAD) and one deliberately wrong URL would have caught two of them on day one.
+The HEAD bug is the **second** time: the portal had the same fault on 2026-07-25, which means
+it was a pattern, not an accident. **Encoded in:** `product/chatbot/server.js` now handles
+HEAD and falls back to the site's own `404.html` (language-aware via `/en/`), and post-deploy
+verification now checks GET *and* HEAD plus at least one 404 path. Note a 404 page is served
+at an arbitrary URL, so its own asset links must be root-absolute; `apply.mjs` was writing a
+relative widget path.
+
+## 2026-07-27 — Shared JS across two language pages makes one language fail silently
+
+**Lesson:** the Belvanger hero simulation is driven by one `js/app.js` for both languages,
+which addresses DOM nodes by `data-step`. The Dutch page gained two closing cards (`data-step`
+8 and 9); the English page never got them. `app.js` still ran `hide(7); show(8)` at 11.2s, so
+on `/en/` the last notification disappeared and **nothing replaced it**: the animation ended
+on an empty rectangle, right where the offer lands. No console error, no failed request, HTTP
+200. It sat there from 18 to 27 July.
+**Why:** shared code plus per-language markup means a missing node is not an error, it is
+silence. A translation review reads *words*; this was a missing *hook*. And the flaw was
+invisible in exactly the place that matters, the one page an English-speaking prospect sees.
+**Encoded in:** `sites/belvanger/tests/taalpariteit.mjs`, which compares NL↔EN on `data-step` sets,
+counts of every repeated copy block, prices/percentages, hreflang and `robots`. Run it after
+touching either page. It fails on the pre-fix files and passes on the fixed ones (verified
+both ways). It deliberately does **not** claim to judge wording: same structure with stale
+sentences still passes, so a human still reads the copy.
+
 ## 2026-07-18 — Test the RENDERED page, not just the API endpoint
 
 **Lesson:** the dashboard's `index.html` was missing its `<script src="app.js">` tag, so the

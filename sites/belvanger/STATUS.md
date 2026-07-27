@@ -4,6 +4,79 @@ PrimeCircle's eigen trades-demo/verkoopsite. Live (noindex), gehost op de VPS in
 `/opt/belvanger` achter Traefik. **Deze map is sinds 2026-07-17 de bron-van-waarheid**
 — deploy alleen hiervandaan (`bash deploy-to-vps.sh`).
 
+## EN-versie gelijkgetrokken met de NL (2026-07-27), LIVE en geverifieerd
+De Engelse pagina liep achter op de Nederlandse. Niet alleen in tekst, ook structureel.
+
+- **Kapot, nu gefixt:** `js/app.js` is voor beide talen hetzelfde bestand en doet op 11,2s
+  `hide(7); show(8)`. De EN-pagina had `data-step` 8 en 9 nooit gekregen, dus verdween de
+  meldingskaart en kwam er niets terug: **de hero-animatie eindigde op een leeg vlak**, precies
+  waar het aanbod valt. Geen console-fout, HTTP 200. Stond er van 18 t/m 27 juli.
+- **Copy bijgetrokken naar de NL:** hero-alinea (nu website + dashboard + vangnet, niet meer
+  "we catch them automatically"), eyebrow (ontgenderd, net als NL), belief-regel
+  ("You're on the job, not on the phone"), `aria-label` van de telefoon.
+- **Interne inconsistentie in het Engels:** hetzelfde vak had drie namen: "Landscapers" in de
+  strip, "Gardeners" bij de voorbeelden, "Landscaper" in het formulier (idem Handymen /
+  Handyman firm). Nu overal één term.
+- **NL-kant:** de voorbeelden-alinea stond in de u-vorm terwijl de hele site je/jij gebruikt →
+  gelijkgetrokken. `og:locale:alternate` (en_GB) toegevoegd.
+- **Legal:** EN privacy + terms zeiden "Last updated 18 July", NL 17 juli, bij identieke
+  inhoud → op 17 juli gezet. "Chamber of Commerce (KvK)" nu ook in de EN terms.
+- **Nieuw: `tests/taalpariteit.mjs`** vergelijkt NL↔EN op `data-step`, aantallen kaarten/
+  vragen/velden/opties, prijzen en percentages, hreflang en `robots`. Draai dit na elke wijziging
+  aan één van de twee pagina's. Geverifieerd: faalt op de oude bestanden (4 verschillen), slaagt
+  op de nieuwe. Wat het NIET dekt: of de woorden hetzelfde bedoelen, dat blijft lezen.
+- **Geverifieerd in een echte browser** (Chrome headless, beide talen tot het eind van de
+  simulatie): EN eindigt nu net als NL op een zichtbare kaart, geen JS-fouten, geen mislukte
+  requests, rekenmachine formatteert per taal (€ 3.900 / €3,900).
+Meegenomen in dezelfde ronde, want ze waren allemaal onzichtbaar voor een gewone GET op de
+homepage:
+
+- **`404.html` werd nooit geserveerd.** De server gaf bij een onbekend pad kale tekst
+  "Not found"; de volledig vormgegeven 404-pagina in `site/` was dode code. `serveStatic` in
+  `product/chatbot/server.js` valt nu terug op `en/404.html` voor een pad onder `/en/`, anders
+  op `404.html`, met een echte 404-status (geen soft-404). Een missend plaatje of css-bestand
+  krijgt nog steeds kale tekst, want daar hoort geen HTML in. Heeft een site geen 404.html,
+  dan blijft het gedrag precies zoals het was, dus AB verandert niet.
+- **`site/en/404.html` bestond niet**, dus een Engelse bezoeker met een typefout kreeg
+  Nederlands. Nu tweetalig, gekozen op het pad.
+- Een 404-pagina wordt bij een **willekeurige** URL geserveerd, dus haar eigen verwijzingen
+  moeten root-absoluut zijn. `apply.mjs` zette het chat-widget er relatief in, wat vanaf
+  `/en/iets/diep/typefout` naar `/en/iets/diep/assets/` had gewezen. Nu `/assets/` voor
+  404-pagina's. Live geverifieerd op drie niveaus diep: widget laadt.
+- **`HEAD` gaf 405 op elke pagina, ook op `/`.** Elke uptime-monitor en linkchecker die HEAD
+  gebruikt zou de site als kapot melden. Nu 200 met `Content-Length` en een leeg body.
+  Gemeten dat HEAD géén bezoek meetelt (5x HEAD met browser-user-agent = 0 pageviews,
+  1x GET = 1), anders verzint een monitor je bezoekcijfers. Zelfde fout als eerder in het
+  portaal; dit was de site-kant.
+- **Privacyverklaring beschreef een gegevensstroom die niet meer bestaat.** Er stond dat de
+  aanvraag via WhatsApp verstuurd wordt; sinds 19 juli gaat hij via `POST /api/lead` naar de
+  eigen server, die hem mailt naar info@belvanger.nl en de aanvrager een bevestiging stuurt.
+  Ook ontbraken **naam en e-mailadres** in de opsomming terwijl het formulier die verplicht
+  vraagt, en de **AI-chat** stond er helemaal niet in (berichten gaan naar OpenRouter → Google
+  Gemini, mogelijk buiten de EER; berichttekst wordt niet bewaard, `LOG_QUESTIONS=false`).
+  Beide talen herschreven op basis van wat de code werkelijk doet, met de verwerkers erin
+  (Hostinger, OpenRouter, Clarity na toestemming, WhatsApp alleen als de bezoeker die link
+  zelf gebruikt). Datum op 27 juli. **Blijft een concept: laat dit nalezen door iemand met
+  juridische kennis voordat je gaat factureren.**
+- De vier juridische pagina's hadden geen favicon-verwijzing, dus de browser vroeg een
+  niet-bestaande `/favicon.ico` (404 in het netwerkpaneel). Toegevoegd.
+- `assemble.mjs` zette het chat-widget ook in `film-opnamepodium.html` en
+  `film-tekstkaarten.html`, waardoor er een chatbubbel in de volgende filmopname had gestaan.
+  `apply.mjs` kent nu `AB_SITE_EXCLUDE_FILES`; die twee pagina's worden overgeslagen.
+- De deploy uploadde **67 MB** `film/` (frames, clips, de mp4) die de container niet gebruikt,
+  en `cp -a` kopieerde dat daarna in elke `pre-deploy`-backup. Bij 71 backups loopt dat hard
+  op. `film/`, `tests/` en het rollbackscript zijn nu uitgesloten: tar van 71 MB naar 3,6 MB.
+- Op de EN-pagina staat er nu bij dat de voorbeeldsites en het voorbeelddashboard **in het
+  Nederlands** zijn. Die zeven pagina's vertalen is bouwen zonder koper; de verwachting
+  managen kost één zin.
+
+**Live geverifieerd na de deploy** (2026-07-27), niet aangenomen:
+GET én HEAD op 7 pagina's + 3 foutpaden, taal per pad, geldig certificaat, en in een echte
+browser NL+EN op desktop én mobiel helemaal tot het eind van de simulatie: stappen 1 t/m 9,
+eindigt op de website-kaart, 0px horizontale overflow, geen JS-fouten, geen mislukte
+requests, chat-widget met het juiste `data-lang` op elke pagina inclusief drie niveaus diep
+op de Engelse 404.
+
 ## Domein-migratie → belvanger.nl (2026-07-18)
 - Eigen domein **belvanger.nl** (geregistreerd 2026-07-18 via Hostinger). DNS: A `@` →
   VPS `31.97.123.34` (via Hostinger DNS). **MX/mail-records ongemoeid** (Hostinger-mail),
@@ -144,8 +217,13 @@ bestaat, gooi die weg of overschrijf 'm met deze — anders republiceer je de va
 - [x] ~~Werkende mailbox~~ → **info@belvanger.nl** aangemaakt + in de footer (2026-07-18).
 - [ ] **KvK-inschrijving** zodra je gaat factureren; daarna privacy/voorwaarden bijwerken
       met bedrijfsnaam + KvK-nummer, en de contactPoint + prijs terug in de JSON-LD.
-- [ ] **`noindex` eraf** (`index.html`, `privacy.html`, `voorwaarden.html`) pas als het
-      bovenstaande klopt — anders indexeert Google onjuiste gegevens.
+- [ ] **`noindex` eraf** pas als het bovenstaande klopt, anders indexeert Google onjuiste
+      gegevens. Het moet dan van **zes** bestanden af, niet drie: `index.html`, `privacy.html`,
+      `voorwaarden.html` én `en/index.html`, `en/privacy.html`, `en/terms.html`. Vergeet je de
+      EN-helft, dan indexeert Google één taal en de hreflang-verwijzing ernaartoe loopt dood.
+      (`404.html`, `aanbod.html`, `klantintake.html` en de twee `film-*.html` blijven bewust op
+      `noindex` staan, die horen niet in Google.)
+      `tests/taalpariteit.mjs` waarschuwt als de twee homepages hierin uiteenlopen.
 - [ ] Juridische pagina's laten nalezen door iemand met juridische kennis.
 - [ ] Live-demo-loop (Twilio/n8n/WhatsApp) bouwen → pas dán mag "zie het live" terug.
 

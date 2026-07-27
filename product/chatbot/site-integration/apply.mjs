@@ -26,6 +26,11 @@ const HOST = (process.argv[3] || "http://localhost:3100").replace(/\/$/, "");
 // Optioneel: komma-gescheiden mapnamen die dit script volledig moet negeren (bv.
 // losstaande voorbeeld-/demopagina's die geen live chat-widget horen te krijgen).
 const EXCLUDE_DIRS = (process.env.AB_SITE_EXCLUDE_DIRS || "").split(",").map((s) => s.trim()).filter(Boolean);
+// Idem voor losse BESTANDEN. Nodig omdat niet elke uit te sluiten pagina in een eigen map
+// staat: de opnamepodia voor de promotiefilm liggen naast de echte pagina's, en een
+// chatbubbel in beeld verpest de opname. 'remove' haalt de tag overal weg, 'add' slaat
+// deze bestanden over, dus zetten en weghalen blijft idempotent.
+const EXCLUDE_FILES = (process.env.AB_SITE_EXCLUDE_FILES || "").split(",").map((s) => s.trim()).filter(Boolean);
 
 const MARKER = "data-ab-chat";
 const JS_NAME = "ab-chat.js";
@@ -45,6 +50,11 @@ function walk(dir) {
 }
 
 function assetPrefix(file) {
+  // Een 404-pagina wordt geserveerd bij een WILLEKEURIGE URL, dus er bestaat geen goed
+  // relatief pad: vanaf /en/typefout zou "assets/..." naar /en/assets/ wijzen en zelf 404'en.
+  // Root-absoluut is de enige juiste vorm. 404.html verwijst om diezelfde reden al met
+  // /css/ en /fonts/ naar zijn andere bestanden.
+  if (path.basename(file).toLowerCase() === "404.html") return "/assets";
   // URL-pad van de pagina naar de assets-map (bv. "assets" of "../assets").
   const rel = path.relative(path.dirname(file), ASSETS).replace(/\\/g, "/");
   return rel === "" ? "." : rel;
@@ -102,6 +112,11 @@ for (const file of files) {
   let html = fs.readFileSync(file, "utf8");
   const rel = path.relative(SITE, file);
   if (html.includes(MARKER)) {
+    skipped++;
+    continue;
+  }
+  if (EXCLUDE_FILES.includes(path.basename(file))) {
+    console.log(`= uitgesloten  ${rel}`);
     skipped++;
     continue;
   }

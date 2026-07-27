@@ -1,11 +1,14 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Deze pagina bestaat niet | Belvanger</title>
+  <title>This page doesn't exist | Belvanger</title>
   <meta name="robots" content="noindex, follow" />
   <meta name="theme-color" content="#16232E" />
+  <!-- Alle verwijzingen hieronder zijn ROOT-ABSOLUUT (/css/, /fonts/, /favicon.svg).
+       Deze pagina wordt geserveerd bij een willekeurige URL onder /en/, dus een relatief
+       pad zou vanaf /en/iets/typefout naar de verkeerde map wijzen. -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preload" href="/fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/css/styles.css?v=2a9b2761" />
@@ -21,12 +24,12 @@
   <main class="nf">
     <div>
       <p class="nf__code">404</p>
-      <h1 class="nf__title">Deze pagina hebben we gemist.</h1>
-      <p class="nf__text">Anders dan je klanten. Die vangen we wél op. Ga terug naar de startpagina.</p>
+      <h1 class="nf__title">This one we missed.</h1>
+      <p class="nf__text">Your customers, we don't. Head back to the home page.</p>
       <div class="nf__cta">
-        <a class="btn btn--primary btn--lg" href="/">Naar de startpagina</a>
-        <a class="btn btn--ghost btn--lg" href="/#gesprek">Plan een gesprek</a>
+        <a class="btn btn--primary btn--lg" href="/en/">Back to the home page</a>
+        <a class="btn btn--ghost btn--lg" href="/en/#gesprek">Book a call</a>
       </div>
     </div>
-  </main><script src="/assets/ab-chat.js?v=f049ef96" data-ab-chat data-lang="nl" defer></script></body>
+  </main><script src="/assets/ab-chat.js?v=f049ef96" data-ab-chat data-lang="en" defer></script></body>
 </html>

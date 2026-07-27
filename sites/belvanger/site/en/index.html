@@ -7,6 +7,9 @@
   <title>Never miss a customer. For tradespeople | Belvanger</title>
   <meta name="description" content="When you're up a ladder, the phone rings. Belvanger catches your missed calls automatically with a message, so you never lose a job again." />
   <meta name="theme-color" content="#16232E" />
+  <!-- TEMPORARY noindex, same reason as on the Dutch page (placeholder KvK/phone,
+       demo request does not deliver yet). Flip BOTH pages back to "index, follow"
+       at the same time, otherwise Google indexes one language and not the other. -->
   <meta name="robots" content="noindex, nofollow" />
   <link rel="canonical" href="https://belvanger.nl/en/" />
   <link rel="alternate" hreflang="nl" href="https://belvanger.nl/" />
@@ -173,12 +176,12 @@
     <section class="hero">
       <div class="wrap hero__grid">
         <div class="hero__copy">
-          <p class="eyebrow">For the tradesperson with their hands full</p>
+          <p class="eyebrow">For anyone with their hands full</p>
           <h1 class="hero__title">Never miss<br>another <span class="mark-underline">customer</span>.</h1>
           <p class="hero__sub">
-            When you're up a ladder, the phone rings. If you don't pick up, over <strong>half</strong>
-            of customers simply call a competitor, and <strong>44%</strong> don't try again.
-            We catch them. Automatically.
+            Your own website, a dashboard full of leads, and an automatic safety net under missed calls.
+            Because miss one and over <strong>half</strong> of customers simply call a competitor,
+            and <strong>44%</strong> don't try again.
           </p>
           <div class="hero__cta">
             <a class="btn btn--primary btn--lg" href="#gesprek">See it for your business<span class="btn__arrow" aria-hidden="true">→</span></a>
@@ -207,7 +210,7 @@
           </div>
           <div class="phone-stage">
           <div class="phone" data-phone data-state="done" role="img"
-               aria-label="Example: a missed call is caught automatically with a message, the customer replies, and the lead reaches the tradesperson.">
+               aria-label="Example: a missed call is caught automatically with a message, the customer replies, and the lead reaches the business owner.">
             <div class="phone__notch" aria-hidden="true"></div>
             <div class="phone__screen">
 
@@ -258,6 +261,16 @@
             <span class="lead-toast__dot" aria-hidden="true"></span>
             <span><b>New lead in</b>: 14-home project, regular installer wanted</span>
           </div>
+          <!-- ★ Same notification continues: dashboard, then own website. Same spot,
+               no extra hero space, so it reads as one continuous system. -->
+          <div class="lead-toast lead-toast--wide" data-step="8" role="status">
+            <span class="lead-toast__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 16v-3M12 16V8M17 16v-6"/></svg></span>
+            <span class="lead-toast__body"><b>Straight into your dashboard</b><small>Name, job and status in one place. You can call back right from there.</small></span>
+          </div>
+          <div class="lead-toast lead-toast--wide" data-step="9" role="status">
+            <span class="lead-toast__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9z"/></svg></span>
+            <span class="lead-toast__body"><b>Your own website caught it too</b><small>Professionally built for your trade, included.</small></span>
+          </div>
           </div><!-- /.phone-stage -->
           </div><!-- /.hero__stage -->
 
@@ -279,7 +292,7 @@
     <!-- ══════════════════════════ WHY / BELIEF ══════════════════════════ -->
     <section class="belief">
       <div class="wrap">
-        <p class="belief__text reveal">You're a tradesperson, <em>not a receptionist</em>. You should never lose a customer over something as daft as a missed call.</p>
+        <p class="belief__text reveal">You're on the job, <em>not on the phone</em>. You should never lose a customer over something as daft as a missed call.</p>
       </div>
     </section>
 
@@ -466,7 +479,7 @@
     <section class="voorbeelden" id="voorbeelden">
       <div class="wrap">
         <header class="section-head reveal">
-          <p class="eyebrow eyebrow--dark">See it for yourself</p>
+          <p class="eyebrow eyebrow--dark">This is what it looks like</p>
           <h2 class="section-title">A website per trade, not a template.</h2>
           <p class="section-lead">Fictional examples, built to show what you can expect. Your own website is tailored just as closely to your trade and the way you work.</p>
         </header>
@@ -497,22 +510,22 @@
             <span class="voorbeelden__label">Electricians<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
           </a>
           <a class="voorbeelden__card" data-trade="hovenier" style="--accent:#2F7D4F" href="../voorbeelden/hovenier-premium.html" target="_blank" rel="noopener">
-            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-hovenier.webp?v=bf89b710" alt="Example website for a gardening business" loading="lazy" />
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-hovenier.webp?v=bf89b710" alt="Example website for a landscaping business" loading="lazy" />
             <span class="voorbeelden__scrim" aria-hidden="true"></span>
             <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6.03"/></svg></span>
-            <span class="voorbeelden__label">Gardeners<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+            <span class="voorbeelden__label">Landscapers<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
           </a>
           <a class="voorbeelden__card" data-trade="klusbedrijf" style="--accent:#9A2846" href="../voorbeelden/klusbedrijf-premium.html" target="_blank" rel="noopener">
             <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-klusbedrijf.webp?v=bf89b710" alt="Example website for a handyman business" loading="lazy" />
             <span class="voorbeelden__scrim" aria-hidden="true"></span>
             <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 12l-8.4 8.4a1.9 1.9 0 1 1-2.7-2.7L12.3 9.3"/><path d="M17.6 14.6 22 10.2"/><path d="M21 10.3 13.7 3a5.9 5.9 0 0 0-4.1-1.7L8 1.2l.9.8A6 6 0 0 1 11 8.3v1.5l2 2h1.5a2 2 0 0 1 1.4.6l2 2z"/></svg></span>
-            <span class="voorbeelden__label">Handymen<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+            <span class="voorbeelden__label">Handyman firms<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
           </a>
         </div>
-        <p class="voorbeelden__note">Fictional example businesses, built by Belvanger to show the style. No real companies.</p>
+        <p class="voorbeelden__note">Fictional example businesses, built by Belvanger to show the style. No real companies. The examples themselves are in Dutch: Belvanger works with trade businesses in the Netherlands.</p>
 
         <div class="voorbeelden__dashboard reveal">
-          <p class="voorbeelden__dashboard-text">And the dashboard behind it? Take a look at an example with sample data, just like it would work for your business.</p>
+          <p class="voorbeelden__dashboard-text">And the dashboard behind it? Take a look at an example with sample data, just like it would work for your business. The dashboard is in Dutch.</p>
           <a class="btn btn--ghost" href="/dashboard-demo/" target="_blank" rel="noopener">See the example dashboard<span class="btn__arrow" aria-hidden="true">→</span></a>
         </div>
       </div>

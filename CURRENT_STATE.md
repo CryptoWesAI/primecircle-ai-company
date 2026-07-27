@@ -172,3 +172,21 @@ de e-mailmelding blijft als vangnet staan.
 
 `TWA_*`-variabelen en de assetlinks-route zijn niet nodig zolang de Play Store geparkeerd
 blijft (ze geven netjes 404 als ze leeg zijn).
+
+### Engelse site gelijkgetrokken + drie stille serverfouten weg (2026-07-27, LIVE)
+
+De Engelse versie van `belvanger.nl` liep achter op de Nederlandse, en bleek ook stuk: de
+hero-animatie eindigde op een leeg vlak omdat het gedeelde `js/app.js` twee `data-step`-
+knopen aanriep die alleen op de NL-pagina bestonden. Verder liepen hero, belief-regel en
+vaktermen uiteen, en noemde de privacyverklaring in beide talen een gegevensstroom die
+sinds 19 juli niet meer bestaat (WhatsApp in plaats van de eigen server) terwijl de
+AI-chat er helemaal niet in stond.
+
+Meegenomen in dezelfde ronde, alle drie onzichtbaar voor een GET-op-de-homepage:
+`404.html` werd **nooit** geserveerd (kale tekst "Not found"), `HEAD` gaf **405 op elke
+pagina** zodat een uptime-monitor de site als down zou melden, en de deploy uploadde 67 MB
+filmmateriaal dat daarna in elke backup werd meegekopieerd.
+
+Volledige lijst met wat er is aangepast en hoe het is geverifieerd: `sites/belvanger/STATUS.md`.
+Nieuw vangnet: `sites/belvanger/tests/taalpariteit.mjs` (NL↔EN structuurvergelijking).
+Les vastgelegd in `docs/LEARNINGS.md`.

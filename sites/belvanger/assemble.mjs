@@ -46,7 +46,14 @@ execFileSync("node", [path.join(__dirname, "build-dashboard-demo.mjs")], { stdio
 // 2. chat-widget same-origin in de site embedden (idempotent: eerst remove, dan add auto)
 // voorbeelden/ en dashboard-demo/ = losstaande demopagina's die GEEN live Belvanger-
 // chatwidget horen te krijgen (fictief ander bedrijf, resp. het dashboard-voorbeeld zelf).
-const env = { ...process.env, AB_SITE_DIR: SITE, AB_SITE_EXCLUDE_DIRS: "voorbeelden,dashboard-demo" };
+// film-*.html = opnamepodia voor de promotiefilm. Een chatbubbel in beeld verpest de
+// opname, dus die twee pagina's krijgen het widget niet.
+const env = {
+  ...process.env,
+  AB_SITE_DIR: SITE,
+  AB_SITE_EXCLUDE_DIRS: "voorbeelden,dashboard-demo",
+  AB_SITE_EXCLUDE_FILES: "film-opnamepodium.html,film-tekstkaarten.html",
+};
 execFileSync("node", [APPLY, "remove"], { env, stdio: "inherit" });
 execFileSync("node", [APPLY, "add", "auto"], { env, stdio: "inherit" });
 
