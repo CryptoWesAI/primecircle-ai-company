@@ -349,6 +349,37 @@
        Elk paneel heeft een "kale" en een "geverfde" versie. De geverfde versie wordt
        tijdens het scrollen vrijgegeven met een masker dat als een kwast overheen gaat.
        ============================================================================ */
+    /* ============================================================================
+       PLAKSCÈNE — de sectie blijft in het midden staan terwijl de animatie loopt
+       De baan is hoger dan het venster; de scène erin plakt. Daardoor staat het beeld
+       stil in het midden van het scherm terwijl je scrollt, en bepaalt jouw scroll hoe
+       ver de animatie is. Je houdt dus de regie: verder scrollen speelt vooruit,
+       terugscrollen speelt terug, en vergelijken kan zo lang je wil.
+       Dit is BEWUST geen scroll-hijack. Scroll-events tegenhouden tot een animatie klaar
+       is breekt toetsenbordnavigatie, trackpad-momentum en schermlezers, en het voelt
+       stuk op een telefoon. Plakken geeft hetzelfde effect zonder iets af te pakken.
+       Onder 900px staat het uit: daar is de inhoud hoger dan het venster, en dan zou
+       plakken juist inhoud buiten beeld duwen. Daar valt elk element terug op zijn eigen
+       tijdlijn, en omdat een kaart daar de volle breedte heeft, staat hij bij het
+       vergelijken toch al gecentreerd. */
+    .plakbaan{position:relative;height:250vh}
+    /* FLEX en niet grid. De inhoud is een .wrap met `margin:0 auto`, en auto-marges zetten
+       het uitrekken van een grid-item uit: het raster kromp dan naar zijn minimumbreedte
+       (260px per kolom in plaats van 352px) en de panelen werden kleiner in plaats van
+       groter. In een kolom-flexbox rekt het kind normaal op en centreert de auto-marge
+       gewoon zoals overal elders op de pagina. */
+    .plakscene{position:sticky;top:0;min-height:100vh;display:flex;flex-direction:column;
+      justify-content:center}
+    /* `.wrap` heeft `margin:0 auto`, en auto-marges schakelen het uitrekken van een flex-
+       EN grid-kind uit. Zonder deze regel kromp het raster naar zijn minimum (260px per
+       kolom in plaats van 352px) en werden de panelen kleiner in plaats van groter.
+       Met een expliciete breedte gedraagt de wrap zich weer als overal elders. */
+    .plakscene > .wrap{width:100%}
+    @media(max-width:900px){
+      .plakbaan{height:auto}
+      .plakscene{position:static;min-height:0;display:block}
+    }
+
     .werk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(14px,2vw,22px)}
     .werk-frame{position:relative;border-radius:var(--r-lg);overflow:hidden;aspect-ratio:4/5;
       background:var(--surface);border:1px solid var(--line)}
@@ -521,6 +552,11 @@
            één. Een kind binnen die kaart vult de kaart volledig, dus zo'n tijdlijn staat
            altijd op 100% en de animatie beweegt nooit. Daarom hangt de tijdlijn hier met
            een NAAM aan de kaart zelf, want die wordt wél tegen de pagina gemeten. */
+        /* De baan is de tijdlijn zolang de scène plakt. `contain` loopt exact zo lang als
+           het plakken duurt, en met marge aan beide kanten krijg je: eerst stilstaan op
+           VOOR (vergelijken), dan de omslag, dan stilstaan op NA (nog eens vergelijken),
+           en pas daarna schuift de pagina door. */
+        .plakbaan{view-timeline-name:--baan;view-timeline-axis:block}
         .werk-frame{view-timeline-name:--paneel;view-timeline-axis:block}
         /* Het bereik begint op `cover 50%`: dat is exact het moment dat het midden van het
            paneel samenvalt met het midden van het scherm. Daardoor blijft het paneel op
@@ -530,6 +566,13 @@
            paneel goed in beeld was, dus je zag het verschil nooit als verschil. */
         .scene-af{animation:overschilderen linear both;animation-timeline:--paneel;
           animation-range:cover 50% cover 78%}
+        @media(min-width:901px){
+          /* Wachten op VOOR tot 22%, omslag tot 62%, daarna stilstaan op NA. */
+          .scene-af{animation-timeline:--baan;animation-range:contain 22% contain 62%}
+          .werk-frame__voor{animation-timeline:--baan;animation-range:contain 24% contain 36%}
+          .fan__blad{animation-timeline:--baan;animation-range:contain 20% contain 58%}
+          .proef{animation-timeline:--baan;animation-range:contain 12% contain 88%}
+        }
         @keyframes overschilderen{
           from{clip-path:inset(0 0 100% 0)}
           to{clip-path:inset(0 0 0 0)}
@@ -687,13 +730,19 @@
 
   <!-- ============ ONS WERK ============ -->
   <section class="block" id="werk">
-    <div class="wrap">
-      <div class="sec-head reveal">
-        <p class="eyebrow">Ons werk</p>
-        <h2>Van verweerd naar af.</h2>
-        <p>Scroll en kijk wat er gebeurt. Straks staan hier de echte voor- en na-foto's van úw projecten: bij schilderwerk verkoopt dat verschil zichzelf.</p>
-      </div>
-      <div class="werk-grid">
+    <div class="plakbaan werkbaan">
+      <div class="plakscene">
+        <!-- De kop staat BINNEN de plakscène, dus hij blijft staan zolang je vergelijkt.
+             Stond hij erboven, dan was hij al weggescrold op het moment dat het beeld
+             stilstaat, en kijk je naar twee foto's zonder te weten waarnaar. -->
+        <div class="wrap">
+          <div class="sec-head reveal">
+            <p class="eyebrow">Ons werk</p>
+            <h2>Van verweerd naar af.</h2>
+            <p>Scroll en kijk wat er gebeurt. Straks staan hier de echte voor- en na-foto's van úw projecten: bij schilderwerk verkoopt dat verschil zichzelf.</p>
+          </div>
+        </div>
+        <div class="wrap werk-grid">
         <!-- Twee foto's per paneel, exact hetzelfde kader. De "na" ligt bovenop en wordt
              tijdens het scrollen van boven naar beneden vrijgegeven, dus je ziet het werk
              gebeuren. Beide krijgen een eigen alt-tekst: voor een schermlezer is juist het
@@ -721,12 +770,15 @@
           <span class="werk-frame__tag">Voordeur in de lak &middot; Groningen</span>
         </div>
         <div class="werk-frame werk-frame--slot reveal"><span>+ Hier komen straks<br>de voor- en na-foto's<br>van úw projecten</span></div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ============ KLEURADVIES ============ -->
   <section class="block kleur" id="kleur">
+    <div class="plakbaan kleurbaan">
+      <div class="plakscene">
     <div class="wrap kleur__grid">
       <div class="reveal">
         <p class="eyebrow">Kleuradvies</p>
@@ -758,6 +810,8 @@
           <div class="proef__kozijn"></div>
           <div class="proef__plint"></div>
         </div>
+      </div>
+    </div>
       </div>
     </div>
   </section>
