@@ -17,6 +17,25 @@ this at milestones, same discipline as `CURRENT_STATE.md`. Newest first.
 
 ---
 
+## 2026-07-27 — In an AI image for tradespeople, the method has to be right, not just pretty
+
+**Lesson:** an image prompt I wrote put a painter on a ladder **leaning against the window
+frame he was painting**. The founder caught it immediately. It cannot happen: you would be
+resting on your own wet paint, glass and a frame are not load-bearing, and you cannot reach the
+surface you are leaning on. Correct is a ladder against load-bearing brickwork *beside* the
+opening, with a standoff, about 75 degrees, feet on firm ground, working sideways. For a whole
+facade a mobile scaffold is more credible than a ladder at all.
+**Why:** this is the most dangerous class of error in generated imagery, because it looks fine
+to us and is obvious to the audience. Our reader IS the expert: a painter reads a wrong ladder
+before he reads a single word, and then the site is a site built by someone who does not know
+the trade. Cosmetic AI artifacts (a sixth finger) get noticed and forgiven; a wrong working
+method gets noticed and disqualifies you.
+**Encoded in:** the AI-image rules inside the client-intake prompt in
+`product/chatbot/server.js` now list the standing ladder/method errors and what correct looks
+like, so every future client site inherits it. Standing rule: for any trade image, have someone
+from the trade look at it before it ships, and generate the scene from how the work is actually
+done rather than from what looks dynamic.
+
 ## 2026-07-27 — Two ways a scroll-driven CSS animation silently does nothing
 
 **Lesson:** building the painter example page (scroll = the wall gets painted) hit two traps

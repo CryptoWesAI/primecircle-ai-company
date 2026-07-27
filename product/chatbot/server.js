@@ -508,6 +508,19 @@ function buildDesignPrompt(d) {
     "",
     `Beeldmateriaal: ${oneLine(d.eigenFotos) === "ja" ? "eigen foto's aangeleverd (apart nagestuurd)" : "geen eigen foto's, AI-beelden genereren, prompts aanleveren"}`,
     "Regels voor AI-beelden: geen gezichten, geen logo's, geen tekst in beeld.",
+    // Vakinhoudelijke fouten zijn de gevaarlijkste soort: ze zien er voor ons prima uit en
+    // worden door de doelgroep meteen gezien. Een schilder ziet in een halve seconde dat
+    // een ladder niet tegen een kozijn kan (je leunt op je eigen natte werk, glas en
+    // kozijn zijn niet dragend, en je kunt niet bij het vlak waar je tegenaan staat).
+    // Wie de werkwijze fout neerzet, verliest de klant nog voordat de tekst gelezen is.
+    "Gereedschap en werkwijze moeten vakinhoudelijk kloppen. Laat het beeld nakijken door",
+    "iemand uit het vak voordat het live gaat. Vaste fouten om te vermijden: ladder tegen",
+    "glas, tegen een kozijn of tegen net geverfd/gerepareerd werk; ladder tegen de dakgoot",
+    "waaraan gewerkt wordt; staan op de bovenste sporten; ladderpoten op zachte of scheve",
+    "ondergrond; te steile of te vlakke ladderstand. Correct is: ladder tegen dragend",
+    "muurwerk NAAST de opening, met afstandhouder, ongeveer 75 graden, poten op vaste",
+    "grond, en de vakman werkt zijwaarts. Voor een hele gevel is een rolsteiger",
+    "geloofwaardiger dan een ladder.",
     "",
     "Layout-archetype: kies een indeling die nog niet gebruikt is binnen de bestaande",
     "voorbeeldengalerij, zodat de galerij bespoke blijft ogen in plaats van sjabloonherhaling.",
