@@ -22,6 +22,10 @@ source of truth for identity, mission, and current state:
 - `LEARNINGS.md` — running journal of lessons, insights and mistakes-not-to-repeat (**what
   we learned**). Grows over time; updated at milestones alongside `CURRENT_STATE.md`
 - `compliance/` — product-wide compliance (EU AI Act Art. 50 disclosure)
+- `EIGENAARSCHAP_EN_OVERDRACHT.md` — **wie is waarvan eigenaar, en wat gebeurt er bij
+  opzegging**. Bron voor de exit-alinea in de voorwaarden, de overdrachtchecklist en het
+  antwoord in het verkoopgesprek. Bevat twee openstaande must-haves vóór klant #1
+  (verwerkersovereenkomst, exit-alinea) en het backup-gat op de VPS.
 - `offers/` — GTM strategy (`aanbod-uitvaartniche.md`) + `OFFER_TEMPLATE.md` (PrimeCircle-level only)
 - `build/` — build recipes (trades missed-call MVP)
 
