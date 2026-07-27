@@ -569,23 +569,32 @@ input[type="range"]::-moz-range-thumb {
 /* ─────────────────────────── Voorbeelden ─────────────────────────── */
 .voorbeelden { padding: var(--sp-section) 0; background: var(--surface-2); }
 .voorbeelden .section-lead { max-width: 60ch; }
+/* Alle zeven vakken in één raster, niets om te schuiven.
+   Was een horizontale schuifrij, maar met zeven vakken stonden er drie buiten beeld en
+   moest de bezoeker gaan slepen om zijn eigen vak te vinden. Precies het omgekeerde van
+   wat deze sectie moet doen. Een automatisch schuivende band lost dat niet op: dan wordt
+   je eigen vak een bewegend doel waar je op moet wachten en dan op moet mikken.
+   Zeven kaarten in vier kolommen wordt 4 + 3, wat een normale, rustige afsluiting geeft. */
 .voorbeelden__scroll {
-  display: flex; gap: 1.2rem; overflow-x: auto; scroll-snap-type: x mandatory; margin-top: 2.2rem; padding-bottom: .6rem; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: var(--line) transparent;
-  /* Zachte uitfade rechts i.p.v. een harde afknip: laat zien dat er meer te scrollen valt
-     in plaats van dat de rij "kapot" oogt. */
-  mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 56px), transparent 100%);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 2.2rem;
 }
-.voorbeelden__scroll::-webkit-scrollbar { height: 8px; }
-.voorbeelden__scroll::-webkit-scrollbar-track { background: transparent; }
-.voorbeelden__scroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 99px; }
+@media (max-width: 900px) { .voorbeelden__scroll { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 620px) {
+  .voorbeelden__scroll { grid-template-columns: repeat(2, 1fr); gap: .8rem; }
+  /* Twee kolommen op een telefoon maakt de kaart 169px breed en dan past "Klusbedrijven"
+     niet meer op één regel. De vaknaam is juist waarop de bezoeker zoekt, dus die mag niet
+     afgekapt worden. Het pijltje verschijnt alleen bij hover, dus op touch is die ruimte
+     toch niet nodig. */
+  .voorbeelden__label { left: .75rem; right: .75rem; bottom: .7rem; font-size: .92rem; }
+  .voorbeelden__label-arrow { display: none; }
+}
 /* Elk kaartje is een volledig beeld met een eigen vak-accent: de foto vult de hele kaart,
    naam en icoon liggen als overlay op een gradient-scrim eroverheen. Uniforme maat voor
    alle zes, dus geen kans meer op ongelijke witruimte tussen kaarten onderling. Een zachte
    hover-zoom plus schuivend pijltje geven de rij leven zonder dat het afleidt. */
 .voorbeelden__card {
-  position: relative; flex: 0 0 auto; width: clamp(230px, 26vw, 300px); aspect-ratio: 4 / 5;
-  scroll-snap-align: start; display: block; border-radius: var(--r-lg); overflow: hidden;
+  position: relative; aspect-ratio: 4 / 5;
+  display: block; border-radius: var(--r-lg); overflow: hidden;
   text-decoration: none; color: #fff; isolation: isolate;
   box-shadow: 0 2px 4px rgba(22,35,46,.06), 0 20px 44px -20px rgba(22,35,46,.32);
   transition: transform .3s ease, box-shadow .3s ease;

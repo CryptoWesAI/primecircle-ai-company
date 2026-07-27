@@ -259,8 +259,12 @@
       background:linear-gradient(180deg,#FBF9F6,#E8E2DA);box-shadow:0 4px 10px rgba(0,0,0,.22)}
     .kamer__schakelaar::after{content:"";position:absolute;inset:9px 7px auto 7px;height:18px;border-radius:3px;
       background:#D9D2C8}
-    /* De geverfde laag. STANDAARD 100%: zonder scroll-ondersteuning zie je het werk af. */
-    .verflaag{position:absolute;left:0;right:0;top:0;height:100%;overflow:visible;
+    /* De geverfde laag. STANDAARD tot de plint: zonder scroll-ondersteuning zie je het werk af.
+       93% en niet 100%, want de plint beslaat de onderste 7% en ligt met z-index 3 BOVEN deze
+       laag. Daardoor tuckt de kwastrand (een ::after die 30px onder de laag hangt) netjes weg
+       achter de plint in plaats van eronderuit te komen. Op 100% hing de rand met de druipers
+       onder de plint door in het niets, en dat las als een fout in plaats van als verf. */
+    .verflaag{position:absolute;left:0;right:0;top:0;height:93%;overflow:visible;
       background:linear-gradient(180deg,#35785F,var(--verf-groen) 70%,#255A49);
       box-shadow:inset 0 -22px 30px -18px rgba(0,0,0,.45)}
     /* De kwastrand aan de onderkant van de verf, die met de rand meebeweegt. */
@@ -462,7 +466,7 @@
            open stand blijft in de HTML staan en niet in de keyframes. */
         .fan{view-timeline-name:--kaart;view-timeline-axis:block}
         .fan__blad{animation:vouw linear both;animation-timeline:--kaart;
-          animation-range:entry 15% entry 85%}
+          animation-range:cover 50% cover 76%}
         @keyframes vouw{from{transform:rotate(0deg)}}
 
         /* --- DE VERFSCÈNE ---
@@ -471,7 +475,7 @@
         .verven{view-timeline-name:--verfscroll;view-timeline-axis:block}
         .verflaag{animation:verven linear both;animation-timeline:--verfscroll;
           animation-range:contain 2% contain 92%}
-        @keyframes verven{from{height:0}to{height:100%}}
+        @keyframes verven{from{height:0}to{height:93%}}
 
         /* De roller strijkt heen en weer terwijl hij zakt. Dit is wat het gebaar echt
            maakt: een roller die kaarsrecht naar beneden zakt is een lift.
@@ -490,10 +494,18 @@
         .roller{animation:wiegen 2.8s ease-in-out infinite alternate}
         @keyframes wiegen{from{rotate:-1.4deg}to{rotate:1.4deg}}
 
-        /* De druppels groeien pas als de verf er langs is. */
+        /* De druppels groeien pas als de verf er langs is, en zijn tegen het eind weer weg:
+           de langste druiper (70px) is langer dan de plint hoog is (39px), dus zonder dit
+           kwam hij aan het eind onder de plint uit hangen. Bovendien is het kloppend werk:
+           wie netjes werkt rolt de laatste druipers weg voordat hij bij de plint is. */
         .drup{animation:zakken linear both;animation-timeline:--verfscroll;
           animation-range:contain 30% contain 100%;transform-origin:top}
-        @keyframes zakken{from{transform:scaleY(.15);opacity:.4}to{transform:scaleY(1);opacity:.85}}
+        @keyframes zakken{
+          0%{transform:scaleY(.15);opacity:.4}
+          55%{transform:scaleY(1);opacity:.85}
+          88%{transform:scaleY(.55);opacity:.5}
+          100%{transform:scaleY(.1);opacity:0}
+        }
 
         /* Tekst: eerst "kijk mee", daarna "af". Kruislings, op dezelfde plek. */
         .verven__regel--start{animation:uitfaden linear both;animation-timeline:--verfscroll;
@@ -510,14 +522,21 @@
            altijd op 100% en de animatie beweegt nooit. Daarom hangt de tijdlijn hier met
            een NAAM aan de kaart zelf, want die wordt wél tegen de pagina gemeten. */
         .werk-frame{view-timeline-name:--paneel;view-timeline-axis:block}
+        /* Het bereik begint op `cover 50%`: dat is exact het moment dat het midden van het
+           paneel samenvalt met het midden van het scherm. Daardoor blijft het paneel op
+           VOOR staan zolang het in beeld schuift, staat het stil op voor als je ernaar
+           kijkt, en gebeurt de omslag pas als je verder scrollt.
+           Eerder liep het van `entry 25%` en dan was de klus al half geverfd voordat het
+           paneel goed in beeld was, dus je zag het verschil nooit als verschil. */
         .scene-af{animation:overschilderen linear both;animation-timeline:--paneel;
-          animation-range:entry 25% contain 45%}
+          animation-range:cover 50% cover 78%}
         @keyframes overschilderen{
           from{clip-path:inset(0 0 100% 0)}
           to{clip-path:inset(0 0 0 0)}
         }
+        /* Het VOOR-label valt weg zodra de omslag begint, niet ervoor. */
         .werk-frame__voor{animation:wegvallen linear both;animation-timeline:--paneel;
-          animation-range:entry 45% contain 30%}
+          animation-range:cover 52% cover 64%}
         @keyframes wegvallen{to{opacity:0}}
 
         /* --- Kleuradvies: de proefwand verschiet echt van kleur --- */
