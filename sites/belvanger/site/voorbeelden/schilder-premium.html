@@ -414,7 +414,12 @@
     .callbar{position:fixed;left:0;right:0;bottom:0;z-index:35;display:none;gap:10px;padding:10px 14px;
       background:rgba(18,14,22,.94);backdrop-filter:blur(10px);border-top:1px solid rgba(255,255,255,.1)}
     .callbar .btn{flex:1;justify-content:center}
-    @media(max-width:760px){.callbar{display:flex}body{padding-bottom:74px}}
+    @media(max-width:760px){
+      .callbar{display:flex}body{padding-bottom:74px}
+      /* De stage is 100vh en de belbalk ligt eroverheen, dus de slotregel van de
+         verfscène moet daar bovenlangs. Dat is juist de regel die de klus afmaakt. */
+      .verven__tekst{bottom:calc(74px + 1.1rem)}
+    }
 
     /* ============================================================================
        DE BEWEGING — alles hierboven staat AF, alles hieronder maakt het levend.
