@@ -4,6 +4,59 @@ PrimeCircle's eigen trades-demo/verkoopsite. Live (noindex), gehost op de VPS in
 `/opt/belvanger` achter Traefik. **Deze map is sinds 2026-07-17 de bron-van-waarheid**
 — deploy alleen hiervandaan (`bash deploy-to-vps.sh`).
 
+## Schilders toegevoegd als zevende vak (2026-07-27), LIVE en geverifieerd
+Aanleiding: de eerste échte prospect (Friesland Schilderwerken, via Georgina Tan) is schilder,
+en dat vak stond niet tussen de zes op de site. Nu overal doorgevoerd, in beide talen:
+vakkenstrip, het merk-ruggetje in de hero (7 segmenten), de vak-optie in het formulier, de
+`audience` in de JSON-LD, en een eigen kaart in de voorbeelden-carrousel. Vakkleur violet
+`#7E4A9E`, het enige vrije vak naast de zes bestaande kleuren.
+
+**`voorbeelden/schilder-premium.html`** is bewust de meest uitgesproken van de zeven, want bij
+een schilder is het werk zelf beweging:
+
+- **De verfscène.** Een hoge sectie met een plakkende stage: je scrollt en de wand wordt
+  geverfd. De gekleurde laag groeit in HOOGTE, en de kwastrand, de druppels en de roller zijn
+  KINDEREN van die laag. Daardoor blijven ze automatisch op de verfrand zitten: één
+  geanimeerde eigenschap, geen rekenwerk om dingen synchroon te houden.
+- De roller strijkt ook zijwaarts terwijl hij zakt, want een roller die kaarsrecht naar
+  beneden zakt is een lift. Die streek staat in `cqw` (containereenheden), niet in procenten:
+  `translateX` in procenten rekent met de eigen breedte van de roller, waardoor hij op een
+  telefoon te ver en op een groot scherm te kort zou strijken. Gemeten op 390, 1440 en 2560px:
+  blijft overal binnen de wand.
+- Plint en lichtschakelaar liggen bóven de verflaag, dus het lijkt of de roller er netjes
+  omheen werkt in plaats van eroverheen.
+- **Ons werk**: twee getekende panelen (kozijn en voordeur) die van verweerd naar geverfd
+  gaan. Niet de hele achtergrond verschiet van kleur, alleen het HOUTWERK, want dat is wat een
+  schilder doet. Twee identieke kopieën waarvan alleen `--hout` verschilt; het glas blijft dus
+  glas. Plus hetzelfde eerlijke lege vak voor de echte projectfoto's van de klant.
+- **Kleuradvies**: de proefwand verschiet echt van kleur tijdens het scrollen (`@property`
+  met `syntax:"<color>"`, anders springt een custom property hard van waarde naar waarde).
+- Alles in CSS, **nul JavaScript**, net als de andere zes voorbeeldpagina's.
+- **De beginstand is de eindstand**: buiten `@media(prefers-reduced-motion:no-preference)` en
+  `@supports(animation-timeline:view())` staat de wand al geverfd. Firefox en wie beweging uit
+  heeft staan zien dus het afgeleverde werk, geen halve klus. Geverifieerd met
+  `prefers-reduced-motion: reduce`: wand 100%, kleurenkaart open, panelen onclipped, tekst zichtbaar.
+- Twee CSS-valkuilen kostten elk een ronde; ze staan uitgelegd in de code én in
+  `docs/LEARNINGS.md`, want ze zien er in de stylesheet allebei correct uit.
+
+**Geen foto's op deze pagina, en dat is een beperking, geen keuze.** OpenArt is niet
+aangesloten op dit project (`.claude.json` heeft alleen de zeven Hostinger-servers; OpenArt
+hoort bij de OmniFrame-workspace), dus de zes vakfoto's van de andere pagina's kon ik hier niet
+maken. De pagina is daarom volledig met CSS en SVG getekend, wat voor dit vak juist wint: een
+foto kun je niet gaandeweg verven. **De carrousel-thumbnail `thumb-schilder.webp` (900x1200) is
+een gerenderde poster van de verfscène**, en daarmee de enige van de zeven zonder echte foto.
+Wil je dat gelijktrekken: genereer in de OmniFrame-workspace een schildersfoto op 900x1200 en
+overschrijf dat bestand. De naam staat vast, er hoeft geen code aan.
+
+**Fictieve bedrijfsnaam: "Van Rijn Schilderwerken", regio Groningen.** Bewust NIET Friesland
+Schilderwerken en bewust niet Leeuwarden, want dat is een echt bedrijf dat je net hebt
+aangeschreven; een voorbeeldpagina mag niet op een prospect lijken.
+
+**Live geverifieerd** (2026-07-27): GET en HEAD 200 op de pagina en de thumbnail
+(`image/webp`), 7 vakken en 7 kaarten in beide talen, en in een echte browser op desktop én
+mobiel de verfscène op vier scrollstanden: verf 0/31/64/100%, roller steeds op de rand,
+0px overflow, geen JS-fouten, geen mislukte requests.
+
 ## EN-versie gelijkgetrokken met de NL (2026-07-27), LIVE en geverifieerd
 De Engelse pagina liep achter op de Nederlandse. Niet alleen in tekst, ook structureel.
 

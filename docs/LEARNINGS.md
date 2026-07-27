@@ -17,6 +17,29 @@ this at milestones, same discipline as `CURRENT_STATE.md`. Newest first.
 
 ---
 
+## 2026-07-27 — Two ways a scroll-driven CSS animation silently does nothing
+
+**Lesson:** building the painter example page (scroll = the wall gets painted) hit two traps
+that both look like "the animation is broken" and are neither visible in devtools nor in any
+console:
+1. **`animation-timeline: view()` measures against the nearest scroll container, and
+   `overflow: hidden` creates one.** A child inside a clipped card fills that card
+   completely, so its view progress is pinned and the animation never moves. Fix: put
+   `view-timeline-name` on the card itself (which *is* measured against the page) and
+   reference it by name from the child.
+2. **A `clip-path` sweep on a parent deletes any pseudo-element hanging outside it**, and
+   `animation-fill-mode: both` makes that clip permanent after the animation ends. The
+   ragged brush edge was a `::after` at `top: 100%`; the hero's reveal ended on
+   `clip-path: inset(0 0 0 0)` and cut it off forever. Fix: end on `inset(0 0 -60px 0)`.
+**Why:** both produce a *correct-looking* stylesheet with a wrong result, so reading the CSS
+again does not help. What helped was measuring: forcing the element bright green and counting
+pixels on a full-page screenshot proved the box was painted nowhere, which ruled out mask,
+background and stacking in one shot and pointed straight at the clip.
+**Encoded in:** comments at both sites in `sites/belvanger/site/voorbeelden/schilder-premium.html`,
+and the habit: when an animation "does nothing", assert the element's painted pixels before
+touching the animation. Same rule as the six-round "Bel terug" hunt — after one failed fix,
+measure instead of fixing again.
+
 ## 2026-07-27 — Check the error paths and the other HTTP methods, not just GET /
 
 **Lesson:** "check everything" on the Belvanger site turned up three defects that every

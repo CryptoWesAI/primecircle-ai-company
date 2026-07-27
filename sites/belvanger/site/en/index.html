@@ -73,7 +73,7 @@
         "areaServed": { "@type": "Country", "name": "Netherlands" },
         "audience": {
           "@type": "BusinessAudience",
-          "name": "Trade businesses: plumbers, installers, roofers, electricians, landscapers, handyman firms"
+          "name": "Trade businesses: plumbers, installers, roofers, electricians, landscapers, handyman firms, painters"
         },
         "offers": {
           "@type": "Offer",
@@ -200,13 +200,14 @@
         <div class="hero__demo">
           <div class="hero__stage">
           <!-- ★ SIGNATURE #2: the brand spine, the 6 trade colors in Belvanger's own ink -->
-          <div class="hero__spine" role="img" aria-label="Six trade colors: roofer, plumber, installer, electrician, gardener and handyman, all part of the same Belvanger family">
+          <div class="hero__spine" role="img" aria-label="Seven trade colors: roofer, plumber, installer, electrician, landscaper, handyman and painter, all part of the same Belvanger family">
             <span class="hero__spine-seg" style="--seg:#C2410C"></span>
             <span class="hero__spine-seg" style="--seg:#0E7490"></span>
             <span class="hero__spine-seg" style="--seg:#3949AB"></span>
             <span class="hero__spine-seg" style="--seg:#B7791F"></span>
             <span class="hero__spine-seg" style="--seg:#2F7D4F"></span>
             <span class="hero__spine-seg" style="--seg:#9A2846"></span>
+            <span class="hero__spine-seg" style="--seg:#7E4A9E"></span>
           </div>
           <div class="phone-stage">
           <div class="phone" data-phone data-state="done" role="img"
@@ -318,6 +319,9 @@
           </li>
           <li>
             <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 12l-8.4 8.4a1.9 1.9 0 1 1-2.7-2.7L12.3 9.3"/><path d="M17.6 14.6 22 10.2"/><path d="M21 10.3 13.7 3a5.9 5.9 0 0 0-4.1-1.7L8 1.2l.9.8A6 6 0 0 1 11 8.3v1.5l2 2h1.5a2 2 0 0 1 1.4.6l2 2z"/></svg>Handyman firms
+          </li>
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h12.5v4.5H3z"/><path d="M15.5 6.25h3.5v3.5h-8v4"/><path d="M9.25 13.75h3.5v7h-3.5z"/></svg>Painters
           </li>
         </ul>
       </div>
@@ -521,6 +525,12 @@
             <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 12l-8.4 8.4a1.9 1.9 0 1 1-2.7-2.7L12.3 9.3"/><path d="M17.6 14.6 22 10.2"/><path d="M21 10.3 13.7 3a5.9 5.9 0 0 0-4.1-1.7L8 1.2l.9.8A6 6 0 0 1 11 8.3v1.5l2 2h1.5a2 2 0 0 1 1.4.6l2 2z"/></svg></span>
             <span class="voorbeelden__label">Handyman firms<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
           </a>
+          <a class="voorbeelden__card" data-trade="schilder" style="--accent:#7E4A9E" href="../voorbeelden/schilder-premium.html" target="_blank" rel="noopener">
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-schilder.webp?v=schilder1" alt="Example website for a painting business" loading="lazy" />
+            <span class="voorbeelden__scrim" aria-hidden="true"></span>
+            <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4h12.5v4.5H3z"/><path d="M15.5 6.25h3.5v3.5h-8v4"/><path d="M9.25 13.75h3.5v7h-3.5z"/></svg></span>
+            <span class="voorbeelden__label">Painters<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+          </a>
         </div>
         <p class="voorbeelden__note">Fictional example businesses, built by Belvanger to show the style. No real companies. The examples themselves are in Dutch: Belvanger works with trade businesses in the Netherlands.</p>
 
@@ -610,6 +620,7 @@
                 <option>Electrician</option>
                 <option>Landscaper</option>
                 <option>Handyman firm</option>
+                <option>Painter</option>
                 <option>Other</option>
               </select>
               <span class="ffield__err" data-err></span>
