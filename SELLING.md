@@ -17,13 +17,9 @@ een cijfer verhogen zou dan een muisklik zijn, terwijl een regel toevoegen het v
 van een mens vereist. Dat is een veel hogere drempel, en precies de drempel die deze
 teller nuttig maakt.
 
-| | |
-|---|---|
-| Prospects gesproken deze week | **0** |
-| Gesprekken geboekt | **0** |
-| Gefactureerd | **€ 0** |
-
-Laatste contact: **nooit**.
+Deze worden bij het starten van een sessie berekend en getoond door
+`.claude/hooks/selling-status.mjs`. Ze staan hier niet meer als getal, juist omdat een
+getal in een bestand te makkelijk klopt te maken is.
 
 ## De eerstvolgende actie
 
@@ -46,11 +42,18 @@ Vijf echte namen, niet meer. Vul ze zelf in; ik verzin geen mensen.
 
 | # | Naam | Vak | Hoe je hem kent | Al benaderd |
 |---|---|---|---|---|
-| 1 | _(de overboekte vriend)_ | | | nee |
-| 2 | | | | nee |
-| 3 | | | | nee |
+| 1 | Marcel Bruinenberg | ? | getagd door Georgina Tan onder de Facebook-post | **ja, 27-07 17:21** |
+| 2 | Friesland Schilderwerken | schilder | getagd door Georgina Tan onder de Facebook-post | **ja, 27-07 17:22** |
+| 3 | _(de overboekte vriend)_ | | | nee |
 | 4 | | | | nee |
 | 5 | | | | nee |
+
+**Doorverwijsbronnen.** Mensen die anderen naar je toe brengen. Los bijhouden, want dit
+zijn je waardevolste contacten en het zijn geen prospects.
+
+| Naam | Wat hij deed | Bedankt | "Ken je er nog meer?" gevraagd |
+|---|---|---|---|
+| Georgina Tan | tagde Marcel Bruinenberg en Friesland Schilderwerken onder de post | nog niet | **nog niet** |
 
 ## Grootboek
 
@@ -58,9 +61,13 @@ Eén regel per écht verstuurd bericht naar een écht mens. Geen post op een tij
 reactie in een groep: dat is zichtbaarheid, geen contact. Wie de definitie oprekt om de
 nul weg te krijgen, heeft een mooier bestand en hetzelfde bedrijf.
 
+Zet in de kolom Reactie letterlijk `GEBOEKT` zodra er een gesprek staat. Daar rekent de
+teller op.
+
 | Datum | Naam | Vak | Kanaal | Wat je zei | Reactie |
 |---|---|---|---|---|---|
-| | | | | | |
+| 2026-07-27 | Marcel Bruinenberg | ? | Messenger | tag-opener + de vraag of hij belletjes mist | nog niets |
+| 2026-07-27 | Friesland Schilderwerken | schilder | Messenger (bedrijfspagina) | zelfde, formeler geopend | nog niets |
 
 ## Facturen
 
@@ -71,21 +78,22 @@ zelfgerapporteerd.
 |---|---|---|---|---|
 | | | | | |
 
-## De hook staat er bewust nog NIET
+## De hook staat er nu wel
 
-Het plan was een SessionStart-hook die deze drie cijfers als eerste op het scherm zet, en
-een regel die bij nul gesproken prospects de bouwvraag één keer een uitstel noemt.
+Hij was expliciet gegate op één echte regel in het grootboek. Op 27 juli 2026 om 17:21 en
+17:22 kwamen er twee, dus de poort is open en de hook is gebouwd:
+`.claude/hooks/selling-status.mjs`, aangeroepen via `SessionStart` in
+`.claude/settings.json`.
 
-Die is niet gebouwd, en dat is de belangrijkste beslissing in dit bestand.
+Wat hij doet: bij het starten van een sessie de drie cijfers berekenen uit het grootboek
+hieronder, plus het aantal dagen sinds het laatste contact en de eerstvolgende actie. Drie
+regels, daarna houdt hij zijn mond.
 
-De reden staat in het onderzoek van 27 juli: **het bouwen van dit soort machinerie is
-precies de vorm die het uitstelgedrag hier aanneemt.** Een avond besteden aan een
-verkoopteller, met een streak-counter erbij, voelt als verkoopwerk en is het niet. Dus:
+De reden dat hij niet eerder is gebouwd staat er nog steeds, en blijft gelden: het bouwen
+van dit soort machinerie is de vorm die uitstelgedrag hier aanneemt. Was de hook er vóór
+het eerste bericht geweest, dan was de hook zelf het uitstel geweest.
 
-**De hook wordt pas gebouwd nadat er één echte regel in het grootboek staat.**
-
-Ships de machinerie eerder dan het eerste gesprek, dan is de machinerie zelf het uitstel,
-en dan heeft dit bestand zijn eigen doel gemist.
+Weghalen kan altijd: verwijder het `hooks`-blok uit `.claude/settings.json`.
 
 ## Wanneer dit bestand verdwijnt
 
