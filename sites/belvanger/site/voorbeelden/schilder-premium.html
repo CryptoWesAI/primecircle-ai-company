@@ -56,6 +56,9 @@
       /* De kleurenkaart van het bedrijf. Ook echt gebruikt in de secties hieronder. */
       --verf-terra:#C0563E; --verf-groen:#2F6B58; --verf-oker:#DDB65F; --verf-blauw:#3A4F6E;
       --kaal:#B9B2AA;            /* ongeverfde, dode pleisterwand */
+      /* Gemeten uit de na-foto, net boven de plint: de kwastrand en de druipers krijgen
+         hiermee exact de kleur van de verf op de foto in plaats van een benadering. */
+      --verf-echt:#3B5646;
       --display:"Fraunces",Georgia,"Times New Roman",serif;
       --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
       --wrap:1180px; --r:16px; --r-lg:26px;
@@ -231,6 +234,15 @@
        van die laag en hangen aan de onderkant. Daardoor blijven ze automatisch precies
        op de verfrand zitten. Eén geanimeerde eigenschap, nul rekenwerk.
        ============================================================================ */
+    /* Op een telefoon is de BREEDTE de beperking, dus met een vaste verhouding werd de
+       scène maar 256px hoog: een bandje in plaats van een wand. Daar laten we de verhouding
+       los en geven we de kamer weer een eigen hoogte; `object-fit:cover` snijdt de foto dan
+       aan de zijkant bij. Het brandpunt ligt links, want daar zit de schakelaar en die is
+       het ankerpunt waaraan je ziet dat het dezelfde wand is. */
+    @media(max-width:900px){
+      .kamer{aspect-ratio:auto;height:min(54vh,400px)}
+      .wand__foto,.verflaag__foto{object-position:12% center}
+    }
     .verven{position:relative;background:var(--surface-2)}
     .verven__stage{position:sticky;top:0;height:100vh;display:grid;place-items:center;overflow:hidden}
     .verven__grain{position:absolute;inset:0;background-image:var(--grain);background-size:200px;
@@ -238,35 +250,50 @@
     /* container-type maakt `cqw` beschikbaar: 1cqw = 1% van de wandbreedte. Nodig voor
        de zijwaartse streek van de roller. Met procenten zou die met zijn EIGEN breedte
        rekenen, en dan strijkt hij op een telefoon te ver en op een groot scherm te kort. */
-    .kamer{position:relative;width:min(880px,86vw);height:min(72vh,560px);
-      container-type:inline-size;
+    /* De maat volgt nu de FOTO en niet omgekeerd. De twee wandfoto's zijn 1760x1250 na
+       het wegsnijden van de plint; die 1,408 verhouding is exact het wandvlak boven de
+       getekende plint (93% van de kamerhoogte). Zo wordt er nergens gecropt en blijft de
+       schakelaar in beide foto's op dezelfde plek staan.
+       880/672 = 1,3095, dus de derde term in min() begrenst de HOOGTE tot 78vh zonder de
+       verhouding te breken. container-type:size (niet inline-size) maakt `cqh` beschikbaar,
+       nodig omdat de fotolaag de volle wandhoogte moet houden terwijl zijn ouder groeit. */
+    .kamer{position:relative;width:min(880px,86vw,calc(78vh * 1.3095));aspect-ratio:880 / 672;
+      container-type:size;
       filter:drop-shadow(0 30px 60px rgba(27,21,32,.22))}
     /* De kale wand: dode pleister met een vleugje ongelijkheid. */
-    .wand{position:absolute;inset:0;border-radius:6px;overflow:hidden;
-      background:
-        radial-gradient(120% 100% at 20% 10%, rgba(255,255,255,.5), transparent 55%),
-        linear-gradient(180deg,#C3BCB4,var(--kaal) 60%,#ADA69E);}
+    /* De kale wand is nu een echte foto: geplamuurde pleisterwand met een schakelaar. */
+    .wand{position:absolute;inset:0 0 7% 0;border-radius:6px 6px 0 0;overflow:hidden;
+      background:var(--kaal)}
+    .wand__foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+      object-position:center}
     .wand__grain{position:absolute;inset:0;background-image:var(--grain);background-size:150px;
       opacity:.14;mix-blend-mode:multiply}
-    /* Plint en schakelaar liggen BOVEN de verflaag. Daardoor lijkt het alsof de roller
-       er netjes omheen werkt in plaats van eroverheen, en dat is precies het verschil
-       tussen een schilder en iemand met een emmer. Ze maken de wand ook pas een wand. */
+    /* De plint ligt BOVEN de verflaag, zodat de kwastrand erachter wegvalt in plaats van
+       eronderuit te komen. De schakelaar zit nu in de foto zelf: daar is de verf er in het
+       echt netjes omheen gesneden, wat overtuigender is dan mijn getekende versie. */
     .kamer__plint{position:absolute;left:0;right:0;bottom:0;height:7%;z-index:3;
       background:linear-gradient(180deg,#FBF9F6,#EDE8E1);box-shadow:0 -3px 8px rgba(0,0,0,.14)}
     .kamer__plint::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
       background:rgba(0,0,0,.06)}
-    .kamer__schakelaar{position:absolute;left:7%;top:41%;width:34px;height:52px;border-radius:5px;z-index:3;
-      background:linear-gradient(180deg,#FBF9F6,#E8E2DA);box-shadow:0 4px 10px rgba(0,0,0,.22)}
-    .kamer__schakelaar::after{content:"";position:absolute;inset:9px 7px auto 7px;height:18px;border-radius:3px;
-      background:#D9D2C8}
     /* De geverfde laag. STANDAARD tot de plint: zonder scroll-ondersteuning zie je het werk af.
        93% en niet 100%, want de plint beslaat de onderste 7% en ligt met z-index 3 BOVEN deze
        laag. Daardoor tuckt de kwastrand (een ::after die 30px onder de laag hangt) netjes weg
        achter de plint in plaats van eronderuit te komen. Op 100% hing de rand met de druipers
        onder de plint door in het niets, en dat las als een fout in plaats van als verf. */
+    /* De geverfde laag. `overflow:visible` MOET blijven: de kwastrand, de druipers en de
+       roller hangen aan de onderkant en mogen niet geklipt worden. De foto zit daarom in
+       een eigen clip-doosje eronder. De achtergrondkleur is de gemeten wandkleur net boven
+       de plint uit de na-foto (#3B5646), zodat de kwastrand exact de kleur van de verf
+       heeft in plaats van een gok. */
     .verflaag{position:absolute;left:0;right:0;top:0;height:93%;overflow:visible;
-      background:linear-gradient(180deg,#35785F,var(--verf-groen) 70%,#255A49);
-      box-shadow:inset 0 -22px 30px -18px rgba(0,0,0,.45)}
+      background:var(--verf-echt);
+      box-shadow:inset 0 -22px 30px -18px rgba(0,0,0,.4)}
+    .verflaag__clip{position:absolute;inset:0;overflow:hidden;border-radius:6px 6px 0 0}
+    /* 93cqh = de volle hoogte van het wandvlak, ongeacht hoe hoog de OUDER op dit moment
+       is. Zonder dit zou de foto met de laag meekrimpen en dus verticaal uitgerekt worden
+       in plaats van van boven naar beneden vrijgegeven. */
+    .verflaag__foto{position:absolute;top:0;left:0;width:100%;height:93cqh;
+      object-fit:cover;object-position:center}
     /* De kwastrand aan de onderkant van de verf, die met de rand meebeweegt. */
     .verflaag::after{content:"";position:absolute;left:0;right:0;top:100%;height:30px;
       background:inherit;
@@ -274,7 +301,7 @@
       mask-image:var(--rand);mask-size:240px 100%;mask-repeat:repeat-x}
     /* Druppels: hangen aan de rand, dus ze zakken mee. */
     .drup{position:absolute;top:100%;width:9px;border-radius:0 0 60% 60%;
-      background:var(--verf-groen);opacity:.85}
+      background:var(--verf-echt);opacity:.9}
     .drup--1{left:16%;height:52px}
     .drup--2{left:41%;height:26px;width:7px}
     .drup--3{left:68%;height:70px}
@@ -292,7 +319,7 @@
       border:1px solid rgba(0,0,0,.16);box-shadow:0 8px 16px rgba(0,0,0,.3)}
     /* Verse verf op de rol, plus de natte glans direct onder de rand. */
     .roller__kop::before{content:"";position:absolute;inset:4px 7px auto 7px;height:11px;border-radius:6px;
-      background:var(--verf-groen);opacity:.9}
+      background:var(--verf-echt);opacity:.95}
     .roller__kop::after{content:"";position:absolute;left:6%;right:6%;top:100%;height:5px;border-radius:3px;
       background:rgba(255,255,255,.3)}
     /* Één element voor beugel, steel en greep: kan dus nooit los van de kop raken.
@@ -665,7 +692,7 @@
   <!-- ============================================================================
        DE VERFSCÈNE — scroll en de wand wordt geverfd
        ============================================================================ -->
-  <section class="verven" style="height:300vh" aria-label="De wand wordt geverfd terwijl u scrollt">
+  <section class="verven" style="height:300vh" aria-label="Een kale pleisterwand die van boven naar beneden wordt geverfd, van kaal tot afgeleverd">
     <div class="verven__stage">
       <div class="verven__grain"></div>
 
@@ -673,12 +700,19 @@
 
       <div class="kamer">
         <div class="wand">
+          <img class="wand__foto" src="../assets/voorbeelden/schilder-wand-voor.webp"
+               alt="Kale pleisterwand met plamuurplekken, klaar om geschilderd te worden"
+               width="1760" height="1250" loading="lazy" decoding="async" />
           <div class="wand__grain"></div>
         </div>
-        <span class="kamer__schakelaar" aria-hidden="true"></span>
         <!-- De geverfde laag. Kwastrand, druppels en roller zijn kinderen en hangen
              aan de onderrand, dus ze blijven vanzelf op de verfrand zitten. -->
         <div class="verflaag">
+          <div class="verflaag__clip">
+            <img class="verflaag__foto" src="../assets/voorbeelden/schilder-wand-na.webp"
+                 alt="Dezelfde wand, afgewerkt in diepgroen" width="1760" height="1250"
+                 loading="lazy" decoding="async" />
+          </div>
           <span class="drup drup--1"></span>
           <span class="drup drup--2"></span>
           <span class="drup drup--3"></span>
@@ -696,7 +730,7 @@
       <div class="verven__tekst">
         <p class="verven__regel verven__regel--start">Eerst schuren, plamuren en stofvrij maken.</p>
         <p class="verven__regel verven__regel--eind">Daarna dekt het in één keer. Zo hoort verf te liggen.</p>
-        <p class="verven__hint">Scroll verder</p>
+        <p class="verven__hint">Twee lagen, dekkend</p>
       </div>
     </div>
   </section>
@@ -739,7 +773,7 @@
           <div class="sec-head reveal">
             <p class="eyebrow">Ons werk</p>
             <h2>Van verweerd naar af.</h2>
-            <p>Scroll en kijk wat er gebeurt. Straks staan hier de echte voor- en na-foto's van úw projecten: bij schilderwerk verkoopt dat verschil zichzelf.</p>
+            <p>Straks staan hier de echte voor- en na-foto's van úw projecten. Bij schilderwerk verkoopt dat verschil zichzelf.</p>
           </div>
         </div>
         <div class="wrap werk-grid">
@@ -804,7 +838,7 @@
         </div>
       </div>
       <div class="reveal">
-        <div class="proef" role="img" aria-label="Voorbeeldkamer die van kleur verandert terwijl u scrollt">
+        <div class="proef" role="img" aria-label="Voorbeeldkamer in vier verschillende verfkleuren">
           <div class="proef__grain"></div>
           <div class="proef__lamp"></div>
           <div class="proef__kozijn"></div>
