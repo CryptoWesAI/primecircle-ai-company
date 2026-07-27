@@ -39,14 +39,43 @@ een schilder is het werk zelf beweging:
 - Twee CSS-valkuilen kostten elk een ronde; ze staan uitgelegd in de code én in
   `docs/LEARNINGS.md`, want ze zien er in de stylesheet allebei correct uit.
 
-**Geen foto's op deze pagina, en dat is een beperking, geen keuze.** OpenArt is niet
-aangesloten op dit project (`.claude.json` heeft alleen de zeven Hostinger-servers; OpenArt
-hoort bij de OmniFrame-workspace), dus de zes vakfoto's van de andere pagina's kon ik hier niet
-maken. De pagina is daarom volledig met CSS en SVG getekend, wat voor dit vak juist wint: een
-foto kun je niet gaandeweg verven. **De carrousel-thumbnail `thumb-schilder.webp` (900x1200) is
-een gerenderde poster van de verfscène**, en daarmee de enige van de zeven zonder echte foto.
-Wil je dat gelijktrekken: genereer in de OmniFrame-workspace een schildersfoto op 900x1200 en
-overschrijf dat bestand. De naam staat vast, er hoeft geen code aan.
+**Foto's toegevoegd (2026-07-27, later die dag).** OpenArt is niet aangesloten op dit project
+(`.claude.json` heeft alleen de zeven Hostinger-servers), dus de founder heeft de beelden zelf
+in de OmniFrame-workspace gegenereerd. Zes stuks, aangeleverd op 1792x2400 en 1856x2304, door
+mij gecropt naar de maten van de andere pagina's en omgezet naar webp:
+
+| Bestand | Formaat | Plek |
+|---|---|---|
+| `thumb-schilder.webp` | 900x1200 | kaart in de carrousel (vervangt de gerenderde poster) |
+| `schilder-hero.webp` | 1080x1350 | hero, rechterhelft |
+| `schilder-werk-1-voor/-na.webp` | 760x950 | paneel 1, kozijn |
+| `schilder-werk-2-voor/-na.webp` | 760x950 | paneel 2, voordeur |
+
+Foto en tekenwerk zijn nu verdeeld naar waar ze sterker in zijn: **foto** waar het om
+geloofwaardigheid gaat (hero, voor/na), **tekenwerk** waar het om beweging gaat (de verfscène,
+want een foto kun je niet gaandeweg verven).
+
+- **De voor/na-panelen zijn nu echte foto's** in plaats van getekende objecten, met dezelfde
+  wipe. Dat de twee foto's exact samenvallen is **gemeten** met gradiëntcorrelatie (randen
+  vergelijken, niet kleuren, want de kleur is juist wat verandert): optimum op dx=0, dy=0,
+  schaal 1.00 voor beide paren. Vandaar dat het kozijn en de deurpanelen dwars door de verflijn
+  doorlopen zonder sprong. Meet dit opnieuw voordat je ooit beelden vervangt.
+- **De hero is nu split-screen**: tekstpaneel links met de verfstreek, foto rechts. De
+  kleurenkaart is verhuisd naar de kleuradvies-sectie, want daar gaat het er ook echt over, en
+  hij bestaat uit exact dezelfde vijf kleuren die daar als losse staaltjes stonden. Die
+  staaltjes zijn dus vervangen, niet aangevuld. De kaart vouwt nu open op scroll in plaats van
+  bij het laden: een openvouw-animatie die afloopt voordat je er bent, heb je nooit gezien.
+- Mobiel gefixt: "Van Rijn Schilderwerken" is langer dan de namen op de andere pagina's en liep
+  over de Offerte-knop. Onder 620px gaat die knop weg (de vaste belbalk heeft dezelfde functie),
+  en het brandpunt van de foto ligt lager zodat de schilder onder de header uitkomt.
+- **De rolsteiger in de hero is bewust geen ladder.** De founder haalde uit mijn eerste prompt
+  dat een ladder niet tegen een kozijn kan; de tweede versie zette de vakman op een rolsteiger
+  met leuningen, wielen en afdekzeil. Vakinhoudelijk klopt het beeld daarmee.
+
+**Wat op alle zeven pagina's is gefixt:** de vaste VOORBEELD-badge dekte op een telefoon de
+eerste regel van het eerlijkheidslabel af, precies de regel die vertelt dat het een fictief
+voorbeeld is. Nu ruimte gemaakt. Gemeten op de echte tekstrechthoeken (Range, niet de
+elementdoos): nul regels onder de badge, op alle zeven.
 
 **Fictieve bedrijfsnaam: "Van Rijn Schilderwerken", regio Groningen.** Bewust NIET Friesland
 Schilderwerken en bewust niet Leeuwarden, want dat is een echt bedrijf dat je net hebt

@@ -60,6 +60,13 @@
     .demo-badge{position:fixed;top:14px;right:14px;background:var(--pan);color:#fff;font-family:var(--body);
       font-weight:900;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 13px;
       border-radius:999px;box-shadow:0 6px 18px rgba(20,32,26,.28);z-index:40;pointer-events:none}
+    /* De badge staat vast rechtsboven en dekte op een telefoon de eerste regel van het
+       eerlijkheidslabel af. Juist die regel moet leesbaar blijven: hij vertelt de bezoeker
+       dat dit een fictief voorbeeld is. Daarom maken we er ruimte voor in plaats van te
+       hopen dat het meevalt. Gold op alle zeven voorbeeldpagina's. */
+    @media(max-width:620px){
+      .demo-note{padding-right:104px;text-align:left}
+    }
 
     /* ============ Header (donker-op-licht, translucente sticky bar) ============ */
     .site-head{position:sticky;top:0;left:0;right:0;z-index:20;

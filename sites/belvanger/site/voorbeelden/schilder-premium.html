@@ -24,10 +24,15 @@
        browser zonder ondersteuning (Firefox nu nog) toont dus simpelweg het afgeleverde
        werk in plaats van een halve klus. Dat is het verschil tussen degradatie en stuk.
 
-       Ook geen foto's: de hele pagina is getekend met CSS en SVG. Dat is hier een
-       voordeel, want een foto kun je niet gaandeweg verven en vectorwerk blijft scherp
-       op elk scherm en weegt bijna niets. Waar straks echte projectfoto's van de klant
-       horen te komen, staat een eerlijk leeg vak.
+       Foto's en tekenwerk zijn hier bewust verdeeld naar waar ze sterker in zijn:
+         - FOTO waar het om geloofwaardigheid gaat: de hero, en de voor/na-panelen bij
+           "ons werk". Een schilder gelooft een foto van een verweerd kozijn, geen tekening.
+         - TEKENWERK waar het om beweging gaat: de verfscène. Een foto kun je niet
+           gaandeweg verven; die wand wél, en dat kost nul kilobyte extra.
+       De voor/na-panelen zijn twee foto's in exact hetzelfde kader. Dat samenvallen is
+       gemeten (gradiëntcorrelatie, optimum op dx=0 dy=0 schaal 1.00), niet aangenomen.
+       Het derde vak blijft leeg met de eerlijke tekst erin: daar horen de echte
+       projectfoto's van de klant te komen.
        ============================================================================ */
 
     /* ============ Fonts (gedeeld met de rest van de site) ============ */
@@ -96,6 +101,13 @@
     .demo-badge{position:fixed;top:14px;right:14px;background:var(--pan);color:#fff;font-family:var(--body);
       font-weight:900;font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 13px;
       border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.28);z-index:40;pointer-events:none}
+    /* De badge staat vast rechtsboven en dekte op een telefoon de eerste regel van het
+       eerlijkheidslabel af. Juist die regel moet leesbaar blijven: hij vertelt de bezoeker
+       dat dit een fictief voorbeeld is. Daarom maken we er ruimte voor in plaats van te
+       hopen dat het meevalt. Gold op alle zeven voorbeeldpagina's. */
+    @media(max-width:620px){
+      .demo-note{padding-right:104px;text-align:left}
+    }
 
     /* ============ Header ============ */
     .site-head{position:absolute;top:38px;left:0;right:0;z-index:20}
@@ -116,6 +128,14 @@
     .head-phone{color:#fff;font-weight:900;font-size:1.02rem;text-decoration:none;white-space:nowrap;
       text-shadow:0 1px 6px rgba(0,0,0,.35)}
     @media(max-width:860px){.site-nav,.head-phone{display:none}}
+    /* "Van Rijn Schilderwerken" is langer dan de namen op de andere voorbeeldpagina's en
+       liep op een telefoon dwars over de Offerte-knop. Onder 620px gaat die knop weg: de
+       vaste belbalk onderaan heeft dezelfde functie al, dus er verdwijnt geen actie. */
+    @media(max-width:620px){
+      .head-actions .btn{display:none}
+      .brand__name{font-size:1.1rem}
+      .brand__name small{font-size:.56rem;letter-spacing:.12em}
+    }
 
     /* ============================================================================
        HERO — de kwaststreek die de kop vrijgeeft
@@ -133,7 +153,7 @@
     /* De verse verfstreep bovenlangs. De kwastrand is een DUNNE strook onderaan, geen
        masker over het hele vlak: dat laatste rekt de golf zo ver uit dat het een heuvel
        wordt in plaats van een verfrand. Zie ook .verflaag::after, zelfde truc. */
-    .hero__streek{position:absolute;top:0;left:0;right:0;height:44%;z-index:1;pointer-events:none;
+    .hero__streek{position:absolute;top:0;left:0;right:44%;height:44%;z-index:1;pointer-events:none;
       background:linear-gradient(100deg,var(--pan-deep),var(--pan) 55%,#9459B8);opacity:.92}
     .hero__streek::after{content:"";position:absolute;left:0;right:0;top:100%;height:34px;
       background:inherit;
@@ -153,10 +173,18 @@
     .hero__trust b{font-family:var(--display);font-weight:600;font-size:1.2rem;color:#fff}
     .hero__trust .stars{color:var(--gold);letter-spacing:1px}
 
-    /* Rechts: de kleurenkaart die zich opent. Geen foto nodig, dit IS het vak. */
-    .hero__kaart{position:relative;z-index:3;grid-column:2;align-self:center;
-      height:min(60vh,460px);display:grid;place-items:center;padding-right:clamp(20px,4vw,3rem)}
-    .fan{position:relative;width:min(300px,34vw);aspect-ratio:1;transform-origin:50% 88%}
+    /* Rechts: de foto. De streek ligt alleen over het tekstpaneel, niet over het beeld,
+       want een kwastrand dwars over een echte foto leest als een fout. */
+    .hero__media{position:relative;grid-column:2;align-self:stretch;overflow:hidden;z-index:2}
+    .hero__foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+      object-position:52% 45%}
+    .hero__scrim{position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(90deg, rgba(27,21,32,.72), rgba(27,21,32,.12) 34%, transparent 60%)}
+    .hero__topscrim{position:absolute;top:0;left:0;right:0;height:170px;pointer-events:none;
+      background:linear-gradient(180deg, rgba(27,21,32,.5), transparent)}
+    /* De kleurenkaart: verhuisd naar de kleuradvies-sectie, want daar gaat het over. */
+    .fan{position:relative;width:min(320px,72%);aspect-ratio:1;transform-origin:50% 88%;
+      margin:0 auto}
     .fan__blad{position:absolute;left:50%;bottom:6%;width:23%;height:78%;margin-left:-11.5%;
       border-radius:10px 10px 4px 4px;transform-origin:50% 96%;
       box-shadow:0 10px 26px rgba(0,0,0,.32);border:1px solid rgba(255,255,255,.14)}
@@ -166,10 +194,20 @@
     .fan__nop{position:absolute;left:50%;bottom:2%;width:16px;height:16px;margin-left:-8px;border-radius:50%;
       background:#E8DDEF;box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:9}
     @media(max-width:860px){
+      /* Op mobiel gaat de foto BOVEN de tekst, zoals op de andere voorbeeldpagina's, en
+         loopt de streek weer over de volle breedte want er staat geen beeld naast. */
       .hero{grid-template-columns:1fr;min-height:0}
-      .hero__panel{grid-column:1;padding:5.5rem clamp(20px,5vw,26px) 2.4rem}
-      .hero__kaart{grid-column:1;height:min(42vh,300px);padding:0 0 2.6rem}
-      .hero__streek{height:34%}
+      /* Iets hoger beeld en een lager brandpunt, zodat de schilder zelf onder de header
+         uitkomt in plaats van erachter. Op een liggend uitgesneden portret schuift cover
+         verticaal, dus dit brandpunt bepaalt wie je ziet. */
+      .hero__media{grid-column:1;order:-1;min-height:54vh}
+      .hero__foto{object-position:48% 38%}
+      .hero__panel{grid-column:1;padding:2.8rem clamp(20px,5vw,26px) 2.6rem}
+      /* De streek zit vast aan de bovenkant van de hero en zou op mobiel dus over de foto
+         liggen. Daar draagt het beeld de hero, dus de streek gaat uit. De verfsignatuur
+         komt verderop terug in de pull-quote en de verfscène. */
+      .hero__streek{display:none}
+      .hero__scrim{background:linear-gradient(180deg, rgba(27,21,32,.34), transparent 45%)}
     }
 
     /* ============ Statistiekenband ============ */
@@ -310,37 +348,13 @@
     .werk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:clamp(14px,2vw,22px)}
     .werk-frame{position:relative;border-radius:var(--r-lg);overflow:hidden;aspect-ratio:4/5;
       background:var(--surface);border:1px solid var(--line)}
-    /* De scène: de WAND blijft zoals hij is, het HOUTWERK gaat van verweerd naar geverfd.
-       Dat is wat een schilder doet, en het maakt het verschil ook beter zichtbaar dan
-       een hele achtergrond die van kleur verschiet.
-       Twee identieke kopieën van het object, alleen `--hout` verschilt. De geverfde
-       kopie wordt tijdens het scrollen met een streek vrijgegeven. Het glas gebruikt
-       een vaste kleur, dus dat verandert niet mee. */
-    .werk-scene{position:absolute;inset:0;
-      background:linear-gradient(180deg,#E4DDD5,#D2CAC1)}
-    .werk-scene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:9%;
-      background:linear-gradient(180deg,#F7F4F1,#E9E3DB);box-shadow:0 -2px 6px rgba(0,0,0,.12)}
-    .obj{position:absolute;inset:0;--hout:#8E8375;--glas:#B9C9D2}
-    .obj--af{--hout:var(--verf-blauw)}
-    .werk-frame--deur .obj--af{--hout:var(--verf-terra)}
-    /* Kozijn: raamlijst met glas en roeden. De roeden zijn twee gradiënt-lagen op het
-       glas, zodat er geen extra elementen nodig zijn. */
-    .obj__kozijn{position:absolute;inset:13% 17% 20% 17%;border-radius:3px;
-      background:var(--hout);box-shadow:0 14px 30px rgba(0,0,0,.2)}
-    .obj__kozijn::before{content:"";position:absolute;inset:8%;
-      background:
-        linear-gradient(var(--hout),var(--hout)) center/7% 100% no-repeat,
-        linear-gradient(var(--hout),var(--hout)) center/100% 5% no-repeat,
-        linear-gradient(165deg,#CEDDE4,var(--glas) 60%,#A9BCC7)}
-    /* Deur: blad met twee verdiepte panelen en een kruk. */
-    .obj__deur{position:absolute;inset:11% 27% 9% 27%;border-radius:3px 3px 0 0;
-      background:var(--hout);box-shadow:0 16px 34px rgba(0,0,0,.22)}
-    .obj__deur::before,.obj__deur::after{content:"";position:absolute;left:13%;right:13%;
-      background:rgba(0,0,0,.1);box-shadow:inset 0 0 0 4px rgba(255,255,255,.18)}
-    .obj__deur::before{top:7%;height:32%}
-    .obj__deur::after{bottom:9%;height:40%}
-    .obj__kruk{position:absolute;left:19%;top:52%;width:8%;aspect-ratio:1;border-radius:50%;
-      background:#D8CFA8;box-shadow:0 2px 5px rgba(0,0,0,.35)}
+    /* Twee foto's op elkaar in hetzelfde kader: de verweerde staat en de afgeleverde
+       staat. De bovenste (.scene-af) wordt tijdens het scrollen vrijgegeven. Dat de twee
+       exact samenvallen is gemeten, niet aangenomen: gradiëntcorrelatie gaf het optimum
+       op dx=0, dy=0, schaal 1.00. Verschuift een toekomstig paar wél, dan valt de wipe
+       meteen op, dus meet opnieuw voordat je beelden vervangt. */
+    .werk-foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+      object-position:center}
     .werk-frame__grain{position:absolute;inset:0;background-image:var(--grain);background-size:140px;
       opacity:.1;mix-blend-mode:multiply;pointer-events:none}
     .werk-frame__tag{position:absolute;left:14px;bottom:14px;z-index:3;background:rgba(27,21,32,.82);
@@ -373,11 +387,6 @@
     .proef__lamp{position:absolute;right:16%;top:0;width:2px;height:26%;background:rgba(27,21,32,.35)}
     .proef__lamp::after{content:"";position:absolute;left:50%;top:100%;width:64px;height:30px;margin-left:-32px;
       border-radius:0 0 60px 60px;background:linear-gradient(180deg,#3A2F42,#241C2B)}
-    .swatches{display:flex;gap:10px;flex-wrap:wrap;margin-top:1.6rem}
-    .swatch{width:56px;height:56px;border-radius:12px;border:1px solid rgba(0,0,0,.1);
-      box-shadow:0 6px 14px rgba(0,0,0,.14);position:relative}
-    .swatch span{position:absolute;left:0;right:0;bottom:-1.35rem;text-align:center;font-family:var(--body);
-      font-weight:700;font-size:.62rem;color:var(--muted);white-space:nowrap}
     .kleur__lijst{margin:2.6rem 0 0;padding:0;list-style:none;display:grid;gap:.7rem}
     .kleur__lijst li{display:flex;gap:.7rem;align-items:flex-start;color:var(--muted)}
     .kleur__lijst svg{width:20px;height:20px;flex:none;stroke:var(--pan);fill:none;stroke-width:2.2;
@@ -446,14 +455,15 @@
         .hero__panel > *{animation:opkomen .7s cubic-bezier(.22,.61,.36,1) both;animation-delay:.45s}
         @keyframes opkomen{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
-        /* --- Hero: de kleurenkaart vouwt open --- */
-        .fan__blad{animation:vouw .9s cubic-bezier(.34,1.24,.44,1) both}
+        /* --- Kleuradvies: de kleurenkaart vouwt open ---
+           Hangt aan de SCROLL en niet aan het laden, want de kaart staat nu halverwege de
+           pagina. Een openvouw-animatie die afloopt voordat je er bent, heb je nooit gezien.
+           `from` zonder `to`: het eindpunt is de inline rotatie van het blad zelf, dus de
+           open stand blijft in de HTML staan en niet in de keyframes. */
+        .fan{view-timeline-name:--kaart;view-timeline-axis:block}
+        .fan__blad{animation:vouw linear both;animation-timeline:--kaart;
+          animation-range:entry 15% entry 85%}
         @keyframes vouw{from{transform:rotate(0deg)}}
-        .fan__blad:nth-child(1){animation-delay:.30s}
-        .fan__blad:nth-child(2){animation-delay:.38s}
-        .fan__blad:nth-child(3){animation-delay:.46s}
-        .fan__blad:nth-child(4){animation-delay:.54s}
-        .fan__blad:nth-child(5){animation-delay:.62s}
 
         /* --- DE VERFSCÈNE ---
            De tijdlijn is de hoge sectie zelf. Bereik `contain` loopt exact zolang de
@@ -519,17 +529,6 @@
           58%{--kamerkleur:#C0563E}
           100%{--kamerkleur:#2F6B58}
         }
-        /* De swatch die aan de beurt is, komt even naar voren. */
-        .swatch{animation:swatch-op linear both;animation-timeline:view();animation-range:entry 10% exit 40%}
-        @keyframes swatch-op{from{transform:none}to{transform:none}}
-        .swatch--oker{animation-name:swatch-puls;animation-range:entry 18% entry 40%}
-        .swatch--terra{animation-name:swatch-puls;animation-range:entry 34% cover 12%}
-        .swatch--groen{animation-name:swatch-puls;animation-range:cover 10% exit 36%}
-        @keyframes swatch-puls{
-          0%{transform:none;box-shadow:0 6px 14px rgba(0,0,0,.14)}
-          40%{transform:translateY(-8px) scale(1.06);box-shadow:0 14px 26px rgba(0,0,0,.24)}
-          100%{transform:none;box-shadow:0 6px 14px rgba(0,0,0,.14)}
-        }
       }
     }
 
@@ -559,17 +558,13 @@
       <div class="hero__trust"><b>4,9</b><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span><span>134 Google-reviews</span></div>
     </div>
 
-    <!-- Kleurenkaart in plaats van een foto: dit IS het vak.
-         De rotaties staan inline zodat de OPEN stand de basisstand is. -->
-    <div class="hero__kaart" aria-hidden="true">
-      <div class="fan">
-        <div class="fan__blad" style="background:var(--verf-blauw);transform:rotate(-38deg)"><span>Staalblauw</span></div>
-        <div class="fan__blad" style="background:var(--verf-groen);transform:rotate(-19deg)"><span>Diepgroen</span></div>
-        <div class="fan__blad" style="background:#E8E2D6;transform:rotate(0deg)"><span>Kalkwit</span></div>
-        <div class="fan__blad" style="background:var(--verf-oker);transform:rotate(19deg)"><span>Oker</span></div>
-        <div class="fan__blad" style="background:var(--verf-terra);transform:rotate(38deg)"><span>Terracotta</span></div>
-        <div class="fan__nop"></div>
-      </div>
+    <div class="hero__media">
+      <img class="hero__foto" src="../assets/voorbeelden/schilder-hero.webp"
+           alt="Schilder werkt vanaf een rolsteiger aan de kozijnen van een Nederlandse gevel"
+           width="1080" height="1350" fetchpriority="high" decoding="async" />
+      <div class="hero__scrim"></div>
+      <div class="hero__topscrim"></div>
+      <div class="hero__grain"></div>
     </div>
 
     <div class="site-head">
@@ -680,20 +675,28 @@
         <p>Scroll en kijk wat er gebeurt. Straks staan hier de echte voor- en na-foto's van úw projecten: bij schilderwerk verkoopt dat verschil zichzelf.</p>
       </div>
       <div class="werk-grid">
+        <!-- Twee foto's per paneel, exact hetzelfde kader. De "na" ligt bovenop en wordt
+             tijdens het scrollen van boven naar beneden vrijgegeven, dus je ziet het werk
+             gebeuren. Beide krijgen een eigen alt-tekst: voor een schermlezer is juist het
+             VERSCHIL de informatie. -->
         <div class="werk-frame reveal">
-          <div class="werk-scene" aria-hidden="true">
-            <div class="obj"><span class="obj__kozijn"></span></div>
-            <div class="obj obj--af scene-af"><span class="obj__kozijn"></span></div>
-          </div>
+          <img class="werk-foto" src="../assets/voorbeelden/schilder-werk-1-voor.webp"
+               alt="Kozijn voor het schilderwerk: de verf laat los en de onderhoek is aangetast door houtrot"
+               width="760" height="950" loading="lazy" decoding="async" />
+          <img class="werk-foto scene-af" src="../assets/voorbeelden/schilder-werk-1-na.webp"
+               alt="Hetzelfde kozijn na herstel, geschuurd en afgewerkt in staalblauw"
+               width="760" height="950" loading="lazy" decoding="async" />
           <div class="werk-frame__grain"></div>
           <span class="werk-frame__voor">Voor</span>
           <span class="werk-frame__tag">Kozijnen vernieuwd &middot; Haren</span>
         </div>
         <div class="werk-frame werk-frame--deur reveal">
-          <div class="werk-scene" aria-hidden="true">
-            <div class="obj"><span class="obj__deur"><i class="obj__kruk"></i></span></div>
-            <div class="obj obj--af scene-af"><span class="obj__deur"><i class="obj__kruk"></i></span></div>
-          </div>
+          <img class="werk-foto" src="../assets/voorbeelden/schilder-werk-2-voor.webp"
+               alt="Voordeur voor het schilderwerk: verweerde verf met scheuren en losliggende verf op de onderregel"
+               width="760" height="950" loading="lazy" decoding="async" />
+          <img class="werk-foto scene-af" src="../assets/voorbeelden/schilder-werk-2-na.webp"
+               alt="Dezelfde voordeur na het schilderwerk, in terracotta hoogglans"
+               width="760" height="950" loading="lazy" decoding="async" />
           <div class="werk-frame__grain"></div>
           <span class="werk-frame__voor">Voor</span>
           <span class="werk-frame__tag">Voordeur in de lak &middot; Groningen</span>
@@ -715,12 +718,18 @@
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Proefvlak op uw eigen wand voordat we beginnen</span></li>
           <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span>Wij schrijven de kleurcodes voor u op, ook voor later bijwerken</span></li>
         </ul>
-        <div class="swatches" aria-hidden="true">
-          <span class="swatch swatch--kalk" style="background:#E8E2D6"><span>Kalkwit</span></span>
-          <span class="swatch swatch--oker" style="background:var(--verf-oker)"><span>Oker</span></span>
-          <span class="swatch swatch--terra" style="background:var(--verf-terra)"><span>Terracotta</span></span>
-          <span class="swatch swatch--groen" style="background:var(--verf-groen)"><span>Diepgroen</span></span>
-          <span class="swatch swatch--blauw" style="background:var(--verf-blauw)"><span>Staalblauw</span></span>
+        <!-- De kleurenkaart stond eerst in de hero, maar daar staat nu de foto en hier
+             gaat het er ook echt over. De vijf bladen zijn dezelfde vijf kleuren die
+             eerst als losse staaltjes stonden, dus dit vervangt ze in plaats van dat het
+             erbij komt. De rotaties staan inline zodat de OPEN stand de basisstand is:
+             zonder animatie ligt de kaart dus gewoon open in plaats van dicht. -->
+        <div class="fan" aria-hidden="true">
+          <div class="fan__blad" style="background:var(--verf-blauw);transform:rotate(-38deg)"><span>Staalblauw</span></div>
+          <div class="fan__blad" style="background:var(--verf-groen);transform:rotate(-19deg)"><span>Diepgroen</span></div>
+          <div class="fan__blad" style="background:#E8E2D6;transform:rotate(0deg)"><span>Kalkwit</span></div>
+          <div class="fan__blad" style="background:var(--verf-oker);transform:rotate(19deg)"><span>Oker</span></div>
+          <div class="fan__blad" style="background:var(--verf-terra);transform:rotate(38deg)"><span>Terracotta</span></div>
+          <div class="fan__nop"></div>
         </div>
       </div>
       <div class="reveal">

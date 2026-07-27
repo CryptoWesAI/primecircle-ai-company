@@ -11,6 +11,7 @@ set -euo pipefail
 HOST="${1:-root@31.97.123.34}"
 KEY="${2:-$HOME/.ssh/primecircle_codex_vps}"
 DIR="/opt/belvanger"
+URL="https://belvanger.nl"   # wordt na de deploy echt opgevraagd, zie onderaan
 SRC="$(cd "$(dirname "$0")" && pwd)"
 
 # De chat-assistent heeft de OpenRouter-sleutel nodig (runtime-env, niet in de image).
@@ -43,6 +44,25 @@ tar czf - -C "$SRC" --exclude=deploy-to-vps.sh --exclude=rollback-to-vps.sh --ex
        mkdir -p '$DIR' && tar xzf - -C '$DIR' && cd '$DIR' && \
        docker compose up -d --build && echo '--- status ---' && docker compose ps"
 
+# Echt controleren of de site weer antwoordt, met herhaalpogingen. Traefik geeft namelijk
+# 404 zolang de container herstart en er dus geen backend is: wie meteen na de deploy curlt
+# ziet een 404 die geen 404 is. Zonder deze lus stond hier alleen "Klaar", ook als de site
+# plat lag. rollback-to-vps.sh deed dit al wel; dat was een gat aan de deploykant.
 echo
-echo "Klaar. Live op https://belvanger.nl"
-echo "LET OP: de site staat op noindex tot de echte gegevens erin staan (zie STATUS.md)."
+echo "Controle op $URL"
+for poging in 1 2 3 4 5 6; do
+  CODE="$(curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$URL" || echo 000)"
+  echo "  poging $poging: HTTP $CODE"
+  if [ "$CODE" = "200" ]; then
+    echo
+    echo "Klaar en geverifieerd. Live op $URL"
+    echo "LET OP: de site staat op noindex tot de echte gegevens erin staan (zie STATUS.md)."
+    exit 0
+  fi
+  sleep 5
+done
+
+echo "WAARSCHUWING: $URL antwoordt niet met 200 na de deploy." >&2
+echo "Kijk op de VPS: docker compose -f $DIR/docker-compose.yml logs --tail 40 belvanger" >&2
+echo "Terugdraaien kan met: bash rollback-to-vps.sh" >&2
+exit 1
