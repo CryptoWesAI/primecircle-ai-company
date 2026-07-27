@@ -22,6 +22,11 @@ source of truth for identity, mission, and current state:
 - `LEARNINGS.md` — running journal of lessons, insights and mistakes-not-to-repeat (**what
   we learned**). Grows over time; updated at milestones alongside `CURRENT_STATE.md`
 - `compliance/` — product-wide compliance (EU AI Act Art. 50 disclosure)
+- `marketing-agent/` — **het systeem om verkeer te krijgen**. `SYSTEEM.md` is de
+  architectuur met een fasering op triggers (niet op datums) en het rekensommetje dat bepaalt
+  wat een aanvraag mag kosten. `ANGLES.md` is de hoekendatabase met resultaten per hoek.
+  `video-notes.md` bewaart het bronmateriaal (Cody Schneider bij Greg Isenberg). De uitvoering
+  zit in de skill `ad-batch`, het meten in `tools/ad-rendement.mjs`.
 - `EIGENAARSCHAP_EN_OVERDRACHT.md` — **wie is waarvan eigenaar, en wat gebeurt er bij
   opzegging**. Bron voor de exit-alinea in de voorwaarden, de overdrachtchecklist en het
   antwoord in het verkoopgesprek. Bevat twee openstaande must-haves vóór klant #1
