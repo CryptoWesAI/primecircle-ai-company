@@ -7,6 +7,43 @@ until there's a concrete, repeatable task to automate.
 
 ## Installed skills
 
+- **safe-demo-mirror** — authored by us (2026-07-24), distilled from building
+  the public Belvanger dashboard demo (`belvanger.nl/dashboard-demo`). Builds a
+  shareable, no-login demo of an authenticated internal tool (a dashboard, a
+  portal) by mirroring its REAL frontend at build time (one script, re-run on
+  every deploy, so it can never hand-drift from the real UI) and backing it
+  with a stateless, fictional-data mock API, never a copy of real data, never a
+  second hand-maintained frontend. Encodes: check for an existing preview/mock
+  server before building a new one, patch the frontend's one central API
+  helper instead of N call sites, audit every API call the frontend makes in
+  one pass before writing mocks (missing one means a real visitor hits a raw
+  404 mid-demo), make "who am I" always answer yes to skip the login screen
+  for free, keep the fictional data honest about what the real product can
+  actually do (a well-formed-but-impossible mock event is a trust bug, not a
+  cosmetic one), exclude the mirror from unrelated site-wide automation, and
+  verify through the real routing layer with both curl and an actual
+  screenshot. Proven working end to end 2026-07-24: built, deployed, then hit
+  and fixed three separate "missing mock" bugs live (partners, visibility,
+  support/logout) plus one narrative-consistency bug (a fictional inbound sms
+  reply the real system cannot receive), each one folded back into the method
+  above.
+- **persona-pressure-test** — authored by us (2026-07-23), distilled from
+  stress-testing the revamped Belvanger homepage hero. Pressure-tests persuasive
+  copy (hero, pitch, pricing page) by spawning 2-4 sub-agents as distinct,
+  genuinely skeptical buyer personas (each with a real objection angle: trust/
+  price-burned, effort/complexity-averse, already-has-something), who see only
+  the exact copy, then running a real multi-round persuasion conversation (you as
+  founder, them as the lead) via `SendMessage` until each reaches a decisive
+  verdict: converts, or names a specific remaining blocker. Encodes: extract the
+  literal artifact (never a paraphrase), spawn personas in parallel and isolated
+  for the opening reaction (same invariant as `adhd`'s diverge phase), respond
+  with real specific/honest answers grounded in the actual knowledge base, repeat
+  "don't cave" every round since sub-agents default to agreeable, and the key
+  discipline: separate artifact problems (fix the copy) from downstream business/
+  product gaps the test surfaces (write up as a recommendation, don't patch the
+  copy to paper over a real product gap). Proven working on the Belvanger hero
+  test 2026-07-23 (2 of 3 personas converted, 1 surfaced a real pricing-tier gap
+  rather than a copy problem).
 - **opportunity-check** — authored by us (2026-07-16), distilled from the
   funeral→trades niche analysis. A repeatable decision procedure to pressure-test any
   new niche/offer/wedge BEFORE building: Founder Filter → market research (TAM, pain
@@ -46,6 +83,18 @@ until there's a concrete, repeatable task to automate.
   unlike the other skills this came from research, **not yet battle-tested on a live client
   React build** — provisional until a real integration; also a reminder that the current
   Belvanger site is vanilla HTML, so it's not drop-in there.
+- **adhd** — third-party skill (MIT, vendored 2026-07-22 from
+  `github.com/UditAkhourii/adhd`, not authored by us; installed at the founder's
+  request). **Divergent ideation** for open-ended decisions: spawns 5 *parallel,
+  isolated* sub-agents, each under a different cognitive frame (regulator,
+  biology, speedrunner, $0-budget, inversion, and more), generates ideas with the
+  critic OFF, then scores (novelty/viability/fit), clusters by underlying angle,
+  flags traps, and deepens the top 3. Has a pre-flight gate: use it for
+  architecture, naming, API surface, positioning, and fuzzy bugs; skip it for
+  canonical answers or "quick/standard/textbook" phrasing. Costs ~10 Agent calls
+  per run, so it is a decision-point tool, not an every-task one. Instruction-only
+  (SKILL.md); the optional `adhd-agent` npm CLI is separate and NOT installed.
+  Invoke with `/adhd <problem>` or by asking for "ADHD mode".
 - **scroll-world** — third-party skill (MIT, vendored 2026-07-14 from
   `github.com/cth9191/scroll-world`, not authored by us). Builds scroll-scrubbed
   "fly through the world" landing pages using the Higgsfield CLI + ffmpeg. Kept

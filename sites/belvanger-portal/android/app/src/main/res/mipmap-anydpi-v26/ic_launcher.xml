@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Adaptive icon voor Android 8+ (API 26). De launcher bepaalt zelf de vorm (rond,
+     squircle, druppel) en knipt daarvoor tot 18dp van elke rand weg; daarom is de
+     foreground door scripts/make-icons.mjs op 55% geschaald in plaats van full bleed.
+     De legacy PNG's in mipmap-<dichtheid>/ blijven staan voor Android 6 en 7. -->
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background" />
+    <foreground android:drawable="@mipmap/ic_launcher_foreground" />
+</adaptive-icon>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Leeg op één pad na: androidbrowserhelper gebruikt de FileProvider alleen om de
+     splash-afbeelding aan Chrome door te geven. Er worden geen klantbestanden gedeeld. -->
+<paths>
+    <files-path name="twa_splash" path="twa_splash/" />
+</paths>

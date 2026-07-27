@@ -17,6 +17,31 @@
   }
   var reqLang = (script && script.getAttribute("data-lang")) || window.AB_CHAT_LANG || null;
 
+  // Demo-personalisatie: optionele URL-parameters waarmee de founder tijdens een live
+  // verkoopgesprek de widget kan "voorladen" met het bedrijf/vak van de prospect, zonder
+  // een nieuwe klantmap of serverproces. Alleen aanwezige velden worden meegestuurd; geen
+  // enkele velden aanwezig → geen prospect-veld in de request (huidig gedrag ongewijzigd).
+  var demoProspect = (function () {
+    var params;
+    try {
+      params = new URLSearchParams(location.search);
+    } catch (e) {
+      return null;
+    }
+    var fields = { bedrijfsnaam: "demo_bedrijf", vak: "demo_vak", werkgebied: "demo_werkgebied" };
+    var out = {};
+    var has = false;
+    for (var key in fields) {
+      var raw = params.get(fields[key]);
+      if (raw == null) continue;
+      var trimmed = String(raw).trim().slice(0, 60);
+      if (!trimmed) continue;
+      out[key] = trimmed;
+      has = true;
+    }
+    return has ? out : null;
+  })();
+
   // Injecteer de bijbehorende CSS vanaf hetzelfde pad als dit script.
   if (script && script.src && !document.getElementById("ab-chat-css")) {
     var link = document.createElement("link");
@@ -102,7 +127,7 @@
     };
   }
 
-  function applyColors(colors) {
+  function applyColors(colors, fontDisplay) {
     var c = colors || {};
     var style = document.createElement("style");
     style.id = "ab-chat-vars";
@@ -112,7 +137,8 @@
       "--sw-primary-soft:" + (c.primarySoft || "#2f4a40") + ";" +
       "--sw-surface:" + (c.surface || "#f4f1ea") + ";" +
       "--sw-ink:" + (c.ink || "#26302c") + ";" +
-      "--sw-line:" + (c.line || "#d9d3c7") + "}";
+      "--sw-line:" + (c.line || "#d9d3c7") +
+      (fontDisplay ? ";--sw-font-display:" + fontDisplay : "") + "}";
     document.head.appendChild(style);
   }
 
@@ -126,7 +152,7 @@
     var cEmail = config.contactEmail || "";
     var API_URL = API_BASE + "/api/chat";
 
-    applyColors(config.colors);
+    applyColors(config.colors, config.fontDisplay);
 
     var history = [];
 
@@ -245,10 +271,12 @@
       setBusy(true);
       var thinking = addMessage("…", "ab-bot");
       try {
+        var payload = { messages: history, lang: lang };
+        if (demoProspect) payload.prospect = demoProspect;
         var resp = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: history, lang: lang }),
+          body: JSON.stringify(payload),
         });
         var data = await resp.json();
         var reply = (data && data.reply) || t.error;

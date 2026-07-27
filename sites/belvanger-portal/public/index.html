@@ -6,39 +6,79 @@
   <meta name="theme-color" content="#0e1a24">
   <title>Belvanger dashboard</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/style.css?v=20260719-1">
-  <script src="/app.js?v=20260719-1" defer></script>
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="stylesheet" href="/style.css?v=20260727-2">
+  <script src="/app.js?v=20260725-1" defer></script>
+  <script src="/push.js?v=20260727-6" defer></script>
 </head>
 <body>
   <section class="login" id="loginView" aria-labelledby="loginTitle">
     <div class="login__brand" aria-label="Belvanger">
-      <span class="mark" aria-hidden="true"><i></i></span>
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path class="brand-mark__arc" d="M6 22a13 13 0 0 1 20-11" fill="none" stroke-width="3.4" stroke-linecap="round"/><circle class="brand-mark__dot" cx="26.5" cy="9.5" r="4"/></svg>
       <span>Belvanger</span>
     </div>
     <form class="login__card" id="loginForm">
       <p class="eyebrow">Klantdashboard</p>
       <h1 id="loginTitle">Alles wat aandacht nodig heeft, op één plek.</h1>
       <p class="muted">Log in om gemiste oproepen, berichten en aanvragen te bekijken.</p>
-      <label>Bedrijfscode<input name="tenant" value="belvanger" autocomplete="organization" required></label>
+      <input type="hidden" name="tenant" value="belvanger">
       <label>E-mailadres<input name="email" type="email" autocomplete="username" required></label>
       <label>Wachtwoord<input name="password" type="password" autocomplete="current-password" required></label>
+      <button class="text-button login__forgot" type="button" id="showForgotPassword">Wachtwoord vergeten?</button>
       <p class="form-error" id="loginError" role="alert"></p>
       <button class="button button--primary" type="submit">Inloggen</button>
+      <p class="muted login__help">Lukt inloggen niet? Mail <a href="mailto:info@belvanger.nl">info@belvanger.nl</a>.</p>
+    </form>
+    <form class="login__card is-hidden" id="forgotForm">
+      <p class="eyebrow">Wachtwoord vergeten</p>
+      <h1>Wachtwoord opnieuw instellen</h1>
+      <p class="muted">Vul je e-mailadres in. Klopt dit, dan sturen we een e-mail met een link om een nieuw wachtwoord in te stellen.</p>
+      <input type="hidden" name="tenant" value="belvanger">
+      <label>E-mailadres<input name="email" type="email" autocomplete="username" required></label>
+      <p class="form-error" id="forgotFormError" role="alert"></p>
+      <p class="form-success is-hidden" id="forgotFormSuccess" role="status">Als dit e-mailadres bij ons bekend is, hebben we een link gestuurd. Check ook je spamfolder.</p>
+      <button class="button button--primary" type="submit">Verstuur link</button>
+      <button class="text-button login__forgot" type="button" id="backToLogin">Terug naar inloggen</button>
+      <p class="muted login__help">Lukt dit niet? Mail <a href="mailto:info@belvanger.nl">info@belvanger.nl</a>.</p>
+    </form>
+    <form class="login__card is-hidden" id="otpForm">
+      <p class="eyebrow">Beveiligingscode</p>
+      <h1>Check je e-mail.</h1>
+      <p class="muted">We hebben een 6-cijferige inlogcode gestuurd naar je e-mailadres. Geldig voor 10 minuten.</p>
+      <label>Inlogcode<input name="code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" required></label>
+      <label class="checkbox-label"><input type="checkbox" name="remember" checked> Onthoud dit apparaat 30 dagen</label>
+      <p class="form-error" id="otpFormError" role="alert"></p>
+      <button class="button button--primary" type="submit">Bevestigen</button>
+      <button class="text-button login__forgot" type="button" id="backToLoginFromOtp">Terug naar inloggen</button>
+      <p class="muted login__help">Geen code ontvangen? Mail <a href="mailto:info@belvanger.nl">info@belvanger.nl</a>.</p>
     </form>
   </section>
+
+  <!-- Belbalk: verschijnt alleen na een tik op "Bel terug" in een pushmelding, als
+       Android het automatisch openen van de telefoonapp heeft geweigerd. Staat buiten
+       #appShell zodat hij ook werkt als het dashboard nog aan het laden is. -->
+  <div class="callbar is-hidden" id="callBar" role="region" aria-label="Terugbellen">
+    <a class="button button--primary callbar__link" id="callBarLink" href="tel:">Bel terug</a>
+    <button class="text-button callbar__dismiss" type="button" id="callBarDismiss">Sluiten</button>
+  </div>
 
   <div class="shell is-hidden" id="appShell">
     <aside class="sidebar">
       <a class="sidebar__brand" href="#overview" aria-label="Belvanger dashboard">
-        <span class="mark" aria-hidden="true"><i></i></span><span>Belvanger</span>
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><path class="brand-mark__arc" d="M6 22a13 13 0 0 1 20-11" fill="none" stroke-width="3.4" stroke-linecap="round"/><circle class="brand-mark__dot" cx="26.5" cy="9.5" r="4"/></svg><span>Belvanger</span>
       </a>
       <nav class="nav" aria-label="Dashboard">
         <button class="nav__item is-active" data-view="overview"><span aria-hidden="true">⌂</span>Overzicht</button>
         <button class="nav__item" data-view="contacts"><span aria-hidden="true">◎</span>Contacten</button>
         <button class="nav__item" data-view="connections"><span aria-hidden="true">↗</span>Kanalen</button>
+        <button class="nav__item" data-view="visibility"><span aria-hidden="true">◈</span>Zichtbaarheid</button>
+        <button class="nav__item" data-view="support"><span aria-hidden="true">?</span>Hulp</button>
+        <p class="nav__group-label is-hidden" id="adminGroupLabel">Belvanger beheer</p>
         <button class="nav__item is-hidden" id="adminNav" data-view="admin"><span aria-hidden="true">▦</span>Klanten</button>
         <button class="nav__item is-hidden" id="healthNav" data-view="health"><span aria-hidden="true">✓</span>Systeemcheck</button>
         <button class="nav__item is-hidden" id="activityNav" data-view="activity"><span aria-hidden="true">◷</span>Activiteitenlog</button>
+        <button class="nav__item is-hidden" id="knowledgeNav" data-view="knowledge"><span aria-hidden="true">▤</span>Kennisbank</button>
       </nav>
       <div class="sidebar__foot">
         <div class="account"><span class="account__avatar" id="accountAvatar">B</span><span><b id="accountName">Belvanger</b><small id="accountEmail"></small></span></div>
@@ -55,6 +95,51 @@
 
       <main>
         <section class="view" id="view-overview">
+          <!-- Meldingen: staat bovenaan en bewust vóór de cijfers, want dit is de
+               enige actie die een gemiste oproep binnen seconden op de telefoon van
+               de vakman krijgt. is-hidden totdat push.js weet of het kan. -->
+          <article class="push-card is-hidden" id="pushCard">
+            <div class="push-card__text">
+              <p class="eyebrow" id="pushCardEyebrow">Meldingen</p>
+              <strong id="pushCardTitle">Krijg een melding zodra je een klant mist</strong>
+              <span class="muted" id="pushCardBody">Dan hoef je dit dashboard niet in de gaten te houden. Je telefoon trilt binnen een paar seconden.</span>
+            </div>
+            <div class="push-card__actions">
+              <button class="button button--primary" type="button" id="pushEnableButton">Zet meldingen aan</button>
+              <button class="button button--secondary is-hidden" type="button" id="pushTestButton">Stuur testmelding</button>
+              <button class="text-button is-hidden" type="button" id="pushDisableButton">Zet uit</button>
+              <button class="button button--secondary is-hidden" type="button" id="swRepairButton">Meldingen opnieuw instellen</button>
+            </div>
+            <p class="push-card__status" id="pushStatus" role="status" aria-live="polite"></p>
+            <!-- Toont welke versie van de app-laag op dit toestel draait. Een service
+                 worker die vast blijft zitten op een oude versie is de meest verraderlijke
+                 storing in een PWA: de server meldt dat de push is aangenomen, en de
+                 telefoon gedraagt zich als weken terug. -->
+            <p class="push-card__status push-card__status--sw is-hidden" id="swStatus" role="status" aria-live="polite"></p>
+          </article>
+
+          <!-- Op het beginscherm zetten. Staat ONDER de meldingenkaart: meldingen zijn
+               de opbrengst, een icoon is gemak. Blijft is-hidden tot Chrome laat weten
+               dat installeren daadwerkelijk kan, zodat er nooit een dode knop staat. -->
+          <article class="push-card is-hidden" id="installCard">
+            <div class="push-card__text">
+              <p class="eyebrow">Sneller bij je leads</p>
+              <strong id="installCardTitle">Zet Belvanger op je beginscherm</strong>
+              <span class="muted" id="installCardBody">Dan open je je dashboard met één tik, net als een gewone app. Je hoeft niets te downloaden en het kost geen ruimte.</span>
+            </div>
+            <div class="push-card__actions">
+              <button class="button button--primary" type="button" id="installButton">Zet op beginscherm</button>
+            </div>
+            <p class="push-card__status" id="installStatus" role="status" aria-live="polite"></p>
+          </article>
+
+          <article class="savings-card" id="savingsCard">
+            <span class="savings-card__glow" aria-hidden="true"></span>
+            <p class="eyebrow eyebrow--light">Deze periode bespaard</p>
+            <strong class="savings-card__amount" id="savingsAmount" aria-live="polite">€ 0</strong>
+            <p class="savings-card__sub" id="savingsSub"></p>
+          </article>
+
           <article class="attention-card">
             <div><p class="eyebrow eyebrow--light">Nu aandacht nodig</p><strong id="attentionCount">0</strong><span>contacten wachten op opvolging</span></div>
             <button class="button button--light" data-go="contacts">Bekijk de lijst</button>
@@ -77,10 +162,25 @@
               <div class="timeline" id="activityList"></div>
             </section>
           </div>
+
+          <section class="panel proof-log" id="proofLogCard">
+            <div class="panel__head"><div><p class="eyebrow">Controleerbaar bewijs</p><h2>Bewijslog</h2></div></div>
+            <p class="muted proof-log__intro">Opgevangen betekent: een gemiste oproep die binnen enkele minuten gevolgd wordt door een automatisch verzonden sms naar de beller. Beide momenten zie je met tijdstempel terug in je dashboard. Geen belofte over een geboekte klus, dat bepaal jij zelf; wel een controleerbaar bewijs dat het vangnet heeft gewerkt.</p>
+            <details class="proof-log__details" id="proofLogDetails">
+              <summary class="proof-log__toggle">Bekijk het bewijs</summary>
+              <div class="timeline proof-log__list" id="proofLogList"></div>
+            </details>
+          </section>
         </section>
 
         <section class="view is-hidden" id="view-contacts">
-          <div class="section-heading"><div><p class="eyebrow">Gezamenlijke inbox</p><h2>Alle contacten</h2><p class="muted">Oproepen, berichten en aanvragen overzichtelijk bij elkaar.</p></div></div>
+          <div class="section-heading">
+            <div><p class="eyebrow">Gezamenlijke inbox</p><h2>Alle contacten</h2><p class="muted">Oproepen, berichten en aanvragen overzichtelijk bij elkaar.</p></div>
+            <div class="activity-actions">
+              <a class="button button--secondary" href="/api/contacts/export">Download als CSV</a>
+              <button class="button button--primary" id="openNewContactDialog">+ Contact toevoegen</button>
+            </div>
+          </div>
           <section class="panel">
             <div class="filters">
               <label class="search"><span aria-hidden="true">⌕</span><input id="contactSearch" type="search" placeholder="Zoek naam, nummer of e-mail"></label>
@@ -88,6 +188,17 @@
             </div>
             <div class="table-wrap"><table><thead><tr><th>Contact</th><th>Laatste kanaal</th><th>Status</th><th>Laatste activiteit</th><th></th></tr></thead><tbody id="contactsBody"></tbody></table></div>
             <div class="mobile-contact-list" id="mobileContacts"></div>
+          </section>
+
+          <section class="panel partners-panel">
+            <div class="panel__head"><div><p class="eyebrow">Uw achterban</p><h2>Partners</h2><p class="muted">Kunt u een lead zelf niet oppakken? Zet 'm door naar een partner die u vertrouwt, zodat de klant alsnog geholpen wordt.</p></div></div>
+            <form class="partners-form" id="partnerForm">
+              <input name="name" placeholder="Naam" required maxlength="160">
+              <input name="phone" placeholder="Telefoonnummer" type="tel" maxlength="30">
+              <input name="email" placeholder="E-mailadres" type="email" maxlength="160">
+              <button class="button button--secondary" type="submit">+ Partner toevoegen</button>
+            </form>
+            <div class="partners-list" id="partnersList"></div>
           </section>
         </section>
 
@@ -99,6 +210,29 @@
             <article class="connection" data-source-card="email"><span class="connection__mark">@</span><div><h3>E-mail</h3><p>Nieuwe vragen en reacties uit uw gekoppelde mailbox.</p><span class="connection__status">Nog niet actief</span></div></article>
           </div>
           <aside class="explainer"><p class="eyebrow eyebrow--light">Alles komt samen</p><h3>U hoeft niets handmatig over te nemen</h3><p>Nieuwe oproepen, berichten en aanvragen worden automatisch verzameld. Zo ziet u direct wie aandacht nodig heeft en via welk kanaal iemand contact opnam.</p></aside>
+        </section>
+
+        <section class="view is-hidden" id="view-visibility">
+          <div class="section-heading">
+            <div><p class="eyebrow">Automatisch bijgehouden</p><h2>Zichtbaarheid</h2><p class="muted">Hoe goed wordt de site gevonden en hoe gebruiken bezoekers 'm.</p></div>
+            <button class="button button--secondary" id="refreshVisibility">Ververs Clarity-gegevens</button>
+          </div>
+          <p class="muted" id="visibilityMeta"></p>
+          <div class="visibility-grid" id="visibilityGrid"></div>
+          <aside class="explainer is-hidden" id="visibilityGscCard"><p class="eyebrow eyebrow--light">Zoekmachines</p><h3>Zoekprestaties</h3><p>Vind- en klikcijfers uit Google Zoeken staan in Google Search Console.</p><a class="button button--light" id="gscLink" href="#" target="_blank" rel="noopener">Bekijk in Google Search Console →</a></aside>
+        </section>
+
+        <section class="view is-hidden" id="view-support">
+          <div class="section-heading"><div><p class="eyebrow">Contact</p><h2>Hulp nodig?</h2><p class="muted">Stel je vraag, dan komt hij per e-mail bij ons binnen. We reageren doorgaans binnen één werkdag.</p></div></div>
+          <section class="panel support-panel">
+            <form id="supportForm">
+              <label>Onderwerp<input name="subject" required maxlength="150" placeholder="Waar gaat je vraag over?"></label>
+              <label>Bericht<textarea name="message" required maxlength="4000" rows="7" placeholder="Beschrijf je vraag zo duidelijk mogelijk."></textarea></label>
+              <p class="form-error" id="supportFormError" role="alert"></p>
+              <p class="form-success is-hidden" id="supportFormSuccess" role="status">Bedankt, je bericht is verstuurd. Check ook je e-mail voor een bevestiging.</p>
+              <button class="button button--primary" type="submit">Bericht versturen</button>
+            </form>
+          </section>
         </section>
 
         <section class="view is-hidden" id="view-admin">
@@ -132,6 +266,57 @@
           <p class="muted" id="activityMeta"></p>
           <div id="activityTimeline"></div>
         </section>
+
+        <section class="view is-hidden" id="view-knowledge">
+          <div class="section-heading">
+            <div><p class="eyebrow">Belvanger beheer</p><h2>Kennisbank</h2><p class="muted">Alle documentatie op één plek: waar wat staat en wat bij elkaar hoort, doorzoekbaar.</p></div>
+            <div class="knowledge-mode-toggle" role="tablist" aria-label="Weergave">
+              <button class="knowledge-mode-btn is-active" type="button" data-mode="list" role="tab" aria-selected="true">Lijst</button>
+              <button class="knowledge-mode-btn" type="button" data-mode="graph" role="tab" aria-selected="false">Graaf</button>
+            </div>
+          </div>
+
+          <p class="knowledge-staleness is-hidden" id="knowledgeStaleness"></p>
+
+          <div class="knowledge-layout" id="knowledgeListView">
+            <aside class="knowledge-sidebar">
+              <label class="search"><span aria-hidden="true">⌕</span><input id="knowledgeSearch" type="search" placeholder="Zoek in alle documenten"></label>
+              <div class="knowledge-categories" id="knowledgeCategories"></div>
+              <p class="muted knowledge-count" id="knowledgeCount"></p>
+              <div class="knowledge-list" id="knowledgeList"></div>
+            </aside>
+            <article class="knowledge-doc" id="knowledgeDoc">
+              <p class="muted">Kies een document links om te lezen.</p>
+            </article>
+          </div>
+
+          <div class="knowledge-layout is-hidden" id="knowledgeGraphView">
+            <div class="knowledge-graph-wrap" id="knowledgeGraphWrap">
+              <button class="button button--secondary knowledge-graph-back is-hidden" type="button" id="knowledgeGraphBack">← Categorieën</button>
+              <div class="knowledge-layout-switch" id="knowledgeLayoutSwitch" role="tablist" aria-label="Weergave-layout">
+                <button class="knowledge-layout-chip is-active" type="button" data-layout="globe" role="tab" aria-selected="true">Bol</button>
+                <button class="knowledge-layout-chip" type="button" data-layout="rings" role="tab" aria-selected="false">Ringen</button>
+                <button class="knowledge-layout-chip" type="button" data-layout="circle" role="tab" aria-selected="false">Cirkel</button>
+                <button class="knowledge-layout-chip" type="button" data-layout="bubbles" role="tab" aria-selected="false">Bubbels</button>
+                <button class="knowledge-layout-chip" type="button" data-layout="force" role="tab" aria-selected="false">Force</button>
+              </div>
+              <canvas class="knowledge-canvas" id="knowledgeCanvas"></canvas>
+              <div class="knowledge-zoom">
+                <button type="button" id="knowledgeZoomOut" aria-label="Uitzoomen">−</button>
+                <button type="button" id="knowledgeZoomIn" aria-label="Inzoomen">+</button>
+              </div>
+              <p class="muted knowledge-graph-hint" id="knowledgeGraphHint">Sleep om te draaien, scroll om te zoomen. Klik op een categorie om in te zoomen.</p>
+              <div class="knowledge-edge-evidence is-hidden" id="knowledgeEdgeEvidence">
+                <button class="knowledge-edge-evidence__close" type="button" id="knowledgeEdgeEvidenceClose" aria-label="Sluiten">×</button>
+                <p class="knowledge-edge-evidence__type" id="knowledgeEdgeEvidenceType"></p>
+                <p class="knowledge-edge-evidence__reason" id="knowledgeEdgeEvidenceReason"></p>
+              </div>
+            </div>
+            <article class="knowledge-doc" id="knowledgeGraphDoc">
+              <p class="muted">Klik op een node om te lezen.</p>
+            </article>
+          </div>
+        </section>
       </main>
     </div>
   </div>
@@ -140,7 +325,26 @@
     <div class="detail__head"><div><p class="eyebrow">Contacttijdlijn</p><h2 id="detailName">Contact</h2><p class="muted" id="detailMeta"></p></div><button class="icon-button" id="closeDialog" aria-label="Sluiten">×</button></div>
     <div class="detail__actions"><a class="button button--primary" id="callLink" href="#">Bellen</a><a class="button button--secondary" id="smsLink" href="#">Sms sturen</a><a class="button button--secondary" id="waLink" href="#" target="_blank" rel="noopener">WhatsApp</a></div>
     <label class="detail__status">Status<select id="detailStatus"><option value="new">Nieuw</option><option value="follow_up">Opvolging nodig</option><option value="contacted">Contact gehad</option><option value="closed">Afgesloten</option></select></label>
+    <div class="detail__refer" id="detailRefer">
+      <label>Doorsturen naar partner<select id="detailReferSelect"><option value="">Kies een partner…</option></select></label>
+      <button class="button button--secondary" type="button" id="detailReferButton">Doorsturen</button>
+      <p class="muted" id="detailReferStatus"></p>
+      <div class="forward-compose is-hidden" id="forwardCompose">
+        <p class="forward-compose__to" id="forwardTo"></p>
+        <textarea id="forwardMessage" rows="7" aria-label="Bericht aan partner"></textarea>
+        <p class="forward-compose__note" id="forwardNote"></p>
+        <div class="forward-compose__actions">
+          <button class="button button--whatsapp" type="button" id="forwardWhatsApp">WhatsApp</button>
+          <button class="button button--secondary" type="button" id="forwardSms">SMS</button>
+          <button class="button button--secondary" type="button" id="forwardCopy">Kopieer</button>
+          <button class="text-button" type="button" id="forwardCancel">Annuleren</button>
+        </div>
+      </div>
+    </div>
     <div class="timeline timeline--detail" id="detailTimeline"></div>
+    <div class="detail__danger">
+      <button class="text-button text-button--danger" type="button" id="deleteContact">Contact verwijderen</button>
+    </div>
   </dialog>
 
   <dialog class="password-dialog" id="passwordDialog">
@@ -178,6 +382,20 @@
       <pre id="credentialText"></pre>
       <div class="result-actions"><button class="button button--primary" id="copyCredentials" type="button">Gegevens kopiëren</button><button class="button button--secondary" id="finishTenant" type="button">Sluiten</button></div>
     </section>
+  </dialog>
+
+  <dialog class="tenant-dialog" id="newContactDialog">
+    <form id="newContactForm">
+      <div class="detail__head"><div><p class="eyebrow">Contacten</p><h2>Contact toevoegen</h2><p class="muted">Voor een klant die u zelf al gesproken heeft, bijvoorbeeld een doorverwijzing.</p></div><button class="icon-button" id="closeNewContactDialog" type="button" aria-label="Sluiten">×</button></div>
+      <div class="form-grid">
+        <label>Naam<input name="name" maxlength="160" placeholder="Voor- en achternaam"></label>
+        <label>Bedrijf<input name="company" maxlength="160" placeholder="Optioneel"></label>
+        <label>Telefoonnummer<input name="phone" type="tel" placeholder="+31..."></label>
+        <label>E-mailadres<input name="email" type="email" placeholder="Optioneel"></label>
+      </div>
+      <p class="form-error" id="newContactFormError" role="alert"></p>
+      <button class="button button--primary" type="submit">Contact opslaan</button>
+    </form>
   </dialog>
 
   <dialog class="tenant-dialog" id="activityDialog">

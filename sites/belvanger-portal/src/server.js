@@ -2,19 +2,36 @@ import http from "node:http";
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import tls from "node:tls";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import pg from "pg";
+import { sendPush } from "./webpush.js";
+import { INBOUND_PUSH_KINDS, inboundPushPayload } from "./push-payloads.js";
 
 const { Pool } = pg;
 const scrypt = promisify(crypto.scrypt);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = path.resolve(__dirname, "../public");
+// Gebouwd door build-knowledge-index.mjs, bewust NIET in public/ (dat wordt onbeveiligd
+// statisch geserveerd) — alleen bereikbaar via het geauthenticeerde /api/admin/knowledge.
+const KNOWLEDGE_INDEX_PATH = path.join(__dirname, "knowledge-index.json");
+// Handmatig, inhoudelijk geanalyseerd (niet automatisch af te leiden): welk document hoort
+// écht bij welk ander document, en waarom. Zie knowledge-relationships.json zelf voor hoe
+// dit is bepaald (per-categorie inhoudsanalyse, geen keyword-gok of categorie-toeval).
+const KNOWLEDGE_RELATIONSHIPS_PATH = path.join(__dirname, "knowledge-relationships.json");
+// Nachtelijke staleness-check schrijft hier zijn laatste run naar toe (runtime state,
+// niet gecommit — reset bij elke deploy, en dat is prima: het is een signaal, geen
+// bron van waarheid). Zie runStalenessCheck() verderop.
+const KNOWLEDGE_STALENESS_PATH = path.join(__dirname, "knowledge-staleness-state.json");
 const PORT = Number(process.env.PORT || 8096);
 const DATABASE_URL = process.env.DATABASE_URL || "";
 const INGEST_KEY = process.env.INGEST_KEY || "";
 const COOKIE_SECURE = String(process.env.COOKIE_SECURE || "false") === "true";
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const PASSWORD_RESET_TTL_MS = 60 * 60 * 1000;
+const OTP_TTL_MS = 10 * 60 * 1000;
+const TRUST_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 const MAX_BODY = 256 * 1024;
 const INTEGRATION_SOURCES = ["twilio", "website", "email"];
 
@@ -27,10 +44,54 @@ const N8N_API_URL = (process.env.N8N_API_URL || "").replace(/\/+$/, "");
 const N8N_API_KEY = process.env.N8N_API_KEY || "";
 const HEALTH_TIMEOUT_MS = 8000;
 
+// Hulp: klant stuurt een vraag, komt per e-mail binnen. Dezelfde Hostinger-mailbox
+// en dezelfde zero-dependency SMTP-client als het bestaande leadformulier op
+// belvanger.nl (product/chatbot/server.js), hier hergebruikt i.p.v. opnieuw gebouwd.
+const SMTP_HOST = process.env.SMTP_HOST || "";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 465);
+const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || "";
+const SMTP_FROM = process.env.SMTP_FROM || SMTP_USER;
+const SUPPORT_TO = process.env.SUPPORT_TO || "";
+const SMTP_ENABLED = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASS);
+const SUPPORT_ENABLED = SMTP_ENABLED && Boolean(SUPPORT_TO);
+const supportAttempts = new Map();
+
+// Web Push (PWA op het beginscherm + de Android-app via Trusted Web Activity).
+// Ontbreken deze vars, dan is push simpelweg uit: /api/push/key geeft dan netjes
+// { enabled: false } en de klant ziet geen aan-knop, in plaats van een crash.
+// Sleutels genereren: node scripts/generate-vapid-keys.mjs
+const VAPID_PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY || "";
+const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY || "";
+const VAPID_SUBJECT = process.env.VAPID_SUBJECT || (SMTP_FROM ? `mailto:${SMTP_FROM}` : "");
+const PUSH_ENABLED = Boolean(VAPID_PUBLIC_KEY && VAPID_PRIVATE_KEY && VAPID_SUBJECT);
+// Publieke URL van het dashboard, gebruikt in de deeplink van een pushmelding en in
+// de e-mailmeldingen. Zonder dit valt hij terug op het domein dat al hardcoded in de
+// e-mails stond, zodat gedrag niet verandert als de var ontbreekt.
+const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || "https://dashboard.belvanger.nl").replace(/\/+$/, "");
+// Trusted Web Activity: pakketnaam + signing-fingerprints voor
+// /.well-known/assetlinks.json. Meerdere fingerprints zijn normaal (upload key én
+// de sleutel waarmee Play App Signing daadwerkelijk ondertekent), komma-gescheiden.
+const TWA_PACKAGE_NAME = (process.env.TWA_PACKAGE_NAME || "").trim();
+const TWA_SHA256_FINGERPRINTS = (process.env.TWA_SHA256_FINGERPRINTS || "")
+  .split(",")
+  .map((value) => value.trim().toUpperCase())
+  .filter((value) => /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(value));
+
 if (!DATABASE_URL || !INGEST_KEY) throw new Error("DATABASE_URL en INGEST_KEY zijn verplicht");
 
 const pool = new Pool({ connectionString: DATABASE_URL, max: 10 });
 const loginAttempts = new Map();
+const resetAttempts = new Map();
+const otpVerifyAttempts = new Map();
+
+// "Deze periode bespaard"-widget (Overzicht): dezelfde eerlijke aanname als de
+// rekenmachine op de marketingsite (sites/belvanger/site/js/app.js) — ~60% van
+// gemiste belletjes is een echte klus-kans. avg_job_value komt uit tenants (door
+// platform_admin ingesteld); ontbreekt die, dan valt de widget terug op deze default
+// (zelfde €250 als de homepage-rekenmachine) en toont de widget een indicatie-hint.
+const DEFAULT_AVG_JOB_VALUE = 250;
+const MISSED_CALL_RECOVERY_RATE = 0.6;
 
 const EVENT_LABELS = {
   "call.missed": "Gemiste oproep",
@@ -41,6 +102,8 @@ const EVENT_LABELS = {
   "website.lead": "Websiteaanvraag",
   "chat.lead": "Aanvraag via chat",
   "contact.status": "Status gewijzigd",
+  "contact.manual": "Handmatig toegevoegd",
+  "contact.referred": "Doorgezet naar partner",
 };
 
 function securityHeaders(contentType = "application/json; charset=utf-8") {
@@ -107,6 +170,10 @@ function integrationToken() {
   return `bvi_${crypto.randomBytes(32).toString("base64url")}`;
 }
 
+function resetToken() {
+  return crypto.randomBytes(32).toString("base64url");
+}
+
 async function passwordDigest(password, salt) {
   const result = await scrypt(password, salt, 64);
   return Buffer.from(result).toString("hex");
@@ -132,7 +199,7 @@ async function currentUser(req) {
   if (!token) return null;
   const result = await pool.query(`
     SELECT u.id, u.email, u.display_name, u.must_change_password, u.role,
-           t.id AS tenant_id, t.slug AS tenant_slug, t.name AS tenant_name
+           t.id AS tenant_id, t.slug AS tenant_slug, t.name AS tenant_name, t.avg_job_value
     FROM sessions s
     JOIN users u ON u.id = s.user_id
     JOIN tenants t ON t.id = u.tenant_id
@@ -182,6 +249,32 @@ async function bootstrap() {
   }
 }
 
+async function createSessionCookie(userId) {
+  const token = crypto.randomBytes(32).toString("base64url");
+  await pool.query("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)", [tokenHash(token), userId, new Date(Date.now() + SESSION_TTL_MS)]);
+  return `portal_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${SESSION_TTL_MS / 1000}${COOKIE_SECURE ? "; Secure" : ""}`;
+}
+
+async function createTrustCookie(userId) {
+  const token = crypto.randomBytes(32).toString("base64url");
+  await pool.query("INSERT INTO trusted_devices (token_hash, user_id, expires_at) VALUES ($1, $2, $3)", [tokenHash(token), userId, new Date(Date.now() + TRUST_TTL_MS)]);
+  return `portal_trust=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${TRUST_TTL_MS / 1000}${COOKIE_SECURE ? "; Secure" : ""}`;
+}
+
+function otpEmail(code) {
+  return {
+    subject: `Inlogcode: ${code}`,
+    text: `Je inlogcode voor Belvanger is: ${code}\n\nDeze code is 10 minuten geldig. Heb je niet zelf proberen in te loggen? Negeer deze e-mail dan, of wijzig voor de zekerheid je wachtwoord.`,
+    html: emailShell(
+      `<p style="margin:0 0 14px;font-size:18px;font-weight:700;">Je inlogcode</p>
+       <p style="margin:0 0 20px;">Vul deze code in om in te loggen bij je Belvanger-dashboard. Geldig voor 10 minuten.</p>
+       <p style="margin:0 0 20px;font-size:32px;font-weight:900;letter-spacing:.12em;color:#16232E;">${escHtml(code)}</p>
+       <p style="margin:0;color:#5a6470;font-size:13px;">Heb je niet zelf proberen in te loggen? Negeer deze e-mail, of wijzig voor de zekerheid je wachtwoord.</p>`,
+      "Belvanger, veilig en overzichtelijk.",
+      "Je ontvangt dit omdat er zojuist is ingelogd (of geprobeerd) op jouw Belvanger-account."),
+  };
+}
+
 async function login(req, res) {
   const ip = req.socket.remoteAddress || "unknown";
   const attempt = loginAttempts.get(ip) || { count: 0, reset: Date.now() + 15 * 60_000 };
@@ -204,18 +297,202 @@ async function login(req, res) {
     loginAttempts.set(ip, attempt);
     return json(res, 401, { error: "E-mailadres of wachtwoord klopt niet." });
   }
-
   loginAttempts.delete(ip);
-  const token = crypto.randomBytes(32).toString("base64url");
-  await pool.query("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)", [tokenHash(token), user.id, new Date(Date.now() + SESSION_TTL_MS)]);
-  const cookie = `portal_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${SESSION_TTL_MS / 1000}${COOKIE_SECURE ? "; Secure" : ""}`;
-  json(res, 200, { ok: true, mustChangePassword: user.must_change_password }, { "Set-Cookie": cookie });
+
+  // Vertrouwd apparaat (30 dagen): 2FA overslaan als dit apparaat al eerder een
+  // code voor deze gebruiker heeft ingevoerd.
+  const trustToken = parseCookies(req).portal_trust;
+  if (trustToken) {
+    const trusted = await pool.query(
+      "SELECT 1 FROM trusted_devices WHERE token_hash = $1 AND user_id = $2 AND expires_at > NOW()",
+      [tokenHash(trustToken), user.id]
+    );
+    if (trusted.rowCount) {
+      const cookie = await createSessionCookie(user.id);
+      return json(res, 200, { ok: true, mustChangePassword: user.must_change_password }, { "Set-Cookie": cookie });
+    }
+  }
+
+  // Geen SMTP geconfigureerd: 2FA kan dan niet werken, val terug op direct inloggen
+  // i.p.v. iedereen buiten te sluiten.
+  if (!SMTP_ENABLED) {
+    const cookie = await createSessionCookie(user.id);
+    return json(res, 200, { ok: true, mustChangePassword: user.must_change_password }, { "Set-Cookie": cookie });
+  }
+
+  const code = String(crypto.randomInt(0, 1_000_000)).padStart(6, "0");
+  const challenge = crypto.randomBytes(32).toString("base64url");
+  await pool.query(
+    "INSERT INTO login_challenges (token_hash, user_id, code_hash, expires_at) VALUES ($1, $2, $3, $4)",
+    [tokenHash(challenge), user.id, tokenHash(code), new Date(Date.now() + OTP_TTL_MS)]
+  );
+  const mail = otpEmail(code);
+  smtpSend({ host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER, pass: SMTP_PASS, from: SMTP_FROM, to: email, subject: mail.subject, text: mail.text, html: mail.html })
+    .catch((error) => console.error("otp-mail mislukt naar", email, error?.message || error));
+  json(res, 200, { otpRequired: true, challenge });
+}
+
+async function verifyOtp(req, res) {
+  const ip = req.socket.remoteAddress || "unknown";
+  const attempt = otpVerifyAttempts.get(ip) || { count: 0, reset: Date.now() + 15 * 60_000 };
+  if (Date.now() > attempt.reset) Object.assign(attempt, { count: 0, reset: Date.now() + 15 * 60_000 });
+  if (attempt.count >= 15) return json(res, 429, { error: "Te veel pogingen. Log opnieuw in." });
+
+  const body = await readBody(req);
+  const challenge = String(body.challenge || "");
+  const code = cleanText(body.code, 6) || "";
+  const remember = body.remember === true;
+
+  const client = await pool.connect();
+  let outcome;
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      `SELECT lc.token_hash, lc.user_id, lc.code_hash, lc.attempts, u.must_change_password
+       FROM login_challenges lc JOIN users u ON u.id = lc.user_id
+       WHERE lc.token_hash = $1 AND lc.expires_at > NOW() FOR UPDATE`,
+      [tokenHash(challenge)]
+    );
+    if (!result.rowCount) {
+      outcome = { status: 400, error: "Deze aanvraag is verlopen of ongeldig. Log opnieuw in." };
+    } else {
+      const row = result.rows[0];
+      if (row.attempts >= 5) {
+        await client.query("DELETE FROM login_challenges WHERE token_hash = $1", [row.token_hash]);
+        outcome = { status: 429, error: "Te veel foutieve pogingen. Log opnieuw in." };
+      } else if (!safeEqual(tokenHash(code), row.code_hash)) {
+        await client.query("UPDATE login_challenges SET attempts = attempts + 1 WHERE token_hash = $1", [row.token_hash]);
+        outcome = { status: 401, error: "Code klopt niet." };
+      } else {
+        await client.query("DELETE FROM login_challenges WHERE token_hash = $1", [row.token_hash]);
+        outcome = { status: 200, userId: row.user_id, mustChangePassword: row.must_change_password };
+      }
+    }
+    await client.query("COMMIT");
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+
+  if (outcome.status !== 200) {
+    attempt.count += 1;
+    otpVerifyAttempts.set(ip, attempt);
+    return json(res, outcome.status, { error: outcome.error });
+  }
+  otpVerifyAttempts.delete(ip);
+  const cookies = [await createSessionCookie(outcome.userId)];
+  if (remember) cookies.push(await createTrustCookie(outcome.userId));
+  json(res, 200, { ok: true, mustChangePassword: outcome.mustChangePassword }, { "Set-Cookie": cookies });
 }
 
 async function logout(req, res) {
   const token = parseCookies(req).portal_session;
-  if (token) await pool.query("DELETE FROM sessions WHERE token_hash = $1", [tokenHash(token)]);
+  if (token) {
+    // Push-subscriptions horen bij de SESSIE, niet bij de browser. Laten we ze staan,
+    // dan blijven lead-meldingen aankomen op een toestel dat geen geldige sessie meer
+    // heeft: dat is leaddata naar een niet-geauthenticeerd apparaat. Daarom eerst de
+    // toestellen van deze gebruiker weg, dan de sessie.
+    const session = await pool.query("SELECT user_id FROM sessions WHERE token_hash = $1", [tokenHash(token)]);
+    if (session.rowCount) {
+      await pool.query("DELETE FROM push_devices WHERE user_id = $1", [session.rows[0].user_id]);
+    }
+    await pool.query("DELETE FROM sessions WHERE token_hash = $1", [tokenHash(token)]);
+  }
   json(res, 200, { ok: true }, { "Set-Cookie": "portal_session=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0" });
+}
+
+function passwordResetEmail(naam, resetUrl) {
+  const first = escHtml(String(naam || "").trim().split(/\s+/)[0] || "daar");
+  return {
+    subject: "Wachtwoord opnieuw instellen",
+    text: `Hoi ${first},\n\nJe hebt (of iemand namens jou) een nieuw wachtwoord aangevraagd voor je Belvanger-dashboard.\n\nStel 'm hier binnen 60 minuten opnieuw in:\n${resetUrl}\n\nHeb je dit niet aangevraagd? Dan kun je deze e-mail gewoon negeren, er verandert niets aan je account.\n\nGroeten,\nTeam Belvanger`,
+    html: emailShell(
+      `<p style="margin:0 0 14px;font-size:18px;font-weight:700;">Wachtwoord opnieuw instellen</p>
+       <p style="margin:0 0 14px;">Hoi ${first}, je hebt (of iemand namens jou) een nieuw wachtwoord aangevraagd voor je Belvanger-dashboard.</p>
+       <p style="margin:0 0 20px;">Stel 'm hieronder binnen 60 minuten opnieuw in. Daarna verloopt de link.</p>
+       <p style="margin:0 0 20px;"><a href="${resetUrl}" style="display:inline-block;background:#E6480C;color:#fff;font-weight:700;padding:12px 22px;border-radius:10px;text-decoration:none;">Nieuw wachtwoord instellen</a></p>
+       <p style="margin:0;color:#5a6470;font-size:13px;">Heb je dit niet aangevraagd? Negeer deze e-mail gerust, er verandert dan niets aan je account.</p>`,
+      "Belvanger, veilig en overzichtelijk.",
+      "Je ontvangt dit omdat er een wachtwoordreset is aangevraagd voor jouw Belvanger-account."),
+  };
+}
+
+// Altijd hetzelfde antwoord teruggeven, ongeacht of het account bestaat of de
+// limiet is geraakt: nooit laten blijken welke e-mailadressen wel/niet bestaan.
+async function requestPasswordReset(req, res) {
+  const ip = req.socket.remoteAddress || "unknown";
+  const attempt = resetAttempts.get(ip) || { count: 0, reset: Date.now() + 15 * 60_000 };
+  if (Date.now() > attempt.reset) Object.assign(attempt, { count: 0, reset: Date.now() + 15 * 60_000 });
+  attempt.count += 1;
+  resetAttempts.set(ip, attempt);
+
+  const body = await readBody(req);
+  if (attempt.count <= 8 && SMTP_ENABLED) {
+    const email = normalizeEmail(body.email);
+    const tenant = cleanText(body.tenant || "belvanger", 80);
+    if (email) {
+      const result = await pool.query(`
+        SELECT u.id, u.display_name FROM users u JOIN tenants t ON t.id = u.tenant_id
+        WHERE u.email = $1 AND t.slug = $2 AND u.active = TRUE
+      `, [email, tenant]);
+      const target = result.rows[0];
+      if (target) {
+        const token = resetToken();
+        await pool.query(
+          "INSERT INTO password_reset_tokens (token_hash, user_id, expires_at) VALUES ($1, $2, $3)",
+          [tokenHash(token), target.id, new Date(Date.now() + PASSWORD_RESET_TTL_MS)]
+        );
+        const resetUrl = `https://dashboard.belvanger.nl/reset.html?token=${encodeURIComponent(token)}`;
+        const mail = passwordResetEmail(target.display_name, resetUrl);
+        smtpSend({ host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER, pass: SMTP_PASS, from: SMTP_FROM, to: email, subject: mail.subject, text: mail.text, html: mail.html })
+          .catch((error) => console.error("wachtwoordreset-mail mislukt naar", email, error?.message || error));
+      }
+    }
+  }
+  json(res, 200, { ok: true });
+}
+
+async function verifyResetToken(res, tokenRaw) {
+  if (!tokenRaw) return json(res, 200, { valid: false });
+  const result = await pool.query(
+    "SELECT 1 FROM password_reset_tokens WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW()",
+    [tokenHash(tokenRaw)]
+  );
+  json(res, 200, { valid: Boolean(result.rowCount) });
+}
+
+async function completePasswordReset(req, res) {
+  const body = await readBody(req);
+  const tokenRaw = String(body.token || "");
+  const password = String(body.password || "");
+  if (password.length < 12) return json(res, 400, { error: "Het nieuwe wachtwoord moet minimaal 12 tekens hebben." });
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const result = await client.query(
+      "SELECT user_id FROM password_reset_tokens WHERE token_hash = $1 AND used_at IS NULL AND expires_at > NOW() FOR UPDATE",
+      [tokenHash(tokenRaw)]
+    );
+    if (!result.rowCount) {
+      await client.query("ROLLBACK");
+      return json(res, 400, { error: "Deze link is ongeldig of verlopen. Vraag een nieuwe aan." });
+    }
+    const userId = result.rows[0].user_id;
+    const credentials = await createPassword(password);
+    await client.query("UPDATE users SET password_salt = $1, password_hash = $2, must_change_password = FALSE WHERE id = $3", [credentials.salt, credentials.hash, userId]);
+    await client.query("UPDATE password_reset_tokens SET used_at = NOW() WHERE token_hash = $1", [tokenHash(tokenRaw)]);
+    await client.query("DELETE FROM sessions WHERE user_id = $1", [userId]);
+    await client.query("COMMIT");
+    json(res, 200, { ok: true });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 async function changePassword(req, res, user) {
@@ -354,6 +631,19 @@ async function ingest(req, res) {
       await client.query("UPDATE tenant_integrations SET status = 'connected', last_event_at = GREATEST(COALESCE(last_event_at, $1), $1), updated_at = NOW() WHERE id = $2", [occurredAt, target.integration_id]);
     }
     await client.query("COMMIT");
+    if (inserted.rowCount && eventType === "call.missed") {
+      notifyMissedCall(target.tenant_id, body.contact?.phone, occurredAt).catch(() => {});
+      pushMissedCall(target.tenant_id, body.contact?.phone, occurredAt).catch(() => {});
+    }
+    if (inserted.rowCount && eventType === "website.lead") {
+      notifyWebsiteLead(target.tenant_id, body.contact, cleanText(body.preview, 600), occurredAt).catch(() => {});
+      pushWebsiteLead(target.tenant_id, occurredAt).catch(() => {});
+    }
+    // Een reactie van de beller, een e-mail of een chataanvraag. Dit is de eigenlijke
+    // lead: zonder melding hierop mist de klant het gesprek alsnog.
+    if (inserted.rowCount && INBOUND_PUSH_KINDS[eventType]) {
+      pushInboundLead(target.tenant_id, eventType, contactId, body.contact, cleanText(body.preview, 600)).catch(() => {});
+    }
     json(res, inserted.rowCount ? 201 : 200, { ok: true, duplicate: !inserted.rowCount, eventId: inserted.rows[0]?.id || null, contactId });
   } catch (error) {
     await client.query("ROLLBACK");
@@ -368,6 +658,10 @@ async function listAdminTenants(res, user) {
   const result = await pool.query(`
     SELECT t.id, t.slug, t.name, t.active, t.created_at,
       t.website_domain AS "websiteDomain",
+      t.avg_job_value AS "avgJobValue",
+      ta.clarity_project_id AS "clarityProjectId",
+      (ta.clarity_api_token IS NOT NULL) AS "clarityTokenSet",
+      ta.search_console_url AS "searchConsoleUrl",
       COUNT(DISTINCT u.id)::int AS users,
       COUNT(DISTINCT c.id)::int AS contacts,
       COALESCE(jsonb_agg(DISTINCT jsonb_build_object(
@@ -379,10 +673,93 @@ async function listAdminTenants(res, user) {
     LEFT JOIN users u ON u.tenant_id = t.id
     LEFT JOIN contacts c ON c.tenant_id = t.id
     LEFT JOIN tenant_integrations i ON i.tenant_id = t.id
-    GROUP BY t.id
+    LEFT JOIN tenant_analytics ta ON ta.tenant_id = t.id
+    GROUP BY t.id, ta.clarity_project_id, ta.clarity_api_token, ta.search_console_url
     ORDER BY t.created_at DESC
   `);
   json(res, 200, { tenants: result.rows });
+}
+
+// Kennisbank ("second brain"): statisch, door build-knowledge-index.mjs gebouwd
+// JSON-bestand met alle relevante markdown-documentatie. Geen database nodig —
+// dit verandert alleen wanneer iemand opnieuw deployt, niet at runtime.
+let knowledgeCache = null;
+async function listKnowledge(res, user) {
+  if (!requirePlatformAdmin(res, user)) return;
+  if (!knowledgeCache) {
+    let entries = [], generatedAt = null, relationships = [];
+    try { ({ generatedAt, entries } = JSON.parse(fs.readFileSync(KNOWLEDGE_INDEX_PATH, "utf8"))); } catch {}
+    try { relationships = JSON.parse(fs.readFileSync(KNOWLEDGE_RELATIONSHIPS_PATH, "utf8")); } catch {}
+    knowledgeCache = { generatedAt, entries, relationships };
+  }
+  let staleness = null;
+  try { staleness = JSON.parse(fs.readFileSync(KNOWLEDGE_STALENESS_PATH, "utf8")); } catch {}
+  json(res, 200, { ...knowledgeCache, staleness });
+}
+
+// Nachtelijke staleness-check — Level-5-lite: geen 24/7-losse dienst, gewoon een
+// geplande taak binnen het proces dat toch al altijd draait. Herchecked elke nacht
+// een roterende plak (~5%) van de 112 relaties: staat de kernterm uit de "reason"
+// nog steeds in het bron-document? Zo niet, is de relatie mogelijk verouderd sinds
+// die inhoud is herschreven. Ontdekt geen NIEUWE documenten (dat kan pas na een
+// herbuild+deploy vanaf de volledige monorepo, die alleen lokaal bestaat) — dit
+// controleert alleen wat al is uitgerold, en dat eerlijk en zichtbaar.
+const STOPWORDS = new Set(["deze","dat","dit","voor","naar","door","zoals","waar","wordt","werd","noemt","expliciet","zegt","voort","bouwen","gebruikt","letterlijk","script","bestand","merkt","nooit","bevat","staat","gaat","over","heeft","alinea"]);
+function relationshipKeyword(reason, content) {
+  const contentLower = content.toLowerCase();
+  const words = (reason || "").toLowerCase().match(/[a-zà-ÿ][a-zà-ÿ0-9-]{5,}/g) || [];
+  return words.find((w) => !STOPWORDS.has(w) && contentLower.includes(w)) || null;
+}
+
+function runStalenessCheck() {
+  let entries = [], relationships = [];
+  try { ({ entries } = JSON.parse(fs.readFileSync(KNOWLEDGE_INDEX_PATH, "utf8"))); } catch {}
+  try { relationships = JSON.parse(fs.readFileSync(KNOWLEDGE_RELATIONSHIPS_PATH, "utf8")); } catch {}
+  if (!entries.length || !relationships.length) return;
+  const entryByPath = new Map(entries.map((e) => [e.path, e]));
+
+  let state = { rotationIndex: 0 };
+  try { state = JSON.parse(fs.readFileSync(KNOWLEDGE_STALENESS_PATH, "utf8")); } catch {}
+
+  const sliceSize = Math.max(1, Math.round(relationships.length * 0.05));
+  const start = state.rotationIndex % relationships.length;
+  const slice = [];
+  for (let i = 0; i < sliceSize; i++) slice.push(relationships[(start + i) % relationships.length]);
+
+  const flagged = [];
+  for (const rel of slice) {
+    const fromEntry = entryByPath.get(rel.from);
+    const toEntry = entryByPath.get(rel.to);
+    if (!fromEntry || !toEntry) { flagged.push({ from: rel.from, to: rel.to, reason: "document niet meer gevonden (verplaatst of verwijderd?)" }); continue; }
+    const keyword = relationshipKeyword(rel.reason, fromEntry.content);
+    if (!keyword) flagged.push({ from: rel.from, to: rel.to, reason: "kernterm uit de relatie-omschrijving niet meer teruggevonden in het brondocument" });
+  }
+
+  const next = {
+    lastRunAt: new Date().toISOString(),
+    rotationIndex: (start + sliceSize) % relationships.length,
+    checkedCount: slice.length,
+    totalEdges: relationships.length,
+    flagged,
+  };
+  fs.writeFileSync(KNOWLEDGE_STALENESS_PATH, JSON.stringify(next));
+  console.log(`Kennisbank staleness-check: ${slice.length}/${relationships.length} relaties gecontroleerd, ${flagged.length} gemarkeerd.`);
+}
+
+function scheduleNightlyStalenessCheck() {
+  // Eerste run kort na opstarten, zodat er meteen een signaal is i.p.v. leeg tot 03:00.
+  setTimeout(() => { try { runStalenessCheck(); } catch (err) { console.error("Staleness-check mislukt:", err); } }, 2 * 60 * 1000);
+  const scheduleNext = () => {
+    const now = new Date();
+    const next = new Date(now);
+    next.setHours(3, 0, 0, 0);
+    if (next <= now) next.setDate(next.getDate() + 1);
+    setTimeout(() => {
+      try { runStalenessCheck(); } catch (err) { console.error("Staleness-check mislukt:", err); }
+      scheduleNext();
+    }, next.getTime() - now.getTime());
+  };
+  scheduleNext();
 }
 
 async function createAdminTenant(req, res, user) {
@@ -455,9 +832,21 @@ async function updateAdminTenantConfig(req, res, user, tenantId) {
   if (!requirePlatformAdmin(res, user)) return;
   const body = await readBody(req);
   const domain = cleanText(String(body.websiteDomain || "").replace(/^https?:\/\//i, "").replace(/\/+$/, ""), 200);
+
+  // Leeg veld = terug naar de indicatieve default (DEFAULT_AVG_JOB_VALUE), niet 0.
+  let avgJobValue = null;
+  const rawAvgJobValue = String(body.avgJobValue ?? "").trim();
+  if (rawAvgJobValue !== "") {
+    const parsed = Number(rawAvgJobValue);
+    if (!Number.isFinite(parsed) || parsed <= 0 || parsed > 100000) {
+      return json(res, 400, { error: "Gemiddelde klus-waarde moet een bedrag tussen €1 en €100.000 zijn." });
+    }
+    avgJobValue = Math.round(parsed);
+  }
+
   const result = await pool.query(
-    "UPDATE tenants SET website_domain = $1, updated_at = NOW() WHERE id = $2 RETURNING id",
-    [domain, tenantId]
+    "UPDATE tenants SET website_domain = $1, avg_job_value = $2, updated_at = NOW() WHERE id = $3 RETURNING id",
+    [domain, avgJobValue, tenantId]
   );
   if (!result.rowCount) return json(res, 404, { error: "Klant niet gevonden." });
   json(res, 200, { ok: true });
@@ -670,6 +1059,411 @@ async function exportActivityCsv(res, user) {
   res.end(csv);
 }
 
+// --- Hulp: supportverzoek van een klant, per e-mail naar info@belvanger.nl ---
+// Minimale SMTP-client over impliciete TLS (poort 465), zonder dependencies.
+// Één-op-één geport uit product/chatbot/server.js (bewezen werkend voor het
+// bestaande leadformulier), met een optionele Reply-To voor het supportverzoek.
+function smtpSend({ host, port, user, pass, from, to, replyTo, subject, text, html }) {
+  return new Promise((resolve, reject) => {
+    const socket = tls.connect({ host, port, servername: host });
+    socket.setEncoding("utf8");
+    socket.setTimeout(20000, () => { socket.destroy(); reject(new Error("smtp timeout")); });
+    let buf = "";
+    let waiting = null;
+    function pump() {
+      if (!waiting) return;
+      const m = buf.match(/^(\d{3}) [^\n]*\n/m);
+      if (m) {
+        buf = buf.slice(buf.indexOf(m[0]) + m[0].length);
+        const w = waiting; waiting = null; w(m[1]);
+      }
+    }
+    socket.on("data", (d) => { buf += d; pump(); });
+    socket.on("error", reject);
+    const read = () => new Promise((r) => { waiting = r; pump(); });
+    const send = (line) => socket.write(line + "\r\n");
+    (async () => {
+      try {
+        let c = await read(); if (c[0] !== "2") throw new Error("greeting " + c);
+        send("EHLO belvanger.nl"); c = await read(); if (c[0] !== "2") throw new Error("EHLO " + c);
+        send("AUTH LOGIN"); c = await read(); if (c !== "334") throw new Error("AUTH " + c);
+        send(Buffer.from(user).toString("base64")); c = await read(); if (c !== "334") throw new Error("user " + c);
+        send(Buffer.from(pass).toString("base64")); c = await read(); if (c !== "235") throw new Error("auth " + c);
+        send("MAIL FROM:<" + from + ">"); c = await read(); if (c[0] !== "2") throw new Error("MAIL " + c);
+        send("RCPT TO:<" + to + ">"); c = await read(); if (c[0] !== "2") throw new Error("RCPT " + c);
+        send("DATA"); c = await read(); if (c !== "354") throw new Error("DATA " + c);
+        const dot = (s) => String(s).replace(/\r?\n/g, "\r\n").replace(/\r\n\./g, "\r\n..");
+        const base = [
+          "From: Belvanger <" + from + ">",
+          "To: <" + to + ">",
+          ...(replyTo ? ["Reply-To: <" + replyTo + ">"] : []),
+          "Subject: " + subject,
+          "MIME-Version: 1.0",
+          "Date: " + new Date().toUTCString(),
+        ];
+        let mime;
+        if (html) {
+          const bnd = "bv_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+          const plain = text || String(html).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+          mime = base.concat(['Content-Type: multipart/alternative; boundary="' + bnd + '"']).join("\r\n")
+            + "\r\n\r\n--" + bnd + "\r\n"
+            + 'Content-Type: text/plain; charset="utf-8"\r\nContent-Transfer-Encoding: 8bit\r\n\r\n' + dot(plain) + "\r\n"
+            + "--" + bnd + "\r\n"
+            + 'Content-Type: text/html; charset="utf-8"\r\nContent-Transfer-Encoding: 8bit\r\n\r\n' + dot(html) + "\r\n"
+            + "--" + bnd + "--\r\n";
+        } else {
+          mime = base.concat(['Content-Type: text/plain; charset="utf-8"', "Content-Transfer-Encoding: 8bit"]).join("\r\n")
+            + "\r\n\r\n" + dot(text);
+        }
+        socket.write(mime + "\r\n.\r\n");
+        c = await read(); if (c[0] !== "2") throw new Error("send " + c);
+        send("QUIT"); socket.end(); resolve(true);
+      } catch (e) { try { socket.destroy(); } catch {} reject(e); }
+    })();
+  });
+}
+
+function escHtml(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+
+function cleanMultiline(value, max = 4000) {
+  const normalized = String(value || "").split("\r\n").join("\n");
+  return normalized.replace(/[\u0000-\u0009\u000b\u000c\u000e-\u001f\u007f]+/g, " ").slice(0, max).trim();
+}
+function emailShell(inner, tagline, disclaimer) {
+  const font = "-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+  return `<!doctype html><html><body style="margin:0;background:#FAF9F6;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FAF9F6;"><tr><td align="center" style="padding:28px 16px;">
+  <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="width:520px;max-width:100%;background:#ffffff;border:1px solid #e4e1d8;border-radius:16px;overflow:hidden;">
+    <tr><td style="background:#16232E;padding:22px 28px;font-family:${font};">
+      <span style="color:#FAF9F6;font-size:20px;font-weight:800;letter-spacing:.3px;">Belvanger<span style="color:#E6480C;">.</span></span>
+    </td></tr>
+    <tr><td style="padding:28px;color:#16232E;font-family:${font};font-size:16px;line-height:1.6;">${inner}</td></tr>
+    <tr><td style="padding:18px 28px;border-top:1px solid #e4e1d8;color:#5a6470;font-size:13px;font-family:${font};line-height:1.5;">
+      ${escHtml(tagline)}<br>
+      <a href="https://belvanger.nl" style="color:#E6480C;text-decoration:none;">belvanger.nl</a> &middot; <a href="mailto:info@belvanger.nl" style="color:#E6480C;text-decoration:none;">info@belvanger.nl</a>
+    </td></tr>
+  </table>
+  <p style="color:#9aa2a9;font-size:12px;margin:16px 0 0;font-family:${font};">${escHtml(disclaimer)}</p>
+</td></tr></table>
+</body></html>`;
+}
+
+function supportAutoreply(naam) {
+  const first = escHtml(String(naam || "").trim().split(/\s+/)[0] || "daar");
+  return {
+    subject: "We hebben je bericht ontvangen",
+    text: `Bedankt voor je bericht, ${first}!\n\nWe hebben 'm goed ontvangen en nemen zo snel mogelijk contact met je op.\n\nGroeten,\nTeam Belvanger\n\nbelvanger.nl | info@belvanger.nl`,
+    html: emailShell(
+      `<p style="margin:0 0 14px;font-size:18px;font-weight:700;">Bedankt voor je bericht, ${first}!</p>
+       <p style="margin:0 0 14px;">We hebben 'm goed ontvangen en nemen zo snel mogelijk contact met je op.</p>
+       <p style="margin:22px 0 0;">Groeten,<br><strong>Team Belvanger</strong></p>`,
+      "We reageren doorgaans binnen één werkdag.",
+      "Je ontvangt deze mail omdat je een vraag stelde via je Belvanger-dashboard."),
+  };
+}
+
+async function submitSupportRequest(req, res, user) {
+  if (!SUPPORT_ENABLED) return json(res, 501, { error: "Het hulpformulier is nog niet geconfigureerd." });
+  const attempt = supportAttempts.get(user.id) || { count: 0, reset: Date.now() + 60 * 60_000 };
+  if (Date.now() > attempt.reset) Object.assign(attempt, { count: 0, reset: Date.now() + 60 * 60_000 });
+  if (attempt.count >= 5) return json(res, 429, { error: "Te veel berichten. Probeer het over een uur opnieuw." });
+
+  const body = await readBody(req);
+  const subject = cleanText(body.subject, 150);
+  const message = cleanMultiline(body.message, 4000);
+  if (!subject || !message) return json(res, 400, { error: "Onderwerp en bericht zijn verplicht." });
+
+  attempt.count += 1;
+  supportAttempts.set(user.id, attempt);
+
+  const text = [
+    `Nieuw supportverzoek via het dashboard (${user.tenant_name})`, "",
+    `Klant:     ${user.tenant_name}`,
+    `Naam:      ${user.display_name}`,
+    `E-mail:    ${user.email}`,
+    `Onderwerp: ${subject}`, "",
+    "Bericht:",
+    message, "",
+    `Tijd:      ${new Date().toISOString()}`,
+  ].join("\n");
+  try {
+    await smtpSend({
+      host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER, pass: SMTP_PASS, from: SMTP_FROM,
+      to: SUPPORT_TO, replyTo: user.email, subject: `Supportverzoek van ${user.tenant_name}: ${subject}`, text,
+    });
+  } catch (error) {
+    console.error("support e-mail mislukt:", error?.message || error);
+    return json(res, 502, { error: "Versturen is mislukt. Probeer het later opnieuw of stuur direct een WhatsApp." });
+  }
+  try {
+    const ar = supportAutoreply(user.display_name);
+    await smtpSend({ host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER, pass: SMTP_PASS, from: SMTP_FROM, to: user.email, subject: ar.subject, text: ar.text, html: ar.html });
+  } catch (error) { console.error("support-autoreply mislukt:", error?.message || error); }
+  json(res, 200, { ok: true });
+}
+
+// --- Web Push ---------------------------------------------------------------
+//
+// Waarom naast de e-mailmelding en niet in plaats daarvan: e-mail is traag en wordt
+// door een vakman op een ladder niet gelezen, push trilt binnen seconden. Maar push
+// heeft géén afleverbewijs in het protocol (RFC 8030 belooft alleen dat de
+// push-dienst het bericht heeft aangenomen), en OEM-batterijbeheer op goedkope
+// Android-toestellen sloopt bezorging stil. Daarom blijft e-mail voorlopig staan als
+// vangnet en houden we per toestel bij of het nog werkt.
+//
+// De volgende stap hierin is een echt escalatie-grootboek (push, en zonder ACK binnen
+// 30 seconden automatisch sms). Dat is BEWUST niet meegebouwd: elke terugval kost
+// Twilio-geld per bericht, en dat is een beslissing over klantkosten die de founder
+// zelf neemt. Zie docs/research/belvanger-android-app-adhd-onderzoek-2026-07-25.md.
+
+/**
+ * Alle toestellen van een klant die meldingen aan hebben staan. Alleen actieve
+ * gebruikers: een gedeactiveerde gebruiker hoort geen leads meer te zien, ook niet
+ * op een toestel waarop hij ooit push heeft aangezet.
+ */
+async function pushTargets(tenantId) {
+  const result = await pool.query(`
+    SELECT d.id, d.endpoint, d.p256dh, d.auth
+    FROM push_devices d
+    JOIN users u ON u.id = d.user_id
+    WHERE d.tenant_id = $1 AND u.active = TRUE
+  `, [tenantId]);
+  return result.rows;
+}
+
+/**
+ * Verstuurt één melding naar alle toestellen van een klant en verwerkt de uitkomst
+ * per toestel. Gooit nooit: een mislukte melding mag de ingest-flow niet raken.
+ */
+async function pushToTenant(tenantId, notification) {
+  if (!PUSH_ENABLED) return;
+  try {
+    const devices = await pushTargets(tenantId);
+    if (!devices.length) return;
+    const payload = JSON.stringify(notification);
+    const vapid = { publicKey: VAPID_PUBLIC_KEY, privateKey: VAPID_PRIVATE_KEY, subject: VAPID_SUBJECT };
+    await Promise.all(devices.map(async (device) => {
+      const outcome = await sendPush(device, payload, vapid);
+      if (outcome.gone) {
+        // De browser heeft dit endpoint weggegooid. Rij weg, anders pushen we
+        // eeuwig naar een toestel dat niet meer bestaat.
+        await pool.query("DELETE FROM push_devices WHERE id = $1", [device.id]).catch(() => {});
+        return;
+      }
+      if (outcome.ok) {
+        await pool.query("UPDATE push_devices SET last_success_at = NOW(), failure_count = 0 WHERE id = $1", [device.id]).catch(() => {});
+        return;
+      }
+      await pool.query("UPDATE push_devices SET last_failure_at = NOW(), failure_count = failure_count + 1 WHERE id = $1", [device.id]).catch(() => {});
+      console.error("push mislukt:", outcome.statusCode, outcome.error || "");
+    }));
+  } catch (error) {
+    console.error("pushToTenant mislukt:", error?.message || error);
+  }
+}
+
+/**
+ * Pushmelding bij een gemiste oproep.
+ *
+ * Over het telefoonnummer in de payload: de payload is end-to-end versleuteld
+ * (RFC 8291) met sleutels die alleen het toestel van de klant heeft, dus Google ziet
+ * uitsluitend ciphertext. Het nummer meesturen is daarmee verdedigbaar (eigen
+ * leaddata van de klant naar het eigen toestel van de klant) én veel bruikbaarder:
+ * zonder nummer moet iemand op een ladder eerst de app openen en inloggen.
+ * Toch staat het standaard UIT, omdat dit een gegevensbeschermingsafweging is die de
+ * founder zelf hoort te maken en niet een keuze die er stilletjes in glijdt.
+ * Aanzetten: PUSH_INCLUDE_CALLER=true in .env.
+ */
+async function pushMissedCall(tenantId, phone, occurredAt) {
+  const includeCaller = String(process.env.PUSH_INCLUDE_CALLER || "false") === "true";
+  const caller = phone ? String(phone) : "";
+  await pushToTenant(tenantId, {
+    title: includeCaller && caller ? `Gemiste oproep: ${caller}` : "Je hebt een oproep gemist",
+    body: includeCaller && caller ? "Tik om deze klant terug te bellen." : "Tik om te zien wie er belde en terug te bellen.",
+    tag: `missed-call-${occurredAt.getTime()}`,
+    url: "/?tab=contacten",
+    // Alleen gevuld als PUSH_INCLUDE_CALLER aan staat; de service worker maakt
+    // hier een "Bel terug"-knop van die direct de telefoonapp opent.
+    phone: includeCaller ? caller : "",
+  });
+}
+
+async function pushInboundLead(tenantId, eventType, contactId, contact, preview) {
+  const includeDetails = String(process.env.PUSH_INCLUDE_CALLER || "false") === "true";
+  const payload = inboundPushPayload(eventType, {
+    name: contact?.name,
+    phone: contact?.phone,
+    preview,
+  }, contactId, includeDetails);
+  if (payload) await pushToTenant(tenantId, payload);
+}
+
+async function pushWebsiteLead(tenantId, occurredAt) {
+  await pushToTenant(tenantId, {
+    title: "Nieuwe aanvraag via je website",
+    body: "Tik om de aanvraag te bekijken.",
+    tag: `website-lead-${occurredAt.getTime()}`,
+    url: "/?tab=contacten",
+    phone: "",
+  });
+}
+
+// --- Push-API voor de client ------------------------------------------------
+
+/**
+ * De client heeft de publieke VAPID-sleutel nodig om een subscription te maken.
+ * Geeft ook terug hoeveel toestellen deze gebruiker al heeft aangemeld, zodat de UI
+ * "meldingen staan aan" kan tonen zonder een tweede request.
+ */
+async function pushKey(res, user) {
+  if (!PUSH_ENABLED) return json(res, 200, { enabled: false, publicKey: null, devices: 0 });
+  const result = await pool.query("SELECT COUNT(*)::int AS n FROM push_devices WHERE user_id = $1", [user.id]);
+  json(res, 200, { enabled: true, publicKey: VAPID_PUBLIC_KEY, devices: result.rows[0].n });
+}
+
+/**
+ * Slaat een PushSubscription op. Idempotent op endpoint: de browser kan dezelfde
+ * subscription opnieuw aanbieden (bijvoorbeeld na een reconcile bij het openen van de
+ * app), en dan mag er geen tweede rij ontstaan. Wisselt het endpoint van gebruiker,
+ * bijvoorbeeld omdat twee mensen dezelfde telefoon gebruiken, dan verhuist de rij
+ * mee in plaats van dat de oude eigenaar meldingen blijft krijgen.
+ */
+async function subscribePush(req, res, user) {
+  if (!PUSH_ENABLED) return json(res, 503, { error: "Meldingen zijn op deze server niet geconfigureerd." });
+  const body = await readBody(req);
+  const endpoint = cleanText(body.endpoint, 800);
+  const p256dh = cleanText(body.p256dh, 200);
+  const auth = cleanText(body.auth, 100);
+  if (!endpoint || !p256dh || !auth) return json(res, 400, { error: "endpoint, p256dh en auth zijn verplicht." });
+  if (!/^https:\/\//i.test(endpoint)) return json(res, 400, { error: "endpoint moet https zijn." });
+  // Vorm valideren vóór opslag: een subscription met verkeerde sleutellengtes levert
+  // anders pas maanden later een onverklaarbaar mislukte melding op.
+  if (Buffer.from(p256dh, "base64url").length !== 65) return json(res, 400, { error: "p256dh heeft de verkeerde lengte." });
+  if (Buffer.from(auth, "base64url").length !== 16) return json(res, 400, { error: "auth heeft de verkeerde lengte." });
+
+  await pool.query(`
+    INSERT INTO push_devices (tenant_id, user_id, endpoint, p256dh, auth)
+    VALUES ($1, $2, $3, $4, $5)
+    ON CONFLICT (endpoint) DO UPDATE
+      SET tenant_id = EXCLUDED.tenant_id,
+          user_id = EXCLUDED.user_id,
+          p256dh = EXCLUDED.p256dh,
+          auth = EXCLUDED.auth,
+          failure_count = 0,
+          last_failure_at = NULL
+  `, [user.tenant_id, user.id, endpoint, p256dh, auth]);
+  json(res, 201, { ok: true });
+}
+
+/**
+ * Meldingen uitzetten. Zonder endpoint in de body gaan ALLE toestellen van deze
+ * gebruiker eruit; dat is wat "zet meldingen uit" in de UI moet doen op een toestel
+ * waarvan de subscription al kwijt is.
+ */
+async function unsubscribePush(req, res, user) {
+  const body = await readBody(req).catch(() => ({}));
+  const endpoint = cleanText(body.endpoint, 800);
+  if (endpoint) await pool.query("DELETE FROM push_devices WHERE user_id = $1 AND endpoint = $2", [user.id, endpoint]);
+  else await pool.query("DELETE FROM push_devices WHERE user_id = $1", [user.id]);
+  json(res, 200, { ok: true });
+}
+
+/**
+ * Stuurt een testmelding naar de eigen toestellen. Dit is geen luxe: het is de enige
+ * manier waarop de klant (en de founder tijdens onboarding) kan vaststellen dat de
+ * hele keten werkt, inclusief het batterijbeheer van dit specifieke toestel. Als de
+ * test niet aankomt, komt een echte gemiste oproep ook niet aan.
+ */
+async function pushTest(res, user) {
+  if (!PUSH_ENABLED) return json(res, 503, { error: "Meldingen zijn op deze server niet geconfigureerd." });
+  const devices = await pushTargets(user.tenant_id);
+  if (!devices.length) return json(res, 400, { error: "Er staan nog geen toestellen aangemeld voor meldingen." });
+  await pushToTenant(user.tenant_id, {
+    title: "Testmelding van Belvanger",
+    body: "Als je dit ziet, werken je meldingen. Zo snel krijg je ook een gemiste oproep binnen.",
+    tag: `test-${Date.now()}`,
+    url: "/",
+    phone: "",
+  });
+  json(res, 200, { ok: true, devices: devices.length });
+}
+
+// --- Realtime melding bij een gemiste oproep, per e-mail naar alle actieve
+// gebruikers van de klant. Hergebruikt dezelfde SMTP-koppeling als Hulp. Wordt
+// bewust niet afgewacht door de aanroeper (ingest moet snel blijven reageren voor
+// n8n/Twilio); mislukken van de melding mag de eventopslag nooit raken.
+async function notifyMissedCall(tenantId, phone, occurredAt) {
+  if (!SMTP_ENABLED) return;
+  try {
+    const recipients = await pool.query("SELECT email FROM users WHERE tenant_id = $1 AND active = TRUE", [tenantId]);
+    if (!recipients.rowCount) return;
+    const caller = phone || "een onbekend nummer";
+    const when = new Intl.DateTimeFormat("nl-NL", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Amsterdam" }).format(occurredAt);
+    const text = [
+      "Je hebt zojuist een oproep gemist.", "",
+      `Van:  ${caller}`,
+      `Tijd: ${when}`, "",
+      "Bekijk 'm in je dashboard: https://dashboard.belvanger.nl/",
+    ].join("\n");
+    const html = emailShell(
+      `<p style="margin:0 0 14px;font-size:18px;font-weight:700;">Je hebt zojuist een oproep gemist.</p>
+       <p style="margin:0 0 6px;"><strong>Van:</strong> ${escHtml(caller)}</p>
+       <p style="margin:0 0 14px;"><strong>Tijd:</strong> ${escHtml(when)}</p>
+       <p style="margin:22px 0 0;"><a href="https://dashboard.belvanger.nl/" style="color:#E6480C;text-decoration:none;">Bekijk in je dashboard &rarr;</a></p>`,
+      "Belvanger vangt je gemiste klanten automatisch op.",
+      "Je ontvangt dit omdat er zojuist een oproep is gemist op je gekoppelde nummer.");
+    await Promise.all(recipients.rows.map((r) =>
+      smtpSend({ host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER, pass: SMTP_PASS, from: SMTP_FROM, to: r.email, subject: `Gemiste oproep: ${caller}`, text, html })
+        .catch((error) => console.error("missed-call-melding mislukt naar", r.email, error?.message || error))
+    ));
+  } catch (error) {
+    console.error("notifyMissedCall mislukt:", error?.message || error);
+  }
+}
+
+// Realtime melding bij een nieuwe websiteaanvraag, per e-mail naar alle actieve
+// gebruikers van de KLANT wiens website de lead binnenkreeg (tenant-gescopeerd,
+// nooit naar een vast Belvanger-adres: de lead gaat over die klant, niet over ons).
+async function notifyWebsiteLead(tenantId, contact, message, occurredAt) {
+  if (!SMTP_ENABLED) return;
+  try {
+    const recipients = await pool.query("SELECT email FROM users WHERE tenant_id = $1 AND active = TRUE", [tenantId]);
+    if (!recipients.rowCount) return;
+    const name = cleanText(contact?.name, 160) || "Onbekend";
+    const company = cleanText(contact?.company, 160) || "-";
+    const phone = normalizePhone(contact?.phone) || "-";
+    const email = normalizeEmail(contact?.email) || "-";
+    const when = new Intl.DateTimeFormat("nl-NL", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Amsterdam" }).format(occurredAt);
+    const textLines = [
+      "Je hebt zojuist een nieuwe aanvraag via je website ontvangen.", "",
+      `Naam:     ${name}`,
+      `Bedrijf:  ${company}`,
+      `Telefoon: ${phone}`,
+      `E-mail:   ${email}`,
+      `Tijd:     ${when}`,
+    ];
+    if (message) textLines.push("", "Bericht:", message);
+    textLines.push("", "Bekijk in je dashboard: https://dashboard.belvanger.nl/");
+    const text = textLines.join("\n");
+    const html = emailShell(
+      `<p style="margin:0 0 14px;font-size:18px;font-weight:700;">Je hebt zojuist een nieuwe aanvraag via je website ontvangen.</p>
+       <p style="margin:0 0 4px;"><strong>Naam:</strong> ${escHtml(name)}</p>
+       <p style="margin:0 0 4px;"><strong>Bedrijf:</strong> ${escHtml(company)}</p>
+       <p style="margin:0 0 4px;"><strong>Telefoon:</strong> ${escHtml(phone)}</p>
+       <p style="margin:0 0 14px;"><strong>E-mail:</strong> ${escHtml(email)}</p>
+       ${message ? `<p style="margin:0 0 14px;"><strong>Bericht:</strong><br>${escHtml(message)}</p>` : ""}
+       <p style="margin:22px 0 0;"><a href="https://dashboard.belvanger.nl/" style="color:#E6480C;text-decoration:none;">Bekijk in je dashboard &rarr;</a></p>`,
+      "Belvanger vangt je nieuwe aanvragen automatisch op.",
+      "Je ontvangt dit omdat er zojuist een nieuwe aanvraag via je website is binnengekomen.");
+    await Promise.all(recipients.rows.map((r) =>
+      smtpSend({ host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER, pass: SMTP_PASS, from: SMTP_FROM, to: r.email, subject: `Nieuwe websiteaanvraag: ${name}`, text, html })
+        .catch((error) => console.error("website-lead-melding mislukt naar", r.email, error?.message || error))
+    ));
+  } catch (error) {
+    console.error("notifyWebsiteLead mislukt:", error?.message || error);
+  }
+}
+
 async function listConnections(res, user) {
   const result = await pool.query(`
     SELECT i.source, i.status, i.external_identifier, i.last_event_at,
@@ -677,6 +1471,78 @@ async function listConnections(res, user) {
     FROM tenant_integrations i WHERE i.tenant_id = $1 ORDER BY i.source
   `, [user.tenant_id]);
   json(res, 200, { connections: result.rows });
+}
+
+// --- Zichtbaarheid: Microsoft Clarity Data Export API + link naar Google Search Console ---
+// Clarity-limieten (officiële docs): max. 10 requests/dag per project, data beperkt
+// tot de laatste 1-3 dagen, geen paginering. Daarom nooit automatisch pollen, alleen
+// op verzoek verversen, met een minimale wachttijd tussen twee verversingen.
+const CLARITY_API_URL = "https://www.clarity.ms/export-data/api/v1/project-live-insights";
+const VISIBILITY_MIN_REFRESH_MS = 10 * 60 * 1000;
+
+async function fetchClarityInsights(token) {
+  const { signal, cancel } = withTimeout(HEALTH_TIMEOUT_MS);
+  try {
+    const response = await fetch(`${CLARITY_API_URL}?numOfDays=3`, {
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+      signal,
+    });
+    if (response.status === 429) return { error: "Dagelijkse limiet van Clarity bereikt (max. 10 keer per dag). Probeer het later opnieuw." };
+    if (response.status === 401 || response.status === 403) return { error: "Clarity-token is ongeldig, verlopen of niet geautoriseerd." };
+    if (!response.ok) return { error: `Clarity gaf HTTP ${response.status}.` };
+    return { data: await response.json() };
+  } catch (error) {
+    return { error: error.name === "AbortError" ? "Clarity reageerde niet op tijd." : "Kon Clarity niet bereiken." };
+  } finally { cancel(); }
+}
+
+async function getVisibility(res, user) {
+  const result = await pool.query(`
+    SELECT clarity_project_id, search_console_url, clarity_last_fetched_at, clarity_last_payload
+    FROM tenant_analytics WHERE tenant_id = $1
+  `, [user.tenant_id]);
+  const row = result.rows[0] || {};
+  json(res, 200, {
+    clarityConfigured: Boolean(row.clarity_project_id),
+    searchConsoleUrl: row.search_console_url || null,
+    lastFetchedAt: row.clarity_last_fetched_at,
+    insights: row.clarity_last_payload || null,
+  });
+}
+
+async function refreshVisibility(res, user) {
+  const result = await pool.query(`
+    SELECT clarity_api_token, clarity_last_fetched_at FROM tenant_analytics WHERE tenant_id = $1
+  `, [user.tenant_id]);
+  const row = result.rows[0];
+  if (!row || !row.clarity_api_token) return json(res, 400, { error: "Clarity is nog niet gekoppeld voor deze klant." });
+  if (row.clarity_last_fetched_at && Date.now() - new Date(row.clarity_last_fetched_at).getTime() < VISIBILITY_MIN_REFRESH_MS) {
+    return json(res, 429, { error: "Net ververst. Wacht een paar minuten voor je opnieuw ophaalt (Clarity staat max. 10 keer per dag toe)." });
+  }
+  const { data, error } = await fetchClarityInsights(row.clarity_api_token);
+  if (error) return json(res, 502, { error });
+  await pool.query(`
+    UPDATE tenant_analytics SET clarity_last_payload = $1, clarity_last_fetched_at = NOW(), updated_at = NOW() WHERE tenant_id = $2
+  `, [JSON.stringify(data), user.tenant_id]);
+  json(res, 200, { ok: true, insights: data, lastFetchedAt: new Date().toISOString() });
+}
+
+async function updateAdminAnalytics(req, res, user, tenantId) {
+  if (!requirePlatformAdmin(res, user)) return;
+  const body = await readBody(req);
+  const clarityProjectId = cleanText(body.clarityProjectId, 40) || null;
+  const clarityApiToken = cleanText(body.clarityApiToken, 2000) || null;
+  const searchConsoleUrl = cleanText(body.searchConsoleUrl, 300) || null;
+  await pool.query(`
+    INSERT INTO tenant_analytics (tenant_id, clarity_project_id, clarity_api_token, search_console_url, updated_at)
+    VALUES ($1, $2, $3, $4, NOW())
+    ON CONFLICT (tenant_id) DO UPDATE SET
+      clarity_project_id = $2,
+      clarity_api_token = COALESCE($3, tenant_analytics.clarity_api_token),
+      search_console_url = $4,
+      updated_at = NOW()
+  `, [tenantId, clarityProjectId, clarityApiToken, searchConsoleUrl]);
+  json(res, 200, { ok: true });
 }
 
 function rangeInterval(value) {
@@ -709,6 +1575,16 @@ async function summary(res, user, range) {
       ORDER BY c.last_event_at DESC LIMIT 8
     `, [user.tenant_id]),
   ]);
+  // Gemiste oproepen die "opgevangen" zijn: per het n8n-workflowcontract (zie
+  // n8n/README.md, workflow 1) wordt call.missed pas naar het dashboard geschreven
+  // NADAT de automatische opvang-sms al is verstuurd. Elke geregistreerde
+  // call.missed is dus al een opgevangen gemiste oproep — geen aparte telling nodig,
+  // exact dezelfde databron/telling als de bestaande "Gemiste oproepen"-kaart.
+  const missedCallsCaught = counts.rows[0].missed_calls;
+  const avgJobValueIsDefault = user.avg_job_value == null;
+  const avgJobValue = avgJobValueIsDefault ? DEFAULT_AVG_JOB_VALUE : Number(user.avg_job_value);
+  const savingsAmount = Math.round(missedCallsCaught * avgJobValue * MISSED_CALL_RECOVERY_RATE);
+
   json(res, 200, {
     range,
     attention: attention.rows[0].count,
@@ -716,6 +1592,37 @@ async function summary(res, user, range) {
     channels: channels.rows,
     recent: recent.rows.map((row) => ({ ...row, label: EVENT_LABELS[row.event_type] || row.event_type })),
     contacts: contacts.rows,
+    savings: {
+      amount: savingsAmount,
+      missedCallsCaught,
+      avgJobValue,
+      avgJobValueIsDefault,
+      recoveryRate: MISSED_CALL_RECOVERY_RATE,
+    },
+  });
+}
+
+// Bewijslog: het n8n-eventcontract (zie n8n/README.md, workflow 1) schrijft
+// call.missed pas naar het dashboard NADAT de automatische sms al is verstuurd,
+// dus elke call.missed in de database is per definitie al "opgevangen". Deze
+// lijst toont daarom simpelweg de eigen call.missed/sms.outbound-events van de
+// tenant in chronologische volgorde, zodat de klant zelf ziet dat een gemiste
+// oproep en de bijbehorende sms vlak na elkaar plaatsvonden. Geen expliciete
+// koppeling tussen een specifieke oproep en "zijn" sms is nodig (en zonder
+// gedeelde external_id ook niet betrouwbaar te maken) omdat de belofte alleen is
+// dat het vangnet als geheel werkt, niet dat elk paar 1-op-1 matcht.
+async function proofLog(res, user, range) {
+  const interval = rangeInterval(range);
+  const result = await pool.query(`
+    SELECT occurred_at, event_type, status
+    FROM events
+    WHERE tenant_id = $1 AND event_type IN ('call.missed', 'sms.outbound') AND occurred_at >= NOW() - $2::interval
+    ORDER BY occurred_at ASC
+    LIMIT 100
+  `, [user.tenant_id, interval]);
+  json(res, 200, {
+    range,
+    entries: result.rows.map((row) => ({ ...row, label: EVENT_LABELS[row.event_type] || row.event_type })),
   });
 }
 
@@ -740,10 +1647,58 @@ async function listContacts(res, user, url) {
 }
 
 async function contactDetail(res, user, id) {
-  const contact = await pool.query("SELECT * FROM contacts WHERE id = $1 AND tenant_id = $2", [id, user.tenant_id]);
+  const contact = await pool.query(`
+    SELECT c.*, p.name AS referred_partner_name
+    FROM contacts c LEFT JOIN partners p ON p.id = c.referred_partner_id
+    WHERE c.id = $1 AND c.tenant_id = $2
+  `, [id, user.tenant_id]);
   if (!contact.rowCount) return json(res, 404, { error: "Contact niet gevonden." });
   const events = await pool.query("SELECT * FROM events WHERE contact_id = $1 AND tenant_id = $2 ORDER BY occurred_at DESC", [id, user.tenant_id]);
   json(res, 200, { contact: contact.rows[0], events: events.rows.map((row) => ({ ...row, label: EVENT_LABELS[row.event_type] || row.event_type })) });
+}
+
+async function createContact(req, res, user) {
+  const body = await readBody(req);
+  const name = cleanText(body.name, 160);
+  const company = cleanText(body.company, 160);
+  const phone = normalizePhone(body.phone);
+  const email = normalizeEmail(body.email);
+  if (!phone && !email) return json(res, 400, { error: "Vul minimaal een telefoonnummer of e-mailadres in." });
+
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const contactId = await upsertContact(client, user.tenant_id, { name, company, phone, email }, new Date());
+    const dedupeKey = `dashboard:${crypto.randomUUID()}:contact.manual`;
+    await client.query(`
+      INSERT INTO events (tenant_id, contact_id, source, event_type, direction, preview, dedupe_key, occurred_at)
+      VALUES ($1,$2,'dashboard','contact.manual','system',$3,$4,NOW())
+    `, [user.tenant_id, contactId, `Handmatig toegevoegd door ${user.display_name}.`, dedupeKey]);
+    await client.query("COMMIT");
+    const contact = await pool.query("SELECT * FROM contacts WHERE id = $1", [contactId]);
+    json(res, 201, { contact: contact.rows[0] });
+  } catch (error) {
+    await client.query("ROLLBACK");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
+async function exportContactsCsv(res, user) {
+  const result = await pool.query(`
+    SELECT name, company, phone, email, status, to_char(last_event_at, 'YYYY-MM-DD HH24:MI') AS last_event_at, to_char(created_at, 'YYYY-MM-DD HH24:MI') AS created_at
+    FROM contacts WHERE tenant_id = $1 ORDER BY last_event_at DESC
+  `, [user.tenant_id]);
+  const statusLabels = { new: "Nieuw", follow_up: "Opvolging nodig", contacted: "Contact gehad", closed: "Afgesloten" };
+  const header = ["Naam", "Bedrijf", "Telefoon", "E-mail", "Status", "Laatste activiteit", "Aangemaakt"].map(csvEscape).join(";");
+  const rows = result.rows.map((r) => [r.name, r.company, r.phone, r.email, statusLabels[r.status] || r.status, r.last_event_at, r.created_at].map(csvEscape).join(";"));
+  const csv = "﻿" + [header, ...rows].join("\r\n") + "\r\n";
+  res.writeHead(200, {
+    ...securityHeaders("text/csv; charset=utf-8"),
+    "Content-Disposition": `attachment; filename="belvanger-contacten-${new Date().toISOString().slice(0, 10)}.csv"`,
+  });
+  res.end(csv);
 }
 
 async function updateContact(req, res, user, id) {
@@ -766,15 +1721,147 @@ async function updateContact(req, res, user, id) {
   } finally { client.release(); }
 }
 
+// Verwijdert ook de bijbehorende events (niet alleen loskoppelen): bedoeld voor
+// niet-klanten (verkeerd nummer, spam) die de tijdlijn/metrics niet horen te vervuilen.
+async function deleteContact(res, user, id) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    await client.query("DELETE FROM events WHERE contact_id = $1 AND tenant_id = $2", [id, user.tenant_id]);
+    const result = await client.query("DELETE FROM contacts WHERE id = $1 AND tenant_id = $2", [id, user.tenant_id]);
+    if (!result.rowCount) { await client.query("ROLLBACK"); return json(res, 404, { error: "Contact niet gevonden." }); }
+    await client.query("COMMIT");
+    json(res, 200, { ok: true });
+  } catch (error) {
+    await client.query("ROLLBACK"); throw error;
+  } finally { client.release(); }
+}
+
+// --- Partners: het eigen netwerk van een tenant, handmatig te koppelen aan een lead die de
+// tenant zelf niet kan oppakken. Bewust geen automatische matching/routing. ---
+async function listPartners(res, user) {
+  const result = await pool.query("SELECT * FROM partners WHERE tenant_id = $1 ORDER BY name ASC", [user.tenant_id]);
+  json(res, 200, { partners: result.rows });
+}
+
+async function createPartner(req, res, user) {
+  const body = await readBody(req);
+  const name = cleanText(body.name, 160);
+  if (!name) return json(res, 400, { error: "Vul een naam in." });
+  const phone = normalizePhone(body.phone);
+  const email = normalizeEmail(body.email);
+  const note = cleanText(body.note, 300);
+  const result = await pool.query(
+    "INSERT INTO partners (tenant_id, name, phone, email, note) VALUES ($1,$2,$3,$4,$5) RETURNING *",
+    [user.tenant_id, name, phone, email, note]
+  );
+  json(res, 200, { partner: result.rows[0] });
+}
+
+async function deletePartner(res, user, id) {
+  const result = await pool.query("DELETE FROM partners WHERE id = $1 AND tenant_id = $2", [id, user.tenant_id]);
+  if (!result.rowCount) return json(res, 404, { error: "Partner niet gevonden." });
+  json(res, 200, { ok: true });
+}
+
+// Doorzetten: alleen een zichtbaar, tijdgestempeld dashboardrecord (wie, wanneer, naar welke
+// partner). Stuurt bewust nog niets automatisch naar de partner of de beller — dat vraagt om
+// een aparte beslissing over toestemming/notificatie, nog niet gemaakt.
+async function referContact(req, res, user, id) {
+  const body = await readBody(req);
+  const partnerId = Number(body.partner_id);
+  if (!Number.isInteger(partnerId)) return json(res, 400, { error: "Kies een partner." });
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const partner = await client.query("SELECT * FROM partners WHERE id = $1 AND tenant_id = $2", [partnerId, user.tenant_id]);
+    if (!partner.rowCount) { await client.query("ROLLBACK"); return json(res, 404, { error: "Partner niet gevonden." }); }
+    const contact = await client.query(
+      "UPDATE contacts SET referred_partner_id = $1, referred_at = NOW(), updated_at = NOW() WHERE id = $2 AND tenant_id = $3 RETURNING *",
+      [partnerId, id, user.tenant_id]
+    );
+    if (!contact.rowCount) { await client.query("ROLLBACK"); return json(res, 404, { error: "Contact niet gevonden." }); }
+    const dedupeKey = `dashboard:${crypto.randomUUID()}:contact.referred`;
+    await client.query(`
+      INSERT INTO events (tenant_id, contact_id, source, event_type, direction, preview, dedupe_key, occurred_at)
+      VALUES ($1,$2,'dashboard','contact.referred','system',$3,$4,NOW())
+    `, [user.tenant_id, id, `Doorgestuurd naar partner: ${partner.rows[0].name}`, dedupeKey]);
+    await client.query("COMMIT");
+    json(res, 200, { contact: contact.rows[0], partner: partner.rows[0] });
+  } catch (error) {
+    await client.query("ROLLBACK"); throw error;
+  } finally { client.release(); }
+}
+
 function serveStatic(req, res, pathname) {
   const requested = pathname === "/" ? "index.html" : pathname.replace(/^\//, "");
   const target = path.resolve(PUBLIC_DIR, requested);
-  if (!target.startsWith(PUBLIC_DIR) || !fs.existsSync(target) || fs.statSync(target).isDirectory()) return false;
+  if (!target.startsWith(PUBLIC_DIR) || !fs.existsSync(target)) return false;
+  const stat = fs.statSync(target);
+  if (stat.isDirectory()) return false;
   const ext = path.extname(target);
-  const types = { ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".svg": "image/svg+xml" };
-  res.writeHead(200, { ...securityHeaders(types[ext] || "application/octet-stream"), "Cache-Control": ext === ".html" ? "no-cache" : "public, max-age=3600" });
+  // .webmanifest en .png staan hier niet voor de sier: zonder die twee gaan het
+  // manifest en de iconen als application/octet-stream de deur uit, en omdat we
+  // X-Content-Type-Options: nosniff zetten weigert Chrome ze dan allebei. Gevolg
+  // zou zijn dat de PWA stil niet installeerbaar is, zonder foutmelding.
+  const types = {
+    ".html": "text/html; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".webmanifest": "application/manifest+json; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".png": "image/png",
+    ".woff2": "font/woff2",
+  };
+  // De service worker mag NOOIT een uur gecached worden: dan blijft een oude sw.js
+  // met een oude cachelijst rondhangen en zien klanten een verouderd dashboard.
+  const isServiceWorker = requested === "sw.js";
+  const cacheControl = isServiceWorker || ext === ".html" ? "no-cache" : "public, max-age=3600";
+  const extra = isServiceWorker ? { "Service-Worker-Allowed": "/" } : {};
+  res.writeHead(200, {
+    ...securityHeaders(types[ext] || "application/octet-stream"),
+    "Cache-Control": cacheControl,
+    "Content-Length": stat.size,
+    ...extra,
+  });
+  // HEAD krijgt dezelfde headers maar geen body. Zonder dit viel elk HEAD-verzoek door
+  // naar de 404-handler, dus ook HEAD op "/", en dat laat iedere uptime-monitor (die
+  // standaard HEAD gebruikt) melden dat de hele site down is.
+  if (req.method === "HEAD") { res.end(); return true; }
   fs.createReadStream(target).pipe(res);
   return true;
+}
+
+// Digital Asset Links: hiermee bewijst dashboard.belvanger.nl dat de Android-app met
+// deze signing-fingerprint bij dit domein hoort. Zonder dit valt de Trusted Web
+// Activity terug op een gewone Chrome-tab MET adresbalk, en dat is precies wat Google
+// Play onder "minimum functionality" als webview-wrapper afkeurt.
+//
+// Dynamisch in plaats van een bestand in public/: de fingerprint is pas bekend nadat
+// de keystore bestaat, en hij hoort bij de omgeving (upload key vs. Play App Signing),
+// niet bij de broncode. Ontbreekt de env-var, dan geven we 404 in plaats van een
+// leeg-maar-geldig bestand: een half assetlinks-bestand is moeilijker te debuggen
+// dan een ontbrekend bestand.
+function serveAssetLinks(res) {
+  if (!TWA_PACKAGE_NAME || !TWA_SHA256_FINGERPRINTS.length) {
+    return json(res, 404, { error: "Digital Asset Links is niet geconfigureerd." });
+  }
+  const body = JSON.stringify([{
+    relation: ["delegate_permission/common.handle_all_urls"],
+    target: {
+      namespace: "android_app",
+      package_name: TWA_PACKAGE_NAME,
+      sha256_cert_fingerprints: TWA_SHA256_FINGERPRINTS,
+    },
+  }], null, 2);
+  // Publiek en cachebaar: Android's verifier haalt dit op zonder cookies, en het
+  // verandert alleen als er een sleutel bij komt.
+  res.writeHead(200, {
+    ...securityHeaders("application/json; charset=utf-8"),
+    "Cache-Control": "public, max-age=300",
+  });
+  res.end(body);
 }
 
 const server = http.createServer(async (req, res) => {
@@ -783,8 +1870,15 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "GET" && url.pathname === "/healthz") {
       await pool.query("SELECT 1"); return json(res, 200, { ok: true });
     }
+    // Publiek en zonder sessie: Android's Digital Asset Links-verifier haalt dit op
+    // zonder cookies, en Chrome doet dat bij het openen van de Trusted Web Activity.
+    if (req.method === "GET" && url.pathname === "/.well-known/assetlinks.json") return serveAssetLinks(res);
     if (req.method === "POST" && url.pathname === "/api/login") return await login(req, res);
+    if (req.method === "POST" && url.pathname === "/api/verify-otp") return await verifyOtp(req, res);
     if (req.method === "POST" && url.pathname === "/api/ingest") return await ingest(req, res);
+    if (req.method === "POST" && url.pathname === "/api/forgot-password") return await requestPasswordReset(req, res);
+    if (req.method === "GET" && url.pathname === "/api/reset-password/verify") return await verifyResetToken(res, url.searchParams.get("token"));
+    if (req.method === "POST" && url.pathname === "/api/reset-password") return await completePasswordReset(req, res);
 
     if (url.pathname.startsWith("/api/")) {
       const user = await requireUser(req, res);
@@ -793,11 +1887,22 @@ const server = http.createServer(async (req, res) => {
       if (req.method === "GET" && url.pathname === "/api/me") return json(res, 200, { user });
       if (req.method === "POST" && url.pathname === "/api/change-password") return await changePassword(req, res, user);
       if (req.method === "GET" && url.pathname === "/api/summary") return await summary(res, user, url.searchParams.get("range") || "7d");
+      if (req.method === "GET" && url.pathname === "/api/proof-log") return await proofLog(res, user, url.searchParams.get("range") || "7d");
       if (req.method === "GET" && url.pathname === "/api/connections") return await listConnections(res, user);
+      if (req.method === "GET" && url.pathname === "/api/visibility") return await getVisibility(res, user);
+      if (req.method === "POST" && url.pathname === "/api/visibility/refresh") return await refreshVisibility(res, user);
+      if (req.method === "POST" && url.pathname === "/api/support") return await submitSupportRequest(req, res, user);
+      if (req.method === "GET" && url.pathname === "/api/push/key") return await pushKey(res, user);
+      if (req.method === "POST" && url.pathname === "/api/push/subscribe") return await subscribePush(req, res, user);
+      if (req.method === "POST" && url.pathname === "/api/push/unsubscribe") return await unsubscribePush(req, res, user);
+      if (req.method === "POST" && url.pathname === "/api/push/test") return await pushTest(res, user);
       if (req.method === "GET" && url.pathname === "/api/contacts") return await listContacts(res, user, url);
+      if (req.method === "POST" && url.pathname === "/api/contacts") return await createContact(req, res, user);
+      if (req.method === "GET" && url.pathname === "/api/contacts/export") return await exportContactsCsv(res, user);
       if (req.method === "GET" && url.pathname === "/api/admin/tenants") return await listAdminTenants(res, user);
       if (req.method === "POST" && url.pathname === "/api/admin/tenants") return await createAdminTenant(req, res, user);
       if (req.method === "POST" && url.pathname === "/api/admin/healthcheck") return await runHealthcheck(res, user);
+      if (req.method === "GET" && url.pathname === "/api/admin/knowledge") return await listKnowledge(res, user);
       if (req.method === "GET" && url.pathname === "/api/admin/activity") return await listActivity(res, user);
       if (req.method === "POST" && url.pathname === "/api/admin/activity") return await addActivity(req, res, user);
       if (req.method === "GET" && url.pathname === "/api/admin/activity/export") return await exportActivityCsv(res, user);
@@ -807,13 +1912,22 @@ const server = http.createServer(async (req, res) => {
       if (configAdminMatch && req.method === "PATCH") return await updateAdminTenantConfig(req, res, user, Number(configAdminMatch[1]));
       const n8nAdminMatch = url.pathname.match(/^\/api\/admin\/tenants\/(\d+)\/n8n$/);
       if (n8nAdminMatch && req.method === "PATCH") return await updateAdminN8nLinks(req, res, user, Number(n8nAdminMatch[1]));
+      const analyticsAdminMatch = url.pathname.match(/^\/api\/admin\/tenants\/(\d+)\/analytics$/);
+      if (analyticsAdminMatch && req.method === "PATCH") return await updateAdminAnalytics(req, res, user, Number(analyticsAdminMatch[1]));
       const match = url.pathname.match(/^\/api\/contacts\/(\d+)$/);
       if (match && req.method === "GET") return await contactDetail(res, user, Number(match[1]));
       if (match && req.method === "PATCH") return await updateContact(req, res, user, Number(match[1]));
+      if (match && req.method === "DELETE") return await deleteContact(res, user, Number(match[1]));
+      const referMatch = url.pathname.match(/^\/api\/contacts\/(\d+)\/refer$/);
+      if (referMatch && req.method === "POST") return await referContact(req, res, user, Number(referMatch[1]));
+      if (req.method === "GET" && url.pathname === "/api/partners") return await listPartners(res, user);
+      if (req.method === "POST" && url.pathname === "/api/partners") return await createPartner(req, res, user);
+      const partnerMatch = url.pathname.match(/^\/api\/partners\/(\d+)$/);
+      if (partnerMatch && req.method === "DELETE") return await deletePartner(res, user, Number(partnerMatch[1]));
       return json(res, 404, { error: "API-route niet gevonden." });
     }
 
-    if (req.method === "GET" && serveStatic(req, res, url.pathname)) return;
+    if ((req.method === "GET" || req.method === "HEAD") && serveStatic(req, res, url.pathname)) return;
     json(res, 404, { error: "Niet gevonden." });
   } catch (error) {
     console.error(error?.stack || error);
@@ -823,3 +1937,4 @@ const server = http.createServer(async (req, res) => {
 
 await bootstrap();
 server.listen(PORT, "0.0.0.0", () => console.log(`Belvanger portal draait op poort ${PORT}`));
+scheduleNightlyStalenessCheck();

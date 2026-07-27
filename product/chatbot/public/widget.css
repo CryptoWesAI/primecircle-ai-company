@@ -7,6 +7,10 @@
   --sw-surface: #f4f1ea;
   --sw-ink: #26302c;
   --sw-line: #d9d3c7;
+  /* Optioneel per-klant display-font voor de bedrijfsnaam in de header (zie
+     applyColors in widget.js). Default 'inherit' laat de widget ongewijzigd
+     voor klanten die dit niet instellen. */
+  --sw-font-display: inherit;
 }
 
 #ab-chat,
@@ -58,7 +62,7 @@
   align-items: center;
   justify-content: space-between;
 }
-.ab-header strong { font-size: 15px; font-weight: 600; }
+.ab-header strong { font-size: 16px; font-weight: 700; font-family: var(--sw-font-display); letter-spacing: -0.01em; }
 .ab-header small { display: block; font-size: 12px; opacity: 0.8; }
 .ab-head-right { display: flex; align-items: center; gap: 10px; }
 .ab-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; background: rgba(255, 255, 255, 0.2); color: #fff; padding: 3px 8px; border-radius: 999px; line-height: 1.3; white-space: nowrap; }

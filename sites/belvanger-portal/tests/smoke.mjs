@@ -45,11 +45,18 @@ const contacts = await request("/api/contacts?status=all", { headers: { Cookie: 
 if (summary.body.metrics.missed_calls !== 1 || summary.body.metrics.sms_sent !== 1 || summary.body.metrics.sms_delivered !== 1) throw new Error("KPI-aggregatie klopt niet");
 if (contacts.body.contacts.length < 4) throw new Error("Contactaggregatie klopt niet");
 
+// "Deze periode bespaard": 1 opgevangen gemiste oproep × default klus-waarde (€250,
+// zolang deze tenant geen eigen waarde heeft ingesteld) × 60% herstelaanname = €150.
+const savings = summary.body.savings;
+if (!savings || savings.missedCallsCaught !== 1) throw new Error("Bespaard-widget: opgevangen-telling klopt niet");
+if (savings.avgJobValueIsDefault && savings.amount !== 150) throw new Error("Bespaard-widget: rekensom klopt niet (verwacht €150 bij default klus-waarde)");
+
 console.log(JSON.stringify({
   health: health.body.ok,
   login: login.body.ok,
   deduplication: duplicate.body.duplicate,
   attention: summary.body.attention,
   metrics: summary.body.metrics,
+  savings: summary.body.savings,
   contacts: contacts.body.contacts.length,
 }, null, 2));

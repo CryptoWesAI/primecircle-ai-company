@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Kleine melding-icoon in de statusbalk. Android negeert kleur hier en tint het
+     silhouet zelf, dus alles is wit en er zit geen achtergrond in: een gekleurd icoon
+     wordt op Android 5+ een witte blob. Vector in plaats van PNG omdat het dan op elke
+     dichtheid scherp is zonder vijf bestanden. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:pathData="M15,42A24,24 0 0 1 49,20"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M49,12a8,8 0 1 0 0.01,0z"
+        android:fillColor="#FFFFFFFF" />
+</vector>

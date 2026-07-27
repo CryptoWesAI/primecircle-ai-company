@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- OPNAMEPODIUM, geen publieke pagina. Niet gelinkt, niet indexeerbaar.
+       Doel: de bestaande hero-simulatie schermvullend in 9:16 afspelen zodat hij met
+       de schermopname van een telefoon te filmen is, met leesbare tijdstempels.
+       Hergebruikt bewust de ECHTE css/styles.css en js/app.js van de site: zo kan de
+       film nooit iets tonen wat de site niet doet, en hoeft er niets dubbel
+       onderhouden te worden. Zie docs/offers/ voor de montage-instructie. -->
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Opnamepodium (intern)</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=2a9b2761" />
+  <script>document.documentElement.className += " js";</script>
+  <style>
+    /* ── Het frame ──────────────────────────────────────────────────────────
+       1080x1920 is het native formaat van een telefoon in portret en van
+       Facebook/Instagram/WhatsApp verticaal. Het podium is vastgezet op die
+       verhouding zodat wat je ziet exact is wat je opneemt, ongeacht het
+       venster waarin je het opent. */
+    html, body { margin: 0; padding: 0; background: #060B0F; height: 100%; }
+    body {
+      display: grid; place-items: center; overflow: hidden;
+      /* Donkere ondergrond, geen papierwit: dit sluit visueel aan op de
+         gefilmde werkplaatsbeelden in act 1, zodat de overgang van "lichaam"
+         naar "bewijs" niet als een kleurbreuk voelt. */
+      background:
+        radial-gradient(120% 80% at 50% 18%, #16232E 0%, #0B1218 55%, #060B0F 100%);
+    }
+    .stage {
+      position: relative;
+      width: 1080px; height: 1920px;
+      /* Past het 1080x1920-podium in elk venster zonder de interne maten te
+         veranderen, zodat een preview op een laptop hetzelfde kadreert als de
+         echte opname. */
+      transform: scale(var(--fit, 1));
+      transform-origin: center center;
+      display: grid; place-items: center;
+    }
+
+    /* ── De simulatie groot maken ────────────────────────────────────────────
+       `zoom` en niet `transform: scale()`: zoom rekent de layout opnieuw door,
+       dus de tekst wordt op de eindgrootte gerasterd en blijft scherp. Met een
+       transform zou de browser de kleine versie kunnen rasteren en daarna
+       oprekken, en dan is precies het enige wat deze film moet bewijzen (het
+       tijdstempel) onleesbaar. De scroll-berekening in app.js blijft kloppen
+       omdat offsetTop, offsetHeight en clientHeight alle drie meeschalen. */
+    .hero__demo { zoom: 2.28; gap: 1.1rem; }
+
+    /* Sitechrome dat niet in beeld hoort. De vakkleuren-spine is mooi op de
+       site maar kost hier breedte die de telefoon beter gebruikt. */
+    .hero__spine { display: none; }
+
+    /* De startknop moet zichtbaar zijn om te tikken (een tik is ook nodig om
+       het geluid vrij te geven, browserbeleid), maar mag niet in de opname
+       staan.
+       app.js zet .is-live op de balk zolang de simulatie loopt en haalt die er
+       weer af als hij klaar is, waardoor de knop terugkomt in het SLOTSHOT.
+       Dat is precies het beeld dat je in de film wil gebruiken, dus hier blijft
+       hij na de eerste tik permanent weg. Opnieuw opnemen = pagina herladen. */
+    .simctl { transition: opacity .35s ease; }
+    .simctl.is-live,
+    body[data-recording] .simctl { opacity: 0; pointer-events: none; }
+
+    /* De eerlijkheidsregel gaat mee in beeld. Zonder deze regel is een gefilmd
+       gesprek over een klus van 14 woningen een verzonnen casus. Klein, maar
+       leesbaar op 1080 breed. */
+    .phone-note {
+      position: absolute; bottom: 46px; left: 0; right: 0;
+      margin: 0 auto; max-width: 900px; padding: 0 40px;
+      text-align: center; color: rgba(244,242,237,.62);
+      font-family: Archivo, Arial, sans-serif; font-size: 22px; line-height: 1.5;
+    }
+
+    /* Kaderhulplijnen: de bovenste 15% en onderste 20% van een 9:16-frame
+       worden op Facebook en Instagram bedekt door de interface. Alles wat moet
+       overkomen hoort binnen de veilige zone. Zet ?safe=1 in de URL om ze te
+       zien tijdens het kadreren; ze staan standaard uit zodat een opname ze
+       nooit per ongeluk meepakt. */
+    .safe { display: none; }
+    body[data-safe] .safe {
+      display: block; position: absolute; left: 0; right: 0;
+      background: rgba(255,90,31,.10); border: 1px dashed rgba(255,90,31,.55);
+      pointer-events: none; z-index: 40;
+    }
+    body[data-safe] .safe--top { top: 0; height: 288px; }
+    body[data-safe] .safe--bottom { bottom: 0; height: 384px; }
+    body[data-safe] .safe::after {
+      content: attr(data-label); position: absolute; left: 16px; bottom: 8px;
+      font-family: Archivo, Arial, sans-serif; font-size: 20px; font-weight: 700;
+      color: rgba(255,90,31,.9);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="safe safe--top" data-label="Bedekt door interface (15%)"></div>
+    <div class="safe safe--bottom" data-label="Bedekt door interface (20%)"></div>
+
+    <!-- Vanaf hier: exact dezelfde markup als de hero op index.html. Bewust
+         letterlijk gekopieerd en niet vereenvoudigd, want app.js selecteert op
+         .hero__demo, [data-phone], [data-simctl] en [data-step]. -->
+    <div class="hero__demo">
+      <div class="hero__stage">
+        <div class="hero__spine" aria-hidden="true"></div>
+        <div class="phone-stage">
+          <div class="phone" data-phone data-state="done" role="img"
+               aria-label="Voorbeeld: een gemiste oproep wordt automatisch opgevangen met een bericht, de klant reageert, en de lead komt binnen bij de ondernemer.">
+            <div class="phone__notch" aria-hidden="true"></div>
+            <div class="phone__screen">
+
+              <div class="callscreen" data-callscreen aria-hidden="true">
+                <span class="callscreen__label">Inkomende oproep</span>
+                <span class="callscreen__avatar">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>
+                </span>
+                <span class="callscreen__num">06 – 12 34 56 78</span>
+                <span class="callscreen__sub">Onbekend nummer</span>
+                <span class="callscreen__ring" aria-hidden="true"><i></i><i></i><i></i></span>
+                <div class="callscreen__btns" aria-hidden="true">
+                  <span class="cbtn cbtn--decline">✕</span>
+                  <span class="cbtn cbtn--accept">✆</span>
+                </div>
+                <span class="callscreen__hint">Jij staat op de steiger…</span>
+              </div>
+
+              <div class="chat__top">
+                <span class="chat__avatar" aria-hidden="true">JK</span>
+                <span class="chat__who"><b>Onbekend nummer</b><small>via Belvanger</small></span>
+                <span class="chat__wa" aria-hidden="true">Bericht</span>
+              </div>
+              <div class="chat__body">
+                <div class="chat__event" data-step="1">
+                  <svg viewBox="0 0 24 24" class="ico ico--miss" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.24 11.4 11.4 0 0 0 3.6.58 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.4 11.4 0 0 0 .58 3.6 1 1 0 0 1-.24 1z"/></svg>
+                  Gemiste oproep · 14:32
+                </div>
+                <div class="bubble bubble--out" data-step="2">
+                  Sorry, we misten je belletje! Waarmee kunnen we je helpen? Reageer gerust, we bellen zo terug.
+                  <span class="bubble__meta">14:32</span>
+                </div>
+                <div class="typing" data-step="3" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="bubble bubble--in" data-step="4">
+                  Goedemiddag! We zoeken voor een project van 14 woningen een vaste installateur voor de komende maanden. Zijn jullie beschikbaar voor een kennismaking?
+                  <span class="bubble__meta">14:33</span>
+                </div>
+                <div class="typing" data-step="5" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div class="bubble bubble--out" data-step="6">
+                  Wat goed dat u ons treft! Zulke projecten pakken we graag op. U wordt vandaag nog teruggebeld om kennis te maken en de planning door te nemen. Is dit nummer goed bereikbaar?
+                  <span class="bubble__meta">15:03</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lead-toast" data-step="7" role="status">
+            <span class="lead-toast__dot" aria-hidden="true"></span>
+            <span><b>Nieuwe lead binnen</b>: project 14 woningen, vaste installateur gezocht</span>
+          </div>
+          <div class="lead-toast lead-toast--wide" data-step="8" role="status">
+            <span class="lead-toast__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M7 16v-3M12 16V8M17 16v-6"/></svg></span>
+            <span class="lead-toast__body"><b>Meteen in je dashboard</b><small>Naam, klus en status op één plek. Rechtstreeks terugbellen kan direct vanuit daar.</small></span>
+          </div>
+          <div class="lead-toast lead-toast--wide" data-step="9" role="status">
+            <span class="lead-toast__ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 6 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-6-3.8-9s1.3-6.3 3.8-9z"/></svg></span>
+            <span class="lead-toast__body"><b>Je eigen website ving 'm mee op</b><small>Professioneel gebouwd voor jouw vak, inbegrepen.</small></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="simctl" data-simctl hidden>
+        <button class="btn btn--ghost btn--sim" type="button" data-sim>
+          <span class="btn--sim__ico" aria-hidden="true"></span>
+          <span data-sim-label>Tik om de opname te starten</span>
+        </button>
+        <button class="soundtoggle" type="button" data-sound aria-pressed="true" title="Geluid uitzetten">
+          <svg viewBox="0 0 24 24" class="ico" aria-hidden="true" data-sound-ico><path d="M4 9v6h4l5 5V4L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4Z"/><path data-sound-slash d="M3 3l18 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+          <span class="visually-hidden">Geluid</span>
+        </button>
+      </div>
+    </div>
+
+    <p class="phone-note">Voorbeeld ter illustratie, geen echte klant.</p>
+  </div>
+
+  <script>
+    /* Schaalt het vaste 1080x1920-podium naar het venster. Doet niets aan de
+       interne maten, dus een preview op een laptop kadreert identiek aan de
+       echte opname op een telefoon. */
+    (function () {
+      var stage = document.querySelector(".stage");
+      var fit = function () {
+        var s = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+        stage.style.setProperty("--fit", s);
+      };
+      fit();
+      window.addEventListener("resize", fit, { passive: true });
+      if (new URLSearchParams(location.search).has("safe")) document.body.dataset.safe = "1";
+
+      /* Zodra de simulatie ooit heeft gelopen, blijft de bedieningsbalk weg.
+         Bewust gekoppeld aan de AFSPEELSTATUS en niet aan een klik: app.js zet
+         zelf .is-live op de balk bij het starten, dus dit latcht ongeacht of er
+         geklikt, getikt of met het toetsenbord gestart is. Nodig omdat app.js
+         .is-live er aan het EIND weer afhaalt, waardoor de knop precies in het
+         slotshot terugkomt: het beeld dat je wil gebruiken. */
+      var simctl = document.querySelector("[data-simctl]");
+      if (simctl) {
+        new MutationObserver(function () {
+          if (simctl.classList.contains("is-live")) document.body.dataset.recording = "1";
+        }).observe(simctl, { attributes: true, attributeFilter: ["class"] });
+      }
+    })();
+  </script>
+  <!-- Alleen app.js. Bewust GEEN cookies.js en GEEN chatwidget: die horen niet
+       in een filmopname te verschijnen. -->
+  <script src="js/app.js?v=ab2f48c8" defer></script>
+</body>
+</html>

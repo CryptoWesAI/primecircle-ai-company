@@ -39,12 +39,18 @@ eronder, geen robot die je klanten te woord staat.
 
 ## Wat je krijgt
 
-- Een strakke **website**, door ons gebouwd, afgestemd op je vak en hoe je werkt, inclusief
-  contactformulier als tweede voordeur.
-- **Automatische leadvangst** op je eigen telefoonnummer: een gemiste beller krijgt
-  automatisch een bericht, jij krijgt de lead.
+- Een strakke **website**, opnieuw ontworpen voor jouw vak, niet een sjabloon met een
+  andere kleur. Op belvanger.nl staan onder "Wat je krijgt" echte voorbeelden per vak
+  (loodgieters, installateurs, dakdekkers, elektriciens, hoveniers, klusbedrijven), zodat
+  je vooraf ziet wat voor stijl je kunt verwachten. Inclusief contactformulier als tweede
+  voordeur.
+- **Automatische leadvangst**, op twee plekken tegelijk: een gemiste beller op je eigen
+  nummer krijgt direct een bericht, en een bezoeker die het contactformulier op je website
+  invult wordt meteen als lead vastgelegd. In beide gevallen krijg jij realtime een e-mail
+  zodra er een nieuwe lead binnenkomt, naast het overzicht in je dashboard.
 - Een **AI-chatbot** die veelgestelde vragen van bezoekers dag en nacht beantwoordt.
-- Je eigen **dashboard** met al je leads én dagelijkse cijfers op één plek.
+- Je eigen **dashboard** met al je leads, dagelijkse cijfers en (indien gekoppeld) inzicht
+  in je websitebezoek op één plek.
 - Wij bouwen en onderhouden alles. Jij hoeft niets te doen, behalve terugbellen.
 
 ## Voor wie
@@ -55,21 +61,23 @@ installateurs, dakdekkers, elektriciens, hoveniers en klusbedrijven.
 ## Wat het kost
 
 - Twee delen. **Eenmalige setup**: we bouwen je website, AI-chatbot en de automatisering.
-  Daarna een vast **maandbedrag** van **€99 per maand** (founding-tarief voor de eerste
-  bedrijven) voor het draaien, het onderhoud en je dashboard met dagelijkse cijfers.
+  **Vanaf €625** als founding-partner (normaal €1.250), het exacte bedrag hangt af van je
+  wensen. Daarna een vast **maandbedrag** van **€99 per maand** (founding-tarief voor de
+  eerste bedrijven, levenslang vast) voor het draaien, het onderhoud en je dashboard met
+  dagelijkse cijfers.
 - **Onze belofte**: je maandbedrag gaat pas lopen zodra Belvanger je eerste gemiste klant
   heeft opgevangen. Eerst werken, dan pas betalen. De eenmalige setup betaal je vooraf.
 - **Maandelijks opzegbaar**, geen kleine lettertjes. Werkt het niet voor je, dan stop je.
-- De setup stemmen we af op jouw bedrijf; dat bespreken we in een **vrijblijvend gesprek**.
-  Eén extra klus per maand betaalt het ruim terug. Belvanger geeft geen garantie op een
-  bepaald aantal extra klanten.
+- Het exacte setupbedrag bespreken we in een **vrijblijvend gesprek**, op basis van je
+  wensen. Eén extra klus per maand betaalt het ruim terug. Belvanger geeft geen garantie
+  op een bepaald aantal extra klanten.
 
 ## Veelgestelde vragen
 
 - **Moet ik mijn telefoonnummer veranderen?** Nee. Het werkt op je eigen nummer. We zetten
   een doorschakeling klaar zodat een gemiste oproep bij Belvanger binnenkomt.
 - **Moet mijn klant een app installeren?** Nee. Je klant krijgt gewoon een berichtje op
-  zijn telefoon, net als van een vriend.
+  de telefoon, net als van een vriend.
 - **Ik heb al een website. Wat dan?** Dan bouwen we 'm opnieuw, en beter. We plakken de
   leadvangst niet op een site van iemand anders. Je eigen domein neem je gewoon mee.
 - **Ben ik ergens aan vastgebonden?** Nee. Maandelijks opzegbaar.

@@ -39,5 +39,5 @@ tar czf - -C "$SRC" --exclude=deploy-to-vps.sh --exclude=STATUS.md --exclude=.gi
        docker compose up -d --build && echo '--- status ---' && docker compose ps"
 
 echo
-echo "Klaar. Live op https://belvanger.primecircle.cloud"
+echo "Klaar. Live op https://belvanger.nl"
 echo "LET OP: de site staat op noindex tot de echte gegevens erin staan (zie STATUS.md)."

@@ -1,0 +1,12 @@
+// Root build file. Bewust minimaal: alle configuratie die iets doet staat in
+// app/build.gradle, zodat er één plek is om naar te kijken.
+plugins {
+    // 8.7.x is de eerste AGP-reeks die compileSdk 35 officieel ondersteunt, en vraagt
+    // Gradle 8.9. Die versie staat vastgezet in .github/workflows/belvanger-android.yml;
+    // deze twee horen altijd samen bijgewerkt te worden.
+    id 'com.android.application' version '8.7.3' apply false
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}

@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>document.documentElement.className += " js";</script>
+  <title>Vertel ons over je bedrijf | Belvanger</title>
+  <meta name="description" content="Vul dit formulier in zodat we je website en dashboard goed kunnen opzetten. Tien tot vijftien minuten, mag in delen." />
+  <meta name="theme-color" content="#16232E" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://belvanger.nl/klantintake.html" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=2a9b2761" />
+</head>
+<body>
+  <a class="skip-link" href="#hoofd">Naar de inhoud</a>
+
+  <!-- ══════════════════════════ HEADER ══════════════════════════ -->
+  <header class="site-header" data-header>
+    <div class="wrap header__inner">
+      <a class="brand" href="index.html" aria-label="Belvanger, naar de homepage">
+        <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path class="brand__arc" d="M6 22a13 13 0 0 1 20-11" fill="none" stroke-width="3.4" stroke-linecap="round"/>
+          <circle class="brand__dot" cx="26.5" cy="9.5" r="4"/>
+        </svg>
+        <span class="brand__name">Belvanger</span>
+      </a>
+      <div class="header__actions">
+        <a class="btn btn--ghost btn--sm" href="index.html">&larr; Terug naar belvanger.nl</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="hoofd">
+    <!-- ══════════════════════════ INTRO ══════════════════════════ -->
+    <section class="intake-hero">
+      <div class="wrap">
+        <p class="eyebrow eyebrow--dark">Klantintake</p>
+        <h1 style="font-size:clamp(2rem,1.5rem + 2.2vw,3.1rem);max-width:18ch">Vertel ons over je bedrijf.</h1>
+        <p style="max-width:62ch;font-size:1.08rem;color:var(--staal);margin-top:1rem">
+          Met onderstaande gegevens zetten we je website en dashboard goed op. Neem
+          rustig de tijd, het hoeft niet in één keer: wat je niet weet of nog niet
+          hebt, mag je gewoon overslaan. Zodra je verstuurt, ontvangen we je gegevens
+          en gaan we ermee aan de slag.
+        </p>
+        <div class="intake-hero__meta">
+          <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>10&ndash;15 minuten</span>
+          <span><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Alleen bedrijfsnaam, vak, regio, telefoon, e-mail en diensten zijn verplicht</span>
+          <span><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 8h16"/></svg>Rest mag je overslaan</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════ FORMULIER ══════════════════════════ -->
+    <section class="block">
+      <div class="wrap" style="max-width:760px">
+        <form class="intake-form" data-intake-form novalidate>
+
+          <!-- A. Bedrijfsgegevens -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">A &middot; Bedrijfsgegevens</p>
+            <h2>Voor de website, footer en facturatie</h2>
+            <p class="intake-section__hint">Dit gebruiken we voor de header, footer en het contactblok van je nieuwe site.</p>
+
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Officiële bedrijfsnaam (KvK)</span>
+                <input type="text" name="bedrijfsnaam" autocomplete="organization" required placeholder="bijv. Jansen Loodgieters B.V." />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Handelsnaam, indien anders <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="handelsnaam" placeholder="Zoals klanten je kennen" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Vak / branche</span>
+                <input type="text" name="vak" required placeholder="bijv. loodgieter, dakdekker, elektricien, hovenier, klusbedrijf" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <label class="ffield">
+                <span class="ffield__label">KvK-nummer <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="kvk" inputmode="numeric" placeholder="12345678" />
+                <span class="ffield__err" data-err></span>
+              </label>
+              <label class="ffield">
+                <span class="ffield__label">BTW-nummer <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="btw" placeholder="NL000000000B00" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Vestigingsadres</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Mag je adres publiek getoond worden">
+                <label class="radio-pill"><input type="radio" name="adresPubliek" value="ja" checked /><span>Mag publiek getoond worden</span></label>
+                <label class="radio-pill"><input type="radio" name="adresPubliek" value="nee" /><span>Liever niet publiek</span></label>
+              </div>
+              <div class="conditional-field">
+                <input type="text" name="adres" placeholder="Straat, huisnummer, postcode, plaats" style="width:100%;border:1px solid var(--line);border-radius:var(--r-sm);padding:.8rem .9rem;font:inherit" />
+              </div>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Werkgebied / regio</span>
+                <input type="text" name="werkgebied" required placeholder="bijv. regio Utrecht, straal 20 km" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <label class="ffield">
+                <span class="ffield__label">Telefoonnummer</span>
+                <input type="tel" name="telefoon" inputmode="tel" required placeholder="06 12345678" />
+                <span class="ffield__err" data-err></span>
+              </label>
+              <label class="ffield">
+                <span class="ffield__label">E-mailadres voor leads</span>
+                <input type="email" name="email" autocomplete="email" required placeholder="jij@bedrijf.nl" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">WhatsApp-nummer <span class="ffield__opt">(optioneel, indien anders dan boven)</span></span>
+                <input type="tel" name="whatsapp" placeholder="06 12345678" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Openingstijden en bereikbaarheid <span class="ffield__opt">(optioneel)</span></span>
+                <textarea name="bereikbaarheid" rows="2" placeholder="bijv. ma&ndash;vr 8&ndash;17u, spoed 24/7"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- B. Merk en uitstraling -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">B &middot; Merk en uitstraling</p>
+            <h2>Hoe je website eruit moet zien</h2>
+            <p class="intake-section__hint">Geen voorkeur? Prima, dan kiezen wij iets passend bij jouw vak.</p>
+
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Heb je al een logo?</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Heb je al een logo">
+                <label class="radio-pill"><input type="radio" name="logo" value="ja, stuur ik apart na" checked /><span>Ja, stuur ik apart na</span></label>
+                <label class="radio-pill"><input type="radio" name="logo" value="nee, graag ontwerpen" /><span>Nee, graag ontwerpen</span></label>
+              </div>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Kleurvoorkeur <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="kleur" placeholder="bijv. je huisstijlkleur, of laat leeg" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Tagline of slogan die je nu gebruikt <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="tagline" placeholder="Indien van toepassing" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Websites of stijlen die je mooi vindt <span class="ffield__opt">(optioneel, één link per regel)</span></span>
+                <textarea name="stijlMooi" rows="2" placeholder="Mag ook van een andere branche zijn"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Stijlen die je juist niet wilt <span class="ffield__opt">(optioneel)</span></span>
+                <textarea name="stijlNiet" rows="2" placeholder="bijv. te druk, te goedkoop ogend"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Logo uploaden <span class="ffield__opt">(optioneel, jpg/png/webp, max 3 MB)</span></span>
+                <input type="file" name="logoFile" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" data-file-field />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- C. Foto's en bewijs -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">C &middot; Foto's en bewijs van je werk</p>
+            <h2>Wat we kunnen laten zien</h2>
+
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Heb je eigen foto's van afgeronde klussen?</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Eigen fotos beschikbaar">
+                <label class="radio-pill"><input type="radio" name="eigenFotos" value="ja" checked /><span>Ja, stuur ik na</span></label>
+                <label class="radio-pill"><input type="radio" name="eigenFotos" value="nee" /><span>Nee, gebruik AI-beelden</span></label>
+              </div>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Projectfoto 1 <span class="ffield__opt">(optioneel, jpg/png/webp, max 3 MB)</span></span>
+                <input type="file" name="foto1" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" data-file-field />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Projectfoto 2 <span class="ffield__opt">(optioneel, jpg/png/webp, max 3 MB)</span></span>
+                <input type="file" name="foto2" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" data-file-field />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Projectfoto 3 <span class="ffield__opt">(optioneel, jpg/png/webp, max 3 MB)</span></span>
+                <input type="file" name="foto3" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" data-file-field />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Mogen we een voor/na-foto gebruiken?</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Voor na foto toegestaan">
+                <label class="radio-pill"><input type="radio" name="voorNa" value="ja" /><span>Ja</span></label>
+                <label class="radio-pill"><input type="radio" name="voorNa" value="nee" checked /><span>Liever alleen sfeerbeelden</span></label>
+              </div>
+            </div>
+            <div class="demo-form__row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <label class="ffield">
+                <span class="ffield__label">Google-sterren <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="googleSterren" inputmode="decimal" placeholder="bijv. 4,9" />
+                <span class="ffield__err" data-err></span>
+              </label>
+              <label class="ffield">
+                <span class="ffield__label">Aantal Google-reviews <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="googleReviews" inputmode="numeric" placeholder="bijv. 120" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Certificeringen of keurmerken <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="certificeringen" placeholder="bijv. NEN 3140, VHG, erkend installateur" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Actief sinds welk jaar <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="actiefSinds" inputmode="numeric" placeholder="bijv. 2009" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- D. Diensten -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">D &middot; Diensten</p>
+            <h2>Wat je aanbiedt</h2>
+
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Diensten, één per regel met korte omschrijving</span>
+                <textarea name="diensten" rows="5" required placeholder="bijv.&#10;Lekkage verhelpen &ndash; snel gevonden, netjes gerepareerd&#10;Cv-onderhoud &ndash; jaarlijkse beurt of storing"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Specialiteit of meest gevraagde dienst <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="specialiteit" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Hoe werk je met prijzen?</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Prijsmodel">
+                <label class="radio-pill"><input type="radio" name="prijsmodel" value="vaste prijs vooraf" checked /><span>Vaste prijs vooraf</span></label>
+                <label class="radio-pill"><input type="radio" name="prijsmodel" value="offerte" /><span>Offerte</span></label>
+                <label class="radio-pill"><input type="radio" name="prijsmodel" value="uurtarief" /><span>Uurtarief</span></label>
+              </div>
+            </div>
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Bied je spoedservice aan?</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Spoedservice">
+                <label class="radio-pill"><input type="radio" name="spoedservice" value="ja" /><span>Ja</span></label>
+                <label class="radio-pill"><input type="radio" name="spoedservice" value="nee" checked /><span>Nee</span></label>
+              </div>
+              <div class="conditional-field">
+                <input type="text" name="spoedTijd" placeholder="Binnen hoeveel tijd, indien van toepassing" style="width:100%;border:1px solid var(--line);border-radius:var(--r-sm);padding:.8rem .9rem;font:inherit" />
+              </div>
+            </div>
+          </div>
+
+          <!-- E. Doelgroep -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">E &middot; Doelgroep</p>
+            <h2>Voor wie je werkt</h2>
+
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Werk je vooral voor particulieren, bedrijven, of beide?</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Doelgroep">
+                <label class="radio-pill"><input type="radio" name="doelgroep" value="particulieren" checked /><span>Particulieren</span></label>
+                <label class="radio-pill"><input type="radio" name="doelgroep" value="bedrijven" /><span>Bedrijven</span></label>
+                <label class="radio-pill"><input type="radio" name="doelgroep" value="beide" /><span>Beide</span></label>
+              </div>
+            </div>
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Prijspositionering</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Positionering">
+                <label class="radio-pill"><input type="radio" name="positionering" value="betaalbaar" /><span>Betaalbaar</span></label>
+                <label class="radio-pill"><input type="radio" name="positionering" value="gemiddeld" checked /><span>Gemiddeld</span></label>
+                <label class="radio-pill"><input type="radio" name="positionering" value="premium" /><span>Premium</span></label>
+              </div>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Diensten waar je juist niet de nadruk op wilt <span class="ffield__opt">(optioneel)</span></span>
+                <textarea name="vermijdenDiensten" rows="2"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- F. Techniek en koppelingen -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">F &middot; Techniek en koppelingen</p>
+            <h2>Voor de Belvanger-dienst zelf</h2>
+
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Telefoonnummer voor de gemiste-oproep-opvang <span class="ffield__opt">(mag hetzelfde zijn als boven)</span></span>
+                <input type="tel" name="opvangTelefoon" placeholder="Laat leeg indien hetzelfde nummer" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Wie moet toegang krijgen tot het dashboard? <span class="ffield__opt">(naam + e-mail per regel)</span></span>
+                <textarea name="dashboardGebruikers" rows="2" placeholder="bijv. Jan Jansen, jan@bedrijf.nl"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+              <label class="ffield">
+                <span class="ffield__label">Domeinnaam <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="domein" placeholder="bijv. jouwbedrijf.nl" />
+                <span class="ffield__err" data-err></span>
+              </label>
+              <label class="ffield">
+                <span class="ffield__label">Wie beheert je domein nu? <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="domeinBeheerder" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Gebruik je al een ander systeem voor leads of klanten? <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="huidigSysteem" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- G. Overig -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">G &middot; Overig</p>
+            <h2>Nog iets kwijt?</h2>
+
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Moet er per se op de website staan? <span class="ffield__opt">(optioneel)</span></span>
+                <textarea name="moetErOp" rows="2"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Iets dat je wilt vermijden? <span class="ffield__opt">(optioneel)</span></span>
+                <textarea name="vermijden" rows="2"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Andere opmerkingen <span class="ffield__opt">(optioneel)</span></span>
+                <textarea name="opmerkingen" rows="3"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- honeypot: onzichtbaar voor mensen, spam-bots vullen 'm -->
+          <div class="hp" aria-hidden="true">
+            <label>Laat dit veld leeg<input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          </div>
+          <input type="hidden" name="pagina" value="" data-pagina />
+
+          <button class="btn btn--primary btn--lg btn--block" type="submit">Versturen<span class="btn__arrow" aria-hidden="true">&rarr;</span></button>
+          <p class="demo-form__legal">
+            Door te versturen ga je akkoord dat we deze gegevens gebruiken om je
+            website en dashboard op te zetten. We gebruiken ze nergens anders voor.
+            <a href="privacy.html">Privacyverklaring</a>.
+          </p>
+          <p class="demo-form__ok" data-form-ok hidden role="status">
+            <b>Bedankt, we hebben je gegevens ontvangen.</b> Je krijgt zo een bevestiging per e-mail, en wij gaan aan de slag met je eerste ontwerp.
+          </p>
+          <p class="demo-form__fail" data-form-fail hidden role="status">
+            <b>Versturen lukte niet.</b> Mail ons gerust rechtstreeks op
+            <a href="mailto:info@belvanger.nl">info@belvanger.nl</a> of stuur een
+            <a href="https://wa.me/31646733277">WhatsApp</a>.
+          </p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- ══════════════════════════ FOOTER ══════════════════════════ -->
+  <footer class="site-footer">
+    <div class="wrap footer__inner">
+      <div class="footer__brand">
+        <a class="brand brand--footer" href="index.html">
+          <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true"><path class="brand__arc" d="M6 22a13 13 0 0 1 20-11" fill="none" stroke-width="3.4" stroke-linecap="round"/><circle class="brand__dot" cx="26.5" cy="9.5" r="4"/></svg>
+          <span class="brand__name">Belvanger</span>
+        </a>
+        <p class="footer__tag">De belletjes die jij mist, vangen wij op.</p>
+      </div>
+      <nav class="footer__nav" aria-label="Footer">
+        <div>
+          <h4>Contact</h4>
+          <a href="https://wa.me/31646733277" target="_blank" rel="noopener">Stuur een WhatsApp</a>
+          <a href="mailto:info@belvanger.nl">info@belvanger.nl</a>
+        </div>
+        <div>
+          <h4>Juridisch</h4>
+          <a href="privacy.html">Privacyverklaring</a>
+          <a href="voorwaarden.html">Voorwaarden</a>
+        </div>
+      </nav>
+    </div>
+    <div class="wrap footer__base">
+      <span>&copy; <span data-year>2026</span> Belvanger</span>
+    </div>
+  </footer>
+
+  <script src="js/cookies.js?v=1" defer></script>
+  <script src="js/klantintake.js?v=1" defer></script><script src="assets/ab-chat.js?v=f049ef96" data-ab-chat data-lang="nl" defer></script></body>
+</html>

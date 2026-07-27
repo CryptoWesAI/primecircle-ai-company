@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0e1a24">
+  <title>Wachtwoord instellen | Belvanger</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css?v=20260722-1">
+  <script src="/reset.js?v=20260722-1" defer></script>
+</head>
+<body>
+  <section class="reset-page">
+    <div>
+      <div class="login__brand" aria-label="Belvanger">
+        <span class="mark" aria-hidden="true"><i></i></span>
+        <span>Belvanger</span>
+      </div>
+
+      <div class="reset-card" id="checkingState">
+        <p class="muted">Link wordt gecontroleerd…</p>
+      </div>
+
+      <div class="reset-card is-hidden" id="invalidState">
+        <p class="eyebrow">Wachtwoord opnieuw instellen</p>
+        <h1>Deze link is ongeldig of verlopen.</h1>
+        <p class="reset-note">Resetlinks zijn maar 60 minuten geldig en maar één keer te gebruiken. Ga terug naar de inlogpagina en klik daar op "Wachtwoord vergeten?" om een nieuwe aan te vragen.</p>
+        <a class="button button--primary" style="width:100%;margin-top:20px;display:flex;justify-content:center" href="/">Naar de inlogpagina</a>
+      </div>
+
+      <form class="reset-card is-hidden" id="resetForm">
+        <p class="eyebrow">Wachtwoord opnieuw instellen</p>
+        <h1>Kies een nieuw wachtwoord.</h1>
+        <p class="muted">Gebruik minimaal 12 tekens.</p>
+        <label>Nieuw wachtwoord<input name="password" type="password" minlength="12" autocomplete="new-password" required></label>
+        <label>Herhaal wachtwoord<input name="passwordConfirm" type="password" minlength="12" autocomplete="new-password" required></label>
+        <p class="form-error" id="resetFormError" role="alert"></p>
+        <button class="button button--primary" type="submit">Wachtwoord opslaan</button>
+      </form>
+
+      <div class="reset-card is-hidden" id="doneState">
+        <p class="eyebrow">Wachtwoord opnieuw instellen</p>
+        <h1>Gelukt, je wachtwoord is gewijzigd.</h1>
+        <p class="reset-note">Je bent overal automatisch uitgelogd. Log opnieuw in met je nieuwe wachtwoord.</p>
+        <a class="button button--primary" style="width:100%;margin-top:20px;display:flex;justify-content:center" href="/">Naar de inlogpagina</a>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

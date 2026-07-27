@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Geen AppCompat-afhankelijkheid nodig: er is geen eigen UI, alleen de
+         LauncherActivity die direct doorschiet naar Chrome. Translucent voorkomt een
+         zichtbaar leeg activity-frame in dat moment. -->
+    <style name="Theme.Belvanger" parent="android:Theme.Translucent.NoTitleBar">
+        <item name="android:windowNoDisplay">false</item>
+        <item name="android:windowBackground">@color/ic_launcher_background</item>
+    </style>
+</resources>

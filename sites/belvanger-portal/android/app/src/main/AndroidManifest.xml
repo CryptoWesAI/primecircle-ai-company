@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- POST_NOTIFICATIONS is verplicht vanaf Android 13 (API 33). Zonder deze
+         permissie verschijnt het systeemvenster nooit en krijgt de vakman stil geen
+         enkele melding: Notification.requestPermission() in de browser lost dat op
+         via delegatie, maar alleen als de app de permissie declareert. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="@string/app_name"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.Belvanger"
+        tools:targetApi="33">
+
+        <!-- Meldingen delegeren aan de browser. Dit is wat Web Push binnen een TWA
+             laat werken: Chrome ontvangt de push en deze service zorgt dat de melding
+             met het icoon en de naam van DEZE app verschijnt, niet met die van Chrome. -->
+        <meta-data
+            android:name="android.support.customtabs.trusted.SMALL_ICON"
+            android:resource="@drawable/ic_notification" />
+
+        <activity
+            android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+
+            <meta-data
+                android:name="android.support.customtabs.trusted.DEFAULT_URL"
+                android:value="@string/launch_url" />
+
+            <!-- Kleuren van de systeembalken tijdens het laden. Zonder dit ziet de
+                 app er bij het openen een fractie van een seconde uit als een browser. -->
+            <meta-data
+                android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
+                android:resource="@color/twa_background_color" />
+            <meta-data
+                android:name="android.support.customtabs.trusted.NAVIGATION_BAR_COLOR"
+                android:resource="@color/twa_background_color" />
+
+            <!-- Splash: voorkomt een witte flits voordat het dashboard geverfd is. -->
+            <meta-data
+                android:name="android.support.customtabs.trusted.SPLASH_IMAGE_TRANSPARENT"
+                android:value="true" />
+            <meta-data
+                android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION"
+                android:value="300" />
+            <meta-data
+                android:name="android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY"
+                android:value="nl.belvanger.dashboard.fileprovider" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Deep links: hierdoor opent een https://dashboard.belvanger.nl-link in
+                 DEZE app in plaats van in Chrome. android:autoVerify koppelt dat aan
+                 /.well-known/assetlinks.json op de server; klopt die niet, dan valt de
+                 app terug op een gewone Chrome-tab MET adresbalk, en dat is precies
+                 het "webview-wrapper"-beeld dat Play afkeurt. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="@string/host_name" />
+            </intent-filter>
+        </activity>
+
+        <!-- Houdt de melding-delegatie in leven wanneer de app niet op de voorgrond is. -->
+        <service
+            android:name="com.google.androidbrowserhelper.trusted.DelegationService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.support.customtabs.trusted.TRUSTED_WEB_ACTIVITY_SERVICE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="nl.belvanger.dashboard.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+    </application>
+</manifest>

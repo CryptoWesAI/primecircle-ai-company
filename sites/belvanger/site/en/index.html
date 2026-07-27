@@ -35,7 +35,8 @@
 
   <!-- Font: self-hosted, no external call -->
   <link rel="preload" href="../fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="../css/styles.css?v=c38b3e92" />
+  <link rel="preload" href="../fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="../css/styles.css?v=2a9b2761" />
 
   <script type="application/ld+json">
   {
@@ -109,7 +110,7 @@
           {
             "@type": "Question",
             "name": "What does it cost?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Two parts: a one-time setup (we build your website, AI chatbot and the automation) and then €99 per month for running it, maintenance and your dashboard with daily figures. We tailor the setup to your business and discuss it in a no-obligation call. Cancel monthly. One extra job a month more than pays for it." }
+            "acceptedAnswer": { "@type": "Answer", "text": "Two parts: a one-time setup from €625 as a founding partner (normally €1,250), building your website, AI chatbot and the automation, and then €99 per month for running it, maintenance and your dashboard with daily figures. The exact amount depends on your wishes; we discuss that in a no-obligation call. Cancel monthly. One extra job a month more than pays for it." }
           },
           {
             "@type": "Question",
@@ -147,6 +148,7 @@
 
       <div class="header__actions">
         <a class="lang-switch" href="../" hreflang="nl" aria-label="Nederlandse versie">NL</a>
+        <a class="btn btn--ghost btn--sm" href="https://dashboard.belvanger.nl/">Log in</a>
         <a class="btn btn--primary btn--sm" href="#gesprek">Book a call</a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobielmenu" data-nav-toggle>
           <span class="nav-toggle__bars" aria-hidden="true"></span>
@@ -160,6 +162,7 @@
       <a href="#hoe">How it works</a>
       <a href="#prijs">Price</a>
       <a href="#faq">FAQ</a>
+      <a class="btn btn--ghost" href="https://dashboard.belvanger.nl/">Log in</a>
       <a class="btn btn--primary" href="#gesprek">Book a call</a>
       <a class="mobile-menu__lang" href="../" hreflang="nl">Nederlandse versie →</a>
     </div>
@@ -192,6 +195,16 @@
 
         <!-- ★ SIGNATURE: the capture happens live in the phone -->
         <div class="hero__demo">
+          <div class="hero__stage">
+          <!-- ★ SIGNATURE #2: the brand spine, the 6 trade colors in Belvanger's own ink -->
+          <div class="hero__spine" role="img" aria-label="Six trade colors: roofer, plumber, installer, electrician, gardener and handyman, all part of the same Belvanger family">
+            <span class="hero__spine-seg" style="--seg:#C2410C"></span>
+            <span class="hero__spine-seg" style="--seg:#0E7490"></span>
+            <span class="hero__spine-seg" style="--seg:#3949AB"></span>
+            <span class="hero__spine-seg" style="--seg:#B7791F"></span>
+            <span class="hero__spine-seg" style="--seg:#2F7D4F"></span>
+            <span class="hero__spine-seg" style="--seg:#9A2846"></span>
+          </div>
           <div class="phone-stage">
           <div class="phone" data-phone data-state="done" role="img"
                aria-label="Example: a missed call is caught automatically with a message, the customer replies, and the lead reaches the tradesperson.">
@@ -246,6 +259,7 @@
             <span><b>New lead in</b>: 14-home project, regular installer wanted</span>
           </div>
           </div><!-- /.phone-stage -->
+          </div><!-- /.hero__stage -->
 
           <div class="simctl" data-simctl hidden>
             <button class="btn btn--ghost btn--sim" type="button" data-sim>
@@ -448,6 +462,62 @@
       </div>
     </section>
 
+    <!-- ══════════════════════════ EXAMPLES ══════════════════════════ -->
+    <section class="voorbeelden" id="voorbeelden">
+      <div class="wrap">
+        <header class="section-head reveal">
+          <p class="eyebrow eyebrow--dark">See it for yourself</p>
+          <h2 class="section-title">A website per trade, not a template.</h2>
+          <p class="section-lead">Fictional examples, built to show what you can expect. Your own website is tailored just as closely to your trade and the way you work.</p>
+        </header>
+
+        <div class="voorbeelden__scroll reveal">
+          <a class="voorbeelden__card" data-trade="loodgieter" style="--accent:#0E7490" href="../voorbeelden/loodgieter-premium.html" target="_blank" rel="noopener">
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-loodgieter.webp?v=bf89b710" alt="Example website for a plumbing business" loading="lazy" />
+            <span class="voorbeelden__scrim" aria-hidden="true"></span>
+            <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span>
+            <span class="voorbeelden__label">Plumbers<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+          </a>
+          <a class="voorbeelden__card" data-trade="installateur" style="--accent:#3949AB" href="../voorbeelden/installateur-premium.html" target="_blank" rel="noopener">
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-installateur.webp?v=bf89b710" alt="Example website for an installation business" loading="lazy" />
+            <span class="voorbeelden__scrim" aria-hidden="true"></span>
+            <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 18a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z"/><path d="M10 10V5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5"/><path d="M4 15v-3a6 6 0 0 1 6-6"/><path d="M14 6a6 6 0 0 1 6 6v3"/></svg></span>
+            <span class="voorbeelden__label">Installers<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+          </a>
+          <a class="voorbeelden__card" data-trade="dakdekker" style="--accent:#C2410C" href="../voorbeelden/dakdekker-premium.html" target="_blank" rel="noopener">
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-dakdekker.webp?v=bf89b710" alt="Example website for a roofing business" loading="lazy" />
+            <span class="voorbeelden__scrim" aria-hidden="true"></span>
+            <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/></svg></span>
+            <span class="voorbeelden__label">Roofers<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+          </a>
+          <a class="voorbeelden__card" data-trade="elektricien" style="--accent:#B7791F" href="../voorbeelden/elektricien-premium.html" target="_blank" rel="noopener">
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-elektricien.webp?v=bf89b710" alt="Example website for an electrician" loading="lazy" />
+            <span class="voorbeelden__scrim" aria-hidden="true"></span>
+            <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span>
+            <span class="voorbeelden__label">Electricians<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+          </a>
+          <a class="voorbeelden__card" data-trade="hovenier" style="--accent:#2F7D4F" href="../voorbeelden/hovenier-premium.html" target="_blank" rel="noopener">
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-hovenier.webp?v=bf89b710" alt="Example website for a gardening business" loading="lazy" />
+            <span class="voorbeelden__scrim" aria-hidden="true"></span>
+            <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6.03"/></svg></span>
+            <span class="voorbeelden__label">Gardeners<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+          </a>
+          <a class="voorbeelden__card" data-trade="klusbedrijf" style="--accent:#9A2846" href="../voorbeelden/klusbedrijf-premium.html" target="_blank" rel="noopener">
+            <img class="voorbeelden__img" src="../assets/voorbeelden/thumb-klusbedrijf.webp?v=bf89b710" alt="Example website for a handyman business" loading="lazy" />
+            <span class="voorbeelden__scrim" aria-hidden="true"></span>
+            <span class="voorbeelden__motif" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M15 12l-8.4 8.4a1.9 1.9 0 1 1-2.7-2.7L12.3 9.3"/><path d="M17.6 14.6 22 10.2"/><path d="M21 10.3 13.7 3a5.9 5.9 0 0 0-4.1-1.7L8 1.2l.9.8A6 6 0 0 1 11 8.3v1.5l2 2h1.5a2 2 0 0 1 1.4.6l2 2z"/></svg></span>
+            <span class="voorbeelden__label">Handymen<span class="voorbeelden__label-arrow" aria-hidden="true">→</span></span>
+          </a>
+        </div>
+        <p class="voorbeelden__note">Fictional example businesses, built by Belvanger to show the style. No real companies.</p>
+
+        <div class="voorbeelden__dashboard reveal">
+          <p class="voorbeelden__dashboard-text">And the dashboard behind it? Take a look at an example with sample data, just like it would work for your business.</p>
+          <a class="btn btn--ghost" href="/dashboard-demo/" target="_blank" rel="noopener">See the example dashboard<span class="btn__arrow" aria-hidden="true">→</span></a>
+        </div>
+      </div>
+    </section>
+
     <!-- ══════════════════════════ PRICE / ROI ══════════════════════════ -->
     <section class="prijs" id="prijs">
       <div class="wrap prijs__grid">
@@ -460,7 +530,7 @@
             dashboard with daily figures. Cancel monthly.
           </p>
           <ul class="check">
-            <li>One-time setup: website, AI chatbot and automation</li>
+            <li>One-time setup from €625 (normally €1,250): website, AI chatbot and automation</li>
             <li>€99/mo: running, maintenance and daily figures in your dashboard</li>
             <li>Monthly fee only from your first caught customer</li>
             <li>Cancel monthly, no small print</li>
@@ -473,7 +543,7 @@
           <p class="pricecard__setup">running, maintenance and your dashboard with daily figures</p>
           <p class="pricecard__promise"><strong>Our promise:</strong> your monthly fee only starts once Belvanger has caught your first missed customer. It works first, then you pay.</p>
           <a class="btn btn--primary btn--lg btn--block" href="#gesprek">Book a call</a>
-          <p class="pricecard__fine">+ one-time setup (website, AI chatbot and automation), tailored to your business. No obligations.</p>
+          <p class="pricecard__fine">+ one-time setup (website, AI chatbot and automation): <s class="pricecard__was">€1,250</s> <span class="pricecard__now">from €625</span> as a founding partner. No obligations.</p>
         </aside>
       </div>
     </section>
@@ -598,7 +668,7 @@
           </details>
           <details class="qa">
             <summary>What does it cost?</summary>
-            <div class="qa__a"><p>Two parts: a one-time setup (we build your website, AI chatbot and the automation) and then €99 per month for running it, maintenance and your dashboard with daily figures. We tailor the setup to your business and discuss it in a no-obligation call. Cancel monthly. One extra job a month more than pays for it.</p></div>
+            <div class="qa__a"><p>Two parts: a one-time setup from €625 as a founding partner (normally €1,250), building your website, AI chatbot and the automation, and then €99 per month for running it, maintenance and your dashboard with daily figures. The exact amount depends on your wishes; we discuss that in a no-obligation call. Cancel monthly. One extra job a month more than pays for it.</p></div>
           </details>
           <details class="qa">
             <summary>What do you do with the data?</summary>
@@ -627,7 +697,6 @@
           <span class="brand__name">Belvanger</span>
         </a>
         <p class="footer__tag">The calls you miss, we catch.</p>
-        <p class="footer__by">A PrimeCircle product</p>
       </div>
       <nav class="footer__nav" aria-label="Footer">
         <div>
@@ -660,5 +729,5 @@
     <a class="btn btn--primary btn--callbar" href="#gesprek">Book a call</a>
   </div>
 
-  <script src="../js/cookies.js?v=1" defer></script><script src="../js/app.js?v=ab2f48c8" defer></script><script src="../assets/ab-chat.js?v=5bf24d39" data-ab-chat data-lang="en" defer></script></body>
+  <script src="../js/cookies.js?v=1" defer></script><script src="../js/app.js?v=ab2f48c8" defer></script><script src="../assets/ab-chat.js?v=f049ef96" data-ab-chat data-lang="en" defer></script></body>
 </html>

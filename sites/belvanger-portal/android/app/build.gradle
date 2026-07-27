@@ -1,0 +1,93 @@
+// Trusted Web Activity-wrapper om https://dashboard.belvanger.nl
+//
+// Waarom een TWA en geen WebView: een WebView-wrapper is exact wat Google Play onder
+// beleid 4.3 ("minimum functionality") afkeurt, en de handhaving daarop is in 2026
+// strenger geworden. Een TWA is Google's eigen route: hij draait de volledige
+// Chrome-engine (dus service worker, Web Push en offline werken gewoon), hij heeft
+// geen adresbalk zolang Digital Asset Links klopt, en hij is aantoonbaar geen
+// hergebruikte browserpagina.
+//
+// Deze build heeft GEEN Android Studio en GEEN Mac nodig: de CI-workflow in
+// .github/workflows/android-twa.yml doet het met een JDK en de Android command line
+// tools. Zie ANDROID.md voor de complete route naar Play.
+
+plugins {
+    id 'com.android.application'
+}
+
+// Versie komt uit de omgeving zodat CI hem kan zetten zonder dit bestand aan te raken.
+// Lokaal bouwen valt terug op 1 / "1.0.0", wat prima is voor een debug-APK.
+def buildVersionCode = (System.getenv("BELVANGER_VERSION_CODE") ?: "1") as Integer
+def buildVersionName = System.getenv("BELVANGER_VERSION_NAME") ?: "1.0.0"
+
+android {
+    namespace 'nl.belvanger.dashboard'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'nl.belvanger.dashboard'
+        // 23 = Android 6.0. Lager heeft geen zin: Chrome's TWA-ondersteuning en
+        // moderne TLS beginnen hier, en onder de 1% van het Android-park zit eronder.
+        minSdk 23
+        // Play verplicht nieuwe uploads op de recente targetSdk. Dit is DE terugkerende
+        // onderhoudspost van een store-app: zie de kalenderafspraak in ANDROID.md.
+        targetSdk 35
+        versionCode buildVersionCode
+        versionName buildVersionName
+
+        // Deze drie strings worden door androidbrowserhelper uitgelezen. Ze staan hier
+        // en niet in strings.xml zodat het domein op één plek staat.
+        resValue "string", "launch_url", "https://dashboard.belvanger.nl/"
+        resValue "string", "host_name", "dashboard.belvanger.nl"
+        resValue "color", "twa_background_color", "#0E1A24"
+    }
+
+    signingConfigs {
+        release {
+            // Alleen actief als CI (of de founder lokaal) de keystore aanlevert.
+            // Zonder deze env-vars bouwt `bundleRelease` een niet-ondertekende bundle
+            // in plaats van te falen met een cryptische Gradle-fout.
+            if (System.getenv("BELVANGER_KEYSTORE_PATH")) {
+                storeFile file(System.getenv("BELVANGER_KEYSTORE_PATH"))
+                storePassword System.getenv("BELVANGER_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("BELVANGER_KEY_ALIAS")
+                keyPassword System.getenv("BELVANGER_KEY_PASSWORD")
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            // Geen minify: er is bijna geen eigen code om te verkleinen (de app IS de
+            // browser), en R8 aanzetten levert alleen een extra faalmodus op.
+            minifyEnabled false
+            if (System.getenv("BELVANGER_KEYSTORE_PATH")) {
+                signingConfig signingConfigs.release
+            }
+        }
+        debug {
+            // Aparte applicationId zodat een debug-build naast een Play-build op
+            // hetzelfde toestel kan staan tijdens onboarding bij een klant.
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    // De app heeft geen eigen Java- of Kotlin-code: alle gedrag zit in
+    // androidbrowserhelper's LauncherActivity, geconfigureerd via de manifest-metadata.
+    // Minder code is hier een feature, niet luiheid: er is niets dat kan verouderen.
+    buildFeatures {
+        buildConfig true
+    }
+}
+
+dependencies {
+    // Google's officiële TWA-ondersteuningsbibliotheek. Dit is dezelfde library die
+    // Bubblewrap in zijn gegenereerde project zet.
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+}

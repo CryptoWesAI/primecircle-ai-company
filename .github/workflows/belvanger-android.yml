@@ -1,0 +1,127 @@
+# Bouwt de Belvanger Android-app (Trusted Web Activity) in de cloud.
+#
+# Waarom in CI en niet op de laptop van de founder: dan is er geen Android Studio
+# (60 GB), geen lokale SDK die verouderd, en geen Mac nodig. Een release is één
+# handmatige start van deze workflow, en de signing key staat in GitHub Secrets in
+# plaats van in een map op een laptop die stuk kan.
+#
+# Bewust `workflow_dispatch` en GEEN trigger op push: een Android-release is een
+# gebeurtenis met een reviewqueue erachter, geen bijproduct van een commit. De app
+# hoort ook maar zelden te veranderen, want alle UI komt van de server (zie ANDROID.md).
+
+name: Belvanger Android (TWA)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: 'Versienaam, zichtbaar in de Play Store (bijv. 1.0.1)'
+        required: true
+        default: '1.0.0'
+      version_code:
+        description: 'Versiecode, moet HOGER zijn dan de vorige upload (geheel getal)'
+        required: true
+        default: '1'
+      build_type:
+        description: 'release = ondertekende .aab voor Play, debug = .apk om zelf te testen'
+        required: true
+        default: 'release'
+        type: choice
+        options: [release, debug]
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: sites/belvanger-portal/android
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      # Levert Gradle zelf aan, plus caching. Daarom staat er geen gradle-wrapper.jar
+      # in de repo: een binair blob die we niet kunnen lezen of reviewen hoort hier
+      # niet, en de wrapper voegt niets toe als CI de versie al vastzet.
+      #
+      # gradle-version is VERPLICHT hier: zonder die regel verwacht deze action een
+      # wrapper in de repo en is er geen `gradle`-commando. 8.9 is de versie die hoort
+      # bij de Android Gradle Plugin 8.7.x in android/build.gradle; die twee moeten
+      # samen omhoog, nooit los.
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      # Iconen worden uit public/favicon.svg gegenereerd, niet gecommit als
+      # handwerk. Hier opnieuw draaien bewijst dat de gecommitte PNG's kloppen met
+      # het merk; wijkt het af, dan faalt de stap erna op een dirty tree.
+      - name: Iconen genereren
+        working-directory: sites/belvanger-portal
+        run: node scripts/make-icons.mjs
+
+      - name: Controleer dat de gecommitte iconen actueel zijn
+        working-directory: sites/belvanger-portal
+        run: |
+          if ! git diff --quiet -- public/icons android/app/src/main/res; then
+            echo "::error::De gecommitte iconen wijken af van scripts/make-icons.mjs. Draai het script lokaal en commit het resultaat."
+            git diff --stat -- public/icons android/app/src/main/res
+            exit 1
+          fi
+
+      - name: Keystore uitpakken
+        if: inputs.build_type == 'release'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.BELVANGER_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::Secret BELVANGER_KEYSTORE_BASE64 ontbreekt. Zie ANDROID.md, stap 3."
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/belvanger-upload.jks"
+
+      - name: Bouwen
+        env:
+          BELVANGER_VERSION_NAME: ${{ inputs.version_name }}
+          BELVANGER_VERSION_CODE: ${{ inputs.version_code }}
+          BELVANGER_KEYSTORE_PATH: ${{ inputs.build_type == 'release' && format('{0}/belvanger-upload.jks', runner.temp) || '' }}
+          BELVANGER_KEYSTORE_PASSWORD: ${{ secrets.BELVANGER_KEYSTORE_PASSWORD }}
+          BELVANGER_KEY_ALIAS: ${{ secrets.BELVANGER_KEY_ALIAS }}
+          BELVANGER_KEY_PASSWORD: ${{ secrets.BELVANGER_KEY_PASSWORD }}
+        run: |
+          if [ "${{ inputs.build_type }}" = "release" ]; then
+            gradle --no-daemon bundleRelease
+          else
+            gradle --no-daemon assembleDebug
+          fi
+
+      # De fingerprint van de sleutel waarmee net is ondertekend. Die MOET in
+      # TWA_SHA256_FINGERPRINTS op de server staan, anders krijgt de app een
+      # adresbalk en ziet Play een webview-wrapper. Hier printen scheelt het
+      # zoeken in de Play Console.
+      - name: SHA-256 fingerprint van de upload key
+        if: inputs.build_type == 'release'
+        run: |
+          keytool -list -v \
+            -keystore "$RUNNER_TEMP/belvanger-upload.jks" \
+            -alias "${{ secrets.BELVANGER_KEY_ALIAS }}" \
+            -storepass "${{ secrets.BELVANGER_KEYSTORE_PASSWORD }}" \
+            | grep -A1 'SHA256:' || true
+
+      - name: Artefact bewaren
+        uses: actions/upload-artifact@v4
+        with:
+          name: belvanger-android-${{ inputs.version_name }}-${{ inputs.build_type }}
+          path: |
+            sites/belvanger-portal/android/app/build/outputs/bundle/release/*.aab
+            sites/belvanger-portal/android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30

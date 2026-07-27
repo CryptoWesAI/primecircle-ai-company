@@ -23,6 +23,9 @@ const SITE = process.env.AB_SITE_DIR || "C:/Users/wfvis/Documents/PrimeCircle";
 const ASSETS = path.join(SITE, "assets");
 const MODE = process.argv[2] || "add";
 const HOST = (process.argv[3] || "http://localhost:3100").replace(/\/$/, "");
+// Optioneel: komma-gescheiden mapnamen die dit script volledig moet negeren (bv.
+// losstaande voorbeeld-/demopagina's die geen live chat-widget horen te krijgen).
+const EXCLUDE_DIRS = (process.env.AB_SITE_EXCLUDE_DIRS || "").split(",").map((s) => s.trim()).filter(Boolean);
 
 const MARKER = "data-ab-chat";
 const JS_NAME = "ab-chat.js";
@@ -33,7 +36,7 @@ const TAG_RE = /\s*<script src="[^"]*" data-ab-chat data-lang="[a-z]+" defer><\/
 function walk(dir) {
   let out = [];
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+    if (entry.name === "node_modules" || entry.name.startsWith(".") || EXCLUDE_DIRS.includes(entry.name)) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) out = out.concat(walk(full));
     else if (entry.name.endsWith(".html")) out.push(full);
@@ -102,7 +105,9 @@ for (const file of files) {
     skipped++;
     continue;
   }
-  const lang = rel.replace(/\\/g, "/").includes("en/") ? "en" : "nl";
+  // Padsegment-check (niet substring): een map als "voorbeelden/" eindigt toevallig
+  // op "en" maar is geen en/-taalmap.
+  const lang = rel.replace(/\\/g, "/").split("/").slice(0, -1).includes("en") ? "en" : "nl";
   const tag = `<script src="${assetPrefix(file)}/${JS_NAME}?v=${VER}" ${MARKER} data-lang="${lang}" defer></script>`;
   const idx = html.lastIndexOf("</body>");
   if (idx === -1) {

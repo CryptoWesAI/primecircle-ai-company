@@ -88,3 +88,87 @@ These are candidates, not final decisions.
 - [x] Finalize PAOF structure — see `docs/`, `roadmap/LEARNING_ROADMAP.md`, `workflow/DEV_WORKFLOW.md`, `.claude/skills/`
 - [x] First build live (AB Uitvaartzorg chatbot + dashboard, HTTPS, private repo, Art. 50 disclosure) — reference case done
 - [ ] **Validate the trades wedge** — one casual discovery conversation with a warm/hungry trade contact (crux: missed calls/week × job value × willingness-to-pay). Script ready. THEN build MVP v0 (`docs/build/mvp-missed-call-textback.md`). Use the `opportunity-check` skill for any further niche/offer decisions.
+
+### Belvanger klantdashboard als Android-app (2026-07-25)
+
+Route gekozen na ADHD-onderzoek (`docs/research/belvanger-android-app-adhd-onderzoek-2026-07-25.md`):
+**PWA-first, dan Trusted Web Activity**. Geen frontend geport, geen framework of bundler
+toegevoegd, en app-versie 1.0 blijft 1.0 omdat elke UI-wijziging serverside meegaat
+zonder store-review. Geverifieerd: TWA-op-een-echte-PWA is Google's eigen route langs
+beleid 4.3, waar een WebView-wrapper juist op wordt afgekeurd.
+
+**Gebouwd en lokaal geverifieerd** in `sites/belvanger-portal/`: PWA-laag (manifest,
+service worker, offline-pagina, iconen uit één generator), Web Push zonder
+npm-dependency (`src/webpush.js`, getest tegen RFC 8291 Appendix A), meldingen-UI met
+testknop (visueel geverifieerd op 390px en 1440px, geen overflow/consolefouten),
+`push_devices`-tabel, VAPID-routes, verzendhook op `call.missed` en `website.lead`,
+`/.well-known/assetlinks.json` uit env, het TWA-project in `android/`, en een
+cloud-build (`.github/workflows/belvanger-android.yml`) die zonder Android Studio of Mac
+een ondertekende `.aab` oplevert.
+
+**Besluit founder, 2026-07-25: de Play Store is geparkeerd.** Leveringsmechanisme is de
+**geïnstalleerde PWA op het beginscherm**, niet een app in de store. Reden: de PWA geeft
+de vakman 100% van de functionele waarde en dekt gratis ook iPhone-gebruikers, terwijl de
+store alleen vindbaarheid toevoegt tegen permanente onbetaalde onderhoudslast. Het
+TWA-project en `.github/workflows/belvanger-android.yml` blijven staan als slapende
+optie: die workflow start alleen handmatig, dus er gaat nooit per ongeluk iets naar
+Google. Route staat compleet in `ANDROID.md` mocht een klant er ooit om vragen.
+
+**Let op, dit lost een bookmark niet op:** iOS Safari geeft Web Push **uitsluitend** aan
+PWA's die op het beginscherm zijn geïnstalleerd. Op Android werkt push ook in een gewone
+tab, en is installeren winst op weergave (volledig scherm, eigen icoon, offline).
+Klanten moeten dus door "App installeren" worden geleid, niet door "bookmark maken".
+
+**LIVE sinds 2026-07-25** op `https://dashboard.belvanger.nl` (VPS `/opt/belvanger-portal`,
+Traefik + Let's Encrypt). Geverifieerd na deploy: `manifest.webmanifest` met het juiste
+content-type, `sw.js` met `no-cache` + `Service-Worker-Allowed`, iconen als `image/png`,
+`push_devices`-tabel aangemaakt, en in een echte browser een **geactiveerde service
+worker** op scope `/`. VAPID-sleutels staan in de gitignored `.env` op de VPS
+(voor `PUSH_INCLUDE_CALLER` zie punt 3 hieronder). Tijdens de deploy nog een
+latente bug gefixt: `serveStatic` gaf 404 op elk HEAD-verzoek, dus ook op `/`, wat elke
+uptime-monitor als "site down" had gelezen.
+
+**Bewezen op een echt toestel:**
+
+1. **Testmelding aangekomen** (2026-07-25). Dat valideerde het grootste technische risico:
+   de zelfgebouwde Web Push-crypto in `src/webpush.js` wordt niet alleen door het
+   RFC 8291-testvector geaccepteerd maar ook door de echte push-dienst, en door de browser
+   ontcijferd. Er is geen tweede implementatie die ons corrigeert, dus dit was de open vraag.
+2. **Doze-test geslaagd** (2026-07-27). Na een uur met het scherm uit kwam de testmelding
+   alsnog aan, dus OEM-batterijbeheer knijpt de bezorging op dit toestel niet. Nuance: dit is
+   **een** toestel. Xiaomi, Oppo en Samsung knijpen agressiever, dus de Doze-test staat als
+   verplichte stap in de koppelchecklist (`sites/belvanger-portal/n8n/README.md`). De
+   sms-escalatieladder blijft nuttig maar is geen voorwaarde meer om te kunnen leveren.
+3. **`PUSH_INCLUDE_CALLER=true` live** (founder-besluit 2026-07-25). De melding bevat het
+   nummer van de beller plus een "Bel terug"-knop. Verdedigbaar omdat de payload
+   end-to-end versleuteld is (RFC 8291) met sleutels die alleen het toestel van de klant
+   heeft, en het de eigen leaddata van de klant naar zijn eigen toestel betreft.
+   Terugdraaien is een regel in de VPS-`.env` plus een herstart.
+4. **Installeer-affordance gebouwd, Android only** (2026-07-25), gedreven door
+   `beforeinstallprompt`; alle drie de toestanden geverifieerd op 390px.
+5. **Meldingen op inkomende reacties live** (2026-07-25): `sms.inbound`, `email.inbound` en
+   `chat.lead`, met `tests/inbound-push.mjs` gedraaid tegen de gedeployde broncode.
+
+**Nog open:**
+
+- **De "Bel terug"-knop is ongetest.** Het pad `notificationclick` → `/?call=<nummer>` →
+  `location.href = tel:` is nog nooit op een echt toestel gelopen, en dat is het stuk met de
+  meeste kans op een subtiele fout over Android-versies heen. Testen vergt een
+  `call.missed`-event in de productiedatabase (`tests/cleanup-test-data.sql` bestaat).
+- **De echte Chrome-installatieprompt is nog niet op een toestel gezien.**
+- **iOS krijgt niets.** Safari geeft Web Push uitsluitend aan PWA's op het beginscherm en
+  heeft geen installatie-API, dus de installeerkaart blijft daar verborgen. Een
+  iPhone-vakman krijgt daardoor geen enkele melding. Bewust uitgesteld (founder-besluit).
+- **De sms-keten klopt nog niet** (diagnose 2026-07-27). De automatische sms gaat uit vanaf
+  een alfanumerieke afzender in plaats van vanaf het nummer, waardoor de beller niet kan
+  antwoorden en het n8n-importfilter de sms stil overslaat. Bewust zo in de testopstelling;
+  het echte NL-nummer komt met klant #1. Volledige diagnose in
+  `docs/decisions/DECISIONS_LOG.md`, de stappen in de koppelchecklist.
+
+**Bewust uitgesteld:** de sms-terugval als een pushmelding niet aankomt. Ontworpen, niet
+gebouwd, omdat elke terugval Twilio-geld per bericht kost en dat een beslissing over
+klantkosten is. `push_devices.failure_count`/`last_success_at` is er als storingssignaal, en
+de e-mailmelding blijft als vangnet staan.
+
+`TWA_*`-variabelen en de assetlinks-route zijn niet nodig zolang de Play Store geparkeerd
+blijft (ze geven netjes 404 als ze leeg zijn).

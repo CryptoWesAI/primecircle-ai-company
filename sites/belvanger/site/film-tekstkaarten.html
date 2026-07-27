@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- Tekstkaarten voor de promotiefilm, geen publieke pagina.
+       Bewust HTML en geen AI: videomodellen renderen geen betrouwbare Nederlandse
+       tekst, en de kaarten moeten in de echte merkletters staan (Fraunces + Archivo).
+       Aanroepen als ?kaart=1 of ?kaart=2; wordt op 1080x1920 gescreenshot en door
+       ffmpeg tot videoclips gemaakt. Zie docs/offers/belvanger-promotiefilm-*.md -->
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Tekstkaarten (intern)</title>
+  <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=2a9b2761" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #0E1A24; }
+    .kaart {
+      width: 1080px; height: 1920px; position: relative;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 110px; box-sizing: border-box;
+      /* Zelfde radiale gloed als het opnamepodium, zodat de kaarten in dezelfde
+         ruimte lijken te staan als de gefilmde telefoon en de simulatie. */
+      background: radial-gradient(120% 80% at 50% 30%, #16232E 0%, #0E1A24 55%, #070C11 100%);
+      color: #F4F2ED;
+    }
+    /* Tekst blijft buiten de bovenste 15% en onderste 20%: daar zit de interface
+       van Facebook, Instagram en WhatsApp over het beeld heen. */
+    .kaart__inner { margin-top: -60px; }
+    h1 {
+      font-family: Fraunces, Georgia, serif; font-weight: 600;
+      font-size: 104px; line-height: 1.06; letter-spacing: -0.02em; margin: 0;
+    }
+    .lead {
+      font-family: Fraunces, Georgia, serif; font-weight: 600;
+      font-size: 132px; line-height: 1; margin: 0 0 26px;
+    }
+    .lead em { font-style: italic; color: #FF5A1F; }
+    p.sub {
+      font-family: Archivo, Arial, sans-serif; font-weight: 500;
+      font-size: 46px; line-height: 1.45; margin: 30px 0 0; color: #B6BFC7;
+    }
+    .cta {
+      font-family: Archivo, Arial, sans-serif; font-weight: 700;
+      font-size: 42px; line-height: 1.4; margin: 74px 0 0; color: #F4F2ED;
+    }
+    .mark {
+      /* 420px, niet 300px: de onderste 20% van 1920 is 384px en die wordt door de
+         interface van Facebook en Instagram bedekt. */
+      position: absolute; left: 110px; bottom: 420px;
+      display: flex; align-items: center; gap: 22px;
+      font-family: Archivo, Arial, sans-serif; font-weight: 800; font-size: 44px;
+      letter-spacing: -0.01em;
+    }
+    .mark svg { width: 62px; height: 62px; }
+    [data-kaart] { display: none; }
+    body[data-show="1"] [data-kaart="1"],
+    body[data-show="2"] [data-kaart="2"] { display: flex; }
+  </style>
+</head>
+<body>
+  <section class="kaart" data-kaart="1">
+    <div class="kaart__inner">
+      <h1>Dat gesprek<br>had je nooit<br>gehad.</h1>
+      <p class="sub">Je stond op de steiger. Je telefoon ging drie keer.<br>Je kon gewoon niks.</p>
+    </div>
+  </section>
+
+  <section class="kaart" data-kaart="2">
+    <div class="kaart__inner">
+      <p class="lead">Opgevangen.</p>
+      <h1 style="font-size:64px;line-height:1.15;font-weight:600;">Zonder dat je<br>iets deed.</h1>
+      <p class="cta">Ken je iemand die dit kan gebruiken?<br>Stuur me een appje.</p>
+    </div>
+    <div class="mark">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22a13 13 0 0 1 20-11" fill="none" stroke="#F4F2ED" stroke-width="3.4" stroke-linecap="round"/><circle cx="26.5" cy="9.5" r="4" fill="#FF5A1F"/></svg>
+      <span>Belvanger</span>
+    </div>
+  </section>
+
+  <script>
+    document.body.dataset.show = new URLSearchParams(location.search).get("kaart") || "1";
+  </script>
+</body>
+</html>

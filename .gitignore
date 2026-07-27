@@ -12,8 +12,31 @@ sites/belvanger/app/
 sites/belvanger/site/assets/ab-chat.js
 sites/belvanger/site/assets/ab-chat.css
 
+# Gegenereerd door build-dashboard-demo.mjs (kopie van sites/belvanger-portal/public/)
+sites/belvanger/site/dashboard-demo/
+
+# Gegenereerd door build-knowledge-index.mjs (bundelt docs/*.md, goedkoop opnieuw te bouwen,
+# dus niet gecommit). knowledge-relationships.json NIET hier: dat is een handmatige, met
+# sub-agents geanalyseerde dataset (geen goedkoop te herhalen build-stap), die blijft wel
+# gewoon getrackt zodat de analyse niet verloren gaat.
+sites/belvanger-portal/src/knowledge-index.json
+# Runtime-status van de nachtelijke staleness-check (server.js), reset bij elke deploy — signaal, geen bron van waarheid.
+sites/belvanger-portal/src/knowledge-staleness-state.json
+
 # Alien's client project = eigen privé-repo (CryptoWesAI/ABUitvaart), niet hier
 clients/ab-uitvaartzorg/deploy/
 
 # Dashboard runtime-data (login-hash + sessiesleutel) — nooit committen
 infra/dashboard/app/data/
+
+# Lokale Claude-instellingen: kunnen productie-toegang bevatten, nooit committen.
+.claude/settings.local.json
+.claude/production-window.json
+
+# Afgekeurde filmtakes en niet-gebruikte tussenclips. Blijven op schijf staan, maar horen
+# niet in de geschiedenis: het zijn verworpen uitkomsten, geen werk. Opnieuw te maken met
+# de prompts en de vaste seed uit docs/offers/belvanger-promotiefilm-opgevangen-2026-07-25.md.
+sites/belvanger/film/frames/*-b.png
+sites/belvanger/film/clips/clip-A1-werkbank.mp4
+sites/belvanger/film/clips/clip-A2-steiger.mp4
+sites/belvanger/film/clips/clip-A3-schermuit.mp4

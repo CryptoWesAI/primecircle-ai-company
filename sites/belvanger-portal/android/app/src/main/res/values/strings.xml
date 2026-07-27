@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Wat er onder het icoon op het beginscherm staat. Kort houden: Android knipt
+         rond de 12 tekens af op veel launchers. -->
+    <string name="app_name">Belvanger</string>
+</resources>

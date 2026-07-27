@@ -39,8 +39,14 @@ fs.writeFileSync(
 );
 console.log(`app/ samengesteld uit product/chatbot (klant: ${CUSTOMER})`);
 
+// 1b. dashboard-demo/ ← verse kopie van sites/belvanger-portal/public/, altijd opnieuw
+// gebouwd zodat deze nooit los raakt van de echte dashboard-bestanden.
+execFileSync("node", [path.join(__dirname, "build-dashboard-demo.mjs")], { stdio: "inherit" });
+
 // 2. chat-widget same-origin in de site embedden (idempotent: eerst remove, dan add auto)
-const env = { ...process.env, AB_SITE_DIR: SITE };
+// voorbeelden/ en dashboard-demo/ = losstaande demopagina's die GEEN live Belvanger-
+// chatwidget horen te krijgen (fictief ander bedrijf, resp. het dashboard-voorbeeld zelf).
+const env = { ...process.env, AB_SITE_DIR: SITE, AB_SITE_EXCLUDE_DIRS: "voorbeelden,dashboard-demo" };
 execFileSync("node", [APPLY, "remove"], { env, stdio: "inherit" });
 execFileSync("node", [APPLY, "add", "auto"], { env, stdio: "inherit" });
 

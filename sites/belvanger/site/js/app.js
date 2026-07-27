@@ -100,7 +100,7 @@
     var simBtn = simctl.querySelector("[data-sim]");
     var simLabel = simctl.querySelector("[data-sim-label]");
     var soundBtn = simctl.querySelector("[data-sound]");
-    var steps = phone.querySelectorAll("[data-step]");
+    var steps = demo.querySelectorAll("[data-step]");
     var toast = demo.querySelector(".lead-toast");
     var timers = [];
     var playing = false;
@@ -154,7 +154,7 @@
     var at = function (ms, fn) { timers.push(setTimeout(fn, ms)); };
     var chatBody = phone.querySelector(".chat__body");
     var show = function (n) {
-      var el = phone.querySelector('[data-step="' + n + '"]') || (n === 7 ? toast : null);
+      var el = demo.querySelector('[data-step="' + n + '"]');
       if (!el) return;
       el.classList.add("is-in");
       // laat het chatvenster meescrollen naar het nieuwste bericht (zoals WhatsApp)
@@ -163,7 +163,7 @@
       }
     };
     var hide = function (n) {
-      var el = phone.querySelector('[data-step="' + n + '"]') || (n === 7 ? toast : null);
+      var el = demo.querySelector('[data-step="' + n + '"]');
       if (el) el.classList.remove("is-in");
     };
 
@@ -209,9 +209,19 @@
       at(7300, function () { show(5); });                     // Belvanger typt
       at(8500, function () { hide(5); show(6); popTone(); });  // reactie die de lead binnenhoudt
 
-      // 7. de lead komt binnen bij de vakman
+      // 7. de lead komt binnen bij de ondernemer
       at(9500, function () {
         show(7);
+        beep(660, 0.15, "triangle", 0.05);
+        setTimeout(function () { beep(880, 0.2, "triangle", 0.05); }, 130);
+      });
+
+      // 8. …en meteen ook in het dashboard, met directe belactie
+      at(11200, function () { hide(7); show(8); popTone(); });
+
+      // 9. de eigen website ving 'm mede op: het complete pakket in beeld
+      at(12700, function () {
+        hide(8); show(9);
         beep(660, 0.15, "triangle", 0.05);
         setTimeout(function () { beep(880, 0.2, "triangle", 0.05); }, 130);
         phone.setAttribute("data-state", "done");
