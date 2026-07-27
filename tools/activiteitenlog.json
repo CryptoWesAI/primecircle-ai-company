@@ -1,0 +1,68 @@
+[
+  {
+    "logDate": "2026-07-27",
+    "category": "fix",
+    "title": "Engelse site liep achter en was stuk",
+    "summary": "De EN-hero-animatie eindigde op een leeg vlak: js/app.js is voor beide talen hetzelfde bestand en riep data-step 8 en 9 aan, die alleen op de NL-pagina bestonden. Geen console-fout, HTTP 200, stond er van 18 t/m 27 juli. Copy bijgetrokken (hero, belief-regel, eyebrow) en binnen het Engels had hetzelfde vak drie namen (Landscapers/Gardeners/Landscaper). Nieuw vangnet: tests/taalpariteit.mjs vergelijkt NL en EN op structuur, prijzen, hreflang en robots. Faalt op de oude bestanden, slaagt op de nieuwe."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "fix",
+    "title": "Drie stille serverfouten weg",
+    "summary": "Alle drie onzichtbaar voor een gewone GET op de homepage. 404.html werd NOOIT geserveerd; een typefout gaf kale tekst 'Not found'. Er was ook geen Engelse 404, dus een Engelse bezoeker kreeg Nederlands. HEAD gaf 405 op elke pagina, ook op /, waardoor elke uptime-monitor de site als down zou melden; gemeten dat HEAD nu geen bezoek meetelt. En de deploy uploadde 67 MB filmmateriaal dat de container niet gebruikt en dat in elke pre-deploy-backup werd meegekopieerd: tar van 71 MB naar 3,6 MB."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "beslissing",
+    "title": "Privacyverklaring herschreven op wat de code echt doet",
+    "summary": "Er stond dat de aanvraag via WhatsApp verstuurd wordt; sinds 19 juli gaat hij via POST /api/lead naar de eigen server, die hem mailt en de aanvrager een bevestiging stuurt. Naam en e-mailadres stonden niet in de opsomming terwijl het formulier ze verplicht vraagt, en de AI-chat stond er helemaal niet in (OpenRouter naar Google Gemini, mogelijk buiten de EER, berichttekst wordt niet bewaard). Beide talen bijgewerkt met de verwerkers erin. Blijft een concept dat juridisch nagelezen moet worden."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "bouwwerk",
+    "title": "Schilders toegevoegd als zevende vak",
+    "summary": "Aanleiding: de eerste echte prospect (Friesland Schilderwerken via Georgina Tan) is schilder en dat vak stond niet tussen de zes. Doorgevoerd in beide talen: vakkenstrip, merk-ruggetje, formulieroptie, JSON-LD audience en een eigen kaart in de carrousel. Vakkleur violet #7E4A9E. Eigen voorbeeldpagina waar de wand geverfd wordt terwijl je scrollt, in pure CSS zonder JavaScript. Fictieve naam Van Rijn Schilderwerken, regio Groningen: bewust niet de naam of regio van de echte prospect."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "bouwwerk",
+    "title": "Echte foto's in de schilderpagina, voor en na gemeten uitgelijnd",
+    "summary": "Zes beelden zelf gegenereerd in de OmniFrame-workspace (OpenArt is niet aangesloten op dit project) en hier gecropt naar de maten van de andere voorbeeldpagina's. Dat de voor- en na-foto's exact samenvallen is GEMETEN met gradientcorrelatie in plaats van bekeken: optimum op dx=0, dy=0, schaal 1.00 voor alle drie de paren. Daardoor lopen kozijn, deurpanelen en wand dwars door de verflijn zonder sprong. Verdeling: foto voor het oppervlak, tekenwerk voor de beweging, want een foto kun je niet gaandeweg verven."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "fix",
+    "title": "Omslag pas vanaf het midden, en de scene blijft staan",
+    "summary": "De voor/na-omslag ging te snel en te vroeg: het paneel was al half geverfd voordat het goed in beeld was. Nu loopt het bereik van cover 50% tot 78%, en cover 50% is exact het moment dat het midden van het paneel op het midden van het scherm ligt. Daarnaast een plakscene: de sectie blijft staan terwijl de scroll de animatie afspeelt, met de sectiekop erbinnen. Bewust GEEN scroll-hijack, want het tegenhouden van scroll-events breekt toetsenbordnavigatie en schermlezers. Gemeten: tijdens 1300px scrollen beweegt het beeld 0 tot 3px."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "fix",
+    "title": "Vakken in een raster, geen leeg vak meer",
+    "summary": "De voorbeeldwebsites stonden in een horizontale schuifrij waardoor er met zeven vakken drie buiten beeld stonden en de bezoeker moest slepen om zijn eigen vak te vinden. Nu een raster: vier kolommen op desktop, drie op tablet, twee op telefoon. Bewust geen automatisch schuivende band, want dan wordt je eigen vak een bewegend doel. Het lege vak is gevuld met een achtste kaart die geen vak is maar de vraag 'jouw vak staat er niet bij?' met een link naar het gesprek. Gemeten op twaalf schermbreedtes: nergens nog een gat."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "infra",
+    "title": "Deployscript controleert de site nu echt",
+    "summary": "Het deployscript meldde 'Klaar' zonder iets te controleren, terwijl het rollbackscript de URL wel echt opvraagt met herhaalpogingen. Daardoor zag ik na een deploy een 404 die geen 404 was: Traefik geeft 404 zolang de container herstart. Nu een lus met zes pogingen en pas dan 'Klaar en geverifieerd'. Faalt het, dan exitcode 1 met de rollback-opdracht erbij. Bij de eerstvolgende deploy meteen bewezen: poging 1 gaf 404, poging 2 gaf 200."
+  },
+  {
+    "logDate": "2026-07-27",
+    "category": "onderzoek",
+    "title": "scroll-film-studio skill geinstalleerd en gerepareerd",
+    "summary": "Skill uit Downloads bekeken en in .claude/skills gezet. Twee reparaties, beide met minimale testgevallen bewezen. copy-gate.js las de HELE markup in plaats van de zichtbare tekst, waardoor class=reveal, placeholder=... en data-pan vals alarm gaven: elke pagina met een formulier faalde dus altijd. En de regels waren volledig Engelstalig, dus op onze Nederlandse pagina's ving de poort niets. Na de reparatie vond hij drie ECHTE fouten op de schilderpagina: de pagina kondigde zijn eigen truukje aan. Weggehaald. Lane B (echte video) blijft onbruikbaar: drie scripts zijn zsh en er is geen Higgsfield- of Kie-account."
+  },
+  {
+    "logDate": "2026-07-28",
+    "category": "beslissing",
+    "title": "Eigenaarschap en overdracht vastgelegd",
+    "summary": "Vraag van de founder: wat als een klant het beheer zelf wil, of opzegt. Uitgangspunt: de setup koop je, de maandelijkse dienst huur je. Dat is precies hoe de prijs al in elkaar zit. Vastgelegd per bezitting met een matrix, vijf regels (domein altijd op naam van de klant, nooit adverteren met een nummer dat niet van hem is, de statische site is een verkoopargument, het dashboard is een dienst, elke belofte krijgt een termijn) en een overdrachtchecklist. Twee openstaande must-haves vóór klant #1: verwerkersovereenkomst (AB is sinds 14 juli live ZONDER, terwijl de eigen spec zegt dat het voor livegang moest) en een exit-alinea in de voorwaarden. Plus een technisch gat: alle 71 backups staan op dezelfde VPS die ze moeten beschermen."
+  },
+  {
+    "logDate": "2026-07-28",
+    "category": "onderzoek",
+    "title": "Marketing-agent systeem uitgewerkt",
+    "summary": "Op basis van de aflevering met Cody Schneider. Architectuur overgenomen (vier lagen, lezen uit eigen data en schrijven via de API, entropie oplossen met nieuw DNA, en na Andromeda is de creative de targeting), de SCHAAL niet: die video is voor bedrijven die duizenden per maand uitgeven. Bewust NIET nu: 1000 creatives, Airbyte/ClickHouse, Marketing API om te publiceren, agent in de cloud. Toegevoegd wat de video overslaat: de AVG (fase 1 gaat zonder pixel, dus geen wijziging aan de live site) en het rekensommetje, waaruit volgt dat een aanvraag onder 42 euro gezond is en boven 85 het stopcriterium. Skill ad-batch draait de lus, tools/ad-rendement.mjs meet, ANGLES.md heeft batch 1 al ingevuld met tien hoeken plus twee die ik zelf niet zou kiezen."
+  }
+]

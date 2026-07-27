@@ -41,8 +41,9 @@ eronder, geen robot die je klanten te woord staat.
 
 - Een strakke **website**, opnieuw ontworpen voor jouw vak, niet een sjabloon met een
   andere kleur. Op belvanger.nl staan onder "Wat je krijgt" echte voorbeelden per vak
-  (loodgieters, installateurs, dakdekkers, elektriciens, hoveniers, klusbedrijven), zodat
-  je vooraf ziet wat voor stijl je kunt verwachten. Inclusief contactformulier als tweede
+  (loodgieters, installateurs, dakdekkers, elektriciens, hoveniers, klusbedrijven en
+  schilders), zodat je vooraf ziet wat voor stijl je kunt verwachten. Staat jouw vak er niet
+  bij? Vraag het gewoon, we bouwen ook voor andere lokale vakbedrijven. Inclusief contactformulier als tweede
   voordeur.
 - **Automatische leadvangst**, op twee plekken tegelijk: een gemiste beller op je eigen
   nummer krijgt direct een bericht, en een bezoeker die het contactformulier op je website
@@ -50,13 +51,18 @@ eronder, geen robot die je klanten te woord staat.
   zodra er een nieuwe lead binnenkomt, naast het overzicht in je dashboard.
 - Een **AI-chatbot** die veelgestelde vragen van bezoekers dag en nacht beantwoordt.
 - Je eigen **dashboard** met al je leads, dagelijkse cijfers en (indien gekoppeld) inzicht
-  in je websitebezoek op één plek.
+  in je websitebezoek op één plek. Op belvanger.nl staat een voorbeelddashboard met fictieve
+  data, zodat je vooraf kunt zien hoe het werkt. Het dashboard is ook als app op je
+  beginscherm te zetten, met een pushmelding zodra er een gemiste beller of een reactie
+  binnenkomt.
 - Wij bouwen en onderhouden alles. Jij hoeft niets te doen, behalve terugbellen.
 
 ## Voor wie
 
 Voor vakmensen die klanten mislopen omdat ze onder het werk zitten: loodgieters,
-installateurs, dakdekkers, elektriciens, hoveniers en klusbedrijven.
+installateurs, dakdekkers, elektriciens, hoveniers, klusbedrijven en schilders. Staat een
+vak er niet bij, dan kan het meestal ook: het gaat om lokaal werk waarbij een gemist
+belletje een gemiste klus is.
 
 ## Wat het kost
 
@@ -83,9 +89,13 @@ installateurs, dakdekkers, elektriciens, hoveniers en klusbedrijven.
 - **Ben ik ergens aan vastgebonden?** Nee. Maandelijks opzegbaar.
 - **Werkt dit met mijn manier van werken?** Ja. Jij blijft zelf terugbellen; Belvanger
   zorgt alleen dat je de klant niet meer kwijtraakt.
-- **Wat doen jullie met de gegevens?** We slaan alleen op wat nodig is om terug te bellen:
-  het telefoonnummer en waar de klus over gaat. We verkopen niets door, en gegevens kunnen
-  op verzoek verwijderd worden. Zie ook de privacyverklaring op de site.
+- **Wat doen jullie met de gegevens?** Van een gemiste beller slaan we op wat nodig is om
+  terug te bellen: het nummer en waar de klus over gaat. Vul je het formulier op de site in,
+  dan gaat dat via onze eigen server per e-mail naar info@belvanger.nl, en krijg je daar
+  automatisch een bevestiging van. Wat je in dit chatvenster typt gaat naar OpenRouter, dat
+  het aan een AI-model doorgeeft om een antwoord te maken; die tekst bewaren wij niet. Zet er
+  dus geen gevoelige gegevens in. We verkopen niets door en gegevens kunnen op verzoek
+  verwijderd worden. De volledige uitleg staat in de privacyverklaring op de site.
 - **Hoe snel ben ik live?** Binnen een week.
 
 ## Het vrijblijvende gesprek
