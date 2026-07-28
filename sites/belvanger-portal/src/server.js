@@ -1039,8 +1039,13 @@ async function addActivity(req, res, user) {
 }
 
 function csvEscape(value) {
-  const s = String(value == null ? "" : value).replace(/"/g, '""');
-  return `"${s}"`;
+  let s = String(value == null ? "" : value);
+  // Excel voert een cel die begint met = + - of @ uit ALS FORMULE. De namen en berichten in
+  // deze export komen uit het openbare contactformulier van de klant, dus een vreemde kan
+  // daar =HYPERLINK(...) invullen en dat draait dan op de computer van de klant zodra hij
+  // zijn eigen export opent. Een voorloopquote maakt er tekst van; Excel toont hem niet.
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return `"${s.replace(/"/g, '""')}"`;
 }
 
 async function exportActivityCsv(res, user) {

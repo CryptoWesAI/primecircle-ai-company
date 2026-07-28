@@ -39,15 +39,29 @@ function copyPatched(name, patch) {
 // index.html: banner direct na <body>, en absolute asset-/exportpaden herschreven naar
 // /dashboard-demo/... (het bestand leeft niet meer op de site-root, dus /style.css etc.
 // zouden anders 404'en). Verder ongewijzigd.
-copyPatched("index.html", (html) =>
-  html
+copyPatched("index.html", (html) => {
+  let uit = html
     .replace("<body>", "<body>" + DEMO_BANNER)
-    .replace('href="/favicon.svg"', 'href="/dashboard-demo/favicon.svg"')
-    .replace('href="/style.css?', 'href="/dashboard-demo/style.css?')
-    .replace('src="/app.js?', 'src="/dashboard-demo/app.js?')
-    .replace('href="/api/contacts/export"', 'href="/dashboard-demo/api/contacts/export"')
-    .replace('href="/api/admin/activity/export"', 'href="/dashboard-demo/api/admin/activity/export"')
-);
+    // De demo is geen installeerbare app: geen manifest, geen service worker, geen push.
+    // Die verwezen bovendien naar /icons/, /manifest.webmanifest en /push.js op de SITE-root,
+    // waar ze niet bestaan, dus ze gaven drie 404's op een pagina die prospects te zien krijgen.
+    .replace(/^.*rel="manifest".*$\n?/m, "")
+    .replace(/^.*rel="apple-touch-icon".*$\n?/m, "")
+    .replace(/^.*src="\/push\.js.*$\n?/m, "")
+    // Alles wat vanaf de siteroot werd geladen moet naar de demomap wijzen.
+    .replace(/(href|src)="\/(?!dashboard-demo\/)/g, '$1="/dashboard-demo/');
+
+  // Poort in plaats van vertrouwen: blijft er een pad over dat naar de siteroot wijst, dan
+  // is dit script achtergebleven bij het portaal en moet dat NU blijken, niet als een 404 op
+  // de demo van een prospect. De vorige versie had een vaste lijst van vijf vervangingen en
+  // miste er stilzwijgend drie zodra het portaal een asset toevoegde.
+  const rest = [...uit.matchAll(/(?:href|src)="(\/(?!dashboard-demo\/)[^"]*)"/g)].map((m) => m[1]);
+  if (rest.length) {
+    console.error("FOUT: deze paden wijzen nog naar de siteroot en zouden 404 geven:\n  " + rest.join("\n  "));
+    process.exit(1);
+  }
+  return uit;
+});
 
 // app.js: enige wijziging — elke API-aanroep via api() krijgt het /dashboard-demo-voorvoegsel,
 // zodat dezelfde ongewijzigde applicatielogica tegen de fictieve routes praat.

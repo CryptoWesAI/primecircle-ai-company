@@ -86,7 +86,7 @@
         toggle: "Ask a question",
         subtitle: "Digital assistant",
         disclosure:
-          "You are chatting with " + (name ? name + "'s " : "") + "digital assistant (automated, not a staff member)." + escEn,
+          "You are chatting with " + (name ? name + "'s " : "") + "AI assistant (automated, not a staff member)." + escEn,
         greeting: "Good day. How can I help you?",
         call: callEn,
         placeholder: "Type your question...",
@@ -116,7 +116,7 @@
       toggle: "Stel een vraag",
       subtitle: "Digitale assistent",
       disclosure:
-        "U chat met de digitale assistent" + (name ? " van " + name : "") + " (automatisch, geen medewerker)." + escNl,
+        "U chat met de AI-assistent" + (name ? " van " + name : "") + " (automatisch, geen medewerker)." + escNl,
       greeting: "Goedendag. Waarmee kan ik u helpen?",
       call: callNl,
       placeholder: "Typ uw vraag...",

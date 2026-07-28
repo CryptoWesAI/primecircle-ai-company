@@ -38,6 +38,11 @@ services:
       RATE_LIMIT_PER_MIN: "${RATE_LIMIT_PER_MIN:-30}"
       LOG_QUESTIONS: "false"
       DASHBOARD_TOKEN: "${DASHBOARD_TOKEN:-}"
+      # Zonder deze regel valt de server terug op "*", en dan mag ELKE website de chat-API
+      # aanroepen. Iemand kan de widget dan op zijn eigen site zetten en de gesprekken van
+      # zijn bezoekers op onze OpenRouter-rekening laten lopen. Eigen pagina's raken dit niet:
+      # verzoeken vanaf dezelfde herkomst gaan sowieso niet door CORS heen.
+      ALLOWED_ORIGIN: "https://belvanger.nl"
     volumes:
       # analytics (JSONL) blijft bewaard over herbouw heen
       - belvanger-data:/app/data

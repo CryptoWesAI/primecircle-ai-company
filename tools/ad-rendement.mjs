@@ -28,6 +28,26 @@ if (!csvPad) {
   process.exit(2);
 }
 
+// Bestandscontrole vóór het rekenen. Zonder dit gaf een typefout in het pad een kale
+// stacktrace (ENOENT of EISDIR), en dat is de meest waarschijnlijke bedieningsfout.
+function moetBestaan(pad, wat) {
+  if (!fs.existsSync(pad)) {
+    console.error(`FOUT: ${wat} bestaat niet: ${pad}`);
+    console.error("Controleer het pad. Vanuit de projectmap bijvoorbeeld: tools/exports/meta-2026-08.csv");
+    process.exit(1);
+  }
+  if (fs.statSync(pad).isDirectory()) {
+    console.error(`FOUT: ${wat} is een map, geen bestand: ${pad}`);
+    process.exit(1);
+  }
+}
+moetBestaan(csvPad, "de Meta-export");
+// En dit is de gevaarlijkste van de twee: het tweede bestand werd stil overgeslagen als het
+// pad niet klopte. Je kreeg dan een volledige tabel met kill/keep-besluiten, exitcode 0, en
+// niets dat verried dat er met een ANDERE bron was gerekend dan je dacht. Een crash had je
+// gewaarschuwd, die stilte niet.
+if (aanvragenPad) moetBestaan(aanvragenPad, "het aanvragenbestand");
+
 // ── CSV lezen, met aanhalingstekens en beide scheidingstekens ────────────────────────────
 function leesCsv(pad) {
   const tekst = fs.readFileSync(pad, "utf8").replace(/^﻿/, ""); // BOM van Excel eraf

@@ -65,7 +65,14 @@ const RULES = [
 
 // A real brand logo is fetched as SVG. A <svg> whose only child is a circle or
 // a polygon, sitting next to a brand name, is a hand-drawn approximation.
-const FAKE_LOGO = /<svg[^>]*>\s*<(circle|polygon|path\s+d="M\s*\d+\s*[,\s]\d+\s*L)[^>]*\/?>\s*<\/svg>/i;
+const FAKE_LOGO_SHAPE = /<svg[^>]*>\s*<(circle|polygon)[^>]*\/?>\s*<\/svg>/i;
+// Deliberately NO /i flag. With it, the lowercase relative "l" (lineto) in an ordinary
+// checkmark icon <path d="M5 13l4 4 10-11"/> matched as the absolute "L", so every page with
+// a tick-list failed on "fake brand logo". klusbedrijf-premium.html used that icon 18 times
+// and failed for it; the page was fine, the gate was wrong. A gate that cries wolf teaches
+// the reader to ignore it, which is worse than having no gate.
+const FAKE_LOGO_PATH = /<svg[^>]*>\s*<path\s+d="M\s*\d+\s*[,\s]\d+\s*L[^>]*\/?>\s*<\/svg>/;
+const FAKE_LOGO = { test: (s) => FAKE_LOGO_SHAPE.test(s) || FAKE_LOGO_PATH.test(s) };
 
 // The film's own frames must never be re-served as static <img> in the content
 // below it. The canvas already ends the scroll on the payoff frame; dropping the

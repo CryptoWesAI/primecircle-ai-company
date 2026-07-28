@@ -36,8 +36,20 @@ const SYSTEM_TEXT = `${SYSTEM_PROMPT}\n\n---\n\n# Kennisbank (de enige toegestan
 const RATE_MAX = Number(process.env.RATE_LIMIT_PER_MIN || 30);
 const rateHits = new Map(); // ip -> { count, resetAt }
 function clientIp(req) {
+  // X-Forwarded-For is een LIJST die elke tussenliggende proxy aanvult. Traefik plakt het
+  // echte adres er ACHTER aan. Wie zelf "X-Forwarded-For: 1.2.3.4" meestuurt, staat dus
+  // vooraan in die lijst, en met [0] las de server precies de waarde die de aanvrager zelf
+  // had verzonnen. Elk verzoek een verse "IP", dus de begrenzer van 30/min werd nooit geraakt
+  // en de OpenRouter-rekening was zo leeg te trekken.
+  //
+  // De laatste waarde is degene die onze eigen proxy heeft toegevoegd en die kan de bezoeker
+  // niet vervalsen. Staat er ooit een tweede proxy vóór Traefik, dan moet dit een index van
+  // achteren worden; nu is er er precies één.
   const xff = req.headers["x-forwarded-for"];
-  if (xff) return String(xff).split(",")[0].trim();
+  if (xff) {
+    const keten = String(xff).split(",").map((s) => s.trim()).filter(Boolean);
+    if (keten.length) return keten[keten.length - 1];
+  }
   return req.socket.remoteAddress || "onbekend";
 }
 function isRateLimited(ip) {
@@ -377,7 +389,13 @@ function emailShell(inner, tagline, disclaimer) {
 </body></html>`;
 }
 function leadAutoreply(lang, naam) {
-  const first = escHtml(String(naam || "").trim().split(/\s+/)[0] || (lang === "en" ? "there" : "daar"));
+  // De aanhef is het ENIGE stukje bezoekerstekst in een mail die vanaf info@belvanger.nl
+  // vertrekt, mét geldige SPF en DKIM, naar een adres dat de afzender zelf opgeeft. Wie hier
+  // "https://nep-factuur.example" als naam invult, laat jouw domein zijn link bezorgen.
+  // Daarom: alleen wat een voornaam kan zijn, en anders een neutrale aanhef.
+  const ruweNaam = String(naam || "").trim().split(/\s+/)[0] || "";
+  const naamOk = /^[\p{L}][\p{L}'’-]{0,29}$/u.test(ruweNaam);
+  const first = escHtml(naamOk ? ruweNaam : (lang === "en" ? "there" : "daar"));
   if (lang === "en") {
     return {
       subject: "Thanks for your request to Belvanger",
@@ -1131,6 +1149,41 @@ function handleDashboardDemo(req, res) {
     return send({ ok: true, insights: visibilityInsights, lastFetchedAt: new Date().toISOString() });
   }
   if (pathname === "/dashboard-demo/api/contacts") return send({ contacts });
+
+  // De twee downloadknoppen. Deze MOETEN vóór de startsWith-regel hieronder staan: die pakte
+  // "/contacts/export" op als een contact met id "export" en gaf JSON van één nepcontact terug
+  // in plaats van een CSV. De activiteitenexport had helemaal geen route en gaf 404 op een
+  // knop die een prospect gewoon aanklikt.
+  const csvVeld = (v) => {
+    const s = String(v ?? "");
+    // Een cel die met = + - of @ begint wordt door Excel als formule uitgevoerd. Voorloopquote erbij.
+    const veilig = /^[=+\-@]/.test(s) ? "'" + s : s;
+    return /[",;\n]/.test(veilig) ? '"' + veilig.replace(/"/g, '""') + '"' : veilig;
+  };
+  const alsCsv = (kop, rijen, bestandsnaam) => {
+    const csv = [kop, ...rijen].map((r) => r.map(csvVeld).join(",")).join("\r\n") + "\r\n";
+    res.writeHead(200, {
+      "Content-Type": "text/csv; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${bestandsnaam}"`,
+      ...CORS,
+    });
+    res.end("﻿" + csv); // BOM, anders maakt Excel van "Sanne" iets met vreemde tekens
+  };
+  if (pathname === "/dashboard-demo/api/contacts/export") {
+    return alsCsv(
+      ["naam", "bedrijf", "telefoon", "e-mail", "status", "laatste contact"],
+      contacts.map((c) => [c.name, c.company, c.phone, c.email, c.status, c.last_event_at]),
+      "contacten-voorbeeld.csv",
+    );
+  }
+  if (pathname === "/dashboard-demo/api/admin/activity/export") {
+    return alsCsv(
+      ["datum", "gebeurtenis", "status"],
+      proofLog.map((p) => [p.occurred_at, p.label, p.status]),
+      "activiteiten-voorbeeld.csv",
+    );
+  }
+
   if (pathname.startsWith("/dashboard-demo/api/contacts/")) {
     return send({ contact: contacts[0], events: recent.map((event, id) => ({ ...event, id: id + 1, event_type: id ? "call.missed" : "sms.outbound", direction: id ? "inbound" : "outbound" })) });
   }
@@ -1160,7 +1213,24 @@ const MIME = {
 };
 
 function serveStatic(req, res) {
-  let urlPath = decodeURIComponent(req.url.split("?")[0]);
+  // decodeURIComponent GOOIT bij kapotte percent-codering. Eén verzoek "GET /%" was genoeg
+  // om het hele proces te beëindigen, en daarmee de site, de chat en het aanvraagformulier.
+  // Gereproduceerd voor deze regel er stond: server dood, curl kreeg niets meer.
+  let urlPath;
+  try {
+    urlPath = decodeURIComponent(req.url.split("?")[0]);
+  } catch {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Bad request");
+    return;
+  }
+  // Een nulbyte in het pad laat de fs-functies gooien ("/%00" gaf daardoor een 500 in plaats
+  // van een 400). Het is nooit een geldig pad, dus hier weigeren in plaats van verderop struikelen.
+  if (urlPath.includes("\0")) {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Bad request");
+    return;
+  }
   if (urlPath === "/") urlPath = "/" + INDEX_FILE;
   else if (urlPath.endsWith("/")) urlPath = urlPath + "index.html";
   const filePath = path.join(STATIC_DIR, path.normalize(urlPath));
@@ -1212,6 +1282,7 @@ function serveNotFound(res, urlPath, isHead) {
 
 http
   .createServer((req, res) => {
+   try {
     const start = Date.now();
     const ip = clientIp(req);
     res.on("finish", () => {
@@ -1301,6 +1372,13 @@ http
     if (req.method === "GET" || req.method === "HEAD") return serveStatic(req, res);
     res.writeHead(405);
     res.end("Method not allowed");
+   } catch (fout) {
+    // Tweede laag: welke onverwachte fout er ook uit een route komt, hij mag het proces
+    // niet meenemen. Eén bezoeker met een raar verzoek hoort geen site plat te leggen.
+    console.error(`${new Date().toISOString()} onverwachte fout op ${req.method} ${req.url}:`, fout);
+    if (res.headersSent) res.destroy();
+    else { res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" }); res.end("Interne fout"); }
+   }
   })
   .listen(PORT, () => {
     console.log(`Chat-assistent (${CONFIG.businessName}) draait op http://localhost:${PORT}  (model: ${MODEL}, rate: ${RATE_MAX}/min, vragen loggen: ${LOG_QUESTIONS})`);
@@ -1308,3 +1386,20 @@ http
       console.warn("LET OP: OPENROUTER_API_KEY is niet gezet — chatverzoeken zullen falen.");
     }
   });
+
+// Derde laag. Zonder dit is een fout buiten de request-afhandeling (een timer, een callback,
+// een afgewezen promise die niemand opvangt) meteen fataal en stil: het proces verdwijnt en
+// het enige spoor is de containerlog die niemand leest.
+//
+// Waarom hier wél afsluiten en niet doorgaan: op dit punt weten we niet meer of de staat
+// klopt, en de container staat op restart=unless-stopped, dus opnieuw beginnen is schoner dan
+// doordraaien met een half kapot proces. De twee lagen hierboven vangen alles af wat uit een
+// verzoek komt, dus dit hoort zeldzaam te zijn. Wordt het NIET zeldzaam, dan zie je dat aan
+// het aantal herstarts, en dat is precies het signaal dat je wil hebben.
+process.on("unhandledRejection", (reden) => {
+  console.error(`${new Date().toISOString()} niet-opgevangen promise-afwijzing:`, reden);
+});
+process.on("uncaughtException", (fout) => {
+  console.error(`${new Date().toISOString()} onopgevangen fout, proces stopt (container herstart):`, fout);
+  process.exit(1);
+});
