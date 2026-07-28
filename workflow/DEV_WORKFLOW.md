@@ -7,7 +7,7 @@ deploy risk).
 ## Commits
 
 - Commit directly to `master` for docs, config, and scaffolding changes.
-- Conventional commit prefixes: `feat:`, `fix:`, `docs:`, `chore:` — keeps
+- Conventional commit prefixes: `feat:`, `fix:`, `docs:`, `chore:`: keeps
   history usable as reusable knowledge later.
 
 ## Branching

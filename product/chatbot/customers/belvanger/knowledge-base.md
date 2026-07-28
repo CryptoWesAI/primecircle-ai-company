@@ -1,4 +1,4 @@
-# Kennisbank — Belvanger
+# Kennisbank: Belvanger
 
 Dit is de enige toegestane bron. Staat een antwoord hier niet in, zeg dat eerlijk en
 verwijs naar een vrijblijvend gesprek of rechtstreeks contact.

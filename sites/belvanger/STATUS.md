@@ -1,4 +1,4 @@
-# Belvanger — status & TODO
+# Belvanger: status & TODO
 
 PrimeCircle's eigen trades-demo/verkoopsite. Live (noindex), gehost op de VPS in
 `/opt/belvanger` achter Traefik. **Deze map is sinds 2026-07-17 de bron-van-waarheid**
@@ -164,7 +164,7 @@ op de Engelse 404.
   VPS `31.97.123.34` (via Hostinger DNS). **MX/mail-records ongemoeid** (Hostinger-mail),
   dus **info@belvanger.nl** werkt zolang de mailbox in hPanel bestaat (Wesley: bevestigd).
 - Traefik-router luistert nu op `belvanger.nl` + `www.belvanger.nl` + (behouden)
-  `belvanger.primecircle.cloud` — alle drie → dezelfde container. Let's Encrypt-cert voor
+  `belvanger.primecircle.cloud`: alle drie → dezelfde container. Let's Encrypt-cert voor
   belvanger.nl komt **automatisch zodra de DNS wereldwijd is gepropageerd** (vers .nl-
   domein = paar uur). Tot dan blijft `belvanger.primecircle.cloud` de werkende URL.
 - Alle site-URL's (canonical/OG/JSON-LD/sitemap/robots) → belvanger.nl. E-mail in footer.
@@ -247,7 +247,7 @@ Na review als designer/marketeer/copywriter (founder vroeg: wat mist er om klant
   gehaald (site + widget). Founder-voorkeur: geen em-dashes.
 - **Openstaand:** Wesley bevestigt dat de gestylde autoreply er goed uitziet in de inbox.
 
-## Content-herziening — kanaal, prijs, cijfers (2026-07-18)
+## Content-herziening: kanaal, prijs, cijfers (2026-07-18)
 Grote inhoudelijke update na keuzes founder:
 - **Kanaal neutraal**: overal "WhatsApp" als productmechanisme → "een (automatisch) bericht".
   Reden: de pilot draait op **sms met afzendernaam "Belvanger"** (bewezen werkend voor NL);
@@ -265,7 +265,7 @@ Grote inhoudelijke update na keuzes founder:
   cijfers gemarkeerd als indicatief/internationaal.
 - Doorgevoerd in: NL + EN `index.html`, `css/styles.css` (`.stats__source`), én de
   chatbot-bron `product/chatbot/customers/belvanger/{knowledge-base.md,system-prompt.txt}`.
-  **Let op:** `assemble.mjs` herbouwt `app/` uit `product/chatbot` — de site-`app/`-kopie is
+  **Let op:** `assemble.mjs` herbouwt `app/` uit `product/chatbot`: de site-`app/`-kopie is
   een build-artefact, bewerk altijd de bron in `product/chatbot`.
 - Lokaal visueel geverifieerd (NL+EN, desktop+mobiel) via puppeteer/`file://`.
 - **Nog doen:** `assets/og-image.png` opnieuw genereren (SVG-bron staat goed; PNG zegt nog
@@ -310,5 +310,5 @@ bestaat, gooi die weg of overschrijf 'm met deze — anders republiceer je de va
 - [ ] Live-demo-loop (Twilio/n8n/WhatsApp) bouwen → pas dán mag "zie het live" terug.
 
 ## Backups op de VPS
-`/opt/belvanger-backups/` — o.a. `pre-honestyfix-20260717-132634` (vóór alle fixes).
+`/opt/belvanger-backups/`: o.a. `pre-honestyfix-20260717-132634` (vóór alle fixes).
 Het deploy-script maakt automatisch een `pre-deploy-*` backup bij elke deploy.

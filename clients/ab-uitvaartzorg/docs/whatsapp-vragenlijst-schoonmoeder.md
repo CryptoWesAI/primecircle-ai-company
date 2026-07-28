@@ -1,4 +1,4 @@
-# WhatsApp-vragenlijst — schoonmoeder (uitvaartonderneming)
+# WhatsApp-vragenlijst: schoonmoeder (uitvaartonderneming)
 
 > Korte, warme versie van `discovery-schoonmoeder-uitvaart.md`, bedoeld om
 > letterlijk via WhatsApp te sturen. Vul haar naam in bij [naam]. Antwoorden
@@ -40,7 +40,7 @@ Bedankt alvast! Geen haast, wanneer het jou uitkomt. ❤️
 
 ---
 
-## Voor mezelf — wat elke vraag oplevert
+## Voor mezelf: wat elke vraag oplevert
 
 | Vraag | Waarvoor |
 |---|---|

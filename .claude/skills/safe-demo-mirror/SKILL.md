@@ -28,7 +28,7 @@ changing data, a static mirror will read as fake precisely because it is.
 
 ## The method
 
-### Step 0 — Look for an existing mock/preview server first
+### Step 0: Look for an existing mock/preview server first
 
 Before writing anything new, check whether the real product already has a
 lightweight, no-database preview server (used for local dev, screenshots, or
@@ -37,7 +37,7 @@ fictional data look like for this app", reuse and extend it rather than
 inventing a second one. Building `safe-demo-mirror` from scratch when a
 `preview-server.mjs`-shaped tool already exists is duplicated, drifting work.
 
-### Step 1 — Confirm the mirror is safe by construction
+### Step 1: Confirm the mirror is safe by construction
 
 The demo must be structurally incapable of touching real data: no database
 connection, no real credentials, no code path that could accidentally read a
@@ -45,7 +45,7 @@ real record. If the mock server can't reach a real data source because it was
 never given one (not because of an `if` check), a bug can't leak real data.
 Prefer "physically impossible" over "conditionally prevented".
 
-### Step 2 — Mirror the real frontend via a build-time copy, never a hand-maintained fork
+### Step 2: Mirror the real frontend via a build-time copy, never a hand-maintained fork
 
 Write a small script that copies the real app's frontend files (HTML/JS/CSS/
 assets) from their single source of truth into the demo's location, patching
@@ -69,7 +69,7 @@ only what's structurally required:
 Re-run this script on every deploy of the real app (wire it into the existing
 build/assemble pipeline) so the mirror can never silently go stale.
 
-### Step 3 — Audit every API call the frontend makes, in one pass, before writing any mock
+### Step 3: Audit every API call the frontend makes, in one pass, before writing any mock
 
 Grep the frontend for every call through its central fetch helper (or every
 literal `fetch(`) and list every distinct endpoint + method before writing
@@ -80,7 +80,7 @@ you. Build the full mock surface in one deliberate pass, not by fixing one
 broken click at a time as bug reports come in, that happened three times in
 the same session before the lesson landed.
 
-### Step 4 — Build a stateless mock: every endpoint returns a plausible response, none of them persist
+### Step 4, Build a stateless mock: every endpoint returns a plausible response, none of them persist
 
 GET endpoints return realistic fictional data. POST/DELETE/PATCH endpoints
 that would mutate real state should still return a normal-looking success
@@ -88,14 +88,14 @@ response (so the UI doesn't error), they just don't need to actually persist
 anything, since a fresh set of fictional data on every request is completely
 fine for a demo and means there is no datastore to secure, back up, or leak.
 
-### Step 5 — Bypass auth by making "who am I" always answer yes
+### Step 5: Bypass auth by making "who am I" always answer yes
 
 Mock the identity/session-check endpoint (`/api/me` or equivalent) to always
 return a fake logged-in user. Real frontends that check this on load will
 skip straight past the login screen with zero extra code, do not build a fake
 login form, that's effort spent reproducing something you're trying to avoid.
 
-### Step 6 — Keep the fictional narrative consistent with what the REAL system can actually do
+### Step 6: Keep the fictional narrative consistent with what the REAL system can actually do
 
 A mock event that is technically well-formed JSON but implies an interaction
 the real product cannot perform (a customer replying to a one-way, no-reply
@@ -104,7 +104,7 @@ a cosmetic one, a careful prospect (or the founder demoing it) will notice.
 Cross-check every fictional data point against the real product's actual,
 documented constraints before shipping the mock.
 
-### Step 7 — Exclude the mirror from unrelated site-wide automation
+### Step 7: Exclude the mirror from unrelated site-wide automation
 
 If the parent site has any script that walks every page (embedding a chat
 widget, injecting analytics, applying a global template), explicitly exclude
@@ -113,7 +113,7 @@ site's own chat widget layered on top of it, and if a similar exclusion
 mechanism already exists for other demo/example content, extend that list
 rather than building a second mechanism.
 
-### Step 8 — Verify through the real routing layer, not a bare static server
+### Step 8: Verify through the real routing layer, not a bare static server
 
 Serve the assembled app locally with its actual server code (not a generic
 static file server) before deploying, so path-prefix and routing bugs surface
@@ -125,7 +125,7 @@ before shipping). Confirm with both a curl check per endpoint and an actual
 rendered screenshot, curl proves the JSON shape is right, the screenshot
 proves it's not silently blank/unstyled from a path bug.
 
-### Step 9 — Link to it from the moment of peak curiosity, not the first mention
+### Step 9: Link to it from the moment of peak curiosity, not the first mention
 
 Place the link where a reader has just been convinced enough to want proof,
 not where the feature is first described (too early, they're still building

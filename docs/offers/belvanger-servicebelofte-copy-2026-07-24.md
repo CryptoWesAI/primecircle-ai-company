@@ -1,4 +1,4 @@
-# Belvanger — servicebelofte "partner schakelt bij" (websitetekst-sjabloon)
+# Belvanger: servicebelofte "partner schakelt bij" (websitetekst-sjabloon)
 
 Herbruikbare tekst voor op de website van een klant, in dezelfde "je"-toon en
 belofte-stijl als de bestaande `pricecard__promise` op belvanger.nl ("Onze
@@ -30,7 +30,7 @@ klant; toon zelf mag per klant lichtjes worden aangepast, de kern niet.
 
 Het maakt van "we hebben het druk" (normaal een reden voor een klant om af te
 haken) juist een vertrouwenssignaal: zelfs in het slechtste geval sta je niet
-met lege handen. Het past ook naadloos bij het bestaande "belofte"-patroon op
+met lege handen. Het sluit aan bij het bestaande "belofte"-patroon op
 belvanger.nl, en bij de "opgevangen"-clausule die er al staat: dezelfde
 eerlijke, concrete toon in plaats van vage geruststelling.
 

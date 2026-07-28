@@ -1,4 +1,4 @@
-# Product & Business Design — Offer Validation Methodology
+# Product & Business Design: Offer Validation Methodology
 
 A reusable method for filling out `docs/offers/OFFER_TEMPLATE.md`. This is
 methodology, not an instantiated offer — an actual PrimeCircle offer requires

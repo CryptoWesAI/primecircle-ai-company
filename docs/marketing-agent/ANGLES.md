@@ -14,7 +14,7 @@ aanvraag kosten) staat in `SYSTEEM.md` §7: onder €42 gezond, boven €85 stop
 
 ---
 
-## Batch 1 — Belvanger, nog niet gedraaid
+## Batch 1: Belvanger, nog niet gedraaid
 
 Doel: uitvinden welke pijn het hardst raakt. Niet: zo veel mogelijk aanvragen.
 Budget: te bepalen. Landingspagina: `belvanger.nl/?a=<id>`.

@@ -1,4 +1,4 @@
-# Blueprint — Trades-landingssite (PrimeCircle) — "Mis nooit meer een klant"
+# Blueprint: trades-landingssite voor PrimeCircle, "Mis nooit meer een klant"
 
 > Compleet build-brief voor PrimeCircle's eigen verkoop-/demo-site voor de trades-
 > niche — bedoeld als één zelfstandig document ("eerste prompt"): **site + copy + SEO
@@ -70,7 +70,7 @@ bewijs → prijs → actie → bezwaren wegnemen → actie.
   keer. Wij vangen ze automatisch op, via WhatsApp."
 - **Primaire CTA:** "Zie het voor jouw bedrijf →" (scrollt/opent demo-aanvraag)
 - **Secundaire CTA:** "Bel dit nummer en zie het live" + zichtbaar telefoonnummer
-- **Rechts/visueel:** het **signature-moment** (zie §3) — een telefoon-mockup waar
+- **Rechts/visueel:** het **signature-moment** (zie §3): een telefoon-mockup waar
   live het WhatsApp-bericht in verschijnt.
 - **Micro-trust onder de vouw:** "Werkt met je eigen nummer · Geen app nodig voor je
   klant · Binnen een week live."
@@ -88,7 +88,7 @@ hoveniers…") + 1 sterke sociale-bewijs-zin zodra beschikbaar (pilot-quote).
   **85% van die bellers belt niet terug**. Identiek aan de hero — nooit afwijkend
   afronden (dus niet "60%" in de hero en "62%" op de kaart).
 
-### 2.4 Zie het live gebeuren (het bewijs — §3)
+### 2.4 Zie het live gebeuren (het bewijs: §3)
 Het interactieve demo-blok. "Bel [nummer] of vul dit mini-formulier in — kijk wat er
 gebeurt." De bezoeker ervaart de vangst zelf.
 
@@ -98,7 +98,7 @@ we misten je — waarmee kunnen we helpen?") → 3. **Jij krijgt de lead netjes 
 en belt terug wanneer het uitkomt. Eén regel per stap, iconen, geen ruis.
 
 ### 2.6 Wat je krijgt
-- Een strakke **website** (je digitale visitekaartje) — of koppeling op je bestaande.
+- Een strakke **website** (je digitale visitekaartje): of koppeling op je bestaande.
 - **WhatsApp-leadvangst** op je eigen nummer.
 - **Contactformulier** waar klanten hun klus doorgeven.
 - **Overzicht** van alle binnengekomen leads (dashboard).
@@ -223,7 +223,7 @@ stuurt* (referrals, ads, direct); organisch ranken is een langere weg.
 - **Eén primaire CTA-kleur**, overal dezelfde actie ("demo aanvragen"); secundair =
   "zie het live". Niet meer dan twee.
 - **CTA's herhaald** op logische scroll-momenten (na hero, na pijn, na bewijs, slot).
-- **Formulier zo kort mogelijk** (naam, vak, telefoon) — elk extra veld kost
+- **Formulier zo kort mogelijk** (naam, vak, telefoon): elk extra veld kost
   conversie. Inline-validatie, duidelijke succes-staat, **spam-bescherming**
   (honeypot + rate-limit).
 - **Klik-om-te-bellen** overal op mobiel (`tel:`), plus de WhatsApp-knop.
@@ -247,7 +247,7 @@ stuurt* (referrals, ads, direct); organisch ranken is een langere weg.
 - **Signature-moment licht houden:** bouw het met CSS/lichte JS (geen zware
   video/WebGL-library), anders sneuvelen je Core Web Vitals. Craft ≠ gewicht.
 
-## 8. Bouwvolgorde (getimeboxt — niet eindeloos polijsten)
+## 8. Bouwvolgorde (getimeboxt: niet eindeloos polijsten)
 
 1. **Boodschap eerst:** hero-copy + de pijn-som scherp (een uur, geen code).
 2. **v0 skelet:** hero → pijn(+rekenmachine) → hoe het werkt → wat je krijgt →
@@ -257,7 +257,7 @@ stuurt* (referrals, ads, direct); organisch ranken is een langere weg.
 5. **Live maken:** koppel Twilio/n8n zodra WhatsApp-verificatie rond is.
 6. **Itereren met echte reacties** van prospects — niet vooraf perfectioneren.
 
-## 9. Zelf-validatie — dekt dit alles? (checklists)
+## 9. Zelf-validatie: dekt dit alles? (checklists)
 
 **Awwwards-criteria (design 40% / usability 30% / creativity 20% / content 10%):**
 - [x] Sterke, eigen art direction + één memorabel signature-moment (§3, §4)
@@ -265,7 +265,7 @@ stuurt* (referrals, ads, direct); organisch ranken is een langere weg.
 - [x] Betekenisvolle, presterende beweging (+ reduced-motion)
 - [x] Mobiel-first, responsive tot in het signature-moment
 - [x] Toegankelijk (WCAG 2.2 AA)
-- [x] Snel (Core Web Vitals groen) — craft zonder traagheid
+- [x] Snel (Core Web Vitals groen): craft zonder traagheid
 - [x] Heldere, overtuigende content met eigen stem
 
 **SEO-checklist:**
@@ -309,7 +309,7 @@ on-page + lokale SEO, conversie-UX, tech/hosting, bouwvolgorde, legal, de comple
 connectie-/integratie-voorbereiding (incl. de Twilio-Studio-stappen) én het aanbod/
 prijs. Klaar als één zelfstandig build-brief voor v0.
 
-## 11. Connecties & integraties — voorbereiding (het kritieke pad)
+## 11. Connecties & integraties: voorbereiding (het kritieke pad)
 
 Alles wat nodig is om de **live-demo-loop** (gemiste call → WhatsApp → lead → melding)
 te laten werken. Belangrijk: sommige stappen hebben **lange doorlooptijd** (KYC,
@@ -360,7 +360,7 @@ Inkomende call → Twilio (Studio: dial met ~18s timeout)
 Site-contactformulier → webhook → n8n → zelfde CRM + melding  (tweede voordeur)
 ```
 - **Secrets:** alle keys/tokens (Twilio SID/token, WhatsApp/Meta, OpenRouter, NocoDB)
-  in een **gitignored `.env` op de VPS** — nooit in git. (Zelfde discipline als AB.)
+  in een **gitignored `.env` op de VPS**: nooit in git. (Zelfde discipline als AB.)
 - **Webhooks:** Twilio → n8n-webhook-URL (op je VPS achter Traefik, HTTPS).
 
 ### 11.5 AVG / consent
@@ -426,7 +426,7 @@ niet-verkoper: de som praat.
 opzegbaar, mens-in-de-lus (de vakman belt zelf terug — jij levert de lead), geen
 maatwerk per klant.
 
-## 13. Kwaliteits- & eerlijkheidsregels (VERPLICHT — uit onafhankelijke review, 2026-07-16)
+## 13. Kwaliteits- & eerlijkheidsregels (VERPLICHT: uit onafhankelijke review, 2026-07-16)
 
 Een onafhankelijke review van de eerste implementatie (Belvanger) vond 8 echte
 defecten; drie kwamen rechtstreeks uit dit blueprint. Deze regels zijn nu bindend —
@@ -445,7 +445,7 @@ klant wordt.
 - **Geen bewijs-statistieken vóór ze gemeten zijn.** Publiceer geen "100% van de
   gemiste bellers krijgt binnen seconden antwoord" en geen dogfooding-teller zolang er
   niets gemeten is. Bewijs komt ná de meting, niet ervoor.
-- **Geen juridische garanties** ("AVG-proof") — zie §2.10.
+- **Geen juridische garanties** ("AVG-proof"): zie §2.10.
 - **Copy-logica klopt:** de bezoeker ís de beller en bepaalt niet of er wordt
   opgenomen. Dus niet "bel het nummer en neem niet op", maar: *"Bel het nummer —
   wij nemen expres niet op."*
@@ -464,7 +464,7 @@ klant wordt.
 - **CTA-contrast:** meet het. Witte tekst op fel oranje (#FF5C1A) haalt ~3,09:1 en
   **zakt** voor WCAG AA (4,5:1 bij tekst <18,66px/bold). Gebruik **donkere tekst op
   het oranje** of maak het oranje aantoonbaar donker genoeg. Meet elke CTA-variant.
-- **Telefoonvalidatie:** eis **echte cijfers** — normaliseer (spaties/leestekens weg)
+- **Telefoonvalidatie:** eis **echte cijfers**: normaliseer (spaties/leestekens weg)
   en verlang 8–15 cijfers. `++++++++` mag nooit slagen. Valideer opnieuw **server-side**.
 - **Foutmeldingen programmatisch koppelen:** `aria-invalid="true"` op het veld, een
   stabiel `id` op de foutmelding, gekoppeld via `aria-describedby`, plus `role="alert"`
@@ -479,12 +479,12 @@ klant wordt.
 ### 13.5 Pre-launch checklist (afvinken vóór je verkeer stuurt)
 
 - [ ] Elke claim op de pagina is vandaag waar (of gelabeld als simulatie)
-- [ ] Live-loop end-to-end getest met het echte nummer — anders demo als simulatie
+- [ ] Live-loop end-to-end getest met het echte nummer: anders demo als simulatie
 - [ ] Geen juridische garanties; privacyverklaring bestaat en is gelinkt
 - [ ] JS geblokkeerd → pagina blijft volledig leesbaar
 - [ ] Alle CTA's gemeten op ≥4,5:1 contrast
 - [ ] Formulier: echte cijfers vereist + server-side hervalidatie + aria-koppeling
 - [ ] Cijfers overal identiek (62% telefoontjes / 85% bellers) mét bron
 - [ ] Deploy-script: hostverificatie aan
-- [ ] **Visueel gezien, niet aangenomen** — screenshot desktop + mobiel met de
+- [ ] **Visueel gezien, niet aangenomen**: screenshot desktop + mobiel met de
   `web-verify`-skill en kijk er echt naar (clipping, overflow, contrast, animatie-eindstand)

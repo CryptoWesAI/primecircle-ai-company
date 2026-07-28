@@ -86,7 +86,7 @@ _Add every correction / edge case here the moment it happens, so it isn't repeat
 
 - **Not plain MIT.** React Bits carries a **Commons Clause**; several "free" animation
   libraries have non-MIT strings. Always run the license gate before paid use.
-- **Belvanger is vanilla HTML, not React** — a recurring reflex to "just add a React Bits
+- **Belvanger is vanilla HTML, not React**: a recurring reflex to "just add a React Bits
   component" won't work there. Confirm the target stack first.
 - **Copy the install command from the component page**, not from this doc — jsrepo variant
   tokens/paths drift and a hand-built command silently pulls the wrong variant.

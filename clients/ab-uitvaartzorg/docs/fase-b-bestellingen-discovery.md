@@ -1,4 +1,4 @@
-# Discovery — Bestellingen automatiseren (Fase B, AB Uitvaartzorg)
+# Discovery: Bestellingen automatiseren (Fase B, AB Uitvaartzorg)
 
 > Doel: Alien's huidige bestelproces begrijpen vóór we iets bouwen. De
 > antwoorden leveren twee dingen op: (1) de **catalogus/"stamboom"** (leveranciers,
@@ -21,7 +21,7 @@
 
 ---
 
-## Blok 1 — Hoe het nu gaat
+## Blok 1: Hoe het nu gaat
 
 1. Loop me eens door een recente uitvaart: vanaf het moment dat de wensen bekend
    zijn — wat bestel je dan allemaal, en in welke volgorde?
@@ -30,7 +30,7 @@
 4. Hoe vaak komt dit ongeveer voor — per maand of per week? *(frequentie: bepaalt
    of automatiseren de moeite waard is)*
 
-## Blok 2 — Leveranciers
+## Blok 2: Leveranciers
 
 5. Welke leveranciers gebruik je vast? Denk aan: kist/uitvaartkist, bloemen,
    drukwerk (rouwkaarten/liturgie), catering/koffie & cake, rouwvervoer/rouwauto,
@@ -42,14 +42,14 @@
 7. Bij welke leveranciers heb je vaste prijzen of afspraken? En bij welke wisselt
    het per keer?
 
-## Blok 3 — Pakketten / vaste keuzes ("stamboom")
+## Blok 3: Pakketten / vaste keuzes ("stamboom")
 
 8. Heb je standaard combinaties of "pakketten" die vaak terugkomen (bijv. een sober
    basispakket vs. een uitgebreider pakket)?
 9. Waar kiezen families meestal voor — zit daar een patroon in?
 10. Wat verschilt er juist per uitvaart? *(dit worden de "variabelen" in het systeem)*
 
-## Blok 4 — Waar de bestelling vandaan komt (de "voorkant")
+## Blok 4: Waar de bestelling vandaan komt (de "voorkant")
 
 11. Welke informatie heb je nódig voordat je kunt bestellen? (datum, locatie,
     aantal genodigden, specifieke wensen, aanleverdatum …)
@@ -58,7 +58,7 @@
 13. Zou je willen dat het systeem die gegevens automatisch overneemt uit de intake/
     het wensengesprek, zodat je ze niet opnieuw hoeft in te tikken?
 
-## Blok 5 — Jouw controle-moment *(cruciaal — dit is je "grip")*
+## Blok 5: Jouw controle-moment *(cruciaal: dit is je "grip")*
 
 14. Je zei: "alleen controleren en versturen." Hoe voelt dat ideaal — wil je elke
     bestelling apart goedkeuren, of liever een hele set voor één uitvaart in één
@@ -66,13 +66,13 @@
 15. Wat wil je absoluut zélf blijven doen en níét uit handen geven?
 16. Wat mag er onder geen beding automatisch gebeuren (zonder jouw akkoord)?
 
-## Blok 6 — Facturatie (grenst hieraan)
+## Blok 6: Facturatie (grenst hieraan)
 
 17. Maak en verstuur je zelf facturen naar de familie? Hoe gaat dat nu?
 18. Wil je facturatie hierin meenemen, of eerst alleen de bestellingen en later pas
     de facturen?
 
-## Blok 7 — Pijn & prioriteit
+## Blok 7: Pijn & prioriteit
 
 19. Wat kost je in dit hele proces nu de meeste tijd of ergernis?
 20. Als je vandaag één ding mocht wegnemen — welk stukje zou dat zijn?
@@ -106,5 +106,5 @@
   wordt vanuit het wensenformulier, verwerken we bijzondere persoonsgegevens en
   gaan er gegevens naar externe leveranciers. Dan gelden AVG-verplichtingen
   (grondslag, verwerkersafspraken, dataminimalisatie richting leveranciers). Zie
-  `docs/paof/ai-governance-security.md` — meenemen in het ontwerp, niet in de
+  `docs/paof/ai-governance-security.md`: meenemen in het ontwerp, niet in de
   discovery.

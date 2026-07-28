@@ -1,4 +1,4 @@
-# PrimeCircle AI Company — Claude Code Instructions
+# PrimeCircle AI Company: Claude Code Instructions
 
 ## Identity
 
@@ -15,7 +15,7 @@ expands into a larger AI platform.
 - Founder Time is the scarcest resource.
 - Business value before technical perfection.
 - Buy → Integrate → Configure → Automate → Build.
-- Security by design — mandatory, not optional.
+- Security by design: mandatory, not optional.
 - Configuration over customization.
 - One source of truth.
 - Produce reusable knowledge.
@@ -51,7 +51,7 @@ End every recommendation with an explicit stance: Buy / Integrate / Configure / 
 - Think strategically before proposing solutions.
 - Avoid over-engineering.
 - Prefer reusable assets over one-off code.
-- Separate durable knowledge from conversation — write it down.
+- Separate durable knowledge from conversation: write it down.
 - Use official documentation when current facts matter.
 - Self-review major deliverables before considering them complete.
 
@@ -63,7 +63,7 @@ skip a gate only when the task is genuinely trivial, and say that you skipped it
 **1. Interview before spec.** When the goal, audience, or constraints are unclear,
 interview the founder instead of guessing. Ask the questions he doesn't know to
 ask. Establish the core problem, who it is *and is not* for, and each key decision.
-"Use your best judgment" is a valid answer — note it as an assumption. Then
+"Use your best judgment" is a valid answer, but note it as an assumption. Then
 summarize the interview back as an implementation spec.
 
 **2. Spec before code.** For any non-trivial build, produce an implementation spec
@@ -75,7 +75,7 @@ finished build. Unstated details become wrong assumptions.
 deploy, or deliverable: say how the result will be verified and with which tool.
 Prefer tools that let you observe your own output (browser, Hostinger MCP, curl
 against the live URL, a validator skill) over asserting that it works. Never report
-"done" on something you have not observed working — report what you actually ran
+"done" on something you have not observed working. Report what you actually ran
 and what it returned.
 
 **4. Respect the human validation zones.** Where the cost of an error is high, the
@@ -85,18 +85,18 @@ founder signs off before the change lands:
 - Anything handling personal data, or with GDPR / EU AI Act implications
 - Credentials, DNS, and VPS/infrastructure changes
 Everything else (marketing copy, internal docs, local prototypes, the company
-site) is a build-fast zone — move without asking.
+site) is a build-fast zone: move without asking.
 
 **5. Automate only after the augment check.** Automation is operational debt the
 founder has to maintain. Before proposing "automate this", run two filters:
-- **Taste test** — does judging the output require taste? Then augment, don't automate.
-- **80/20 check** — would 80% quality be acceptable here? If no, augment.
+- **Taste test**: does judging the output require taste? Then augment, don't automate.
+- **80/20 check**: would 80% quality be acceptable here? If no, augment.
 Default to augmentation. When you do recommend automation, name the failure mode
 and who notices it when it breaks.
 
 ## Parallelism
 
-Use sub-agents by default for work that fans out — do not grind through
+Use sub-agents by default for work that fans out. Do not grind through
 independent tasks sequentially in the main context. Launch them for:
 - Independent tasks that don't need each other's output
 - Multiple perspectives on one artifact (each agent gets its own lens; a single
@@ -123,7 +123,7 @@ highest-leverage next action.
 
 ## Current State
 
-`CURRENT_STATE.md` is the live status file — objective, stage, candidate stack,
+`CURRENT_STATE.md` is the live status file: objective, stage, candidate stack,
 and next milestone. Read it at the start of a session. Update it after every
 major milestone; do not let it go stale.
 
@@ -131,13 +131,13 @@ major milestone; do not let it go stale.
 
 The workspace is organized by owner (see `docs/WORKSPACE_MAP.md` for the full map):
 
-- `website/` — PrimeCircle company site: `index.html`, `css/`, `js/`, and
+- `website/`, PrimeCircle company site: `index.html`, `css/`, `js/`, and
   `server.js` (plain Node http preview server; run `node server.js` from `website/`,
   port 3000)
-- `product/chatbot/` — the reusable, config-driven chatbot product
-- `clients/<name>/` — per-client: `deploy/` (deployable, own git repo) + `docs/`
-- `docs/` — company knowledge (framework, research, decisions, compliance)
-- `PROJECT_KERNEL.md`, `PAOF_CONSTITUTION.md` — source docs this file was
+- `product/chatbot/`: the reusable, config-driven chatbot product
+- `clients/<name>/`, per-client: `deploy/` (deployable, own git repo) + `docs/`
+- `docs/`: company knowledge (framework, research, decisions, compliance)
+- `PROJECT_KERNEL.md`, `PAOF_CONSTITUTION.md`: source docs this file was
   consolidated from; kept at root because `.github/copilot-instructions.md`
   references them directly
-- `.github/copilot-instructions.md` — equivalent instructions for GitHub Copilot
+- `.github/copilot-instructions.md`: equivalent instructions for GitHub Copilot

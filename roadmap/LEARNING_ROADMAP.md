@@ -10,7 +10,7 @@ without a linked artifact for long.
 |---|---|---|---|---|---|
 | Platform Expertise | Hostinger MCP capability map (hosting, Node.js/cron deploy, DNS/domains, e-commerce/storefront, Reach email-CRM, WordPress) | P1 | researched | This roadmap row + `docs/decisions/DECISIONS_LOG.md` draft entry | `docs/decisions/DECISIONS_LOG.md` |
 | Product & Business Design | Offer validation methodology (evidence over opinion, smallest sellable version, price-before-build) | P1 | done | `docs/paof/product-business-design.md` | `docs/paof/product-business-design.md` |
-| AI Automation Engineering / Solution Design | **Config-driven reusable chatbot product** — knowledge-grounded bilingual assistant embedded in the AB Uitvaartzorg site (NL+EN); first customer live-verified, and refactored into a per-customer template (the "generic core, configurable vertical") | P1 | working end-to-end via OpenRouter; templated + proven reusable with a 2nd demo customer (one env var re-brands everything); packaged as an isolated Docker project for the VPS | `chatbot/` (generic server + widget + `customers/`), `clients/ab-uitvaartzorg/deploy/` | `chatbot/customers/README.md`, `clients/ab-uitvaartzorg/deploy/README.md` |
+| AI Automation Engineering / Solution Design | **Config-driven reusable chatbot product**: knowledge-grounded bilingual assistant embedded in the AB Uitvaartzorg site (NL+EN); first customer live-verified, and refactored into a per-customer template (the "generic core, configurable vertical") | P1 | working end-to-end via OpenRouter; templated + proven reusable with a 2nd demo customer (one env var re-brands everything); packaged as an isolated Docker project for the VPS | `chatbot/` (generic server + widget + `customers/`), `clients/ab-uitvaartzorg/deploy/` | `chatbot/customers/README.md`, `clients/ab-uitvaartzorg/deploy/README.md` |
 | Product & Business Design | First commercial offer definition (actual offer — needs founder's problem/customer input, not researchable) | P1 | not started | | `docs/offers/` |
 | AI Governance & Security | GDPR / EU AI Act baseline (what applies to a 1-person AI automation vendor) | P2 | done | `docs/paof/ai-governance-security.md` (researched against current official sources) | `docs/paof/ai-governance-security.md` |
 | AI Automation Engineering | Cron-based automation on existing hosting vs. n8n — when each is warranted | P2 | done | `docs/paof/ai-automation-engineering.md` | `docs/paof/ai-automation-engineering.md` |
@@ -24,18 +24,18 @@ without a linked artifact for long.
 This environment has Hostinger MCP servers already connected — meaning these
 are real, usable tools today, not hypothetical candidates:
 
-- **hosting** — create websites, deploy Node.js apps from archive, manage
+- **hosting**: create websites, deploy Node.js apps from archive, manage
   cron jobs, create/manage MySQL-style account databases, subdomains, PHP
   config. Covers running a small backend/automation layer without new infra.
-- **domains** — search/purchase domains, DNS records, WHOIS, forwarding.
-- **wordpress** — full WP install/plugin/theme/WooCommerce management. Useful
+- **domains**: search/purchase domains, DNS records, WHOIS, forwarding.
+- **wordpress**: full WP install/plugin/theme/WooCommerce management. Useful
   if a vertical customer's site is already WordPress-based.
-- **ecommerce** — storefronts, digital/physical products, sales channels,
+- **ecommerce**: storefronts, digital/physical products, sales channels,
   shipping, manual payment methods. Can package and sell an offer directly.
-- **reach** — contacts, segments, profiles across "reach profiles" (email
+- **reach**: contacts, segments, profiles across "reach profiles" (email
   marketing / lightweight CRM). Useful for offer validation outreach and
   nurture sequences.
-- **billing** — manages PrimeCircle's own Hostinger subscriptions/payment
+- **billing**: manages PrimeCircle's own Hostinger subscriptions/payment
   methods (internal cost control, not customer-facing).
 
 **Gap vs. candidate stack:** Hostinger does not appear to replace Supabase

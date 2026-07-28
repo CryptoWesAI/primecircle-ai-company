@@ -1,4 +1,4 @@
-# Aanbod — Uitvaartniche (wig → motor)
+# Aanbod: Uitvaartniche (wig → motor)
 
 > Eén gestandaardiseerd, gelaagd aanbod voor uitvaartondernemers. De site/chatbot
 > is de **instap** (makkelijke ja, vertrouwen, bewijs); de administratie-
@@ -70,13 +70,13 @@ bewijs en referrals stapelen.
 
 ## Grenzen & scope (beschermt tegen onderhoudslast)
 
-- **Eén gestandaardiseerd pakket per laag** — geen maatwerk per klant. Onder de motorkap
+- **Eén gestandaardiseerd pakket per laag**: geen maatwerk per klant. Onder de motorkap
   ziet elke klant er hetzelfde uit (config, geen code).
 - **Configure/Automate met bestaande tools** (n8n, NocoDB) — je bezit zo min mogelijk
   eigen code, dus zo min mogelijk problemen.
 - **Duidelijke afspraken in het contract:** wat zit erin, reactietijden, wat valt
   erbuiten. Verantwoordelijkheid begrensd, niet open-eind.
-- **Maandbedrag dekt je supporttijd** — anders werk je gratis.
+- **Maandbedrag dekt je supporttijd**: anders werk je gratis.
 - **Mens-in-de-lus blijft** bij alles wat de deur uit gaat (bestellingen, facturen):
   de klant controleert en verstuurt. Minder risico, meer vertrouwen, minder jouw
   aansprakelijkheid.

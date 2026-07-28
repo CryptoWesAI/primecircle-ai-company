@@ -1,4 +1,4 @@
-# Chat-assistent — herbruikbaar per klant
+# Chat-assistent: herbruikbaar per klant
 
 Kennis-gegronde chatassistent, **config-driven en herbruikbaar**: dezelfde code
 draait voor elke klant; alleen de map `customers/<klant>/` verschilt. Eerste
@@ -8,16 +8,16 @@ Volledige spec: `../clients/ab-uitvaartzorg/docs/chatbot-ab-uitvaartzorg-spec.md
 
 ## Hoe het werkt
 
-- `server.js` — klein Node-endpoint (geen npm-dependencies), config-driven.
+- `server.js`: klein Node-endpoint (geen npm-dependencies), config-driven.
   Laadt `customers/$CUSTOMER/` (standaard `ab-uitvaartzorg`), serveert
   `/api/config` (branding voor het widget) en stuurt chats door naar
   **OpenRouter** (`google/gemini-2.5-flash-lite`, instelbaar via `OPENROUTER_MODEL`).
   De API-sleutel staat hier (server-side), **nooit** in de browser.
-- `customers/<klant>/` — per klant: `config.json` (naam, contactpersoon,
+- `customers/<klant>/`, per klant: `config.json` (naam, contactpersoon,
   telefoon, kleuren, talen), `system-prompt.txt` (toon/grenzen) en
   `knowledge-base.md` (de enige toegestane bron). Beide teksten worden bij élk
   verzoek volledig meegestuurd (*context stuffing* — geen vector-database nodig).
-- `public/widget.js` + `widget.css` — het **generieke** insluitbare chatvenster.
+- `public/widget.js` + `widget.css`: het **generieke** insluitbare chatvenster.
   Het haalt naam/telefoon/kleuren/talen op via `/api/config`, dus dezelfde
   widget werkt voor elke klant. Met de verplichte AI-transparantie (Art. 50) en
   een altijd zichtbare "Bel"-knop.
@@ -34,7 +34,7 @@ Volledige spec: `../clients/ab-uitvaartzorg/docs/chatbot-ab-uitvaartzorg-spec.md
     `/dashboard` als `/api/stats` vereisen de token; leeg = uitgeschakeld.
   - *Voorbeeldvragen* (chips) uit `config.json` per klant, die bezoekers naar
     beantwoordbare onderwerpen leiden.
-- **Standaard geen berichtinhoud opgeslagen** — alleen geanonimiseerde metadata.
+- **Standaard geen berichtinhoud opgeslagen**: alleen geanonimiseerde metadata.
 
 Kies de klant lokaal met `$env:CUSTOMER = "<klant>"` vóór `node server.js`
 (standaard `ab-uitvaartzorg`).
@@ -55,7 +55,7 @@ cd "...\primecircle-ai-company\chatbot"
 node server.js
 ```
 
-> Gebruik **`node server.js`**, niet `npm start` — op Windows blokkeert PowerShell
+> Gebruik **`node server.js`**, niet `npm start`: op Windows blokkeert PowerShell
 > standaard `npm.ps1` (foutmelding "running scripts is disabled"). `node` heeft
 > daar geen last van, en omdat het endpoint geen dependencies heeft is `npm`
 > ook niet nodig.

@@ -41,7 +41,7 @@ node "<path>/.claude/skills/web-verify/verify.mjs" <url> [outDir] [config.json]
 
 - No config → 4 default shots (desktop + mobile, top + full-page).
 - The script prints, per shot, **horizontal overflow** (body must never scroll sideways)
-  and **console errors** — then you Read the images.
+  and **console errors**: then you Read the images.
 - **The Read step is the point.** The tool renders PNGs; look for: clipping, overflow,
   broken layout on mobile, wrong contrast, an animation's END state, and whether the
   copy/claims render as intended.
@@ -75,7 +75,7 @@ For animations: set `wait` past the animation's full duration to catch the end s
 - Host preview panes throttle hidden tabs (rAF freezes → stale shots) — this headless
   harness avoids that.
 
-## Scope — what we deliberately did NOT take
+## Scope: what we deliberately did NOT take
 
 The source skill builds cinematic **scroll-film** sites (canvas frame-scrubbing, generated
 footage). We did **not** adopt that: a heavy cinematic scroll site is the opposite of what

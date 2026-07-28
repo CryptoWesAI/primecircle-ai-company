@@ -1,4 +1,4 @@
-# Workspace-kaart — wat hoort bij wat
+# Workspace-kaart: wat hoort bij wat
 
 > Eén bron van waarheid over wie wat bezit. De mappenstructuur volgt sinds
 > 2026-07-16 de drie eigenaren, zodat de explorer het meteen laat zien.
@@ -25,7 +25,7 @@ primecircle-ai-company/
   .claude/  .github/  # A. Skills + Copilot-instructies
 ```
 
-## A. PrimeCircle — bedrijf, strategie & framework
+## A. PrimeCircle: bedrijf, strategie & framework
 
 | Wat | Locatie |
 |---|---|
@@ -40,10 +40,10 @@ primecircle-ai-company/
 | Leren & werkwijze | `roadmap/LEARNING_ROADMAP.md`, `workflow/DEV_WORKFLOW.md` |
 | Skills | `.claude/skills/opportunity-check/`, `.claude/skills/scroll-world/` |
 | Bedrijfssite | `website/` (index.html, css/, js/, server.js, package.json) |
-| Trades-demo/verkoopsite (Belvanger) | `sites/belvanger/` — gecorrigeerde bron-van-waarheid + hardened `deploy-to-vps.sh`; live (noindex) op `belvanger.primecircle.cloud`. Zie `sites/belvanger/STATUS.md` |
+| Trades-demo/verkoopsite (Belvanger) | `sites/belvanger/`: gecorrigeerde bron-van-waarheid + hardened `deploy-to-vps.sh`; live (noindex) op `belvanger.primecircle.cloud`. Zie `sites/belvanger/STATUS.md` |
 | Deze kaart + docs-index | `docs/WORKSPACE_MAP.md`, `docs/README.md` |
 
-## B. PrimeCircle — het herbruikbare product (de chatbot)
+## B. PrimeCircle: het herbruikbare product (de chatbot)
 
 Config-gedreven chatbot als **product** dat meerdere klanten bedient. PrimeCircle-IP,
 geen klantbezit. Eén generieke motor + per-klant configuratie.
@@ -56,7 +56,7 @@ geen klantbezit. Eén generieke motor + per-klant configuratie.
 | Handleidingen | `product/chatbot/README.md`, `product/chatbot/DEPLOY.md` |
 | Demo-klant (bewijs, geen echte klant) | `product/chatbot/customers/demo-bakkerij/` |
 
-## C. Alien / AB Uitvaartzorg — de klant
+## C. Alien / AB Uitvaartzorg: de klant
 
 Alien's spullen leven op **vijf plekken** (bewust — config vs. deploy vs. docs vs. bron vs. live):
 

@@ -26,7 +26,7 @@ external buyer, that is what code review and the `simplify` skill are for.
 
 ## The method
 
-### Step 1 — Extract the exact artifact
+### Step 1: Extract the exact artifact
 
 Pull the literal copy the persona will react to: headline, subhead, CTA labels,
 any interactive/animated proof elements, trust signals, pricing (or its absence).
@@ -34,7 +34,7 @@ Do not summarize or paraphrase it for the persona, hand them precisely what a
 real visitor would see. If the persona reacts to a paraphrase instead of the real
 copy, the test result is worthless.
 
-### Step 2 — Design 2-4 distinct skeptical personas, not one generic skeptic
+### Step 2: Design 2-4 distinct skeptical personas, not one generic skeptic
 
 Each persona needs its own OBJECTION ANGLE, not just a different name. Cover the
 angles that actually kill deals in this market:
@@ -51,7 +51,7 @@ Adjust the angles to the actual market. Give each persona a real name, age,
 business context, and a specific reason for their skepticism, generic personas
 produce generic (useless) objections.
 
-### Step 3 — Spawn all personas in parallel for their opening reaction
+### Step 3: Spawn all personas in parallel for their opening reaction
 
 Each persona gets ONLY: the exact artifact copy, their character brief, and an
 explicit instruction to give their unfiltered first reaction, understanding what
@@ -70,7 +70,7 @@ Instruction template for each persona agent:
 > considering a call. Do not be persuaded yet. 120-200 words. Leave real openings
 > for a response, don't just shut the door.
 
-### Step 4 — You respond as the founder, for real
+### Step 4: You respond as the founder, for real
 
 Read each persona's objections and write a genuine, specific, HONEST response
 grounded in what the product/service actually does (pull from the real knowledge
@@ -79,7 +79,7 @@ reassurance loses every time in this test; specific, checkable answers win. If a
 honest answer includes admitting a real limitation, include it, personas reward
 honesty about limits more than they reward a claim that sounds too clean.
 
-### Step 5 — Continue each persona via SendMessage, not a fresh spawn
+### Step 5: Continue each persona via SendMessage, not a fresh spawn
 
 Use `SendMessage` to the same agent ID so the persona keeps its established
 character and memory of what was already said. Feed it your founder response and
@@ -96,7 +96,7 @@ either explicit conversion ("I'd book the call") or a clearly named, specific
 remaining blocker. Do not keep grinding rounds once the verdict is clear, extra
 rounds past that point add noise, not signal.
 
-### Step 6 — Separate artifact problems from business problems
+### Step 6: Separate artifact problems from business problems
 
 Read every objection and sort it into exactly one bucket:
 
@@ -110,7 +110,7 @@ Read every objection and sort it into exactly one bucket:
 Conflating these two produces either an over-engineered artifact trying to solve
 a product problem, or a shipped artifact that still has the real gap.
 
-### Step 7 — Write the report
+### Step 7: Write the report
 
 One table: persona, core objection, outcome. Then the per-persona narrative
 (opening objection, what closed it or didn't, final verdict, in the persona's

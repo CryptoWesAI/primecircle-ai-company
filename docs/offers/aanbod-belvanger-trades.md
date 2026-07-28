@@ -1,4 +1,4 @@
-# Aanbod, Belvanger (trades) — founding-offer
+# Aanbod, Belvanger (trades): founding-offer
 
 > Eén gestandaardiseerd aanbod voor NL-vakmensen. De **setup** (website + chatbot +
 > gemiste-oproep-opvang + dashboard) is de instap die cash oplevert en vertrouwen bouwt;

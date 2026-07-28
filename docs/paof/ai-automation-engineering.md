@@ -1,4 +1,4 @@
-# AI Automation Engineering — Cron vs. Workflow Orchestration
+# AI Automation Engineering: Cron vs. Workflow Orchestration
 
 Practical decision framework for choosing an automation mechanism for a
 PrimeCircle offer's delivery, written against what's actually available today

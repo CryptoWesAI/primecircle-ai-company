@@ -1,4 +1,4 @@
-# AI-transparantie (EU AI Act, Art. 50) — standaard in de chatbot
+# AI-transparantie (EU AI Act, Art. 50): standaard in de chatbot
 
 **Status:** ingebouwd en live (2026-07-15). **Wettelijke deadline:** 2 augustus 2026.
 Geen juridisch advies — laat de exacte teksten bij twijfel door een jurist nalezen.
@@ -18,16 +18,16 @@ De disclosure zit in de **gedeelde widget** (`chatbot/public/widget.js` +
 automatisch** en kun je een chatbot niet per ongeluk zónder disclosure uitleveren.
 Drie lagen, zodat het signaal niet kan wegvallen:
 
-1. **Openingsbericht bij eerste interactie** — zodra het chatvenster opent, vóór de
+1. **Openingsbericht bij eerste interactie**: zodra het chatvenster opent, vóór de
    begroeting, verschijnt een notice: *"U chat met de digitale assistent van
    [naam] (automatisch, geen medewerker). Voor persoonlijk of dringend contact belt
    u …"* (NL) / *"You are chatting with [naam]'s digital assistant (automated, not a
    staff member)…"* (EN). Zie `strings()` → `disclosure`, getoond in `openPanel()`
    vóór `greeting`.
-2. **Blijvende "AI"-badge in de header** — een pill die nooit wegscrollt, ook niet
+2. **Blijvende "AI"-badge in de header**: een pill die nooit wegscrollt, ook niet
    in een lang gesprek. Met gelokaliseerde tooltip (`badgeTitle`). Naast de
    subtitel "Digitale assistent".
-3. **Duidelijke styling** — de notice heeft een eigen omkaderde stijl (`.ab-note`),
+3. **Duidelijke styling**: de notice heeft een eigen omkaderde stijl (`.ab-note`),
    niet weggemoffeld als grijs bijschrift → voldoet aan "duidelijk en onderscheidbaar".
 
 De disclosure blijft ook staan als `/api/config` faalt (fallback-tekst zonder

@@ -1,4 +1,4 @@
-# QA-testscript — AB Uitvaartzorg chatbot
+# QA-testscript: AB Uitvaartzorg chatbot
 
 Loop dit door zodra de bot lokaal draait (met API-sleutel). Bedoeld voor jou én
 voor **Alien** als goedkeuringsstap vóór livegang. Vink af; noteer wat niet
@@ -16,7 +16,7 @@ klopt zodat we de system prompt of kennisbank kunnen bijstellen.
 | Wie is Alien? | Sinds 2018, persoonlijk, werkgebied Steenwijk e.o. | |
 | Werkt ze ook in [plaats in werkgebied]? | Bevestigt voor Steenwijk/Kop van Overijssel/Zuid-Friesland/West-Drenthe | |
 
-## B. Grenzen — mag NIET verzinnen, moet doorverwijzen
+## B. Grenzen: mag NIET verzinnen, moet doorverwijzen
 
 | Vraag | Verwacht gedrag | OK? |
 |---|---|---|

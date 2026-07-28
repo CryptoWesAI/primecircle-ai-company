@@ -1,4 +1,4 @@
-# Belvanger — voice-memo scripts (WhatsApp/Messenger)
+# Belvanger: voice-memo scripts (WhatsApp/Messenger)
 
 Oefenmateriaal, geen voorleestekst. Neem hardop op, luister terug, neem opnieuw op
 tot het klinkt zoals je normaal praat. Zodra het goed zit: hergebruiken per
@@ -21,7 +21,7 @@ met de vaste tekst.
 
 ---
 
-## Script A — Hoofdmemo (1,5 tot 2,5 minuut)
+## Script A: Hoofdmemo (1,5 tot 2,5 minuut)
 
 Gebruik dit als iemand voor het eerst echt geïnteresseerd is, na een eerste
 kort contact (bericht, reactie op een post, kort gesprek).
@@ -61,7 +61,7 @@ sfeer maar als concrete belofte die je kan bewijzen.
 
 ---
 
-## Script B — Korte geruststelling (30 tot 45 seconden)
+## Script B: Korte geruststelling (30 tot 45 seconden)
 
 Gebruik dit als iemand het aanbod al kent maar twijfelt over het risico
 ("wat als het niet werkt", "ik heb al eerder geld verloren aan een bureau").
@@ -76,7 +76,7 @@ Gebruik dit als iemand het aanbod al kent maar twijfelt over het risico
 
 ---
 
-## Script C — Bezwaren, losse voice notes (elk 15 tot 25 seconden)
+## Script C: Bezwaren, losse voice notes (elk 15 tot 25 seconden)
 
 Apart opnemen, apart versturen als het bezwaar ook echt naar voren komt. Niet
 alles in één bericht proppen.

@@ -1,7 +1,7 @@
-# Weekend-MVP — "Mis nooit meer een klant" (missed-call → text-back)
+# Weekend-MVP: "Mis nooit meer een klant" (missed-call → text-back)
 
 > Doel: de kleinste werkende loop bouwen die de hele businesscase bewijst.
-> Bewust **zonder AI, zonder voice** — die komen later. **Kanaal: WhatsApp naar de
+> Bewust **zonder AI, zonder voice**, die komen later. **Kanaal: WhatsApp naar de
 > klant** (vertrouwen > SMS; zie hieronder). SMS alleen als interne rooktest.
 > v0 = een middag (intern bewijzen). v1 = een weekend (WhatsApp, echte pilot).
 
@@ -35,13 +35,13 @@ WhatsApp. Daarom:
   automatiseren). Een apart zakelijk nummer met geverifieerd profiel houdt de privé-
   WhatsApp van de vakman gescheiden.
 - **Doe dit vroeg:** Meta Business-verificatie + template-goedkeuring kosten een paar
-  dagen. Start dat **parallel aan het validatiegesprek** — dan blokkeert het niets.
+  dagen. Start dat **parallel aan het validatiegesprek**: dan blokkeert het niets.
 
 ## Belangrijke keuze: begin op Twilio, niet Bird
 
 Voor de **wegwerp-demo** telt maar één ding: hoe snel heb je een werkende loop.
 - **Twilio** = snelst: visuele flow-builder (Studio), textbook missed-call-patroon, native n8n-node, gratis proeftegoed. VS-gehost.
-- **Bird** = EU/NL-data, goedkopere SMS — maar minder kant-en-klaar. **Bewaar Bird voor de EU-schone productieversie** zodra een pilot "ja" zegt.
+- **Bird** = EU/NL-data, goedkopere SMS: maar minder kant-en-klaar. **Bewaar Bird voor de EU-schone productieversie** zodra een pilot "ja" zegt.
 
 Laat de EU-vs-VS-keuze je weekend niet blokkeren: **demo op Twilio, migreer later naar Bird.**
 
@@ -113,7 +113,7 @@ Vastgelegd na het interview met Wesley; deze overrulen twijfels hierboven.
 
 Totaal om het te bewijzen: **~€0-10.** (Meta-verificatie is gratis, kost alleen doorlooptijd.)
 
-## v0 — de interne rooktest (een middag, ZONDER code)
+## v0: de interne rooktest (een middag, ZONDER code)
 
 Doel: bewijs voor jezelf dat de belflow werkt. Hier mag je **SMS** gebruiken (snel,
 geen Meta-verificatie nodig) — dit gaat naar jóúw eigen telefoon, niet naar een klant.
@@ -133,7 +133,7 @@ Puur in **Twilio Studio** (visuele drag-drop flow), geen n8n nodig:
 Start **parallel** de Meta Business-verificatie + de Utility-template (paar dagen
 doorlooptijd), zodat WhatsApp klaar is voor v1.
 
-## v1 — de eerste echte pilot (weekend)
+## v1: de eerste echte pilot (weekend)
 
 Nu klant-facing → **WhatsApp** (het vertrouwenskanaal), niet SMS.
 
@@ -153,7 +153,7 @@ Nu klant-facing → **WhatsApp** (het vertrouwenskanaal), niet SMS.
 4. **Simpel overzicht**: hergebruik je bestaande dashboard of een NocoDB-view →
    "deze week X gemiste calls opgevangen".
 
-## Instrumentatie & resultatendashboard ("meten = weten") — ontwerp vooraf
+## Instrumentatie & resultatendashboard ("meten = weten"): ontwerp vooraf
 
 De klant wil straks zien wat Belvanger oplevert. Dat hero-getal ("opgevangen oproepen")
 bestaat alleen als de utility het **vanaf dag één logt**. Dus: ontwerp nu, bouw het portaal
@@ -170,7 +170,7 @@ dezelfde data-laag als de bestaande geanonimiseerde bezoekersanalytics):
 | `lead_notified` | vakman is gemeld | timestamp, klant-id, kanaal |
 
 **De 4 getallen die de klant écht wil** (geldgericht, niet tech):
-1. **Opgevangen oproepen** = `count(missed_call)` — het hero-getal.
+1. **Opgevangen oproepen** = `count(missed_call)`: het hero-getal.
 2. **Reacties/leads** = `count(reply_received)`; **reactieratio** = reacties ÷ opgevangen.
 3. **Geschatte waarde** = opgevangen × *gemiddelde kluswaarde* (per klant configureerbaar,
    bv. in `config.json`), afgezet tegen het maandbedrag → ROI in één oogopslag.
@@ -212,11 +212,11 @@ het zich terugverdient.
 
 ## Wat je NU NIET toevoegt (discipline)
 
-- ❌ AI-kwalificatie (je chatbot) — pas als de kale loop een lead vangt.
-- ❌ Voice-AI (Retell) — pas als de niche bewezen is.
-- ❌ Booking, meerdere klanten, facturatie — later.
-- ❌ SMS-fallback / hybride — pas als een echte beller ooit géén WhatsApp blijkt te hebben.
-- ❌ Self-service klant-dashboard — de utility logt de events wél vanaf dag één, maar het
+- ❌ AI-kwalificatie (je chatbot): pas als de kale loop een lead vangt.
+- ❌ Voice-AI (Retell): pas als de niche bewezen is.
+- ❌ Booking, meerdere klanten, facturatie: later.
+- ❌ SMS-fallback / hybride: pas als een echte beller ooit géén WhatsApp blijkt te hebben.
+- ❌ Self-service klant-dashboard: de utility logt de events wél vanaf dag één, maar het
   portaal bouw je pas als het handmatige maandoverzicht een bottleneck wordt.
 
 Elke toevoeging is een last tot een betalende klant erom vraagt.

@@ -1,4 +1,4 @@
-# Belvanger — Klantintake, van lead tot bouwklare website
+# Belvanger: Klantintake, van lead tot bouwklare website
 
 Herbruikbare template. Kopieer het relevante deel, vul de naam van de klant in, stuur via
 WhatsApp of e-mail. Doel: nooit meer per klant handmatig een vragenlijst verzinnen, en de
@@ -16,7 +16,7 @@ Twee versies, twee momenten:
 
 ---
 
-## Deel 1 — Quick-scan (bij binnenkomst van een lead)
+## Deel 1: Quick-scan (bij binnenkomst van een lead)
 
 Stuur dit direct, bijvoorbeeld via WhatsApp:
 
@@ -37,7 +37,7 @@ gericht voorbereiden op hun ergernis in plaats van een generiek praatje.
 
 ---
 
-## Deel 2 — Volledige intake (na toezegging)
+## Deel 2: Volledige intake (na toezegging)
 
 Stuur dit pas na een akkoord, met een korte intro:
 
@@ -107,7 +107,7 @@ Stuur dit pas na een akkoord, met een korte intro:
 
 ---
 
-## Deel 3 — Van antwoorden naar bouwprompt (voor jezelf)
+## Deel 3: Van antwoorden naar bouwprompt (voor jezelf)
 
 Zodra je de antwoorden van Deel 2 binnen hebt, plak je ze in het onderstaande sjabloon en
 stuur je dat in één keer naar Claude. Dit is precies de informatie waarmee in deze sessie

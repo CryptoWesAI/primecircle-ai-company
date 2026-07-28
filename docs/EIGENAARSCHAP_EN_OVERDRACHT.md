@@ -15,7 +15,7 @@ Wat is van de klant, wat is van jou, en wat gebeurt er als hij weggaat.
 
 > **De setup koop je. De maandelijkse dienst huur je.**
 
-Dat is niet gemarketingde taal, het is precies hoe je prijs al in elkaar zit: €625 eenmalig
+Dat is precies hoe je prijs al in elkaar zit: €625 eenmalig
 voor de website, €99 per maand voor het draaien, onderhouden en meten. Dus:
 
 - Wat met de **setup** is gemaakt (website, teksten, beeld, kleuren, structuur) is **van de

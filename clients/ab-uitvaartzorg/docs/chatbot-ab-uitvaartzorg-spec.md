@@ -1,4 +1,4 @@
-# Chatbot AB Uitvaartzorg — Ontwerp- & Veiligheidsspec (v1)
+# Chatbot AB Uitvaartzorg: Ontwerp- & Veiligheidsspec (v1)
 
 Eerste concrete PrimeCircle-bouwproject: een kennis-gegronde AI-chatassistent op
 de website van AB Uitvaartzorg (Alien Bisschop). Fast-tracked besluit
@@ -30,7 +30,7 @@ Art. 50-disclosure; en de eigen kennisbank + prompt vormen het herbruikbare
 - **Kennisbank:** afgeleid van de bestaande 14 pagina's + losse Q&A van Alien.
   Klein genoeg om volledig in de context mee te sturen (context stuffing) —
   géén vector-database/RAG nodig (zie besluit 2026-07-12).
-- **Data (v1):** stateless — géén opslag van gesprekken. Minimale logging pas
+- **Data (v1):** stateless: géén opslag van gesprekken. Minimale logging pas
   later, met privacyverklaring-dekking en een verwerkersovereenkomst.
 - **Provider + model:** **OpenRouter**, model **`google/gemini-2.5-flash-lite`**
   (gekozen 2026-07-14, instelbaar via `OPENROUTER_MODEL`). Goedkoop
@@ -42,7 +42,7 @@ Art. 50-disclosure; en de eigen kennisbank + prompt vormen het herbruikbare
 
 ## 3. Harde veiligheidsgrenzen (niet-onderhandelbaar)
 
-1. **Alleen gegrond antwoorden** — uitsluitend op basis van de meegeleverde
+1. **Alleen gegrond antwoorden**: uitsluitend op basis van de meegeleverde
    AB-informatie. Niets verzinnen. Onzeker of niet aanwezig → eerlijk zeggen +
    naar Alien verwijzen.
 2. **Geen medisch/juridisch/verzekeringsadvies** improviseren.
@@ -103,7 +103,7 @@ toon, geen emoji's. Sluit waar passend af met de mogelijkheid Alien te bellen.
 
 1. Kennisbank + endpoint bouwen op een staging-pagina (niet live).
 2. Testen met echte voorbeeldvragen (zie §10).
-3. **Alien laat meelezen** — toon en grenzen moeten door haar goedgekeurd zijn.
+3. **Alien laat meelezen**: toon en grenzen moeten door haar goedgekeurd zijn.
 4. Disclosure + privacyalinea toevoegen, dán pas live op de site.
 5. Na livegang: informeel evalueren of het telefoon-/mailverkeer voor algemene
    vragen merkbaar daalt (validatie van de oorspronkelijke aanname).
@@ -115,7 +115,7 @@ volgende niche verwissel je vooral de kennisbank en een paar toon-regels. Dit is
 de eerste tastbare steen van de generieke kern — bereikt via een echte case,
 niet speculatief.
 
-## 10. Openstaand — nodig van Alien
+## 10. Openstaand: nodig van Alien
 
 - ~10-15 vragen die bezoekers echt stellen, met haar voorkeursantwoord (of
   bevestiging dat we die uit de site mogen afleiden).

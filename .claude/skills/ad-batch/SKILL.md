@@ -36,7 +36,7 @@ uitkomst bevatten, of hij heeft geen instructie.
 
 ---
 
-## STAP 0 — Merk, aanbod, en het ene cijfer
+## STAP 0: Merk, aanbod, en het ene cijfer
 
 Vraag dit één keer per merk en schrijf het op in `docs/marketing-agent/merken/<merk>.md`,
 zodat een volgende batch het niet opnieuw hoeft te vragen.
@@ -53,7 +53,7 @@ stopcriterium niet: dat is geld en dat is zijn beslissing.
 
 ---
 
-## STAP 1 — Onderzoek in echte bronnen
+## STAP 1: Onderzoek in echte bronnen
 
 Niet verzinnen. Ophalen. Voor Nederlandse lokale vakbedrijven werkt in deze volgorde:
 
@@ -75,7 +75,7 @@ alles wat je zelf verzint.
 
 ---
 
-## STAP 2 — 10 tot 15 hoeken die elkaar niet overlappen
+## STAP 2: 10 tot 15 hoeken die elkaar niet overlappen
 
 Per hoek precies dit, in `docs/marketing-agent/ANGLES.md`:
 
@@ -103,7 +103,7 @@ alleen oneerlijk maar ook technisch dom.
 
 ---
 
-## STAP 3 — Een OpenArt-brief per hoek
+## STAP 3: Een OpenArt-brief per hoek
 
 OpenArt zit in de OmniFrame-workspace, niet hier. Ik lever dus de **brief**, jij genereert,
 en ik meet en converteer. Dat is precies de werkwijze die op 27 juli werkte voor de
@@ -142,7 +142,7 @@ reaching far out to the side of the ladder
 
 ---
 
-## STAP 4 — Naam en UTM: de rug van de meting
+## STAP 4, Naam en UTM: de rug van de meting
 
 Zonder dit kun je niets meten en is de hele batch een gevoel.
 
@@ -162,7 +162,7 @@ de bezoekcijfers. Dat is voor deze fase genoeg.
 
 ---
 
-## STAP 5 — Publiceren (handmatig, en dat is bewust)
+## STAP 5: Publiceren (handmatig, en dat is bewust)
 
 Bij minder dan ongeveer 50 advertenties per week is Ads Manager sneller dan een
 API-integratie bouwen, en je loopt nul risico op een blokkade. Zie `SYSTEEM.md` §5.
@@ -179,7 +179,7 @@ Checklist:
 
 ---
 
-## STAP 6 — Drie dagen niets doen, dan meten
+## STAP 6: Drie dagen niets doen, dan meten
 
 **Niets doen is de stap.** Bord 3 uit de video: 2 tot 3 dagen laten lopen, niemand raakt ze
 aan, wachten op echt signaal. Eerder ingrijpen is ruis optimaliseren.
@@ -200,7 +200,7 @@ Beslisregel:
 
 ---
 
-## STAP 7 — Terugschrijven, of het was voor niets
+## STAP 7: Terugschrijven, of het was voor niets
 
 Vul per hoek in `ANGLES.md` in: vertoningen, kliks, aanvragen, kosten per aanvraag, en het
 besluit. Eén regel per hoek.

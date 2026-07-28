@@ -1,4 +1,4 @@
-# Belvanger — stappenplan persoonlijk Facebook-profiel
+# Belvanger: stappenplan persoonlijk Facebook-profiel
 
 Kant-en-klaar, uitvoerbaar vanaf morgen. Bouwt voort op wat al vaststaat: de
 doelgroep-prioritering en het geteste script uit
@@ -17,15 +17,15 @@ homepage-funnel.
 
 ## Doelgroep-volgorde (ongewijzigd)
 
-1. **Mo-type eerst** — dakdekker/vakman, effort-averse, converteert makkelijk
+1. **Mo-type eerst**: dakdekker/vakman, effort-averse, converteert makkelijk
    op eenvoud en "wij doen het voor je".
-2. **Sanne-type tweede** — eerder belazerd door een bureau, prijsbewust,
+2. **Sanne-type tweede**: eerder belazerd door een bureau, prijsbewust,
    converteert alleen met harde feiten en een expliciet genoemd bedrag.
-3. **Els-type voorlopig niet actief** — vergelijkt op prijs, wil losse
+3. **Els-type voorlopig niet actief**: vergelijkt op prijs, wil losse
    onderdelen; wacht tot er een vangnet-only optie is voordat je haar actief
    benadert.
 
-## Fase A — Voorbereiding (dag 1, circa 1 uur)
+## Fase A: Voorbereiding (dag 1, circa 1 uur)
 
 1. **Update je eigen profielfoto/bio niet ingrijpend.** Je verkoopt als
    jezelf, niet als "Belvanger BV". Eén simpele toevoeging aan je bio volstaat:
@@ -40,7 +40,7 @@ homepage-funnel.
    Nederland"), en algemene zzp-groepen. Niet meteen posten, eerst een paar
    dagen meelezen om de toon te leren kennen.
 
-## Fase B — Eerste golf: je eigen netwerk (week 1)
+## Fase B, Eerste golf: je eigen netwerk (week 1)
 
 Dit is de belangrijkste fase. Je vriend die al valideert is hier het bewijs.
 
@@ -65,7 +65,7 @@ Dit is de belangrijkste fase. Je vriend die al valideert is hier het bewijs.
    iemand is die je al goed kent (Script B volstaat) of iemand verder weg in
    je netwerk (Script A, volledige uitleg).
 
-## Fase C — Tweede golf: groepen (week 2-3, pas als Fase B leads oplevert)
+## Fase C, Tweede golf: groepen (week 2-3, pas als Fase B leads oplevert)
 
 1. **Geen cold-pitch posts in groepen.** Dat werkt averechts en jaagt
    moderators op je af. In plaats daarvan: reageer nuttig op bestaande
@@ -79,7 +79,7 @@ Dit is de belangrijkste fase. Je vriend die al valideert is hier het bewijs.
 3. Check per groep de regels voor eigen promotie voordat je post — sommige
    groepen staan dit helemaal niet toe, dat kost je anders je lidmaatschap.
 
-## Fase D — Ritme vasthouden (doorlopend)
+## Fase D: Ritme vasthouden (doorlopend)
 
 - **2-3 keer per week** iets kleins delen: een voortgangsupdate, een
   screenshot van het dashboard (met toestemming van je klant, gegevens

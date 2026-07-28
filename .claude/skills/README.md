@@ -1,13 +1,13 @@
 # Reusable Skills Convention
 
-Real, reusable Claude Code skills for PrimeCircle land here — but only once a
+Real, reusable Claude Code skills for PrimeCircle land here, but only once a
 workflow has actually proven repeatable through real work. This is not a
 place for one-off notes or aspirational skills; those belong in `docs/paof/`
 until there's a concrete, repeatable task to automate.
 
 ## Installed skills
 
-- **safe-demo-mirror** — authored by us (2026-07-24), distilled from building
+- **safe-demo-mirror**: authored by us (2026-07-24), distilled from building
   the public Belvanger dashboard demo (`belvanger.nl/dashboard-demo`). Builds a
   shareable, no-login demo of an authenticated internal tool (a dashboard, a
   portal) by mirroring its REAL frontend at build time (one script, re-run on
@@ -27,7 +27,7 @@ until there's a concrete, repeatable task to automate.
   support/logout) plus one narrative-consistency bug (a fictional inbound sms
   reply the real system cannot receive), each one folded back into the method
   above.
-- **persona-pressure-test** — authored by us (2026-07-23), distilled from
+- **persona-pressure-test**: authored by us (2026-07-23), distilled from
   stress-testing the revamped Belvanger homepage hero. Pressure-tests persuasive
   copy (hero, pitch, pricing page) by spawning 2-4 sub-agents as distinct,
   genuinely skeptical buyer personas (each with a real objection angle: trust/
@@ -44,7 +44,7 @@ until there's a concrete, repeatable task to automate.
   copy to paper over a real product gap). Proven working on the Belvanger hero
   test 2026-07-23 (2 of 3 personas converted, 1 surfaced a real pricing-tier gap
   rather than a copy problem).
-- **opportunity-check** — authored by us (2026-07-16), distilled from the
+- **opportunity-check**: authored by us (2026-07-16), distilled from the
   funeral→trades niche analysis. A repeatable decision procedure to pressure-test any
   new niche/offer/wedge BEFORE building: Founder Filter → market research (TAM, pain
   frequency×value, competition + price anchor, WTP) → scoring → the four "traps"
@@ -52,15 +52,15 @@ until there's a concrete, repeatable task to automate.
   build → Go/Adjust/Kill verdict + smallest next step. Encodes the hard lessons
   (low-volume-segment trap, cheap-incumbent price anchor, don't-give-it-away,
   validate-before-build, arithmetic-pitch preference). No external tooling needed.
-- **web-verify** — authored by us (2026-07-18), distilled from the scroll-film-studio
+- **web-verify**: authored by us (2026-07-18), distilled from the scroll-film-studio
   skill's verification harness. Screenshots any local/live URL at multiple viewports +
   scroll positions using the **system Chrome/Edge** (no download), auto-checks horizontal
   overflow + console errors; you then Read the PNGs to actually LOOK. Closes the "I can't
   see the rendered animation, please check it" gap. Ships `verify.mjs` (needs `npm i
   puppeteer-core` in a scratch dir). Deliberately does NOT adopt the source skill's
-  cinematic scroll-film product (too heavy for fast trades sites) — only the verify
+  cinematic scroll-film product (too heavy for fast trades sites). Only the verify
   discipline. Proven working against Belvanger (2026-07-18).
-- **programmatic-seo** — authored by us (2026-07-16), distilled from the "Claude Code
+- **programmatic-seo**: authored by us (2026-07-16), distilled from the "Claude Code
   SEO" technique + local-SEO best practice. Generates a **quality-gated, right-sized**
   set of local / service-area SEO pages at scale (as a client product = lead
   *generation* complementing missed-call lead *capture*; or for own marketing) WITHOUT
@@ -70,7 +70,7 @@ until there's a concrete, repeatable task to automate.
   distinction, LocalBusiness schema, and batch-ship-then-monitor. Phase-2 growth lever
   (validate the wedge first). No external tooling required to reason; live keyword data
   needs an SEO MCP (Semrush/Ahrefs/DataForSEO).
-- **react-toolkit** — authored by us (2026-07-18), from research into
+- **react-toolkit**: authored by us (2026-07-18), from research into
   [React Bits](https://reactbits.dev) at the founder's request. A curated shortlist of
   **animated React component libraries** for giving client sites a premium "statement"
   feel via **Integrate** (not Build), plus the rules for using them in *paid* work. First
@@ -81,9 +81,9 @@ until there's a concrete, repeatable task to automate.
   effect, WebGL is expensive, respect `prefers-reduced-motion`, keep text real, verify with
   `web-verify`). Detailed library notes live in `references/` (grow it per library). NOTE:
   unlike the other skills this came from research, **not yet battle-tested on a live client
-  React build** — provisional until a real integration; also a reminder that the current
+  React build**: provisional until a real integration; also a reminder that the current
   Belvanger site is vanilla HTML, so it's not drop-in there.
-- **adhd** — third-party skill (MIT, vendored 2026-07-22 from
+- **adhd**: third-party skill (MIT, vendored 2026-07-22 from
   `github.com/UditAkhourii/adhd`, not authored by us; installed at the founder's
   request). **Divergent ideation** for open-ended decisions: spawns 5 *parallel,
   isolated* sub-agents, each under a different cognitive frame (regulator,
@@ -95,7 +95,7 @@ until there's a concrete, repeatable task to automate.
   per run, so it is a decision-point tool, not an every-task one. Instruction-only
   (SKILL.md); the optional `adhd-agent` npm CLI is separate and NOT installed.
   Invoke with `/adhd <problem>` or by asking for "ADHD mode".
-- **scroll-world** — third-party skill (MIT, vendored 2026-07-14 from
+- **scroll-world**: third-party skill (MIT, vendored 2026-07-14 from
   `github.com/cth9191/scroll-world`, not authored by us). Builds scroll-scrubbed
   "fly through the world" landing pages using the Higgsfield CLI + ffmpeg. Kept
   for possible future use; **needs external tooling to actually run** (a

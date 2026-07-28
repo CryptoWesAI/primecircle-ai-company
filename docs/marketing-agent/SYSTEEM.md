@@ -255,7 +255,7 @@ dat er meer mensen zijn om te bellen, niet dat het bellen wordt overgenomen.
 
 - Aflevering: Cody Schneider bij Greg Isenberg, over marketing-agents en de AI-voor-WordPress
   kans. Negen schermafbeeldingen uit de video staan in `docs/marketing-agent/video-notes.md`.
-- `docs/EIGENAARSCHAP_EN_OVERDRACHT.md` — verwerkersovereenkomst, nodig vóór fase 3.
-- `docs/compliance/ai-transparantie-art50.md` — AI-disclosure, raakt de chatbot op de
+- `docs/EIGENAARSCHAP_EN_OVERDRACHT.md`: verwerkersovereenkomst, nodig vóór fase 3.
+- `docs/compliance/ai-transparantie-art50.md`: AI-disclosure, raakt de chatbot op de
   landingspagina waar advertenties naartoe leiden.
-- `SELLING.md` — de teller die bepaalt of dit bouwen of uitstellen is.
+- `SELLING.md`: de teller die bepaalt of dit bouwen of uitstellen is.

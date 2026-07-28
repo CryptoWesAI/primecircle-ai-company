@@ -1,4 +1,4 @@
-# Commercial Offer — [Name]
+# Commercial Offer: [Name]
 
 Copy this file per candidate offer (e.g. `offers/2026-07-funeral-home-intake.md`).
 An offer is not validated until it has real evidence, not just a plausible story.

@@ -12,9 +12,9 @@ ideatiebranches, daarna scoren, clusteren, valkuilen markeren en de top 3 uitdie
 Dit is geen portingprobleem. Het zijn drie problemen die in de vraag door elkaar lopen,
 en ze hebben elk een ander antwoord:
 
-1. **Distributie** — een icoon en een vindbare listing.
-2. **Levering** — de telefoon moet binnen seconden trillen.
-3. **Onderhoudslast** — wie betaalt de verplichte `targetSdk`-tredmolen.
+1. **Distributie**: een icoon en een vindbare listing.
+2. **Levering**: de telefoon moet binnen seconden trillen.
+3. **Onderhoudslast**: wie betaalt de verplichte `targetSdk`-tredmolen.
 
 Wie alleen naar (1) kijkt, bouwt een app die niets toevoegt aan de website. Wie (3)
 negeert, bouwt onbetaalde overhead in voor een founder die al 32 tot 40 uur per week

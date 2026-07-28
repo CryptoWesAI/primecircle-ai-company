@@ -1,4 +1,4 @@
-# React Bits — reference
+# React Bits: reference
 
 Vetted animated-component library. First entry in the PrimeCircle React toolkit.
 
@@ -17,10 +17,10 @@ whatever animation tech fits: `gsap`, `framer-motion` / `motion`, `react-spring`
 
 ## Categories
 
-1. **Text Animations** — split / scramble / gradient / decrypt text (e.g. `SplitText`).
-2. **Animations** — general motion & interaction wrappers.
-3. **Components** — ready-made animated UI elements.
-4. **Backgrounds** — animated / WebGL / Three.js backgrounds.
+1. **Text Animations**: split / scramble / gradient / decrypt text (e.g. `SplitText`).
+2. **Animations**: general motion & interaction wrappers.
+3. **Components**: ready-made animated UI elements.
+4. **Backgrounds**: animated / WebGL / Three.js backgrounds.
 
 Browse the live gallery on reactbits.dev to pick — each has a preview + tweakable props.
 
@@ -46,7 +46,7 @@ npx shadcn@latest add @react-bits/<component-name>
 
 Only the component you add pulls in its own animation dep (tree-shakeable, minimal).
 
-## License — READ BEFORE LEANING ON IT
+## License: READ BEFORE LEANING ON IT
 
 **MIT + Commons Clause.** Free for personal and commercial use, with ONE restriction:
 you may not **sell React Bits itself** (can't repackage the library and sell it as a product).
@@ -61,9 +61,9 @@ It is therefore NOT plain MIT — note this before it becomes a dependency of a 
 
 ## Extra free tools on the site
 
-- **Background Studio** — build an animated background, export as video / image / code.
-- **Shape Magic** — rounded-corner shapes, export SVG / React.
-- **Texture Lab** — 20+ image/video texture effects.
+- **Background Studio**: build an animated background, export as video / image / code.
+- **Shape Magic**: rounded-corner shapes, export SVG / React.
+- **Texture Lab**: 20+ image/video texture effects.
 
 Useful even when you don't take a component: generate a background asset, then serve it as
 a static file (works in any stack, including a plain-HTML site).

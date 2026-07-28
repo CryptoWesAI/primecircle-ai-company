@@ -1,4 +1,4 @@
-# Belvanger — SEO- en leadsoptimalisatieplan (belvanger.nl)
+# Belvanger: SEO- en leadsoptimalisatieplan (belvanger.nl)
 
 Gebaseerd op een technische audit van de live site op 2026-07-24 (curl-checks
 op robots, meta, structured data, headings, afbeeldingen).

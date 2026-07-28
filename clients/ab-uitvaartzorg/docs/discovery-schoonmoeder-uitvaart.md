@@ -1,4 +1,4 @@
-# Discovery & Tijd-audit — Uitvaartonderneming (schoonmoeder)
+# Discovery & Tijd-audit: Uitvaartonderneming (schoonmoeder)
 
 > Veldinstrument voor een gesprek van ~20 min. Doel: ontdekken **waar haar tijd
 > echt heen gaat** en welke ene taak de beste eerste automatisering is —
@@ -9,7 +9,7 @@
 > _(Nederlandstalig omdat dit live met haar wordt gebruikt; Engelse herbruikbare
 > PAOF-versie volgt zodra dit een sjabloon voor andere niches wordt.)_
 
-## Vooraf — mindset
+## Vooraf: mindset
 
 - Noteer letterlijk wat ze zegt, ook getallen ("ongeveer 5 facturen per week").
 - Vraag bij elke taak door op: **hoe vaak**, **hoe lang**, **wat gaat mis**,
@@ -19,7 +19,7 @@
 
 ---
 
-## Deel A — Waar gaat de tijd heen (globaal)
+## Deel A: Waar gaat de tijd heen (globaal)
 
 1. Beschrijf een typische week. Welke terugkerende administratieve taken komen
    steeds terug?
@@ -29,7 +29,7 @@
 5. Als je een uur per dag terug zou krijgen — welke taak zou je dan het liefst
    kwijt zijn?
 
-## Deel B — Inzoomen op de top 2-3 taken
+## Deel B: Inzoomen op de top 2-3 taken
 
 _Stel deze vragen per taak die uit Deel A naar boven kwam:_
 
@@ -37,13 +37,13 @@ _Stel deze vragen per taak die uit Deel A naar boven kwam:_
 7. Welke stappen zet je precies? (laat haar het hardop doorlopen)
 8. Welke tools/programma's gebruik je hiervoor nu?
 9. Wat gaat er wel eens mis, of wat is vervelend aan de huidige manier?
-10. **Wie zit er aan de andere kant** — een leverancier/bedrijf, of een
+10. **Wie zit er aan de andere kant**: een leverancier/bedrijf, of een
     familie in rouw?
 11. Wat gebeurt er als deze taak een dag blijft liggen? (test van urgentie)
 12. Zou je je er comfortabel bij voelen als een computer dit (deels) overneemt?
     Waar ligt voor jou de grens?
 
-## Deel C — Telefoon (ze noemde dit zelf)
+## Deel C: Telefoon (ze noemde dit zelf)
 
 13. Hoeveel telefoontjes krijg je op een dag, ongeveer?
 14. Welk deel is **echt spoed** (overlijden melden, dringend) versus routine
@@ -56,7 +56,7 @@ _Stel deze vragen per taak die uit Deel A naar boven kwam:_
 _(Doel hier is niet om de telefoon-AI nu te bouwen — wel om te bepalen óf en
 wanneer die later zinvol is, en waar de rode lijnen liggen.)_
 
-## Deel D — Systemen & gegevens
+## Deel D: Systemen & gegevens
 
 18. Welke e-mail gebruik je (Gmail, Outlook, eigen domein)?
 19. Hoe maak en verstuur je nu facturen? Welk boekhoud-/facturatieprogramma?
@@ -64,7 +64,7 @@ wanneer die later zinvol is, en waar de rode lijnen liggen.)_
     in een programma?
 21. Hoe plan je nu afspraken (agenda op papier, Google/Microsoft)?
 
-## Deel E — Succes & grenzen
+## Deel E: Succes & grenzen
 
 22. Als er dit jaar **één ding** geautomatiseerd kon worden dat je het meeste
     rust geeft — wat zou dat zijn?
@@ -72,7 +72,7 @@ wanneer die later zinvol is, en waar de rode lijnen liggen.)_
 
 ---
 
-## Na het gesprek — de wedge kiezen (samen invullen)
+## Na het gesprek: de wedge kiezen (samen invullen)
 
 Scoor elke kandidaat-taak 1-5 (5 = best). Hoogste totaal wordt de eerste
 automatisering.

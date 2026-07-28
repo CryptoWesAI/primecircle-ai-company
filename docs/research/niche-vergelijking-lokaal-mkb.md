@@ -1,4 +1,4 @@
-# Niche-vergelijking — lokaal MKB (waar is de pijn groter?)
+# Niche-vergelijking: lokaal MKB (waar is de pijn groter?)
 
 > Doel: objectief niches vergelijken voor PrimeCircle's done-for-you automatiserings-
 > model, na de conclusie dat de uitvaartniche te laag volume heeft bij het winbare
@@ -27,7 +27,7 @@ keert dit om: **hoogfrequente, dure, kwantificeerbare pijn** bij lokale kleinbed
 | Niche | TAM (NL) | Kernpijn | Al bediend? |
 |---|---|---|---|
 | **Installateurs/loodgieters/dakdekkers/bouw** | ~45.000 installatie · 17.990 loodgieters (95% zzp) · 7.000 dakdekkers · 126.000 bouw | **Gemiste calls tijdens klus = verloren klus (€100-1.200/call)** | Nauwelijks — slecht gedigitaliseerd, geen dominante AI-oplossing |
-| Kappers/schoonheidssalons | **79.080** | No-shows (~€6.000/jr) | **Ja, zwaar** — salon-software met online boeken + reminders overal |
+| Kappers/schoonheidssalons | **79.080** | No-shows (~€6.000/jr) | **Ja, zwaar**: salon-software met online boeken + reminders overal |
 | Tandarts/fysio/medisch | Middel | Gemiste patiënt-call ($850 LTV) | Deels; gereguleerd, gatekept, vaak personeel |
 | Horeca/restaurants | Groot | Reserveringen/no-shows | Deels; dunne marges, hoge uitval → zwakke betalers |
 
@@ -50,7 +50,7 @@ keert dit om: **hoogfrequente, dure, kwantificeerbare pijn** bij lokale kleinbed
 - Uitvaart: winbaar segment = laag volume → lage waarde.
 - Trades: winbaar segment (zzp-vakmensen) = **hoog inkomend belvolume × hoge kluswaarde** → hoge, kwantificeerbare waarde. De inversie van het probleem.
 - **Enorme TAM**, 95% zzp/klein → lokaal en benaderbaar (jouw voorkeur).
-- **Onderbediend** — geen dominante NL AI-receptionist voor dit segment (anders dan salon- en uitvaartsoftware).
+- **Onderbediend**: geen dominante NL AI-receptionist voor dit segment (anders dan salon- en uitvaartsoftware).
 - **Cash-rijk & druk** (personeelstekort = ze hebben werk zat = ze kunnen betalen).
 - **Lage emotie/regeldruk** (geen rouw, geen bijzondere persoonsgegevens zoals bij uitvaart/medisch).
 
@@ -91,11 +91,11 @@ chatbot-referentiecase.
 
 ## Bronnen
 
-- CompanyData — installateurs/dakdekkers NL: https://companydata.com/nl/bedrijven/nederland/installateurs/
+- CompanyData, installateurs/dakdekkers NL: https://companydata.com/nl/bedrijven/nederland/installateurs/
 - Installatietechniek statistieken 2025: https://installatie-shop.nl/blogs/nieuws/installatietechniek-statistieken-2025-complete-overzicht-van-de-nederlandse-branche
-- getaira.io — 62% calls unanswered, $126k: https://www.getaira.io/blog/missed-business-calls-statistics
-- Nextiva — AI receptionist ROI per sector: https://www.nextiva.com/blog/ai-receptionist-pay-back-period.html
-- dialzara — cost of a missed call: https://dialzara.com/blog/missed-calls-hidden-costs-and-ai-solutions
-- firmfocus — kappers/schoonheidssalons (79.080): https://www.firmfocus.biz/NL/BI/branche/kappers-schoonheidsalons
-- CBS — automatisering door personeelstekort: https://www.cbs.nl/nl-nl/nieuws/2026/23/bedrijven-zetten-meer-in-op-automatisering-door-personeelstekort
+- getaira.io, 62% calls unanswered, $126k: https://www.getaira.io/blog/missed-business-calls-statistics
+- Nextiva, AI receptionist ROI per sector: https://www.nextiva.com/blog/ai-receptionist-pay-back-period.html
+- dialzara, cost of a missed call: https://dialzara.com/blog/missed-calls-hidden-costs-and-ai-solutions
+- firmfocus, kappers/schoonheidssalons (79.080): https://www.firmfocus.biz/NL/BI/branche/kappers-schoonheidsalons
+- CBS, automatisering door personeelstekort: https://www.cbs.nl/nl-nl/nieuws/2026/23/bedrijven-zetten-meer-in-op-automatisering-door-personeelstekort
 - Exact MKB Barometer 2025: https://files.exact.com/static/web/pdf/mkb-barometer/2025/NL_All-mkb-barometer-2025.pdf
