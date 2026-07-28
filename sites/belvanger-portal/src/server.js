@@ -833,9 +833,10 @@ async function schrijfSysteemStaat(sleutel, waarde) {
 function healthVingerafdruk(rapport) {
   // Alleen de statussen, niet de details. Zo telt "certificaat verloopt over 20 dagen" morgen
   // als dezelfde storing als "over 19 dagen", en krijg je daar niet elke dag een mail over.
-  return rapport.tenants
-    .map((t) => `${t.slug}:${Object.entries(t.checks).map(([k, c]) => `${k}=${c.status}`).join(",")}`)
-    .join("|");
+  const perKlant = rapport.tenants
+    .map((t) => `${t.slug}:${Object.entries(t.checks).map(([k, c]) => `${k}=${c.status}`).join(",")}`);
+  const platform = (rapport.platform || []).map((c) => `${c.naam}=${c.status}`);
+  return [...perKlant, ...platform].join("|");
 }
 
 async function runHealthMail() {
@@ -859,6 +860,10 @@ async function runHealthMail() {
   }
 
   const regels = [];
+  for (const c of rapport.platform || []) {
+    regels.push(`  ${c.status === "ok" ? "  " : "> "}${c.naam}: ${STATUS_TEKST[c.status] || c.status}${c.detail ? ` (${c.detail})` : ""}`);
+  }
+  if ((rapport.platform || []).length) regels.push("");
   for (const t of rapport.tenants) {
     for (const [kanaal, check] of Object.entries(t.checks)) {
       regels.push(`  ${check.status === "ok" ? "  " : "> "}${t.name} / ${kanaal}: ${STATUS_TEKST[check.status] || check.status}${check.detail ? ` (${check.detail})` : ""}`);
@@ -1150,6 +1155,74 @@ async function checkCertificate(domain) {
   });
 }
 
+// Controleert of de back-upketen nog loopt. Twee schakels, en ze kunnen los van elkaar breken:
+// de VPS maakt elke nacht een pakket klaar, en de PC van de founder haalt dat op. Valt schakel
+// twee weg, bijvoorbeeld omdat die PC een tijd uit staat, dan staat alles nog steeds op één
+// machine en is er feitelijk geen back-up meer. Dat is precies het soort verval dat je niet
+// merkt, want er gaat niets kapot; er gebeurt alleen niets meer.
+async function checkBackups() {
+  // Let op de tweede helft van deze regel. Een tijdstip dat NIET te lezen is levert NaN op, en
+  // elke vergelijking met NaN is false. Zonder deze controle viel zo'n waarde door alle drempels
+  // heen en kwam hij onderaan als "in orde" uit de bus. Bij het naspelen van een storing meldde
+  // de check letterlijk "alles in orde" terwijl de kopie twintig dagen oud was. Een melder die
+  // bij twijfel groen zegt is gevaarlijker dan geen melder, want je vertrouwt hem.
+  const uren = (waarde) => {
+    if (!waarde?.op) return null;
+    const ms = new Date(waarde.op).getTime();
+    return Number.isFinite(ms) ? (Date.now() - ms) / 3_600_000 : NaN;
+  };
+  const onleesbaar = (u) => Number.isNaN(u);
+
+  const vps = await leesSysteemStaat("backup-vps");
+  const kopie = await leesSysteemStaat("backup-kopie");
+  const vpsUren = uren(vps);
+  const kopieUren = uren(kopie);
+
+  const checks = [];
+  if (vpsUren === null) {
+    checks.push({ naam: "Back-up op de server", status: "error", detail: "Er is nog nooit een pakket gemaakt. Draait de nachtelijke taak wel?" });
+  } else if (onleesbaar(vpsUren)) {
+    checks.push({ naam: "Back-up op de server", status: "error", detail: `Het tijdstip van de laatste back-up is onleesbaar (${vps.op}). Behandeld als storing.` });
+  } else if (vps.status !== "ok") {
+    checks.push({ naam: "Back-up op de server", status: "error", detail: `De laatste poging is MISLUKT. ${vps.detail || ""}`.trim() });
+  } else if (vpsUren > 36) {
+    checks.push({ naam: "Back-up op de server", status: "error", detail: `Laatste pakket is ${Math.round(vpsUren / 24)} dagen oud. De nachtelijke taak draait niet meer.` });
+  } else {
+    const mb = vps.bytes ? ` (${Math.round(vps.bytes / 1_048_576)} MB)` : "";
+    checks.push({ naam: "Back-up op de server", status: "ok", detail: `Vannacht gemaakt${mb}.` });
+  }
+
+  const dagen = kopieUren === null ? null : Math.floor(kopieUren / 24);
+  if (kopieUren === null) {
+    checks.push({ naam: "Kopie van de server af", status: "error", detail: "Er is nog nooit een pakket opgehaald. Alles staat dus op één machine." });
+  } else if (onleesbaar(kopieUren)) {
+    checks.push({ naam: "Kopie van de server af", status: "error", detail: `Het tijdstip van de laatste kopie is onleesbaar (${kopie.op}). Behandeld als storing.` });
+  } else if (dagen >= 14) {
+    checks.push({ naam: "Kopie van de server af", status: "error", detail: `Al ${dagen} dagen geen kopie opgehaald. Staat de PC aan en draait de geplande taak?` });
+  } else if (dagen >= 7) {
+    checks.push({ naam: "Kopie van de server af", status: "warning", detail: `Laatste kopie is ${dagen} dagen geleden opgehaald.` });
+  } else {
+    checks.push({ naam: "Kopie van de server af", status: "ok", detail: `${dagen === 0 ? "Vandaag" : `${dagen} dag(en) geleden`} opgehaald naar ${kopie.machine || "je PC"}.` });
+  }
+
+  const test = await leesSysteemStaat("backup-hersteltest");
+  const testUren = uren(test);
+  const testDagen = testUren === null || onleesbaar(testUren) ? null : Math.floor(testUren / 24);
+  if (testUren !== null && onleesbaar(testUren)) {
+    checks.push({ naam: "Hersteltest", status: "error", detail: `Het tijdstip van de laatste hersteltest is onleesbaar (${test.op}).` });
+  } else if (testDagen === null) {
+    checks.push({ naam: "Hersteltest", status: "warning", detail: "Nog nooit uitgevoerd. Een ongeteste back-up is een aanname." });
+  } else if (test.status !== "ok") {
+    checks.push({ naam: "Hersteltest", status: "error", detail: `De laatste hersteltest is MISLUKT. ${test.detail || ""}`.trim() });
+  } else if (testDagen > 45) {
+    checks.push({ naam: "Hersteltest", status: "warning", detail: `Laatste geslaagde test was ${testDagen} dagen geleden.` });
+  } else {
+    checks.push({ naam: "Hersteltest", status: "ok", detail: `${testDagen} dagen geleden geslaagd. ${test.detail || ""}`.trim() });
+  }
+
+  return checks;
+}
+
 async function runHealthcheck(res, user) {
   if (!requirePlatformAdmin(res, user)) return;
   json(res, 200, await collectHealth());
@@ -1196,7 +1269,10 @@ async function collectHealth() {
     };
   }));
 
-  const flat = results.flatMap((row) => Object.values(row.checks));
+  // Naast de controles per klant staan er platformbrede controles: de back-upketen. Die hoort
+  // bij niemand in het bijzonder en zou zonder deze regel nergens terechtkomen.
+  const platform = await checkBackups();
+  const flat = [...results.flatMap((row) => Object.values(row.checks)), ...platform];
   const summary = {
     ok: flat.filter((c) => c.status === "ok").length,
     warning: flat.filter((c) => c.status === "warning").length,
@@ -1204,7 +1280,7 @@ async function collectHealth() {
     notConfigured: flat.filter((c) => c.status === "not_configured").length,
     unknown: flat.filter((c) => c.status === "unknown").length,
   };
-  return { checkedAt: new Date().toISOString(), summary, tenants: results };
+  return { checkedAt: new Date().toISOString(), summary, platform, tenants: results };
 }
 
 // --- Activiteitenlog (platform-niveau, alleen platform_admin) ---
