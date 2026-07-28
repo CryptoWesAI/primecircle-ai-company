@@ -485,6 +485,10 @@ async function completePasswordReset(req, res) {
     await client.query("UPDATE users SET password_salt = $1, password_hash = $2, must_change_password = FALSE WHERE id = $3", [credentials.salt, credentials.hash, userId]);
     await client.query("UPDATE password_reset_tokens SET used_at = NOW() WHERE token_hash = $1", [tokenHash(tokenRaw)]);
     await client.query("DELETE FROM sessions WHERE user_id = $1", [userId]);
+    // Ook de vertrouwde apparaten eruit. Zonder deze regel overleeft de tweefactor-omzeiling
+    // van een apparaat dat iemand anders in handen heeft de wachtwoordreset nog 30 dagen,
+    // terwijl die reset juist bedoeld is om die persoon buiten te zetten.
+    await client.query("DELETE FROM trusted_devices WHERE user_id = $1", [userId]);
     await client.query("COMMIT");
     json(res, 200, { ok: true });
   } catch (error) {
@@ -499,8 +503,42 @@ async function changePassword(req, res, user) {
   const body = await readBody(req);
   const password = String(body.password || "");
   if (password.length < 12) return json(res, 400, { error: "Gebruik minimaal 12 tekens." });
+
+  // Twee gevallen, en ze verschillen wezenlijk.
+  //
+  // Gedwongen eerste wijziging (must_change_password): de gebruiker heeft zojuist het
+  // tijdelijke wachtwoord ingetypt om binnen te komen. Er is geen tweede wachtwoord om naar
+  // te vragen.
+  //
+  // Vrijwillige wijziging: hier MOET het huidige wachtwoord erbij. Zonder die eis kan
+  // iedereen die een sessie te pakken heeft (geleende telefoon, meegekeken op de laptop, een
+  // gestolen cookie) het wachtwoord veranderen zonder het oude ooit te kennen, en de eigenaar
+  // daarmee uit zijn eigen dashboard sluiten. De sessie is dan de sleutel tot het slot.
+  if (!user.must_change_password) {
+    const current = String(body.currentPassword || "");
+    const opgeslagen = await pool.query("SELECT password_salt, password_hash FROM users WHERE id = $1", [user.id]);
+    const rij = opgeslagen.rows[0];
+    if (!rij) return json(res, 401, { error: "Log opnieuw in." });
+    // Altijd rekenen, ook bij een leeg veld, zodat de duur niets verraadt.
+    const digest = await passwordDigest(current, rij.password_salt);
+    const klopt = current.length > 0 && crypto.timingSafeEqual(Buffer.from(digest, "hex"), Buffer.from(rij.password_hash, "hex"));
+    if (!klopt) return json(res, 401, { error: "Je huidige wachtwoord klopt niet." });
+    if (current === password) return json(res, 400, { error: "Kies een ander wachtwoord dan je huidige." });
+  }
+
   const credentials = await createPassword(password);
   await pool.query("UPDATE users SET password_salt = $1, password_hash = $2, must_change_password = FALSE WHERE id = $3", [credentials.salt, credentials.hash, user.id]);
+
+  // Je wachtwoord wijzigen doe je meestal omdat je twijfelt of iemand anders het kent. Dan is
+  // het onlogisch dat elke andere sessie 12 uur geldig blijft en elk vertrouwd apparaat de
+  // tweefactor nog 30 dagen mag overslaan. Alles eruit behalve de sessie waarmee je dit nu
+  // doet, anders log je jezelf uit terwijl je in het scherm staat.
+  const huidigeSessie = parseCookies(req).portal_session;
+  await pool.query(
+    "DELETE FROM sessions WHERE user_id = $1 AND token_hash <> $2",
+    [user.id, huidigeSessie ? tokenHash(huidigeSessie) : ""],
+  );
+  await pool.query("DELETE FROM trusted_devices WHERE user_id = $1", [user.id]);
   json(res, 200, { ok: true });
 }
 
@@ -746,6 +784,137 @@ function runStalenessCheck() {
   console.log(`Kennisbank staleness-check: ${slice.length}/${relationships.length} relaties gecontroleerd, ${flagged.length} gemarkeerd.`);
 }
 
+// ── Nachtelijke systeemcontrole met een mail ─────────────────────────────────────────────
+//
+// De drie onderdelen bestonden al los van elkaar: collectHealth() doet echte controles,
+// smtpSend() verstuurt mail, en er stond al een nachtelijke timer. De enige trigger voor de
+// controles was een mens die inlogt als platform_admin en op een knop drukt. Gevolg: als er
+// iets omviel merkte niemand het, tot een klant belde.
+//
+// Wanneer er wél gemaild wordt, en waarom precies zo:
+//
+//  - Bij een fout of waarschuwing: meteen. Dat is het hele punt.
+//  - Is alles goed: alleen op maandag. Een dagelijkse "alles is prima"-mail leer je binnen
+//    twee weken weg te klikken, en dan mis je juist de mail die er wél toe doet. Maar
+//    helemaal nooit mailen kan ook niet, want dan weet je niet of de controle zelf nog leeft.
+//    Eén rustige mail per week is het bewijs dat de wachter wakker is.
+//  - Bij een storing niet elke dag opnieuw dezelfde mail: staat dezelfde storing er de
+//    volgende dag nog, dan komt er niets, tot hij verandert of opgelost is. Anders wordt een
+//    bekend probleem een dagelijkse ruis die de volgende storing verbergt.
+const ALERT_EMAIL = process.env.ALERT_EMAIL || SMTP_FROM || process.env.BOOTSTRAP_ADMIN_EMAIL || "";
+const STATUS_TEKST = { ok: "in orde", warning: "let op", error: "FOUT", not_configured: "niet gekoppeld", unknown: "onbekend" };
+
+// De vorige uitkomst onthouden we in de database, niet in een bestand naast de broncode.
+// Eerste poging deed dat wél, en die faalde bij het testen met EROFS omdat die map niet
+// schrijfbaar hoefde te zijn. Erger dan de fout zelf was de volgorde: het opslaan gebeurde
+// vóór het versturen, dus een mislukte schrijfactie hield de waarschuwing tegen. Een wachter
+// die zwijgt omdat hij zijn eigen aantekening niet kwijt kan is geen wachter.
+async function leesSysteemStaat(sleutel) {
+  try {
+    const r = await pool.query("SELECT value FROM system_state WHERE key = $1", [sleutel]);
+    return r.rows[0]?.value || {};
+  } catch (err) {
+    console.error("Kon de vorige systeemcheck niet lezen:", err?.message || err);
+    return {};
+  }
+}
+async function schrijfSysteemStaat(sleutel, waarde) {
+  try {
+    await pool.query(
+      "INSERT INTO system_state (key, value, updated_at) VALUES ($1, $2, NOW()) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()",
+      [sleutel, JSON.stringify(waarde)],
+    );
+  } catch (err) {
+    // Bewust alleen loggen. Mislukt dit, dan krijg je hooguit morgen dezelfde mail nog eens.
+    console.error("Kon de systeemcheck-staat niet opslaan:", err?.message || err);
+  }
+}
+
+function healthVingerafdruk(rapport) {
+  // Alleen de statussen, niet de details. Zo telt "certificaat verloopt over 20 dagen" morgen
+  // als dezelfde storing als "over 19 dagen", en krijg je daar niet elke dag een mail over.
+  return rapport.tenants
+    .map((t) => `${t.slug}:${Object.entries(t.checks).map(([k, c]) => `${k}=${c.status}`).join(",")}`)
+    .join("|");
+}
+
+async function runHealthMail() {
+  if (!SMTP_ENABLED || !ALERT_EMAIL) {
+    console.log("Systeemcheck: geen SMTP of geen ALERT_EMAIL, dus geen mail. Controle overgeslagen.");
+    return;
+  }
+  const rapport = await collectHealth();
+  const problemen = rapport.summary.error + rapport.summary.warning;
+  const vinger = healthVingerafdruk(rapport);
+
+  const vorige = await leesSysteemStaat("systeemcheck");
+  const isMaandag = new Date().getDay() === 1;
+  const veranderd = vorige.vingerafdruk !== vinger;
+  const moetMailen = problemen > 0 ? veranderd : (veranderd || isMaandag);
+
+  if (!moetMailen) {
+    console.log(`Systeemcheck: ${problemen} probleem(en), ongewijzigd sinds de vorige keer, dus geen mail.`);
+    await schrijfSysteemStaat("systeemcheck", { vingerafdruk: vinger, gemaildOp: vorige.gemaildOp || null });
+    return;
+  }
+
+  const regels = [];
+  for (const t of rapport.tenants) {
+    for (const [kanaal, check] of Object.entries(t.checks)) {
+      regels.push(`  ${check.status === "ok" ? "  " : "> "}${t.name} / ${kanaal}: ${STATUS_TEKST[check.status] || check.status}${check.detail ? ` (${check.detail})` : ""}`);
+    }
+    if (t.lastEventDays !== null && t.lastEventDays >= 7) {
+      regels.push(`  > ${t.name}: al ${t.lastEventDays} dagen geen enkele gebeurtenis binnengekomen.`);
+    }
+  }
+
+  const onderwerp = problemen > 0
+    ? `Belvanger systeemcheck: ${rapport.summary.error} fout, ${rapport.summary.warning} waarschuwing`
+    : "Belvanger systeemcheck: alles in orde";
+  const tekst = [
+    problemen > 0
+      ? "Er is iets dat aandacht nodig heeft."
+      : "Alles staat groen. Deze mail komt eens per week zodat je weet dat de controle zelf nog draait.",
+    "",
+    ...regels,
+    "",
+    `Samenvatting: ${rapport.summary.ok} in orde, ${rapport.summary.warning} waarschuwing, ${rapport.summary.error} fout, ${rapport.summary.notConfigured} niet gekoppeld, ${rapport.summary.unknown} onbekend.`,
+    `Gecontroleerd op ${new Date(rapport.checkedAt).toLocaleString("nl-NL")}.`,
+    "",
+    "Bekijk het volledige overzicht in het dashboard onder Systeemcheck.",
+  ].join("\n");
+
+  await smtpSend({
+    host: SMTP_HOST, port: SMTP_PORT, user: SMTP_USER, pass: SMTP_PASS, from: SMTP_FROM,
+    to: ALERT_EMAIL, subject: onderwerp, text: tekst,
+  });
+  console.log(`Systeemcheck gemaild naar ${ALERT_EMAIL}: ${onderwerp}`);
+  // Pas ONTHOUDEN als de mail echt weg is. Faalt het versturen, dan blijft de vorige staat
+  // staan en probeert de volgende ronde het opnieuw, in plaats van te denken dat je al
+  // gewaarschuwd bent.
+  await schrijfSysteemStaat("systeemcheck", { vingerafdruk: vinger, gemaildOp: new Date().toISOString() });
+}
+
+function scheduleNightlyHealthMail() {
+  // 07:00 en niet 03:00: een melding die om drie uur 's nachts binnenkomt ligt 's ochtends
+  // onder de rest, en dit is bedoeld om gelezen te worden.
+  const volgende = () => {
+    const nu = new Date();
+    const straks = new Date(nu);
+    straks.setHours(7, 0, 0, 0);
+    if (straks <= nu) straks.setDate(straks.getDate() + 1);
+    setTimeout(async () => {
+      try { await runHealthMail(); } catch (err) { console.error("Systeemcheck mislukt:", err); }
+      volgende();
+    }, straks.getTime() - nu.getTime());
+  };
+  volgende();
+  // Eén controle kort na het opstarten, zodat een deploy die iets sloopt binnen vijf minuten
+  // zichtbaar is in plaats van pas de volgende ochtend. Mailt alleen als er ECHT iets anders
+  // is dan de vorige keer, dus een herstart geeft geen mail.
+  setTimeout(() => { runHealthMail().catch((err) => console.error("Systeemcheck bij opstarten mislukt:", err)); }, 5 * 60 * 1000);
+}
+
 function scheduleNightlyStalenessCheck() {
   // Eerste run kort na opstarten, zodat er meteen een signaal is i.p.v. leeg tot 03:00.
   setTimeout(() => { try { runStalenessCheck(); } catch (err) { console.error("Staleness-check mislukt:", err); } }, 2 * 60 * 1000);
@@ -953,8 +1122,43 @@ function combineChecks(checks) {
   return { status: worst.status, detail: checks.map((c) => c.detail).filter(Boolean).join(" ") };
 }
 
+// Het certificaat is de stilste storing die er is. Let's Encrypt verlengt op 60 dagen; faalt
+// dat, dan blijft alles 30 dagen lang gewoon werken en krijgt daarna ELKE bezoeker een
+// volledige browserwaarschuwing. checkWebsite hierboven merkt het pas als het al te laat is.
+// Deze controle kijkt vooruit.
+async function checkCertificate(domain) {
+  if (!domain) return { status: "not_configured", detail: "" };
+  return new Promise((klaar) => {
+    let afgehandeld = false;
+    const af = (uitkomst) => { if (!afgehandeld) { afgehandeld = true; klaar(uitkomst); } };
+    // rejectUnauthorized: false is hier juist de bedoeling. Met de standaardinstelling weigert
+    // Node de verbinding zodra het certificaat ongeldig is, en dan krijg je "kon niet ophalen"
+    // terwijl het antwoord "verlopen sinds vorige week" is. Precies het geval waarvoor deze
+    // controle bestaat, zou dus de vaagste melding geven. We versturen hier niets, we lezen
+    // alleen het certificaat en beoordelen de geldigheid zelf.
+    const socket = tls.connect({ host: domain, port: 443, servername: domain, rejectUnauthorized: false }, () => {
+      const cert = socket.getPeerCertificate();
+      socket.end();
+      if (!cert || !cert.valid_to) return af({ status: "unknown", detail: "Geen certificaat gelezen." });
+      const dagen = Math.floor((new Date(cert.valid_to).getTime() - Date.now()) / 86_400_000);
+      if (dagen < 0) return af({ status: "error", detail: `Certificaat is ${-dagen} dagen VERLOPEN.` });
+      if (dagen <= 21) return af({ status: "warning", detail: `Certificaat verloopt over ${dagen} dagen en is nog niet verlengd.` });
+      af({ status: "ok", detail: `Certificaat nog ${dagen} dagen geldig.` });
+    });
+    socket.setTimeout(HEALTH_TIMEOUT_MS, () => { socket.destroy(); af({ status: "error", detail: "Certificaatcontrole liep in een timeout." }); });
+    socket.on("error", () => af({ status: "error", detail: "Kon het certificaat niet ophalen." }));
+  });
+}
+
 async function runHealthcheck(res, user) {
   if (!requirePlatformAdmin(res, user)) return;
+  json(res, 200, await collectHealth());
+}
+
+// De controles zelf, losgekoppeld van de HTTP-route. Dat is de hele truc waardoor de
+// nachtelijke taak hieronder dezelfde controles kan draaien als de knop in het dashboard:
+// één set controles, twee manieren om hem aan te roepen, dus ze kunnen niet uit elkaar lopen.
+async function collectHealth() {
   const tenants = await pool.query(`
     SELECT t.id, t.slug, t.name, t.website_domain AS "websiteDomain",
       COALESCE(jsonb_object_agg(i.source, jsonb_build_object(
@@ -973,10 +1177,11 @@ async function runHealthcheck(res, user) {
     const twilioInfo = tenant.integrations.twilio || {};
     const websiteInfo = tenant.integrations.website || {};
     const emailInfo = tenant.integrations.email || {};
-    const [twilioNumber, twilioFlow, site, websiteFlow, emailFlow] = await Promise.all([
+    const [twilioNumber, twilioFlow, site, cert, websiteFlow, emailFlow] = await Promise.all([
       checkTwilioNumber(twilioInfo.externalIdentifier, twilioInfo.twilioAccountSid),
       checkN8nWorkflow(twilioInfo.n8nWorkflowId),
       checkWebsite(tenant.websiteDomain),
+      checkCertificate(tenant.websiteDomain),
       checkN8nWorkflow(websiteInfo.n8nWorkflowId),
       checkN8nWorkflow(emailInfo.n8nWorkflowId),
     ]);
@@ -984,7 +1189,7 @@ async function runHealthcheck(res, user) {
       tenantId: tenant.id, slug: tenant.slug, name: tenant.name,
       checks: {
         twilio: combineChecks([twilioNumber, twilioFlow]),
-        website: combineChecks([site, websiteFlow]),
+        website: combineChecks([site, cert, websiteFlow]),
         email: emailFlow,
       },
       lastEventDays: staleDays(twilioInfo.lastEventAt),
@@ -999,7 +1204,7 @@ async function runHealthcheck(res, user) {
     notConfigured: flat.filter((c) => c.status === "not_configured").length,
     unknown: flat.filter((c) => c.status === "unknown").length,
   };
-  json(res, 200, { checkedAt: new Date().toISOString(), summary, tenants: results });
+  return { checkedAt: new Date().toISOString(), summary, tenants: results };
 }
 
 // --- Activiteitenlog (platform-niveau, alleen platform_admin) ---
@@ -1943,3 +2148,4 @@ const server = http.createServer(async (req, res) => {
 await bootstrap();
 server.listen(PORT, "0.0.0.0", () => console.log(`Belvanger portal draait op poort ${PORT}`));
 scheduleNightlyStalenessCheck();
+scheduleNightlyHealthMail();

@@ -213,3 +213,13 @@ CREATE TABLE IF NOT EXISTS push_devices (
 
 CREATE INDEX IF NOT EXISTS push_devices_tenant_idx ON push_devices (tenant_id);
 CREATE INDEX IF NOT EXISTS push_devices_user_idx ON push_devices (user_id);
+
+-- Kleine sleutel/waarde-tabel voor de staat van achtergrondtaken. Bewust in de database en
+-- niet in een bestand naast de broncode: die map is bij een read-only mount niet schrijfbaar
+-- en wordt bij elke herbouw van het image leeggegooid, waardoor de nachtelijke systeemcheck
+-- na iedere deploy opnieuw zou gaan mailen over een storing die je al kent.
+CREATE TABLE IF NOT EXISTS system_state (
+  key TEXT PRIMARY KEY,
+  value JSONB NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

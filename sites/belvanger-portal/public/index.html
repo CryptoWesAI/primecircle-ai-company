@@ -8,8 +8,8 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <link rel="manifest" href="/manifest.webmanifest">
-  <link rel="stylesheet" href="/style.css?v=20260727-2">
-  <script src="/app.js?v=20260725-1" defer></script>
+  <link rel="stylesheet" href="/style.css?v=20260728-1">
+  <script src="/app.js?v=20260728-1" defer></script>
   <script src="/push.js?v=20260727-6" defer></script>
 </head>
 <body>
@@ -82,6 +82,7 @@
       </nav>
       <div class="sidebar__foot">
         <div class="account"><span class="account__avatar" id="accountAvatar">B</span><span><b id="accountName">Belvanger</b><small id="accountEmail"></small></span></div>
+        <button class="text-button" id="changePasswordButton">Wachtwoord wijzigen</button>
         <button class="text-button" id="logoutButton">Uitloggen</button>
       </div>
     </aside>
@@ -349,10 +350,18 @@
 
   <dialog class="password-dialog" id="passwordDialog">
     <form id="passwordForm">
-      <p class="eyebrow">Eerste keer inloggen</p><h2>Kies een eigen wachtwoord</h2><p class="muted">Gebruik minimaal 12 tekens.</p>
+      <p class="eyebrow" id="passwordEyebrow">Eerste keer inloggen</p>
+      <h2 id="passwordHeading">Kies een eigen wachtwoord</h2>
+      <p class="muted">Gebruik minimaal 12 tekens.</p>
+      <label class="is-hidden" id="currentPasswordField">Huidig wachtwoord<input type="password" name="currentPassword" autocomplete="current-password"></label>
       <label>Nieuw wachtwoord<input type="password" name="password" minlength="12" autocomplete="new-password" required></label>
+      <p class="muted" id="passwordNote">Je blijft hier ingelogd. Op andere apparaten moet je opnieuw inloggen.</p>
       <p class="form-error" id="passwordError" role="alert"></p>
-      <button class="button button--primary" type="submit">Wachtwoord opslaan</button>
+      <p class="form-success is-hidden" id="passwordSuccess" role="status">Je wachtwoord is gewijzigd.</p>
+      <div class="dialog-actions">
+        <button class="text-button is-hidden" id="closePasswordDialog" type="button">Annuleren</button>
+        <button class="button button--primary" type="submit">Wachtwoord opslaan</button>
+      </div>
     </form>
   </dialog>
 

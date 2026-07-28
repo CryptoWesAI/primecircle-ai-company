@@ -210,3 +210,7 @@ details[open]>.proof-log__toggle::before{transform:rotate(90deg)}
 .push-card__status--sw{font-size:.8rem;color:#8a95a0}
 .push-card__status--sw[data-kind=error]{color:var(--red);font-weight:700}
 .push-card__status--sw[data-kind=ok]{color:#8a95a0}
+
+/* Knoppenrij onder een dialoog: annuleren naast opslaan, niet eronder. */
+.dialog-actions{display:flex;align-items:center;justify-content:flex-end;gap:16px;margin-top:22px}
+.dialog-actions .button{margin-top:0}

@@ -1252,7 +1252,7 @@ async function showApp(user) {
   await loadProofLog();
   await loadPartners();
   await loadConnections();
-  if (user.must_change_password) $("#passwordDialog").showModal();
+  if (user.must_change_password) openPasswordDialog(true);
 }
 
 let pendingOtpChallenge = null;
@@ -1308,10 +1308,52 @@ $("#forgotForm").addEventListener("submit", async (event) => {
   finally { button.disabled = false; button.textContent = original; }
 });
 
+// Hetzelfde scherm doet twee dingen, en het verschil zit hem in of het huidige wachtwoord
+// gevraagd wordt. Gedwongen eerste wijziging: niet, die persoon heeft net het tijdelijke
+// wachtwoord getypt en kan het scherm ook niet wegklikken. Vrijwillige wijziging: wel, en
+// dan mag je annuleren.
+function openPasswordDialog(gedwongen) {
+  const form = $("#passwordForm");
+  form.reset();
+  $("#passwordError").textContent = "";
+  $("#passwordSuccess").classList.add("is-hidden");
+  $("#passwordEyebrow").textContent = gedwongen ? "Eerste keer inloggen" : "Je account";
+  $("#passwordHeading").textContent = gedwongen ? "Kies een eigen wachtwoord" : "Wachtwoord wijzigen";
+  $("#currentPasswordField").classList.toggle("is-hidden", gedwongen);
+  form.currentPassword.required = !gedwongen;
+  $("#closePasswordDialog").classList.toggle("is-hidden", gedwongen);
+  $("#passwordNote").classList.toggle("is-hidden", gedwongen);
+  $("#passwordDialog").showModal();
+}
+
+$("#changePasswordButton").addEventListener("click", () => openPasswordDialog(false));
+$("#closePasswordDialog").addEventListener("click", () => $("#passwordDialog").close());
+
 $("#passwordForm").addEventListener("submit", async (event) => {
-  event.preventDefault(); $("#passwordError").textContent = ""; const password = new FormData(event.currentTarget).get("password");
-  try { await api("/api/change-password", { method: "POST", body: JSON.stringify({ password }) }); $("#passwordDialog").close(); }
-  catch (error) { $("#passwordError").textContent = error.message; }
+  event.preventDefault();
+  $("#passwordError").textContent = "";
+  $("#passwordSuccess").classList.add("is-hidden");
+  const form = event.currentTarget;
+  const velden = Object.fromEntries(new FormData(form));
+  const knop = form.querySelector('button[type="submit"]');
+  const oorspronkelijk = knop.textContent;
+  knop.disabled = true; knop.textContent = "Bezig…";
+  try {
+    await api("/api/change-password", {
+      method: "POST",
+      body: JSON.stringify({ password: velden.password, currentPassword: velden.currentPassword || undefined }),
+    });
+    // Even laten zien dat het gelukt is voordat het scherm dichtgaat. Een dialoog die
+    // wegklapt zonder bevestiging laat je twijfelen of je het wel goed hebt gedaan, en dan
+    // ga je het nog een keer doen.
+    $("#passwordSuccess").classList.remove("is-hidden");
+    form.reset();
+    setTimeout(() => $("#passwordDialog").close(), 1400);
+  } catch (error) {
+    $("#passwordError").textContent = error.message;
+  } finally {
+    knop.disabled = false; knop.textContent = oorspronkelijk;
+  }
 });
 
 $("#logoutButton").addEventListener("click", async () => { await api("/api/logout", { method: "POST" }); location.reload(); });
