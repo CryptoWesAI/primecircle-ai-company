@@ -101,6 +101,15 @@ bent geweest, en dat is precies wat een volgende klant wil horen van de vorige.
 
 ## Twee dingen die vóór klant #1 geregeld moeten zijn
 
+> **Stand op 28 juli 2026.** Beide zijn nu als tekst geschreven, geen van beide is af.
+>
+> - **De exit-alinea staat live.** `voorwaarden.html` §6 en `en/terms.html` §6, met de termijn
+>   van vijf werkdagen en de dertig dagen tot verwijdering erin, in beide talen gelijk.
+> - **De verwerkersovereenkomst ligt er als concept:** `docs/juridisch/verwerkersovereenkomst-concept.md`.
+>   Nog niet getekend, en nog niet tekenbaar: onderaan dat document staan drie punten die de
+>   techniek nu niet waarmaakt (geen opruiming van de bewaartermijnen, back-ups op dezelfde
+>   machine, geen KvK-nummer). Los die op of pas de tekst aan; teken hem niet zoals hij nu is.
+
 **1. Een verwerkersovereenkomst. Dit is geen nice-to-have.**
 Je verwerkt persoonsgegevens van de klanten van je klant: telefoonnummers, namen, wat de
 klus is, chatberichten. Daarmee is de vakman **verwerkingsverantwoordelijke** en ben jij

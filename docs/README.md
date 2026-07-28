@@ -22,6 +22,11 @@ source of truth for identity, mission, and current state:
 - `LEARNINGS.md` — running journal of lessons, insights and mistakes-not-to-repeat (**what
   we learned**). Grows over time; updated at milestones alongside `CURRENT_STATE.md`
 - `compliance/` — product-wide compliance (EU AI Act Art. 50 disclosure)
+- `juridisch/` — contractstukken. `verwerkersovereenkomst-concept.md` is de AVG art. 28-overeenkomst
+  tussen de klant (verantwoordelijke) en Belvanger (verwerker), inclusief de subverwerkerslijst en
+  een sectie "Wat nog niet waar is" met de drie punten die vóór ondertekening geregeld moeten zijn.
+  De exit-afspraak zelf staat in §6 van `voorwaarden.html` en §6 van `en/terms.html`; die drie
+  teksten noemen met opzet dezelfde termijnen (5 werkdagen export, 30 dagen verwijdering).
 - `marketing-agent/` — **het systeem om verkeer te krijgen**. `SYSTEEM.md` is de
   architectuur met een fasering op triggers (niet op datums) en het rekensommetje dat bepaalt
   wat een aanvraag mag kosten. `ANGLES.md` is de hoekendatabase met resultaten per hoek.
