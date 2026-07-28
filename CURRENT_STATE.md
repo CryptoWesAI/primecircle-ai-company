@@ -6,7 +6,17 @@ Build a managed AI automation business that can initially be operated by one fou
 
 ## Current Stage
 
-First build live (AB Uitvaartzorg) → validating a niche pivot to local trades.
+Belvanger is gebouwd en live; de eerste twee prospects zijn aangeschreven. Er is
+nog geen betalende klant, en dat is de enige maat die nu telt.
+
+Live: `belvanger.nl` (7 vakken, 7 voorbeeldpagina's, NL+EN, noindex),
+`dashboard.belvanger.nl` (klantportaal, PWA met pushmeldingen),
+`ab.primecircle.cloud` (AB Uitvaartzorg, de referentiecase). Alles op de eigen
+Hostinger-VPS achter Traefik. Verkoopstand staat in `SELLING.md` en wordt elke
+sessie via een hook getoond.
+
+Wat hieronder staat over AB en de pivot blijft feitelijk juist maar is
+voorgeschiedenis; het actuele werk staat in de dagsecties onderaan dit bestand.
 
 First customer: AB Uitvaartzorg (founder's schoonmoeder, Alien Bisschop —
 uitvaartonderneming in Steenwijkerwold). First build: a knowledge-grounded,
@@ -87,7 +97,7 @@ These are candidates, not final decisions.
 - [x] Create GitHub repository — `github.com/CryptoWesAI/primecircle-ai-company`
 - [x] Finalize PAOF structure — see `docs/`, `roadmap/LEARNING_ROADMAP.md`, `workflow/DEV_WORKFLOW.md`, `.claude/skills/`
 - [x] First build live (AB Uitvaartzorg chatbot + dashboard, HTTPS, private repo, Art. 50 disclosure) — reference case done
-- [ ] **Validate the trades wedge** — one casual discovery conversation with a warm/hungry trade contact (crux: missed calls/week × job value × willingness-to-pay). Script ready. THEN build MVP v0 (`docs/build/mvp-missed-call-textback.md`). Use the `opportunity-check` skill for any further niche/offer decisions.
+- [~] **Validate the trades wedge** — twee prospects aangeschreven op 2026-07-27 (zie `SELLING.md`), nul gesprekken geboekt. Blijft open tot er een gesprek is geweest. Oorspronkelijke opzet: one casual discovery conversation with a warm/hungry trade contact (crux: missed calls/week × job value × willingness-to-pay). Script ready. THEN build MVP v0 (`docs/build/mvp-missed-call-textback.md`). Use the `opportunity-check` skill for any further niche/offer decisions.
 
 ### Belvanger klantdashboard als Android-app (2026-07-25)
 
@@ -148,13 +158,15 @@ uptime-monitor als "site down" had gelezen.
    `beforeinstallprompt`; alle drie de toestanden geverifieerd op 390px.
 5. **Meldingen op inkomende reacties live** (2026-07-25): `sms.inbound`, `email.inbound` en
    `chat.lead`, met `tests/inbound-push.mjs` gedraaid tegen de gedeployde broncode.
+6. **"Bel terug" werkt** (2026-07-27). Tik op de melding en de telefoonapp opent, met een
+   eenmalige Android-bevestiging. Kostte zes testrondes; oorzaak alleen gevonden door de
+   service worker zelf te laten rapporteren. Twee echte fouten plus een derde die ik zelf
+   introduceerde, volledig uitgeschreven in `docs/decisions/DECISIONS_LOG.md`. De kern:
+   het gebruikersgebaar van een `notificationclick` vervalt bij de eerste `await`, en de
+   diagnostiek die dat moest meten wás die await.
 
 **Nog open:**
 
-- **De "Bel terug"-knop is ongetest.** Het pad `notificationclick` → `/?call=<nummer>` →
-  `location.href = tel:` is nog nooit op een echt toestel gelopen, en dat is het stuk met de
-  meeste kans op een subtiele fout over Android-versies heen. Testen vergt een
-  `call.missed`-event in de productiedatabase (`tests/cleanup-test-data.sql` bestaat).
 - **De echte Chrome-installatieprompt is nog niet op een toestel gezien.**
 - **iOS krijgt niets.** Safari geeft Web Push uitsluitend aan PWA's op het beginscherm en
   heeft geen installatie-API, dus de installeerkaart blijft daar verborgen. Een
@@ -190,3 +202,59 @@ filmmateriaal dat daarna in elke backup werd meegekopieerd.
 Volledige lijst met wat er is aangepast en hoe het is geverifieerd: `sites/belvanger/STATUS.md`.
 Nieuw vangnet: `sites/belvanger/tests/taalpariteit.mjs` (NL↔EN structuurvergelijking).
 Les vastgelegd in `docs/LEARNINGS.md`.
+
+### Veiligheid, contract, bewaking en back-up (2026-07-27/28, alles LIVE)
+
+Vijf parallelle controles op de hele opzet (beveiliging, bedrijfsvoering, juridisch,
+functioneel, samenhang). Wat daaruit kwam en is opgelost:
+
+**Eén verzoek kon belvanger.nl uitzetten.** `serveStatic` riep `decodeURIComponent` aan
+zonder vangnet, de handler had geen try/catch en er was geen process-handler, dus `GET /%`
+beëindigde het proces en daarmee de site, de chat, `/api/lead` en `/api/intake`.
+Gereproduceerd vóór de fix, live nagemeten erna. Drie lagen toegevoegd. In dezelfde ronde:
+`X-Forwarded-For[0]` maakte de snelheidsbegrenzer waardeloos, de bevestigingsmail kon
+iemands link namens ons domein bezorgen, en `ALLOWED_ORIGIN` stond op `*`.
+
+**Exit-alinea staat in de voorwaarden** (§6, NL+EN): vijf werkdagen tot oplevering van
+website, leads en kennisbank, dertig dagen tot verwijdering. **Verwerkersovereenkomst ligt
+als concept** in `docs/juridisch/verwerkersovereenkomst-concept.md`. Nog niet tekenbaar:
+de slotsectie "Wat nog niet waar is" noemt drie punten die de techniek niet nakomt
+(bewaartermijnen worden nergens afgedwongen, geen KvK-nummer, en het back-upgat dat
+inmiddels deels gedicht is).
+
+**Systeemcheck mailt.** `collectHealth` is losgemaakt van de HTTP-route en draait om 07:00
+via een timer, met `smtpSend` erachter. Fout of waarschuwing mailt meteen; alles groen
+mailt alleen op maandag; dezelfde storing als gisteren mailt niet. Certificaatcontrole
+erbij (waarschuwing onder 21 dagen). Het alarm is echt getest, niet alleen de gelukkige
+route: met een nagespeelde storing kwam er een mail met "1 fout".
+
+**Wachtwoord wijzigen** kon alleen bij de eerste keer inloggen. Nu een knop in de zijbalk,
+huidig wachtwoord verplicht bij een vrijwillige wijziging, en na afloop vallen alle andere
+sessies en vertrouwde apparaten eruit. Herstel via de mail bestond al.
+
+**Back-up naar de eigen PC** (founder-keuze, niet naar een opslagdienst). Pull en geen push:
+`infra/backup/maak-backup.sh` zet om 03:30 een pakket van 25 MB klaar op de VPS,
+`infra/backup/haal-backup.ps1` haalt dat om 12:30 op naar `D:\Belvanger-backups` en
+controleert de vingerafdrukken. Beide kanten melden terug in `system_state`, zodat de
+ochtendmail waarschuwt als de keten stilvalt. Maandelijkse hersteltest draait vanzelf.
+Volledige handleiding en de bekende zwakke plekken in `infra/backup/README.md`.
+
+**`dcg` als hook geïnstalleerd** (founder-verzoek), met `containers.docker`,
+`containers.compose`, `database.postgresql` en `database.sqlite` aan, want standaard lieten
+die `docker volume rm belvanger-portal-db` en `DROP DATABASE portal` gewoon door. Config
+als referentiekopie in `infra/dcg/config.toml`. Gevolg voor het werk: `docker rm -f`,
+`git branch -D`, `rm -rf` en `Remove-Item -Recurse -Force` vragen nu om toestemming.
+
+**Nog open, en dit vraagt de founder:**
+
+1. **AB Uitvaartzorg heeft een AI-chat en bezoekersstatistieken terwijl de
+   privacyverklaring daar zegt dat de site geen trackingtechnieken gebruikt.** De juiste
+   alinea ligt klaar in `clients/ab-uitvaartzorg/docs/chatbot-privacy-alinea.md`. Dit is de
+   grootste juridische post en het is een live klantsite, dus founder-akkoord nodig.
+2. **Activiteitenlog vullen**: `node tools/activiteitenlog-vullen.mjs` met `BV_EMAIL`/`BV_PASS`,
+   code uit de mail. Elf regels staan klaar in `tools/activiteitenlog.json`.
+3. **Dashboardwachtwoord wisselen**: het is op 28 juli in een gesprek geplakt.
+4. **Ontbreekt op de site**: vestigingsadres (wettelijk verplicht, ook zonder KvK),
+   "excl. btw" bij de prijzen, en de doorgestreepte €1.250 die nooit is gevraagd.
+5. **Bewaartermijnen worden nergens afgedwongen** (geen opruimtaak voor `contacts`/`events`)
+   en **de containerlogs hebben geen groottelimiet**, dus de schijf kan vollopen.
