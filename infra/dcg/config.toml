@@ -1,0 +1,45 @@
+# REFERENTIEKOPIE. Het bestand dat dcg echt leest staat op deze machine in
+# ~/.config/dcg/config.toml. Deze kopie staat in de repo zodat de instellingen en de
+# redenering erachter niet verdwijnen als de PC omvalt, en zodat een tweede machine
+# dezelfde bescherming kan krijgen door hem daarheen te kopieren.
+#
+# dcg (Destructive Command Guard) - instellingen voor deze machine
+#
+# Aangemaakt 2026-07-28. Waarom deze afwijkingen van de standaard:
+#
+# 1. Standaard staan alleen core.filesystem, core.git, windows.filesystem en
+#    system.disk aan. Gemeten: "docker volume rm belvanger-portal-db" en
+#    "DROP TABLE users" gingen er zo dwars doorheen. Dat zijn precies de twee
+#    commando's die de leads van de klant in een klap zouden wissen, dus die
+#    pakketten gaan hier wel aan.
+#
+# 2. Eén regel gaf structureel vals alarm op deze PC. Zie de toelichting
+#    onderaan bij [policy.rules].
+
+[packs]
+# De standaardpakketten blijven aan; dit komt erbij.
+enabled = [
+    # De portaldatabase van het klantdashboard draait in Postgres, in een
+    # Docker-volume. "docker volume rm" of "docker compose down -v" is daar
+    # het gevaarlijkste commando dat bestaat: geen prullenbak, geen weg terug.
+    "containers.docker",
+    "containers.compose",
+
+    # DROP DATABASE / DROP TABLE / TRUNCATE op de portaldatabase.
+    "database.postgresql",
+
+    # n8n bewaart zijn workflows en versleutelde koppelingen in SQLite.
+    "database.sqlite",
+]
+
+[policy.rules]
+# windows-filesystem-semantic-unverified slaat aan zodra het uitvoerbare bestand
+# uit een variabele komt, bijvoorbeeld `& $dcg test "git status"`. Dat is een
+# doodgewone schrijfwijze in PowerShell en het blokkeerde hier drie onschuldige
+# commando's op rij, waaronder het commando waarmee ik dcg zelf wilde testen.
+#
+# Bewust "warn" en niet uitzetten: de waarschuwing blijft zichtbaar, maar het werk
+# stopt er niet op. De echte bescherming zit in een ANDERE regel
+# (windows.filesystem:remove-item-recurse-force), en die blijft gewoon blokkeren;
+# dat is nagemeten met `Remove-Item -Recurse -Force C:\Users`.
+"windows.filesystem:windows-filesystem-semantic-unverified" = "warn"
