@@ -17,6 +17,64 @@ this at milestones, same discipline as `CURRENT_STATE.md`. Newest first.
 
 ---
 
+## 2026-07-28: An untested alarm is not an alarm
+
+**Lesson:** after wiring the nightly health check to email, I faked a fault (a backup copy 20
+days old) to prove the alert fires. The first run reported "alles in orde" and I concluded the
+check was broken, then "fixed" a bug that did not exist. The code was right; my wait loop was
+reading `docker logs --since 2m`, which still contained the *previous* run's message from just
+before the restart. Anchoring the log window to a timestamp taken after the restart showed the
+truth: "1 probleem". A second attempt, with the dedupe state cleared, produced the real proof:
+an email titled "1 fout, 0 waarschuwing", and "alles in orde" again after restoring the value.
+**Why:** a monitor is the one component whose happy path proves nothing. If you only ever see
+it succeed, you have tested that it can talk, not that it can shout.
+**Encoded in:** `sites/belvanger-portal/src/server.js` (`runHealthMail`), and the third
+instance in two days of the standing rule below about measurements.
+
+## 2026-07-28: Save your state after you act, never before
+
+**Lesson:** the health mail wrote its "have I already warned about this?" state to disk, then
+sent the email. Testing with a read-only mount turned that order into a real failure: the write
+threw `EROFS` and the warning never went out. The bug was not the failed write, it was the
+sequence. State now lives in a `system_state` table, the write is non-blocking, and it happens
+only *after* the mail is confirmed sent.
+**Why:** bookkeeping should never be able to veto the action it is bookkeeping about. A
+watchman who stays silent because he cannot find his notepad is worse than no watchman.
+
+## 2026-07-28: A default config protects against generic risks, not against yours
+
+**Lesson:** installed `dcg` to block destructive commands. Out of the box it blocked
+`rm -rf /` and `git reset --hard`, and let `docker volume rm belvanger-portal-db`,
+`docker compose down -v` and `DROP DATABASE portal` through untouched. Those three are exactly
+the commands that would erase the customer's lead history in one stroke. Four extra packs
+turned nine of nine destructive test commands into blocks, with all six normal work commands
+still allowed.
+**Why:** a guard you install and never measure gives you the feeling of protection over the
+things you do not do. Always run your own most dangerous real commands through a new guard
+before trusting it.
+
+## 2026-07-28: An imported rule list written in English is blind to Dutch (second time)
+
+**Lesson:** `no-ai-slop` ships excellent pattern lists, all of them English. Run unchanged over
+this repo it would have reported almost nothing, because the writing here is Dutch. This is the
+same failure as `copy-gate.js` one day earlier, which passed every page until its rules were
+translated. Two occurrences make it a pattern, not an incident.
+**Why:** a checker that reports "0 problems" is indistinguishable from a checker that cannot
+see. Before trusting any imported gate, feed it a sample you *know* is bad, in the language you
+actually write.
+**Encoded in:** `.claude/skills/no-ai-slop/scripts/slop-scan.mjs` (Dutch equivalents for every
+pattern) and the Gotchas in that skill.
+
+## 2026-07-28: Writing a risk down is not the same as retiring it
+
+**Lesson:** a five-lens audit of the whole setup produced a long list of findings. Nearly every
+serious one was *already written down somewhere in this repo* as an open point: the missing
+processor agreement, the backups sitting on the machine they protect, the privacy paragraph
+never pasted into the live client site. The documents were right. The checklists were simply
+never closed, while the site and the first client went live anyway.
+**Why:** documentation creates the comfortable feeling that something is handled. Anything that
+truly blocks go-live belongs in a gate that fails, not in a paragraph that waits.
+
 ## 2026-07-27: In an AI image for tradespeople, the method has to be right, not just pretty
 
 **Lesson:** an image prompt I wrote put a painter on a ladder **leaning against the window
