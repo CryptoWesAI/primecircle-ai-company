@@ -1,0 +1,646 @@
+// ============================================================================
+// KLANTGENOOM — klant.json schema v1
+// ============================================================================
+// Herkomst: docs/research/adhd-topnotch-logboek.md, Iteratie 3 ("Eerste stap:
+// schrijf klant.json schema v1 waarin elk veld een `bron` draagt").
+//
+// Dit bestand is het CONTRACT waar vier dingen aan hangen: de generator, de
+// intakevragenlijst, de transcriptieprompt en de validator. Het is bewust nog
+// geen JSON Schema (draft-07 etc.): eerst het veldenmodel vastzetten en toetsen,
+// pas daarna formaliseren. Er is nog GEEN generator en dit bestand wordt door
+// niets gelezen.
+//
+// LEESWIJZER — elk veld draagt een commentaarregel in dit formaat:
+//   type · VERPLICHT|optioneel · bron: mens|gegenereerd|afgeleid
+//   → waar het veld terechtkomt
+//
+//   bron: mens        = komt uitsluitend van een mens, letterlijk overgenomen,
+//                       nooit geparafraseerd. Fout hier = schade bij de klant.
+//   bron: gegenereerd = mag door een model geschreven worden uit de zachte input.
+//   bron: afgeleid    = door code berekend uit een ander veld. Nooit met de hand
+//                       invullen, nooit door een model laten verzinnen.
+//
+// DE ZES HARDE VELDEN uit Iteratie 3 die de founder zelf typt en die per
+// WhatsApp-kaartje ("Klopt dit precies? Antwoord met JA") bevestigd worden
+// vóórdat er iets live gaat, zijn hieronder gemarkeerd met [HARD-6]:
+//   prijzen.tarieven · bereikbaarheid.telefoonWeergave · identiteit.kvk+btw ·
+//   bereikbaarheid.werkgebied · techniek.domein · merk.kleurPrimair
+//
+// WAT HIER BEWUST NIET IN STAAT: alles wat in alle bestaande dossiers dezelfde
+// waarde heeft is een productconstante, geen klantvariabele. Die lijst staat
+// onderaan dit bestand onder "CONSTANTEN".
+//
+// De voorbeeldwaarden hieronder zijn de ECHTE waarden van AB Uitvaartzorg
+// (product/chatbot/customers/ab-uitvaartzorg/), zodat het schema meteen tegen
+// een bestaand dossier is ingevuld en niet tegen verbeelding.
+// ============================================================================
+
+{
+  // --------------------------------------------------------------------------
+  // _meta — het genoom over zichzelf. Stuurt de deploy-blokkade.
+  // --------------------------------------------------------------------------
+  "_meta": {
+    // string · VERPLICHT · bron: afgeleid
+    // → validator (klant-keuren.mjs), niets publieks
+    "schemaVersie": "1.0",
+
+    // string (ISO-datum) · VERPLICHT · bron: afgeleid
+    // → dashboard (klantkaart), audit trail
+    "intakeDatum": "2026-07-10",
+
+    // enum: "transcript" | "formulier" | "handmatig" · VERPLICHT · bron: afgeleid
+    // → validator: bij "transcript" gelden strengere eisen op alle bron:mens-velden
+    "intakeBron": "handmatig",
+
+    // string (ISO-datum) of null · VERPLICHT · bron: mens
+    // → deploy-poort. null = de klant heeft de zes harde velden nog niet met JA
+    //   bevestigd; de site blijft op noindex met alle prijsvelden "op aanvraag".
+    "hardeVeldenBevestigdOp": null,
+
+    // array van veldpaden · VERPLICHT · bron: afgeleid
+    // → deploy-poort. Elk pad hierin bevat een `??` uit de transcriptie of is
+    //   leeg terwijl het verplicht is. Niet-leeg = deploy geblokkeerd.
+    "onzeker": []
+  },
+
+  // --------------------------------------------------------------------------
+  // identiteit — wie is dit bedrijf, juridisch en in het dagelijks spraakgebruik
+  // --------------------------------------------------------------------------
+  "identiteit": {
+    // string (slug) · VERPLICHT · bron: afgeleid (uit bedrijfsnaam, mens keurt goed)
+    // → mapnaam customers/<slug>/, subdomein, dashboard tenants.slug, containernaam
+    "slug": "ab-uitvaartzorg",
+
+    // string · VERPLICHT · bron: mens
+    // → site (footer, voorwaarden, JSON-LD), chatbot config.businessName,
+    //   dashboard tenants.name, facturatie
+    "bedrijfsnaam": "AB Uitvaartzorg",
+
+    // string · optioneel · bron: mens
+    // → site (koptekst en logo), chatbot config.businessName als deze gevuld is
+    "handelsnaam": "",
+
+    // string · optioneel · bron: mens
+    // → kennisbank kernfeiten. Bestaat omdat AB de afkorting uitlegt
+    //   ("Aandacht en Betrokkenheid") en bezoekers daar naar vragen.
+    "naamsverklaring": "Aandacht en Betrokkenheid Uitvaartzorg",
+
+    // string · VERPLICHT · bron: mens
+    // → site-ontwerp (kiest archetype/kleur via galerij.json), chatbot startvragen,
+    //   dashboard segmentatie
+    "vak": "uitvaartzorg",
+
+    // string of null · VERPLICHT (mag expliciet null zijn) · bron: mens · [HARD-6]
+    // → site footer, algemene voorwaarden, facturen
+    // null betekent AANTOONBAAR GEEN inschrijving, niet "nog niet opgehaald".
+    // Belvanger's eigen dossier vermeldt dit expliciet als feit; daarom null
+    // toegestaan en niet gewoon een leeg tekstveld.
+    "kvk": null,
+
+    // string of null · VERPLICHT (mag expliciet null zijn) · bron: mens · [HARD-6]
+    // → site footer, facturen
+    "btw": null,
+
+    // string · optioneel · bron: mens
+    // → site ("sinds 2018"), kennisbank kernfeiten, vervangt het reviewblok als
+    //   er te weinig reviews zijn
+    "actiefSinds": "2018",
+
+    // string · optioneel · bron: mens
+    // → kennisbank. Bestaat omdat Belvanger's dossier "een product van PrimeCircle,
+    //   een initiatief van Wesley Visser" als feit voert.
+    "onderdeelVan": "",
+
+    // object of null · optioneel · bron: mens
+    // → chatbot systeemprompt (de derde-persoonsregel), site over-ons, kennisbank
+    // Dit veld draagt in het AB-dossier de halve systeemprompt: zonder een naam
+    // kan de regel "verwijs naar Alien in de derde persoon" niet bestaan.
+    "contactpersoon": {
+      // string · VERPLICHT binnen dit object · bron: mens
+      "naam": "Alien",
+      // string · optioneel · bron: mens
+      "volledigeNaam": "Alien Bisschop",
+      // string · optioneel · bron: mens
+      "rol": "uitvaartverzorger",
+      // bool · VERPLICHT binnen dit object · bron: mens
+      // → systeemprompt. true = "belt u Alien"; false = "belt u het team"
+      //   (demo-bakkerij gebruikt bewust "het team" in plaats van een persoon).
+      "persoonlijkAanspreekbaar": true
+    },
+
+    // object of null · optioneel · bron: mens
+    // → kennisbank. AB voert dit als expliciet feit (Marisa Bremer / IJsselland
+    //   Uitvaartzorg) omdat een eenpitter moet kunnen aantonen dat continuïteit
+    //   geregeld is. Dit is een toezegging, dus hard.
+    "vervangingsregeling": {
+      "naam": "Marisa Bremer",
+      "bedrijf": "IJsselland Uitvaartzorg",
+      "wanneer": "bij ziekte of afwezigheid"
+    }
+  },
+
+  // --------------------------------------------------------------------------
+  // bereikbaarheid — alles hard. Eén fout hier kost de klant een opdracht.
+  // --------------------------------------------------------------------------
+  "bereikbaarheid": {
+    // bool · VERPLICHT · bron: mens
+    // → chatbot systeemprompt, site call-to-action
+    // Bestaat omdat Belvanger's dossier de omgekeerde waarde nodig heeft: "Geef
+    // nooit een telefoonnummer om te bellen." Zonder deze vlag zou dat een fork zijn.
+    "telefonischBereikbaar": true,
+
+    // string · VERPLICHT als telefonischBereikbaar · bron: mens · [HARD-6]
+    // → site (klikbare belknop), chatbot config.phoneDisplay + systeemprompt,
+    //   kennisbank kernfeiten
+    "telefoonWeergave": "06 4089 4000",
+
+    // string (E.164) · VERPLICHT als telefonischBereikbaar · bron: afgeleid
+    // → chatbot config.phoneTel (tel:-href), site tel:-links
+    "telefoonTel": "+31640894000",
+
+    // string (E.164, zonder +) · optioneel · bron: mens
+    // → chatbot config.whatsapp, site WhatsApp-knop
+    "whatsapp": "",
+
+    // string · optioneel · bron: mens
+    // → site footer, chatbot config.contactEmail, kennisbank kernfeiten
+    // LET OP: dit is het adres dat PUBLIEK op de site komt. Niet hergebruiken
+    // voor leadmeldingen; zie techniek.leadEmail.
+    "emailPubliek": "info@abaandachtenbetrokkenheiduitvaartzorg.nl",
+
+    // string · VERPLICHT · bron: mens · [HARD-6]
+    // → site (servicegebied + JSON-LD areaServed), kennisbank, chatbot startvraag
+    //   "Werken jullie ook in ...?"
+    "werkgebied": "Steenwijk, Kop van Overijssel, Zuid-Friesland en westelijk Drenthe",
+
+    // string · optioneel · bron: mens
+    // → site contactblok, kennisbank, chatbot systeemprompt bij spoed
+    // Vrije tekst omdat "dag en nacht (24/7)" en "di t/m za 07:00–17:30" niet in
+    // hetzelfde model passen; het gestructureerde rooster staat hieronder.
+    "bereikbaarheidBelofte": "dag en nacht (24/7) persoonlijk bereikbaar",
+
+    // array van {dag, van, tot} of null · optioneel · bron: mens
+    // → site openingstijdenblok, JSON-LD openingHours, kennisbank, chatbot
+    // null = geen winkeltijden (dienstverlener op afspraak). De demo-bakkerij is
+    // het enige dossier dat dit vult; zonder dit veld is haar meest gestelde
+    // vraag ("Wat zijn jullie openingstijden?") onbeantwoordbaar.
+    "openingstijden": null,
+
+    // object of null · optioneel · bron: mens
+    // → site contact + JSON-LD address, kennisbank
+    "adres": {
+      "straat": "Gelderingen 61 A",
+      "postcode": "8341 PT",
+      "plaats": "Steenwijkerwold",
+      // bool · VERPLICHT binnen dit object · bron: mens
+      // → site: false betekent adres nergens tonen (thuisadres van een zzp'er)
+      "publiekTonen": true
+    }
+  },
+
+  // --------------------------------------------------------------------------
+  // aanbod — wat het bedrijf doet, en wat het expres niet doet
+  // --------------------------------------------------------------------------
+  "aanbod": {
+    // array van objecten · VERPLICHT (min. 1) · bron: gemengd
+    // → site dienstenblok, kennisbank sectie Diensten, chatbot startvragen
+    "diensten": [
+      {
+        // string · VERPLICHT · bron: mens — de NAAM van een dienst is een feit
+        "naam": "Uitvaartbegeleiding van eerste contact tot nagesprek",
+        // string · optioneel · bron: gegenereerd — de verkooptekst mag geschreven
+        // worden, maar mag geen bedrag, termijn of garantie bevatten
+        "omschrijving": ""
+      }
+    ],
+
+    // string · optioneel · bron: mens
+    // → site hero-ondersteuning, kennisbank
+    "specialiteit": "",
+
+    // string · optioneel · bron: mens
+    // → site, chatbot systeemprompt ("doe niet alsof dit wel kan"), kennisbank
+    "neemtBewustNietAan": "",
+
+    // array van strings · optioneel · bron: mens
+    // → chatbot systeemprompt + kennisbank
+    // Bestaat omdat Belvanger's dossier categorisch moet ontkennen wat het NIET
+    // is ("geen leadgeneratie- of marketingbureau"). Dat is iets anders dan een
+    // klus die je niet aanneemt: het is een verwarring die je vóór moet zijn.
+    "watHetNietIs": [],
+
+    // object · optioneel · bron: mens
+    // → site spoedblok, chatbot systeemprompt (spoedroute), kennisbank, telefonie
+    //   (spoed mag een andere doorschakeling krijgen)
+    "spoed": {
+      // bool · VERPLICHT binnen dit object · bron: mens
+      "aangeboden": true,
+      // string · VERPLICHT als aangeboden · bron: mens — dit is een TOEZEGGING
+      "belofte": "dag en nacht bereikbaar, ook direct na een overlijden"
+    },
+
+    // array van {wat, termijn} · optioneel · bron: mens
+    // → site, kennisbank, chatbot (mag alleen deze termijnen noemen)
+    // Voorbeelden uit de dossiers: bakkerij "taart minimaal 2 dagen vooraf",
+    // Belvanger "binnen een week live". Zonder dit veld verzint de bot doorlooptijden.
+    "doorlooptijden": [
+      { "wat": "kostenoverzicht na overlijden", "termijn": "op de tweede dag" },
+      { "wat": "nagesprek", "termijn": "na twee tot drie weken" }
+    ]
+  },
+
+  // --------------------------------------------------------------------------
+  // prijzen — het gevaarlijkste blok van het hele genoom. Alles hier is mens.
+  // Een model mag hier NIETS aan toevoegen, afronden of samenvatten.
+  // --------------------------------------------------------------------------
+  "prijzen": {
+    // enum: "uurtarief" | "vaste-prijs" | "offerte" | "abonnement" | "op-aanvraag"
+    // VERPLICHT · bron: mens
+    // → site prijsblok, chatbot systeemprompt (welke prijsuitspraken mogen)
+    "model": "offerte",
+
+    // array van {label, bedrag, valuta, eenheid, voorwaarde} · optioneel · bron: mens · [HARD-6]
+    // → site prijsblok, kennisbank, chatbot (de ENIGE bedragen die genoemd mogen worden)
+    // Leeg = de bot noemt geen enkel bedrag. Iteratie 3 noemt uurtarief en
+    // voorrijkosten als hard veld #1; de intake vraagt vandaag alleen het MODEL,
+    // niet het BEDRAG (zie GATEN).
+    "tarieven": [
+      {
+        "label": "Reiskosten boven 200 km",
+        "bedrag": 0.30,
+        "valuta": "EUR",
+        "eenheid": "per kilometer",
+        "voorwaarde": "tot 200 km inbegrepen in het basistarief"
+      }
+    ],
+
+    // array van strings · optioneel · bron: mens
+    // → site, kennisbank. Wat er WEL en NIET in de basisprijs zit, zonder bedrag.
+    "inbegrepen": [
+      "oriëntatiegesprek en vastleggen van wensen",
+      "dag-en-nacht ondersteuning",
+      "kostenoverzicht, drukwerkbegeleiding en wettelijke formaliteiten",
+      "nagesprek na twee tot drie weken",
+      "reiskosten tot 200 kilometer"
+    ],
+
+    // array van strings · optioneel · bron: mens
+    // → site, kennisbank
+    "variabeleKosten": [
+      "opbaring thuis, in het Afscheidshuus of een uitvaartcentrum",
+      "rouwkaarten, advertenties en drukwerk",
+      "bloemen, dragers en rouwvervoer"
+    ],
+
+    // array van {belofte, termijn, voorwaarde} · optioneel · bron: mens
+    // → site, kennisbank, chatbot. Een garantie is een juridische toezegging.
+    // Belvanger's dossier voert er twee ("maandbedrag start pas na de eerste
+    // opgevangen klant", "maandelijks opzegbaar").
+    "garanties": [],
+
+    // array van strings · optioneel · bron: mens
+    // → site, kennisbank, chatbot FAQ ("Kan ik pinnen?" — demo-bakkerij)
+    "betaalmethoden": [],
+
+    // string · optioneel · bron: gegenereerd
+    // → site, kennisbank. Mag de OPBOUW uitleggen, mag GEEN bedrag bevatten dat
+    //   niet in `tarieven` staat. De validator controleert dit met een cijferregex.
+    "prijsuitleg": "Iedere uitvaart is anders; op de tweede dag na het overlijden ontvangt de familie een persoonlijk kostenoverzicht."
+  },
+
+  // --------------------------------------------------------------------------
+  // bewijs — waarom zou een vreemde dit bedrijf geloven
+  // --------------------------------------------------------------------------
+  "bewijs": {
+    // string (URL) of null · optioneel · bron: mens
+    // → site reviewbadge (haalt de score LIVE op bij de bron, met ophaaldatum).
+    // De overgetypte score gaat bewust NIET als getal de site op; zie
+    // docs/build/google-reviews-op-klantsites.md.
+    "googleProfielUrl": null,
+
+    // array van strings · optioneel · bron: mens
+    // → site badges, kennisbank sectie Bewijs
+    "certificeringen": [],
+
+    // bool · VERPLICHT · bron: mens
+    // → site beeldstrategie: false = AI-beelden genereren, met de vaste regel
+    //   "geen gezichten, geen logo's, geen tekst in beeld"
+    "eigenFotos": false,
+
+    // bool · VERPLICHT als eigenFotos · bron: mens
+    // → site: mag een voor/na-vergelijking getoond worden (privacy van de klant
+    //   van de klant)
+    "voorNaToegestaan": false
+  },
+
+  // --------------------------------------------------------------------------
+  // publiek — voor wie is dit bedrijf, en voor wie expres niet
+  // --------------------------------------------------------------------------
+  "publiek": {
+    // enum: "particulieren" | "bedrijven" | "beide" · VERPLICHT · bron: mens
+    // → site toon en voorbeelden, chatbot aanspreekvorm-advies
+    "doelgroep": "particulieren",
+
+    // enum: "betaalbaar" | "gemiddeld" | "premium" · VERPLICHT · bron: mens
+    // → site ontwerpniveau, tekstregister
+    "positionering": "gemiddeld",
+
+    // string · optioneel · bron: mens
+    // → site (afbakening), chatbot systeemprompt
+    "nietVoor": "",
+
+    // string · optioneel · bron: mens, LETTERLIJK overnemen
+    // → site over-ons/casus, kennisbank. Dit is het enige materiaal dat deze site
+    //   onderscheidt van elke andere site in hetzelfde vak. Niet herschrijven naar
+    //   marketingtaal.
+    "voorbeeldKlus": "",
+
+    // string · optioneel · bron: mens, LETTERLIJK overnemen
+    // → site signatuur-animatie (één scroll-gestuurde beweging), kennisbank
+    "zichtbaarResultaat": "",
+
+    // string · optioneel · bron: mens
+    // → site FAQ-volgorde, chatbot (weet waar mensen over twijfelen)
+    "grootsteTwijfel": ""
+  },
+
+  // --------------------------------------------------------------------------
+  // stem — hoe het bedrijf klinkt. Zacht, MAAR met drie harde ankers.
+  // --------------------------------------------------------------------------
+  "stem": {
+    // enum: "u" | "je" · VERPLICHT · bron: mens
+    // → chatbot systeemprompt, alle sitecopy, alle e-mails
+    // Niet af te leiden uit het vak: AB en de bakkerij gebruiken "u",
+    // Belvanger "je", en alle drie zijn lokale dienstverleners.
+    "aanspreekvorm": "u",
+
+    // array van strings · optioneel · bron: gegenereerd (uit de andere velden)
+    // → chatbot systeemprompt TOON-blok, sitecopy
+    "toonwoorden": ["warm", "rustig", "niet gehaast", "kort en helder"],
+
+    // string · optioneel · bron: mens, LETTERLIJK overnemen
+    // → chatbot systeemprompt (openingszin, woordelijk), site contactblok
+    "eigenOpeningsvraag": "",
+
+    // string · optioneel · bron: mens indien er al één is, anders gegenereerd
+    // → site hero
+    "tagline": "",
+
+    // string · optioneel · bron: gegenereerd uit publiek.voorbeeldKlus,
+    //   identiteit.actiefSinds en de kernwaarden
+    // → site over-ons, kennisbank sectie "Over <bedrijf>"
+    // Mag GEEN getal, termijn, bedrag of garantie bevatten.
+    "overOns": "Opgegroeid rond Steenwijkerwold, moeder van vier volwassen kinderen en oma. ...",
+
+    // array van strings · optioneel · bron: mens
+    // → site, kennisbank kernfeiten
+    "kernwaarden": ["persoonlijk", "onafhankelijk", "transparante kosten"],
+
+    // array van strings · optioneel · bron: mens
+    // → chatbot systeemprompt, blok "WAT JE NOOIT DOET"
+    // Per vak anders en juridisch geladen: AB verbiedt medisch, juridisch en
+    // verzekeringsadvies. Voor een installateur zou dit gas/CV-advies zijn.
+    "verbodenAdvies": ["medisch", "juridisch", "verzekering"],
+
+    // array van strings · optioneel · bron: mens
+    // → chatbot systeemprompt, blok "EERLIJK BLIJVEN"
+    // Dingen die het bedrijf eerlijk moet toegeven zodra ernaar gevraagd wordt,
+    // maar waar het niet ongevraagd over begint. Belvanger's eigen dossier voert
+    // er twee (testfase/geen KvK, en "de animatie is een demonstratie").
+    "eerlijkheidsclausules": [],
+
+    // enum: "bellen" | "formulier" | "whatsapp" | "vrijblijvend-gesprek" | "geen"
+    // VERPLICHT · bron: mens
+    // → chatbot systeemprompt (waar stuurt hij naartoe), site primaire CTA
+    // "geen" bestaat omdat AB's assistent bewust niet verkoopt; Belvanger's bot
+    // stuurt wel actief naar een vrijblijvend gesprek.
+    "gespreksdoel": "bellen"
+  },
+
+  // --------------------------------------------------------------------------
+  // kennis — de inhoud van de kennisbank. De enige bron waaruit de bot antwoordt.
+  // --------------------------------------------------------------------------
+  "kennis": {
+    // array van {titel, stappen[]} · optioneel · bron: gegenereerd uit mens-input
+    // → kennisbank, site werkwijze-blok
+    // Alle drie de dossiers hebben zo'n blok: AB "Wat te doen bij een overlijden"
+    // (3 stappen) en "Werkwijze" (7 stappen), Belvanger "Hoe het werkt" (3 stappen),
+    // de bakkerij "Bestellen". Bevat een stap een termijn of bedrag, dan komt dat
+    // uit aanbod.doorlooptijden of prijzen.tarieven, niet uit de generator.
+    "procedures": [
+      {
+        "titel": "Wat te doen bij een overlijden",
+        "stappen": [
+          "Neem uw tijd.",
+          "Bel de (huis)arts, die stelt het overlijden officieel vast.",
+          "Bel Alien op 06 4089 4000."
+        ]
+      }
+    ],
+
+    // array van {vraag, antwoord} · optioneel · bron: mens
+    // → kennisbank sectie Veelgestelde vragen, site FAQ, chatbot
+    // HARD, ook al lijkt het zacht: een FAQ-antwoord is een toezegging aan een
+    // klant ("nee, wij bakken niet glutenvrij, kruisbesmetting kunnen we niet
+    // uitsluiten"). Leeg = de bot kan alleen doorverwijzen, niet helpen.
+    "faq": [],
+
+    // array van strings · optioneel · bron: gegenereerd
+    // → interne actielijst, niet publiek
+    // Onderwerpen waarvan het model denkt dat er een vraag over komt maar waar
+    // nog geen menselijk antwoord voor is. Voedt het week-2-gesprek.
+    "faqOnderwerpenOpTeHalen": [],
+
+    // array van {naam, adres, kenmerken[]} · optioneel · bron: gemengd
+    // → site locatiepagina, kennisbank
+    // Bestaat omdat AB een tweede publiek adres voert (het Afscheidshuus) met
+    // eigen eigenschappen. `adres` is mens, `kenmerken` mag gegenereerd.
+    "locaties": [
+      {
+        "naam": "Het Afscheidshuus",
+        "adres": "Gelderingen 61 A, 8341 PT Steenwijkerwold",
+        "kenmerken": ["eigen sleutel en 24 uur toegang", "twee afscheidskamers", "beschut terras"]
+      }
+    ],
+
+    // array van {titel, tekst} · optioneel · bron: mens
+    // → kennisbank. Vakinhoudelijke uitleg die een bezoeker nodig heeft en die
+    //   niet in een FAQ past (AB: de drie conserveringsmethoden). Mens, want
+    //   feitelijk fout uitleggen is hier direct schadelijk.
+    "uitlegblokken": []
+  },
+
+  // --------------------------------------------------------------------------
+  // merk — hoe het eruitziet
+  // --------------------------------------------------------------------------
+  "merk": {
+    // string (hex) · VERPLICHT · bron: mens indien voorkeur, anders gegenereerd · [HARD-6]
+    // → site accentkleur, chatbot config.colors.primary
+    // Gegenereerd betekent hier: kies een kleur die nog NIET in galerij.json
+    // staat, anders wordt de galerij sjabloonherhaling.
+    "kleurPrimair": "#21342d",
+
+    // object · VERPLICHT · bron: afgeleid uit kleurPrimair
+    // → chatbot config.colors (primarySoft/surface/ink/line)
+    // De SLEUTELS zijn een productconstante; alleen de waarden variëren, en die
+    // worden berekend, niet met de hand gekozen.
+    "kleurenSet": {
+      "primarySoft": "#2f4a40",
+      "surface": "#f4f1ea",
+      "ink": "#26302c",
+      "line": "#d9d3c7"
+    },
+
+    // string (CSS font-stack) of null · optioneel · bron: gegenereerd
+    // → chatbot config.fontDisplay, site koppen
+    // Alleen Belvanger's dossier vult dit; null = de productstandaard.
+    "fontDisplay": null,
+
+    // bool · VERPLICHT · bron: mens
+    // → site header/footer; false = wij ontwerpen een woordmerk
+    "logoAanwezig": false,
+
+    // string · optioneel · bron: gegenereerd
+    // → site-indeling. Moet uniek zijn t.o.v. galerij.json.
+    "layoutArchetype": "",
+
+    // string · optioneel · bron: mens (sturend, niet letterlijk)
+    // → ontwerpprompt
+    "stijlMooi": "",
+
+    // string · optioneel · bron: mens (sturend)
+    // → ontwerpprompt
+    "stijlNiet": "",
+
+    // string · optioneel · bron: gegenereerd
+    // → beeldprompts voor AI-beelden als bewijs.eigenFotos false is
+    "beeldrichting": ""
+  },
+
+  // --------------------------------------------------------------------------
+  // talen — tweetaligheid is een klantvariabele, de standaardtaal niet
+  // --------------------------------------------------------------------------
+  "talen": {
+    // array van taalcodes · VERPLICHT · bron: mens
+    // → site (aparte /en/-tak), chatbot config.languages, widget-taalkeuze
+    // AB en Belvanger zijn NL+EN, de bakkerij is NL-only. Dit verdubbelt het
+    // bouwwerk, dus het is een prijs- én een scopebeslissing.
+    "ondersteund": ["nl", "en"],
+
+    // object {taalcode: [string]} · optioneel · bron: gegenereerd
+    // → chatbot config.suggestions (de startknoppen in het widget)
+    // Per ondersteunde taal 3 tot 4 vragen. Mogen geen bedrag bevatten.
+    "startvragen": {
+      "nl": [
+        "Wat moet ik doen bij een overlijden?",
+        "Wat zijn de kosten?",
+        "Kost een voorgesprek iets?"
+      ],
+      "en": [
+        "What should I do when someone dies?",
+        "What are the costs?"
+      ]
+    }
+  },
+
+  // --------------------------------------------------------------------------
+  // techniek — wat er geprovisioneerd moet worden. Niets hiervan is publiek.
+  // --------------------------------------------------------------------------
+  "techniek": {
+    // string · VERPLICHT · bron: mens · [HARD-6]
+    // → DNS, Traefik-route, certificaat, dashboard tenants.website_domain
+    "domein": "abaandachtenbetrokkenheiduitvaartzorg.nl",
+
+    // string · optioneel · bron: mens
+    // → onboardingtaak: wie moet de DNS wijzigen
+    "domeinBeheerder": "",
+
+    // string · VERPLICHT · bron: afgeleid uit slug
+    // → de larve-URL (noindex, niet-raadbaar) tot de klant akkoord geeft
+    "voorlopigSubdomein": "ab-uitvaartzorg.belvanger.nl",
+
+    // string (E.164) of null · optioneel · bron: mens
+    // → telefonie: het nummer waarop de gemiste oproep binnenkomt en waarop de
+    //   doorschakeling wordt gezet. Vaak, maar niet altijd, gelijk aan
+    //   bereikbaarheid.telefoonTel.
+    "opvangTelefoon": null,
+
+    // string · VERPLICHT · bron: mens
+    // → dashboard/n8n: waar de realtime leadmelding heen gaat. NIET publiceren.
+    "leadEmail": "info@abaandachtenbetrokkenheiduitvaartzorg.nl",
+
+    // array van {naam, email, rol} · optioneel · bron: mens
+    // → dashboard users-tabel (rol: customer_admin | platform_admin)
+    "dashboardGebruikers": [],
+
+    // integer (euro) of null · optioneel · bron: mens
+    // → dashboard tenants.avg_job_value ("deze periode bespaard"-widget)
+    // null = de widget valt terug op een indicatieve default en zegt dat erbij.
+    "gemiddeldeKluswaarde": null,
+
+    // string · optioneel · bron: mens
+    // → onboarding: bestaand CRM/agenda-systeem waar rekening mee gehouden moet worden
+    "huidigSysteem": ""
+  },
+
+  // --------------------------------------------------------------------------
+  // verkoop — voedt het gesprek en de kwalificatie, komt nergens publiek
+  // --------------------------------------------------------------------------
+  "verkoop": {
+    // integer · optioneel · bron: mens
+    // → verkoopgesprek (de ROI-rekensom), dashboard-nulmeting
+    "belvolumePerWeek": null,
+
+    // integer · optioneel · bron: mens
+    // → idem
+    "gemistPerWeek": null,
+
+    // enum: "binnen-het-uur" | "s-avonds" | "niet-altijd" · optioneel · bron: mens
+    // → KWALIFICATIE. "niet-altijd" is de diskwalificerende vraag uit iteratie 11:
+    //   wie niet terugbelt heeft geen vangnet nodig maar een telefoniste.
+    //   Blokkeert geen deploy, maar wel het aanbod.
+    "terugbelgedrag": null,
+
+    // string · optioneel · bron: mens
+    // → verkoopgesprek. "Wie neemt nu op als jij op een dak staat?" — de partner
+    //   is vaak de stille blokkeerder van de deal (iteratie 12).
+    "wieNeemtNuOp": ""
+  },
+
+  // --------------------------------------------------------------------------
+  // vlaggen — het anti-fork-mechanisme uit Iteratie 3
+  // --------------------------------------------------------------------------
+  // Elke afwijkende wens wordt hier een sleutel met een waarde, nooit een fork.
+  // "Een fork bij klant 4 kost je klant 30." Wordt drie keer dezelfde vlag
+  // aangevraagd, dan wordt het een echt veld voor iedereen.
+  // → generator (schakelt optioneel gedrag in), verzoekenregister
+  "vlaggen": {}
+}
+
+// ============================================================================
+// CONSTANTEN — dezelfde waarde in ALLE bestaande dossiers, dus GEEN genoomveld
+// ============================================================================
+// Deze horen in de productcode, de gedeelde systeemprompt-romp of het
+// kennisbank-sjabloon. Ze staan hier alleen zodat niemand ze per ongeluk
+// alsnog in klant.json zet.
+//
+//  1. defaultLang = "nl"                       (identiek in alle 4 config.json)
+//  2. tijdzone = "Europe/Amsterdam"            (dashboard tenants-default)
+//  3. de sleutelset van colors: primary, primarySoft, surface, ink, line
+//  4. "Antwoord uitsluitend op basis van de kennisbank"   (grounded-only)
+//  5. "Weet je iets niet? Zeg dat eerlijk en verwijs door"
+//  6. "Niets verzinnen dat niet in de kennisbank staat"
+//  7. "Geen prijzen, garanties of afspraken toezeggen die er niet in staan"
+//  8. "Geen emoji's"
+//  9. "Je bent een hulpmiddel, geen mens en geen medewerker"
+// 10. "Antwoord direct met je conclusie; toon geen interne redenering"
+// 11. "Antwoord in de taal van de bezoeker (Nederlands standaard)"
+// 12. "Bij spoed of iets gevoeligs: rustig reageren en direct doorverwijzen"
+// 13. de sectie "Grenzen voor de assistent" in de kennisbank
+// 14. de kennisbank-koppenstructuur (Kernfeiten / Over / Diensten / Kosten /
+//     Veelgestelde vragen / Grenzen / Contact)
+// 15. de EU AI Act art. 50-disclosure (zit in het gedeelde widget, niet per klant)
+// 16. de privacy-/verwerkersketen (eigen server + OpenRouter): identiek voor
+//     elke klant; alleen de bedrijfsnaam en het lead-mailadres variëren, en die
+//     staan al in het genoom
+// ============================================================================

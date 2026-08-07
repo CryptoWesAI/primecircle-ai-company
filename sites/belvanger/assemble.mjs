@@ -30,6 +30,9 @@ if (!fs.existsSync(CUSTOMER_SRC)) { console.error("Klant niet gevonden:", CUSTOM
 reset(APP);
 fs.copyFileSync(path.join(CHATBOT, "server.js"), path.join(APP, "server.js"));
 fs.copyFileSync(path.join(CHATBOT, "public", "dashboard.html"), path.join(APP, "dashboard.html"));
+// galerij.json moet mee, anders wijst path.join(__dirname, "galerij.json") in de container
+// naar een bestand dat niet bestaat en valt de layout-instructie stil terug op "onbekend".
+fs.copyFileSync(path.join(CHATBOT, "galerij.json"), path.join(APP, "galerij.json"));
 const CUSTOMER_DST = path.join(APP, "customers", CUSTOMER);
 fs.mkdirSync(CUSTOMER_DST, { recursive: true });
 copyTree(CUSTOMER_SRC, CUSTOMER_DST);
