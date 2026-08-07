@@ -53,7 +53,17 @@ zijn je waardevolste contacten en het zijn geen prospects.
 
 | Naam | Wat hij deed | Bedankt | "Ken je er nog meer?" gevraagd |
 |---|---|---|---|
-| Georgina Tan | tagde Marcel Bruinenberg en Friesland Schilderwerken onder de post | nog niet | **nog niet** |
+| Georgina Tan | tagde Marcel Bruinenberg en Friesland Schilderwerken onder de post | **ja** | nog niet |
+| _(naam invullen)_ | deelde de post ook | ? | nog niet |
+
+**Wat het delen heeft opgeleverd: nul geïnteresseerden.** Twee mensen hebben de post
+gedeeld en er is bereik geweest, maar er kwam geen enkele reactie van iemand die zelf
+interesse had in Belvanger. Dat is informatie, geen niks: delen levert **zichtbaarheid,
+geen contact**, precies zoals de definitie onderaan dit bestand zegt. Een gedeelde post
+bereikt mensen die op dat moment niets missen en geen reden hebben om zich te melden.
+
+Conclusie voor het kanaal, niet voor het aanbod: het aanbod is hiermee **niet** getoetst,
+want er is niemand geweest die het heeft afgewezen. Er is alleen niemand geweest.
 
 ## Grootboek
 
