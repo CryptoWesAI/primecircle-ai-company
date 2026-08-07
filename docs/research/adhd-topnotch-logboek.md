@@ -17,11 +17,18 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 6 |
-| Oppervlakken gedekt | 6 van 15 |
+| Iteraties gedraaid | 7 |
+| Oppervlakken gedekt | 8 van 15 (7 opgegaan in 2/4/6) |
 | Fase | divergentie |
 
-**Sterkste vondst tot nu toe:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
+**Commercieel beslissende vondst (iteratie 7):** de vlakke €99 subsidieert de beste
+klanten en haalt het inkomensdoel niet. Een tweedelig tarief (€595 opstart, €149 per maand
+inclusief 150 gesprekken, €0,60 daarboven, plafond €249) laat de marge stíjgen met het
+volume en brengt het doel op **17 tot 24 klanten in plaats van 30 tot 40**, wat binnen de
+leveringscapaciteit valt. Elk bedrag is een hypothese tot vijf echte vakmensen erop hebben
+gereageerd.
+
+**Sterkste productvondst:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
 kwamen er los van elkaar op uit, en het lost in één zet drie problemen tegelijk op:
 geen bewijs, geen verkoopgesprekken, en een site die het product beschrijft in plaats
 van laat ondergaan. **Blokkade:** kan pas live met een NL sms-nummer als afzender in
@@ -49,7 +56,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | **gedaan, iteratie 5** |
 | 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | **gedaan, iteratie 6** |
 | 7 | Storing en support: wat er gebeurt als het stukgaat | **opgegaan in 2, 4 en 6** |
-| 8 | Prijs- en pakketstructuur | open |
+| 8 | Prijs- en pakketstructuur | **gedaan, iteratie 7** |
 | 9 | Retentie: waarom een klant na maand 6 blijft | open |
 | 10 | De wow: wat een vakman ongevraagd aan een collega vertelt | open |
 | 11 | De AI-laag: chat, spraak, triage, tegenover de concurrentie | open |
@@ -817,5 +824,115 @@ plekken bezet"* · de belofte-splitsing als vast blok op de site · een **preced
 triggeren en niet van de discipline · de eerste veertien dagen verkopen als benoemd
 "Startprogramma" met drie vaste belmomenten en een expliciet einde, zodat het enige onbatchbare
 werk eindig en verkoopbaar wordt.
+
+---
+
+## Iteratie 7 — Prijs- en pakketstructuur
+
+Frames: markten · inversie · tienjarig kind · toezichthouder. Vier geïsoleerde takken, 24 ideeën.
+**Dit is het commercieel beslissende oppervlak van de hele loop.**
+
+### De convergentie
+
+Drie onafhankelijke frames zeggen hetzelfde: **de vlakke €99 subsidieert precies de beste
+klanten, en het model haalt het inkomensdoel rekenkundig niet.** De sabotage-formulering uit het
+inversie-frame is de scherpste: *zo word je bang voor succes en durf je bij verlenging niets te
+vragen, omdat het verbruik als je eigen fout voelt.*
+
+### Clusters
+
+**Prijs die meebeweegt met volume**
+- Tweedelig tarief: vaste voet inclusief bundel, daarboven per gesprek `[N8 V9 F10]`
+- Gesprekskrediet vooruit, verbruik erboven automatisch doorbelast zonder gesprek `[N8 V9 F10]`
+- Staffels op geleverde waarde, automatisch en in het contract, **zodat de founder nooit hoeft te onderhandelen** `[N9 V8 F10]`
+- Fair-use-drempel op sms, vooraf zichtbaar op de prijspagina `[N8 V9 F10]`
+- Ingebouwde jaarlijkse indexatie plus herijking na twaalf maanden, ondertekend op dag één `[N8 V9 F10]`
+
+**Toetsbaarheid van de prijsclaims**
+- Definieer "de eerste opgevangen gemiste klant" als één meetbare gebeurtenis met een logregel die de klant zelf kan inzien `[N9 V9 F10]`
+- De doorgestreepte €1.250 pas op de site zodra één klant hem betaald heeft; tot die tijd een onderbouwing die wél bewijsbaar is `[N7 V9 F10]`
+- Aftellende teller met startdatum in plaats van "eerste tien founding-partners" `[N8 V9 F9]`
+- Prijzen als "excl. btw (incl. €x)", plus KvK, btw-nummer en adres in de footer `[N6 V9 F10]`
+
+**Capaciteit als prijsinstrument**
+- Maximaal twaalf klanten regulier, publieke wachtlijst, toeslag om die over te slaan `[N9 V7 F10]`
+- Postcode-exclusiviteit: één loodgieter per gemeente, prijs stijgt zodra een tweede zich meldt `[N10 V6 F9]`
+- Twee pakketten die elkaar uitleggen: €99 waarbij hij zelf terugbelt, €249 waarbij Belvanger de afspraak in de agenda zet `[N8 V8 F10]`
+- Setup blijft €1.250; de generatorwinst gaat naar marge, niet naar korting `[N8 V8 F9]`
+
+**Eerlijkheid als prijsmechanisme**
+- Seizoenspauze: de hovenier drukt in december op pauze `[N8 V8 F9]`
+- Jaarcontract vooruit als werkkapitaal voor de volgende tien klanten `[N7 V7 F9]`
+- Gratis tot de klant zelf op "deze klus heb ik gewonnen" klikt `[N9 V6 F8]`
+
+**Traps** — alle vier uit het tienjarige-frame, en alle vier om dezelfde reden: **niet
+verifieerbaar.** Een percentage van de binnengehaalde omzet, betalen per gesprek waarbij de
+vakman zelf de prijs bepaalt, de eerste drie klussen als betaling, en de klant die zelf uit drie
+bedragen kiest. Ze voelen eerlijk en ze zijn alle vier afhankelijk van zelfgerapporteerde cijfers
+die je niet kunt controleren en niet kunt innen.
+
+### Uitgediept: de prijskaart
+
+**Wat er op de site komt:**
+
+> **Eenmalig €595 opstart. Daarna €149 per maand, inclusief 150 opgevangen gesprekken.
+> Daarboven €0,60 per gesprek, met een maximum van €249 per maand. Hoger wordt je rekening
+> nooit.**
+
+Daaronder de fair-use-regel vóór de handtekening (*"boven 500 gesprekken per maand bellen we je,
+dan past een ander pakket bij je"*), de betaalgebeurtenis in gewone taal (*"je maandbedrag start
+pas bij je eerste opgevangen klant: een gemiste oproep waarop wij binnen 2 minuten een sms
+stuurden waarop de beller antwoordde. Je ziet die regel met datum en tijd in je dashboard"*), de
+capaciteit (*"wij nemen nog 20 vaste klanten aan, daarna wachtlijst"*) en de seizoenspauze
+(*"maximaal 3 maanden per jaar winterstop op €49"*).
+
+**De rekensom:**
+
+| | Gesprekken | Betaalt | Sms-kosten | Brutomarge |
+|---|---|---|---|---|
+| Gemiddelde klant | ~90 | €149 | ~€11 | **€138 (93%)** |
+| Drukke klant | ~300 | €239 | ~€36 | **€203** |
+
+**De marge stijgt nu mét het volume in plaats van te dalen.** Dat is de kernfout van het
+€99-model, omgekeerd. Over een portefeuille van 70% gemiddeld en 30% druk: ~€162 omzet en ~€146
+marge per klant. Het doel van €2.500 tot €3.500 vraagt daarmee **17 tot 24 klanten in plaats van
+30 tot 40**, en dat valt binnen de leveringscapaciteit van 15 tot 25. De bovenkant van het doel
+ligt wel op de bovenkant van de capaciteit, dus de cap staat hard op 20 en de setupfees (20 ×
+€595 = €11.900 in jaar één) dragen het verschil.
+
+**Dragend risico: dit is een prijsarchitectuur voor nul klanten, en kan daarmee zelf het uitstel
+worden.** Vier afwegingen:
+
+1. **Onvoorspelbaarheid.** Een vakman koopt rust, en €40 extra in zijn beste maand voelt als een
+   boete op succes. Het **plafond van €249 is daarom geen detail maar de dragende constructie**:
+   variabel naar boven, met een dak dat hij vooraf kent.
+2. **Uitlegbaarheid.** Elke staffel is iets extra's om te verkopen in een gesprek dat de founder
+   al vermijdt. Daarom mag de staffel **niet in het gesprek zitten maar in het product**:
+   verbruiksmeter in het dashboard, waarschuwings-sms bij 120 gesprekken. Het verkoopgesprek gaat
+   over één getal: €149.
+3. **Meten is factureren.** Zodra de rekening van een telling afhangt, is een telfout een
+   factuurgeschil met iemand die je zijn telefoonlijn heeft toevertrouwd. De telling moet
+   exporteerbaar, per gesprek herleidbaar en **conservatief** zijn: bij twijfel telt hij niet mee.
+4. **Wat nu vast moet en wat kan wachten.** Onomkeerbaar duur om later toe te voegen, want anders
+   wordt klant één het plafond van het bedrijf: het getal op de site, de fair-use-zin, de meetbare
+   definitie van de betaalgebeurtenis met zichtbare logregel, en de indexatie- plus
+   herijkingsclausule. Alles daarna (automatische overage-facturatie, extra staffels, formele
+   winterstopvoorwaarden, wachtlijstpagina) kan wachten tot klant drie.
+
+**De grootste verliespost blijft dat de prijs nooit aan een echte vakman is gevraagd. Elk bedrag
+hierboven is een hypothese, geen bevinding.**
+
+**Eerste stap.** Zet de prijskaart op één A4 en leg hem binnen zeven dagen aan **vijf echte
+vakmensen** voor. Geen demo, geen pitch, alleen het blad en vier vragen: *"Bij welk bedrag zou je
+dit meteen doen? Bij welk bedrag zou je nee zeggen? Wat is hier onduidelijk? Wat zou je hier
+weghalen?"* Noteer de antwoorden letterlijk. **Tot die vijf antwoorden er zijn, wordt er niets aan
+de facturatie- of tellogica gebouwd.**
+
+**Kinderen.** Het plafond letterlijk op de pagina · **meten vanaf dag één, factureren vanaf klant
+drie** (de teller draait, maar de eerste drie klanten betalen twaalf maanden nooit meer dan €149,
+zodat je de bundel kalibreert op echt verbruik vóór de telling geld waard wordt) · alleen
+gesprekken waarop de beller antwoordde tellen mee, waarmee de prijs van een kostenpost een
+succesvergoeding wordt · de staffel tonen en niet uitleggen · de doorgestreepte prijs vervangen
+door drie echte, geanonimiseerde offertes van lokale webbouwers.
 
 ---
