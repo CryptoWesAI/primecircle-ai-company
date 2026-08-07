@@ -17,8 +17,8 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 3 |
-| Oppervlakken gedekt | 3 van 15 |
+| Iteraties gedraaid | 4 |
+| Oppervlakken gedekt | 4 van 15 |
 | Fase | divergentie |
 
 **Sterkste vondst tot nu toe:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
@@ -45,7 +45,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 1 | Website belvanger.nl: vertrouwen en conversie | **gedaan, iteratie 1** |
 | 2 | Klantdashboard: het dagelijkse gebruik door de vakman | **gedaan, iteratie 2** |
 | 3 | Onboarding: van "ja" tot live | **gedaan, iteratie 3** |
-| 4 | De automatiseringen: n8n, sms, push, chat | open |
+| 4 | De automatiseringen: n8n, sms, push, chat | **gedaan, iteratie 4** |
 | 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | open |
 | 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | open |
 | 7 | Storing en support: wat er gebeurt als het stukgaat | open |
@@ -485,5 +485,85 @@ hetzelfde principe, uit twee onafhankelijke oppervlakken:
 > schriftelijk bevestigd.
 
 Dit is de eerste kandidaat voor een vast ontwerpprincipe van het hele product.
+
+### Uitgediept: de keten buiten zichzelf controleren
+
+**Wat er verhuist, en dat is precies één ding.** Alleen het antwoord op een gemiste oproep
+gaat naar Twilio, als ongeveer dertig regels **Twilio Function** en bewust **geen
+Studio-flow**. Bij status no-answer, busy of failed gaan er twee sms'jes uit: één naar de
+beller vanaf een echt tweeweg NL-nummer (~€3 per maand, in plaats van de alfanumerieke
+afzender die antwoorden onmogelijk maakt), en één naar de eigen mobiel van de vakman, zodat
+de melding niet afhangt van Web Push die op iOS toch nooit aankomt.
+
+Al het andere blijft op de VPS: dashboard, chatbot, dedupe, rapportage. Elke inkomende
+webhook wordt eerst als ruwe JSONL-regel weggeschreven met direct 200 OK, pas daarna
+verwerkt, met een `replay <sid>`-commando zodat een mislukte verwerking herspeelbaar is
+zonder de beller nog eens te storen.
+
+**De controle draait buiten alles wat van de founder is.** Een externe cron (Cloudflare
+Worker, gratis, ~30 regels) start via de Twilio-API een échte oproep van canarynummer A naar
+het canary-Belvangernummer, hangt na 15 seconden op, leest via de API de volledige sms-body
+terug op A en **controleert op de aanwezige link en ingevulde variabelen in plaats van op
+`status=delivered`**, antwoordt dan letterlijk "ja", en eist dat dat antwoord binnen 90
+seconden zowel op nummer B als in de ingest-API staat. Dat is het antwoordpad, niet de
+verzendbevestiging.
+
+**De kostenrem die dit ontwerp realistisch houdt.** Eén lus kost ~€0,22 (oproep €0,03, twee
+sms €0,14, nummerhuur). Elk uur is **€158 per maand** en dat is bij nul omzet niet te
+verdedigen. Dus: **vier keer per dag** (07:00, 11:00, 15:00, 19:00 ≈ €26 per maand) plus een
+gratis uurlijkse halve check (Twilio-accountstatus, en GET én HEAD op alle webhook-endpoints,
+want HEAD gaf ooit 405). Schaal pas naar elk uur vanaf de derde betalende klant.
+
+**Vervuiling wordt één vlag, geen uitzondering.** De canary is een echte tenant `__canary`
+met `synthetic: true` op elk event, standaard weggefilterd in élke query van portal,
+klantrapport, bezoekersstatistiek en activiteitenlog.
+
+**Alarmering loopt nergens door de keten die kapot kan zijn.** Een externe heartbeat-dienst
+(EU-gehost, gratis tier) wordt na elke geslaagde lus gepingd; blijft die ping 90 minuten uit,
+dan mailt hij naar Gmail, **niet naar de Hostinger-mailbox die op dezelfde VPS eindigt**.
+
+**Dragend risico: de canary wordt een eigen keten.** Een synthetisch pad dat groen blijft
+terwijl de echte klantconfiguratie ergens anders staat. Dat is exact dezelfde fout als de
+07:00-mail die "alles groen" meldde, één laag hoger, en verraderlijker omdat het bewijs nu
+overtuigender oogt. De mitigatie is structureel: de canary moet dezelfde Function, hetzelfde
+configschema en dezelfde deploy-pijplijn gebruiken als een betalende klant en alleen in
+configwaarden verschillen, plus één keer per maand een handmatige test met een echte tweede
+telefoon.
+
+**Over lock-in.** Naar Twilio Studio verhuizen zou een echte val zijn, want die flow is niet
+exporteerbaar. Dertig regels JavaScript in git, met een leverancier-neutrale pseudocode-spec
+ernaast, is dat niet: een Bird-migratie is dan een dag herbouwen in plaats van een
+platformmigratie.
+
+**Over alarmmoeheid, en dit beleid is harder dan de detectie.** Nachtmodus 22:00 tot 07:00:
+alleen e-mail en een dashboardvlag. Er wordt pas echt gebeld als twee opeenvolgende lussen
+falen én er in datzelfde venster een echte klantoproep binnenkwam. Elk vals alarm krijgt
+binnen 24 uur één regel in `ALARMLOG.md` met precies drie toegestane uitkomsten: drempel
+bijgesteld, check verwijderd, of echte fout gevonden. Meer dan één vals alarm per week
+degradeert die check automatisch naar waarschuwing. **Liever een gemist alarm om 03:00 dan
+een systeem dat over twee weken uitstaat.**
+
+**Het stiltealarm wordt nu niet gebouwd.** Bij nul of één klant is elke week statistisch ruis.
+Wel vanaf dag één de leadteller per klant per week vastleggen, en de onboardingvraag "hoe vaak
+word je per week gebeld?" als prior gebruiken. Vóór acht weken historie geldt alleen een harde
+vloer: nul leads in 72 werkuren betekent dat de founder de klant zelf belt, geen automatisch
+alarm.
+
+**Eerste stap, één avond en ongeveer €10.** Vervang de alfanumerieke afzender door een echt
+tweeweg NL Twilio-nummer en herimplementeer het missed-call-antwoord als Twilio Function, niet
+in Studio. Bewijs het daarna door op de VPS `docker compose stop n8n belvanger-portal` te
+draaien, met een tweede telefoon écht naar het nummer te bellen en op te hangen, en te
+controleren dat de sms met werkende link binnenkomt en dat een reply "ja" aankomt op de
+telefoon van de "vakman", **terwijl er niets van jezelf draait**. Rapporteer wat er letterlijk
+op beide schermen stond. Zonder dat bewijs is de rest van dit ontwerp de moeite niet waard.
+
+**Kinderen.** `synthetic: true` als verplicht veld op het bestaande event-contract, met
+`?include_synthetic=1` voor de eigen monitoringweergave · een maandelijkse chaosknop die de
+VPS tien minuten bewust stillegt tijdens een canary-lus · de onboardingvraag "hoe vaak word je
+gebeld en wat is een gemiste klus waard" als verplicht veld, tegelijk ROI-argument in de
+verkoop en prior voor de stiltedrempel · `CRITICAL_PATH.md` met de logica in
+leverancier-neutrale pseudocode, zodat de logica in het document woont en niet bij Twilio ·
+ruwe webhooks append-only naar `raw/YYYY-MM-DD.jsonl` met een dagelijkse teller van
+niet-verwerkte regels, precies het soort stille fout dat de 07:00-mail nu niet ziet.
 
 ---
