@@ -17,16 +17,16 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 10 |
+| Iteraties gedraaid | 11 |
 | Oppervlakken gedekt | 15 van 15 (12 opgegaan in 3/4/5/9) (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
-| Fase | **synthese** (divergentie afgerond op 9 iteraties) |
+| Fase | **synthese, adversarieel gedraaid** (divergentie afgerond op 9 iteraties) |
 
-**Commercieel beslissende vondst (iteratie 7):** de vlakke €99 subsidieert de beste
-klanten en haalt het inkomensdoel niet. Een tweedelig tarief (€595 opstart, €149 per maand
-inclusief 150 gesprekken, €0,60 daarboven, plafond €249) laat de marge stíjgen met het
-volume en brengt het doel op **17 tot 24 klanten in plaats van 30 tot 40**, wat binnen de
-leveringscapaciteit valt. Elk bedrag is een hypothese tot vijf echte vakmensen erop hebben
-gereageerd.
+**Commercieel beslissende vondst, na correctie in iteratie 11:** de vlakke €99 subsidieert
+de beste klanten. Een tweedelig tarief repareert dát, maar **niet het inkomensdoel**: de
+adversariële ronde toonde aan dat de synthese brutomarge met netto verwarde. Bij €149 zijn
+er **27 tot 37 klanten** nodig en dat ligt boven de leveringscapaciteit. Het minimum om het
+te laten kloppen is **€199 tot €249 per maand**, of een doel van €1.800 netto. Elk bedrag
+blijft een hypothese tot twintig echte vakmensen erop hebben gereageerd.
 
 **Sterkste productvondst:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
 kwamen er los van elkaar op uit, en het lost in één zet drie problemen tegelijk op:
@@ -93,13 +93,18 @@ merkt het.
 
 ### Wat dit kost aan geld en wat het oplevert
 
-| | Nu | Na synthese |
-|---|---|---|
-| Prijs | €625 setup + €99/mnd vlak | €595 + €149/mnd incl. 150 gesprekken, €0,60 daarboven, plafond €249 |
-| Marge bij drukke klant | daalt naar ~€63 | stijgt naar ~€203 |
-| Klanten nodig voor het doel | 30 tot 40 | **17 tot 24** |
-| Leveringscapaciteit | 15 tot 25 | 15 tot 25 |
-| Haalbaar? | **nee** | **ja, met de cap op 20** |
+> ⚠️ **De tabel hieronder was fout en is gecorrigeerd door de adversariële ronde (iteratie 11).
+> Zie daar.** De oorspronkelijke versie claimde 17 tot 24 klanten en "haalbaar"; dat verwarde
+> brutomarge met netto-inkomen. Het echte getal is **27 tot 37 klanten**, en dat ligt boven de
+> leveringscapaciteit. De fout blijft hier staan omdat hij is doorgegeven aan de founder.
+
+| | Nu | Na synthese (**onjuist**) | Na correctie (it. 11) |
+|---|---|---|---|
+| Prijs | €625 setup + €99/mnd vlak | €595 + €149/mnd incl. 150 gesprekken, plafond €249 | **€199 tot €249/mnd** |
+| Marge bij drukke klant | daalt naar ~€63 | ~€203 | ~€202, maar **negatief marginaal boven 317 gesprekken** |
+| Klanten nodig voor het doel | 30 tot 40 | ~~17 tot 24~~ | **27 tot 37** |
+| Leveringscapaciteit | 15 tot 25 | 15 tot 25 | 15 tot 25 |
+| Haalbaar? | nee | ~~ja~~ | **niet op €149. Wel op €199-249, of bij een doel van €1.800 netto** |
 
 ### De vijf dingen die vandaag gratis zijn
 
@@ -126,6 +131,100 @@ Twee bevindingen die tegen elkaar in werken en samen de grootste openstaande vra
   en een prijs die nooit aan een echte vakman is gevraagd.
 
 Beide worden beantwoord door hetzelfde: **vijf gesprekken.** Niet door nog een iteratie.
+
+## Iteratie 11 — Adversariële ronde: wat de synthese niet overleeft
+
+Drie aanvallers, elk met een eigen lens en zonder elkaars antwoord te zien: een sceptische
+Friese loodgieter die drie jaar geleden een marketingbureau heeft weggestuurd, een nuchtere
+financieel adviseur, en de commercieel directeur van een concurrerende AI-telefonist met 200
+klanten en €15.000 advertentiebudget per maand.
+
+**Deze ronde is de meest waardevolle van de hele loop, want hij haalt een fout uit mijn eigen
+synthese.**
+
+### Wat er sneuvelt
+
+**1. De rekensom klopte niet, en de fout was van mij.** De synthese claimde 17 tot 24 klanten
+voor het inkomensdoel en noemde dat haalbaar. Dat verwarde **brutomarge met netto-inkomen**.
+Wat er tussen zit:
+
+- **Nummerhuur vergeten:** €149 − €11 sms − €1,15 = €136,85, niet €138.
+- **De portefeuillecijfers waren niet reproduceerbaar.** Met de eigen prijskaart komt er €176
+  omzet en €156,40 marge uit, niet €162 en €146.
+- **Vaste kosten ontbraken volledig:** VPS, domeinen, mailboxen, boekhouding, verzekeringen,
+  telefonieabonnement, software. Schatting ~€350 per maand, die niet meeschaalt met klanten.
+- **Belasting ontbrak.** De winst stapelt op een fulltime salaris, dus tegen het marginale
+  tarief. Effectief ~35% na MKB-winstvrijstelling. De zelfstandigenaftrek vervalt praktisch,
+  want die vraagt 1.225 uur náást een baan van 40 uur.
+
+Bij 20 klanten: €3.128 marge − €350 vast = €2.778 vóór belasting, **netto ~€1.806 per maand.**
+Voor €2.500 netto zijn **27 klanten** nodig, voor €3.500 netto **37**. Beide liggen **boven de
+eigen cap van 20 en boven de bandbreedte 15-25**. Het plan mist zijn doel met 7 tot 17 klanten.
+
+**2. Het plafond van €249 maakt je beste klant je slechtste marge.** Boven ~317 gesprekken loopt
+de sms-kostenkant door terwijl de omzet stopt: marginale marge **−€0,12 per gesprek**. Dat is
+exact dezelfde fout als de vlakke €99, alleen verplaatst naar een hoger volume.
+
+**3. Ontbrekende kostenposten die elke marge hierboven te hoog maken.** Belminuten, spraak naar
+tekst, LLM-tokens en tekst naar spraak staan nergens in het model. En de vraag of €149 ex of
+inclusief btw is: inclusief wordt de marge €125,70 en valt het plan direct om.
+
+**4. Het bedrijfsbrede gemiddelde als publiek getal is fataal.** *"Een ratel die kapotgaat precies
+wanneer het werkt: elke nieuwe klant verdunt het, de driver ligt buiten je controle, en de maand
+dat 11 naar 19 gaat is dát het verhaal, geschreven door jezelf. Ze hebben een marketingmotor
+gebouwd die groei bestraft."* Vervangen door een **contractuele p90-plafondbelofte per klant** met
+exitrecht. Een gemiddelde verbergt de staart, en een goede prospect vraagt om je p90.
+
+**5. Het getal mag sowieso nog niet op de site.** *"Deze maand gemiddeld na 11 minuten een echt
+mens. Gemiddeld van wat? Je hebt nul klanten. Als je me een getal noemt dat je niet hebt, wat
+vertel je me dan nog meer."* Eén verzonnen cijfer besmet elke andere claim op de pagina.
+
+**6. "Bij ons neemt nooit een robot op" leest als een trucje.** *"Nee, er neemt bij jullie helemaal
+niemand op. Dat is geen mens, dat is een automaat die netjes over zichzelf zegt dat hij geen
+automaat is."* En de garantie betaalt de verkeerde partij: hoor je een robot, dan krijg je €149
+terug, maar de misgelopen badkamer van €4.200 niet.
+
+**7. De aftelklok legt het risico bij de klant en het gemak bij Belvanger.** *"Nu is een gemiste
+beller teleurgesteld. Straks is hij teleurgesteld én heeft hij zwart op wit dat ik mijn woord niet
+hield."* En 's nachts: *"een klok die naar maandag telt is geen belofte, dat is een afwijzing met
+animatie."*
+
+**8. De vrijdagrit plus €49 spoedtoeslag is letterlijk het bureau dat hij heeft weggestuurd.**
+*"Ik betaal €149 per maand en moet dán nog wachten tot vrijdag omdat het jou uitkomt, of bijbetalen
+om iets recht te zetten dat vaak jullie eigen typefout is."*
+
+### Wat er overeind blijft
+
+- **De sms binnen 8 seconden met een terugbeltijd.** Beide vijandige lenzen noemen dit
+  onafhankelijk het echte product. De concurrent geeft toe: *"een beter product dan mijn
+  opnemen-in-3-seconden. Ik verkoop een metriek, zij verkopen een uitkomst."*
+- **De diskwalificerende intakevraag.** *"Hun weigeren van klanten die niet binnen het uur
+  terugbellen maakt hun getal wáár. Dat kan ik met 200 klanten niet kopiëren."*
+- **Eigendom van domein en nummer bij de klant.**
+- **De vijf gratis positioneringsstappen**, met uitzondering van het verzonnen gemiddelde.
+
+### Wat de vakman zelf als voorwaarden noemde, en dat is je go-to-market
+
+> *"Geen €595 vooruit, want ik betaal geen bedrijf zonder klanten. Drie maanden proefdraaien,
+> opzegbaar per maand, en pas betalen vanaf de eerste klus die er aantoonbaar uit komt. Haal die
+> klok weg of laat mij hem zetten. En laat me met één bestaande klant bellen. Kan dat niet, dan
+> zijn we klaar."*
+
+Die laatste eis is bij nul klanten onbeantwoordbaar. **Dat is precies waarom klant nummer één
+bijna gratis moet zijn: je koopt geen omzet, je koopt het antwoord op die vraag.**
+
+### Verloop, en dit is het cijfer dat het hardst aankomt
+
+Bij 1,5 netto nieuwe klanten per maand: 2% verloop geeft 20 klanten na 15 maanden, 5% verloop na
+21 maanden, en **bij 10% verloop wordt 20 klanten nooit bereikt** (plafond 15). Plus 2 tot 3
+maanden vóór de eerste klant. Realistisch: **~24 maanden tot 20 klanten**, met onderweg gemiddeld
+negen klanten en ~€1.400 marge per maand.
+
+### Het financiële oordeel
+
+**Het plan klopt niet op €149.** Het minimum om het wél te laten kloppen: **prijs naar €199 tot
+€249 per maand**, of het doel bijstellen naar €1.800 netto. En vóór alles: **twintig
+verkoopgesprekken voeren en de prijs testen. De hele spreadsheet is nu fictie.**
 
 ## Oppervlakken-wachtrij
 
