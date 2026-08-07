@@ -149,6 +149,11 @@ per maand wint zou onzin zijn.
 
 ### Doen, risico praktisch nul
 
+> **Stand 2026-08-07:** punten 2, 3 en 4 zijn **gedaan in de repo** en gevalideerd met
+> `docker compose config` op alle vier de bestanden. Ze staan nog **niet op de VPS** —
+> dat is één `docker compose up -d` per project, zie `infra/LIMIETEN.md`. Punt 1 kan ik
+> niet doen: dat zit in de Twilio-console en is een wijziging aan een externe dienst.
+
 | # | Actie | Levert op | Risico van uitzetten |
 |---|---|---|---|
 | 1 | **`sms_url` van het Twilio-nummer weghalen van `demo.twilio.com`** | €0 | **Geen. Dit is een risico-verwijdering, geen bezuiniging.** Nu stuurt dat nummer een Twilio-demo-antwoord terug naar wie er sms't. Als dat ooit een echte prospect is, is dat de eerste indruk **[feit, `DECISIONS_LOG.md` 2026-07-27]** |

@@ -20,6 +20,13 @@ services:
       - dashboard-data:/app/data
     networks:
       - dashboard
+    # Node zonder dependencies, doet vrijwel niets tussen twee kliks door.
+    mem_limit: 256m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   dashboard:

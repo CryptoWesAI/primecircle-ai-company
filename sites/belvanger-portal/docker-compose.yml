@@ -16,6 +16,15 @@ services:
       - portal-db:/var/lib/postgresql/data
     networks:
       - portal
+    # Ruim boven wat deze database nodig heeft (leads van een handvol klanten,
+    # shared_buffers staat op de standaard 128 MB). Dit is een noodrem, geen budget.
+    # LET OP: te laag = de database wordt gekilld, niet vertraagd. Zie infra/LIMIETEN.md.
+    mem_limit: 512m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   portal:
     build: .
@@ -36,6 +45,13 @@ services:
       - "127.0.0.1:8096:8096"
     networks:
       - portal
+    # Node + pg-client + Web Push-crypto. Normaal 100-200 MB.
+    mem_limit: 512m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
     labels:
       traefik.enable: "true"
       traefik.http.routers.belvanger-dashboard.entrypoints: "websecure"

@@ -48,6 +48,17 @@ services:
       - belvanger-data:/app/data
     networks:
       - belvanger
+    # Runaway-grens, geen krappe toewijzing. Zonder limiet kan één weggelopen proces het
+    # geheugen van de hele VPS opeten, en dan valt AB Uitvaartzorg mee om — een klantsite
+    # die plat gaat door onze eigen site. Node zit hier normaal rond de 80-150 MB.
+    # LET OP: een te lage limiet vertraagt niet, die KILLT. Zie infra/LIMIETEN.md.
+    mem_limit: 384m
+    # Zonder dit groeit het logbestand ongelimiteerd tot de schijf vol is.
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   belvanger:

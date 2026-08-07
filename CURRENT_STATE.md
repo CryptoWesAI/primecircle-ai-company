@@ -154,8 +154,16 @@ Wat de audit wél oplevert, en het gaat over risico in plaats van geld:
    `knifensharp`, `primecircle`, `primecircle-*` en `agent-zero`.
 3. **`knifensharp` claimt de apex `primecircle.cloud` en zijn ACME faalt permanent.**
    Let's Encrypt heeft weeklimieten; haal de apex-labels weg.
-4. **Geen enkele container heeft een geheugenlimiet of logrotatie.** Eén weggelopen
-   proces neemt de site van AB Uitvaartzorg mee.
+4. ~~**Geen enkele container heeft een geheugenlimiet of logrotatie.**~~ **Opgelost in de
+   repo op 2026-08-07, nog niet uitgerold.** Alle vijf de services hebben nu een
+   `mem_limit` (384m-1024m, bewust noodremmen op ~3× normaal verbruik, geen budgetten) en
+   logrotatie op 10 MB × 3. n8n ruimt zijn uitvoeringsgeschiedenis nu op na 7 dagen.
+   Gevalideerd met `docker compose config` op alle vier de bestanden; **niet** op de VPS
+   gedraaid, want deze sessie kan de machine niet bereiken. Uitrollen = één
+   `docker compose up -d` per project. Handleiding, risico's en de controlestap staan in
+   `infra/LIMIETEN.md`, het leesscript in `infra/vps-check.sh`.
+   **Let op: dit dekt alleen onze eigen vier projecten.** De AB-container, Traefik en de
+   vreemde projecten hebben nog steeds geen limiet, en juist die zijn het risico.
 5. **Het Twilio-nummer `+14474274008` is geen NL-nummer** en `sms_url` staat nog op
    `demo.twilio.com`, dus wie ernaartoe sms't krijgt een Twilio-demo-antwoord terug.
    Advies: nu al inruilen voor een NL-nummer met sms én voice, zodat je de opstelling

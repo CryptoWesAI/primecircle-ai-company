@@ -41,11 +41,41 @@ services:
       N8N_RUNNERS_ENABLED: "true"
       N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS: "true"
       N8N_SECURE_COOKIE: "true"
+      # --- Uitvoeringsgeschiedenis opruimen (toegevoegd 2026-08-07, kostenaudit) ---
+      # De SQLite-database was 200 MB en groeide, vrijwel volledig uitvoeringshistorie.
+      # Die wordt elke nacht meegekopieerd in de back-up (infra/backup/README.md noemt dit
+      # zelf als open punt), dus het kost schijf én back-uptijd voor logboeken van testruns.
+      # Zeven dagen is ruim: langer terugkijken dan een week heb je nog nooit gedaan.
+      EXECUTIONS_DATA_PRUNE: "true"
+      EXECUTIONS_DATA_MAX_AGE: "168"          # uren = 7 dagen
+      EXECUTIONS_DATA_PRUNE_MAX_COUNT: "1000"
+      # NIET GEVERIFIEERD: deze vier namen zijn al jaren stabiel in n8n, maar ik kon vanuit
+      # de sessie waarin dit is geschreven geen enkele externe host bereiken, dus ze zijn
+      # niet tegen de documentatie van 2.30.7 gehouden. Controleer na de eerste herstart of
+      # n8n geen "unknown environment variable"-waarschuwing logt.
+      #
+      # Opruimen verwijdert RIJEN, maar SQLite geeft de schijfruimte pas terug na een
+      # VACUUM. Eenmalig terugwinnen: zet de regel hieronder aan, `docker compose up -d`,
+      # wacht tot n8n draait, zet hem weer uit en `up -d` opnieuw. Permanent aanlaten is
+      # zonde: dan herschrijft hij bij ELKE start de hele database.
+      # DB_SQLITE_VACUUM_ON_STARTUP: "true"
     volumes:
       # Alle n8n-data (SQLite-db, workflows, credentials, settings) blijft hier bewaard.
       - n8n-data:/home/node/.n8n
     networks:
       - n8n
+    # De grootste geheugengebruiker op de VPS. Met N8N_RUNNERS_ENABLED draait de
+    # task-runner als proces BINNEN deze container, dus die telt mee in deze limiet.
+    # 1 GB is de gangbare ondergrond voor n8n; nu doet hij bijna niets, maar één workflow
+    # die een grote payload inleest kan hier tegenaan lopen. Loopt hij OOM, verhoog dan
+    # naar 1536m — dat is een echt signaal, geen ruis. Zie infra/LIMIETEN.md.
+    mem_limit: 1024m
+    # 34 MB puur logboek stond al in de back-uphandleiding als bekend probleem.
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   n8n:
