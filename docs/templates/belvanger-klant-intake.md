@@ -100,7 +100,28 @@ Stuur dit pas na een akkoord, met een korte intro:
   die.
 - Gebruik je nu al een ander systeem voor leads of klantbeheer dat we moeten weten?
 
-### G. Overig
+### G. Zijn telefoon en zijn woorden
+Deze zes staan bewust in het formulier en niet alleen in het gesprek: ze zijn achteraf niet
+te reconstrueren, en klant één levert hiermee vanaf dag één de gegevens die maand twaalf dragen.
+
+- Hoe vaak word je per week gebeld? (schatting)
+- Hoeveel daarvan mis je ongeveer? (schatting)
+- Wat levert een gemiddelde klus je op? (euro)
+- Bel je een gemiste oproep normaal gesproken zelf terug? (binnen het uur / vaak pas 's avonds
+  / eerlijk gezegd niet altijd)
+- **Wat is de eerste vraag die je zelf stelt als iemand belt? Zeg het precies zoals je het zegt.**
+- Wie neemt nu op als jij op een dak staat?
+
+Waarom elk van deze zes:
+
+| Vraag | Waar hij voor dient |
+|---|---|
+| gebeld / gemist / kluswaarde | De ROI-rekensom in het verkoopgesprek, **uit zijn eigen cijfers**, en later de drempel waaronder een stille week een storing is in plaats van een rustige week |
+| terugbelgedrag | **Diskwalificerend.** Wie zijn gemiste oproepen niet terugbelt heeft geen vangnet nodig maar een telefoniste, en koopt dus een AI-telefonist. Een "niet altijd" is geen klant |
+| eigen openingsvraag | Wordt woordelijk regel één van zijn chatbot, zodat zijn klanten zeggen "die vraag op je site, dat ben jij helemaal" |
+| wie neemt nu op | Brengt de stille beslisser in beeld. In veel klusbedrijven neemt de partner de telefoon op, en dan vervang je haar werk. Zij blokkeert de deal als je haar niet spreekt |
+
+### H. Overig
 - Is er iets dat per se op de website moet staan?
 - Is er iets dat je juist wilt vermijden?
 - Andere opmerkingen
@@ -108,6 +129,21 @@ Stuur dit pas na een akkoord, met een korte intro:
 ---
 
 ## Deel 3: Van antwoorden naar bouwprompt (voor jezelf)
+
+> **Dit gebeurt al automatisch als de klant het webformulier gebruikt.** Vult hij
+> `belvanger.nl/klantintake.html` in, dan bouwt de server de prompt zelf en mailt hem naar
+> `info@belvanger.nl`, samen met drie kant-en-klare conceptbestanden voor de chatbot
+> (`system-prompt.txt`, `knowledge-base.md`, `config.json`) en zijn geüploade logo en
+> projectfoto's als bijlagen. Het sjabloon hieronder is de handmatige route, voor als je de
+> vragen via WhatsApp hebt gesteld.
+>
+> De automatische prompt bevat bovendien een blok **HARDE GEGEVENS, LETTERLIJK OVERNEMEN**
+> met bedrijfsnaam, telefoon, KvK, btw, werkgebied, prijsmodel, spoedservice en
+> certificeringen. Dat blok bestaat omdat een geparafraseerd tarief of een verzonnen
+> KvK-nummer op de site van iemand die net €595 heeft betaald, schade is die je niet
+> terugdraait. Ontbreekt er iets, dan schreeuwt de prompt dat en verbiedt hij placeholders.
+>
+> Neem dat blok over als je de handmatige route gebruikt.
 
 Zodra je de antwoorden van Deel 2 binnen hebt, plak je ze in het onderstaande sjabloon en
 stuur je dat in één keer naar Claude. Dit is precies de informatie waarmee in deze sessie

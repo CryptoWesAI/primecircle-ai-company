@@ -494,6 +494,54 @@ function orDash(s) { return oneLine(s) || "-"; }
 // --- Klant-intake (website-vragenlijst) → e-mail met alle gegevens + kant-en-klare
 // ontwerpprompt. Zelfde SMTP/route-patroon als /api/lead hierboven, geen nieuwe
 // afhankelijkheden. ---
+// De rekensom waarmee dit aanbod verkocht wordt, uit zijn eigen cijfers in plaats van uit
+// een folder. Bewust met een ZICHTBARE aanname erbij: hoeveel gemiste bellers een klus
+// waren geworden weet niemand, ook wij niet. Een rekensom met een verborgen aanname is
+// een verkooptruc; met een zichtbare aanname is het een gesprek.
+const GEMISTE_LEAD_CONVERSIE = 0.2; // aanname, geen meting. Aanpassen zodra er data is.
+
+// Een vakman typt "1.250,50", "EUR 340", "6 stuks" of "ongeveer 25". Naief parsen maakt
+// van 1.250,50 een NaN of, erger, 1,25: dan staat er een verkeerd bedrag in de rekensom
+// die je in een verkoopgesprek voorleest. Daarom expliciet de NL-notatie afhandelen.
+function nlGetal(ruw) {
+  const s = String(oneLine(ruw) || "").replace(/[^\d.,]/g, "");
+  if (!s) return NaN;
+  const heeftKomma = s.includes(",");
+  const heeftPunt = s.includes(".");
+  let genormaliseerd;
+  if (heeftKomma && heeftPunt) {
+    // "1.250,50": punt is duizendtal, komma is decimaal.
+    genormaliseerd = s.replace(/\./g, "").replace(",", ".");
+  } else if (heeftKomma) {
+    genormaliseerd = s.replace(",", ".");
+  } else if (heeftPunt) {
+    // Alleen punten is dubbelzinnig. Precies drie cijfers achter de laatste punt is in
+    // het Nederlands vrijwel altijd een duizendtal ("1.250"), niet een decimaal.
+    genormaliseerd = /\.\d{3}$/.test(s) ? s.replace(/\./g, "") : s;
+  } else {
+    genormaliseerd = s;
+  }
+  return Number(genormaliseerd);
+}
+
+function misgelopenPerMaand(d) {
+  const gemist = nlGetal(d.gemistWeek);
+  const waarde = nlGetal(d.klusWaarde);
+  // Nul gemiste oproepen is geen ontbrekend gegeven maar een antwoord, en het belangrijkste
+  // antwoord dat er is: wie niets mist, heeft dit product niet nodig. Dat hardop zeggen is
+  // goedkoper dan het ontdekken in maand drie.
+  if (Number.isFinite(gemist) && gemist === 0) {
+    return "Rekensom: hij zegt NUL gemiste oproepen. Dat is geen lege invoer maar een antwoord: dan is er geen probleem om op te lossen. Toets dit in het gesprek voordat je iets bouwt.";
+  }
+  if (!Number.isFinite(gemist) || !Number.isFinite(waarde) || gemist <= 0 || waarde <= 0) {
+    return "Rekensom: niet te maken, gemiste oproepen of kluswaarde niet ingevuld. Vraag ernaar in het gesprek.";
+  }
+  const perMaand = gemist * 4.33;
+  const euro = Math.round(perMaand * waarde);
+  const netto = Math.round(euro * GEMISTE_LEAD_CONVERSIE);
+  return `Rekensom: ${Math.round(perMaand)} gemiste bellers per maand x EUR ${Math.round(waarde)} = EUR ${euro} aan gesprekken die hij nu niet voert. Bij ${Math.round(GEMISTE_LEAD_CONVERSIE * 100)}% die een klus was geworden: ~EUR ${netto} per maand. Die ${Math.round(GEMISTE_LEAD_CONVERSIE * 100)}% is een AANNAME, geen meting. Noem hem hardop in het gesprek.`;
+}
+
 function buildDesignPrompt(d) {
   const vak = orDash(d.vak);
   const naam = orDash(d.handelsnaam) !== "-" ? orDash(d.handelsnaam) : orDash(d.bedrijfsnaam);
@@ -501,9 +549,35 @@ function buildDesignPrompt(d) {
   const kleur = oneLine(d.kleur)
     ? oneLine(d.kleur)
     : "geen voorkeur, kies passend bij het vak en nog niet gebruikt door een andere Belvanger-klant";
+  // Harde gegevens apart en bovenaan. Alles hieronder in dit blok is door een mens
+  // ingevuld en mag NOOIT worden geparafraseerd, afgerond of aangevuld: een verkeerd
+  // tarief of een verzonnen KvK-nummer op de site van een klant die net betaald heeft,
+  // is schade die je niet terugdraait. De rest van de prompt is zachte data waar het
+  // model wél vrij mag formuleren.
+  const hard = [
+    ["Bedrijfsnaam", orDash(d.bedrijfsnaam)],
+    ["Telefoon", orDash(d.telefoon)],
+    ["KvK", orDash(d.kvk)],
+    ["BTW", orDash(d.btw)],
+    ["Werkgebied", orDash(d.werkgebied)],
+    ["Prijsmodel", orDash(d.prijsmodel)],
+    ["Spoedservice", oneLine(d.spoedservice) === "ja" ? `ja${oneLine(d.spoedTijd) ? `, ${oneLine(d.spoedTijd)}` : ""}` : "nee"],
+    ["Certificeringen", orDash(d.certificeringen)],
+  ];
+  const ontbrekend = hard.filter(([, v]) => v === "-").map(([k]) => k);
+
   return [
     `Bouw een premium voorbeeldwebsite voor ${vak} volgens onze bestaande Belvanger-opzet`,
     `(shared componentkit, eigen kleur en eigen indeling per klant, geen sjabloonherhaling).`,
+    "",
+    "=== HARDE GEGEVENS, LETTERLIJK OVERNEMEN ===",
+    "Deze waarden zijn door de klant zelf ingevuld. Neem ze karakter voor karakter over.",
+    "Niet herschrijven, niet afronden, niet mooier maken, en niets aanvullen wat hier niet staat.",
+    ...hard.map(([k, v]) => `${k}: ${v}`),
+    ontbrekend.length
+      ? `LET OP, NIET INGEVULD: ${ontbrekend.join(", ")}. Zet hiervoor GEEN placeholder en verzin niets. Laat het veld weg uit de pagina en meld onderaan je oplevering welke gegevens nog bij de klant opgehaald moeten worden.`
+      : "Alle harde gegevens zijn ingevuld.",
+    "=== EINDE HARDE GEGEVENS ===",
     "",
     `Bedrijf: ${naam}`,
     `Regio: ${orDash(d.werkgebied)}`,
@@ -645,9 +719,17 @@ function buildChatbotSystemPromptDraft(d) {
   const spoedBlock = oneLine(d.spoedservice) === "ja"
     ? `\nBIJ SPOED\n- Heeft de bezoeker een spoedgeval? ${naam} biedt spoedservice${oneLine(d.spoedTijd) ? ` (${oneLine(d.spoedTijd)})` : ""}. Verwijs meteen naar rechtstreeks contact: ${contact}.\n`
     : "";
+  // De vakman heeft bij de intake zijn eigen openingsvraag opgeschreven, letterlijk zoals
+  // hij hem aan de telefoon stelt. Die zin is het verschil tussen een bot die klinkt als
+  // gehuurde software en een bot waarvan zijn klanten zeggen "dat ben jij helemaal".
+  // Daarom woordelijk overnemen en niet herformuleren.
+  const opening = oneLine(d.eigenOpeningsvraag);
+  const openingBlock = opening
+    ? `\nJE OPENINGSVRAAG\n- Open het gesprek met exact deze zin, woordelijk, want zo vraagt ${naam} het zelf: "${opening}"\n`
+    : "";
   return [
     `Je bent de digitale assistent van ${naam}. Je helpt bezoekers van de website met praktische vragen.`,
-    "",
+    openingBlock,
     "TOON",
     '- Direct, nuchter en vriendelijk. Spreek de bezoeker aan met "je".',
     "- Kort en helder. Geen wollige verkooppraat, geen emoji's, geen em-dashes (gebruik komma, dubbele punt of een nieuwe zin).",
@@ -806,7 +888,13 @@ function intakeEmailText(d, prompt, imageAttachCount) {
     listBlock(d.dashboardGebruikers),
     `Domeinnaam: ${orDash(d.domein)} (beheerder: ${orDash(d.domeinBeheerder)})`,
     `Huidig systeem/CRM: ${orDash(d.huidigSysteem)}`, "",
-    "G. Overig",
+    "G. Zijn telefoon en zijn woorden",
+    `Gebeld per week: ${orDash(d.belvolumeWeek)} · daarvan gemist: ${orDash(d.gemistWeek)} · gemiddelde klus: ${oneLine(d.klusWaarde) ? `EUR ${oneLine(d.klusWaarde)}` : "-"}`,
+    misgelopenPerMaand(d),
+    `Belt gemiste oproepen zelf terug: ${orDash(d.terugbelgedrag)}${oneLine(d.terugbelgedrag) === "niet altijd" ? "   <-- LET OP: dit is de diskwalificerende vraag. Wie niet terugbelt heeft geen vangnet nodig maar een telefoniste. Voer het gesprek voordat je iets bouwt." : ""}`,
+    `Zijn eigen openingsvraag: ${orDash(d.eigenOpeningsvraag)}`,
+    `Wie neemt nu op als hij werkt: ${orDash(d.wieNeemtOp)}`, "",
+    "H. Overig",
     `Moet erop staan: ${orDash(d.moetErOp)}`,
     `Vermijden: ${orDash(d.vermijden)}`,
     `Opmerkingen: ${cleanMulti(d.opmerkingen, 2000) || "-"}`, "",
@@ -860,7 +948,16 @@ function intakeEmailHtml(d, prompt, imageAttachCount) {
       row("Dashboardgebruikers", cleanMulti(d.dashboardGebruikers, 1000).replace(/\n/g, "; ") || "-"),
       row("Domein", `${orDash(d.domein)} (${orDash(d.domeinBeheerder)})`),
       row("Huidig systeem", orDash(d.huidigSysteem))].join(""))}
-    ${section("G. Overig", [row("Moet erop", orDash(d.moetErOp)), row("Vermijden", orDash(d.vermijden)),
+    ${section("G. Zijn telefoon en zijn woorden", [
+      row("Gebeld per week", orDash(d.belvolumeWeek)),
+      row("Daarvan gemist", orDash(d.gemistWeek)),
+      row("Gemiddelde klus", oneLine(d.klusWaarde) ? `EUR ${oneLine(d.klusWaarde)}` : "-"),
+      row("Rekensom", misgelopenPerMaand(d)),
+      row("Belt zelf terug", orDash(d.terugbelgedrag) + (oneLine(d.terugbelgedrag) === "niet altijd" ? "  <-- diskwalificerend, eerst bellen" : "")),
+      row("Eigen openingsvraag", orDash(d.eigenOpeningsvraag)),
+      row("Wie neemt nu op", orDash(d.wieNeemtOp)),
+    ].join(""))}
+    ${section("H. Overig", [row("Moet erop", orDash(d.moetErOp)), row("Vermijden", orDash(d.vermijden)),
       row("Opmerkingen", cleanMulti(d.opmerkingen, 2000) || "-")].join(""))}
     <h3 style="margin:26px 0 8px;font-size:15px;color:#16232E;">Kant-en-klare ontwerpprompt</h3>
     <pre style="white-space:pre-wrap;background:#F3F1EA;border:1px solid #e4e1d8;border-radius:10px;padding:14px;font-size:12.5px;line-height:1.55;color:#16232E;font-family:ui-monospace,Consolas,monospace;">${escHtml(prompt)}</pre>

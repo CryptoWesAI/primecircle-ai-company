@@ -369,9 +369,66 @@
             </div>
           </div>
 
-          <!-- G. Overig -->
+          <!-- G. Jouw telefoon en jouw woorden.
+               Deze zes vragen staan bewust in het formulier en niet in het gesprek: ze zijn
+               achteraf niet te reconstrueren. De eerste drie leveren de rekensom waarmee het
+               aanbod verkocht wordt EN de drempel waaronder een stille week een storing is.
+               De vierde is de diskwalificerende vraag: wie zijn gemiste oproepen niet
+               terugbelt heeft geen vangnet nodig maar een telefoniste, en is dus geen klant.
+               De vijfde levert de openingszin van zijn eigen chatbot, letterlijk in zijn
+               woorden. De zesde brengt de stille beslisser in beeld: in veel klusbedrijven
+               neemt de partner de telefoon op, en dan vervang je haar werk. -->
           <div class="intake-section">
-            <p class="intake-section__eyebrow">G &middot; Overig</p>
+            <p class="intake-section__eyebrow">G &middot; Jouw telefoon en jouw woorden</p>
+            <h2>Zodat we kunnen rekenen en klinken als jij</h2>
+
+            <div class="demo-form__row" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem">
+              <label class="ffield">
+                <span class="ffield__label">Hoe vaak word je per week gebeld? <span class="ffield__opt">(schatting)</span></span>
+                <input type="text" name="belvolumeWeek" inputmode="numeric" placeholder="bijv. 25" />
+                <span class="ffield__err" data-err></span>
+              </label>
+              <label class="ffield">
+                <span class="ffield__label">Hoeveel daarvan mis je? <span class="ffield__opt">(schatting)</span></span>
+                <input type="text" name="gemistWeek" inputmode="numeric" placeholder="bijv. 6" />
+                <span class="ffield__err" data-err></span>
+              </label>
+              <label class="ffield">
+                <span class="ffield__label">Wat levert een gemiddelde klus op? <span class="ffield__opt">(euro)</span></span>
+                <input type="text" name="klusWaarde" inputmode="numeric" placeholder="bijv. 340" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+
+            <div class="demo-form__row">
+              <span class="intake-section__legend">Bel je een gemiste oproep normaal gesproken zelf terug?</span>
+              <div class="radio-pills" role="radiogroup" aria-label="Terugbelgedrag">
+                <label class="radio-pill"><input type="radio" name="terugbelgedrag" value="binnen het uur" checked /><span>Meestal binnen het uur</span></label>
+                <label class="radio-pill"><input type="radio" name="terugbelgedrag" value="zelfde dag" /><span>Vaak pas 's avonds</span></label>
+                <label class="radio-pill"><input type="radio" name="terugbelgedrag" value="niet altijd" /><span>Eerlijk gezegd niet altijd</span></label>
+              </div>
+            </div>
+
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Wat is de eerste vraag die je zelf stelt als iemand belt? <span class="ffield__opt">(precies zoals je het zegt)</span></span>
+                <input type="text" name="eigenOpeningsvraag" placeholder="bijv. Waar zit het, en staat er nu nog water?" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Wie neemt nu op als jij op een dak staat? <span class="ffield__opt">(optioneel)</span></span>
+                <input type="text" name="wieNeemtOp" placeholder="bijv. mijn vrouw, of niemand" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+          </div>
+
+          <!-- H. Overig -->
+          <div class="intake-section">
+            <p class="intake-section__eyebrow">H &middot; Overig</p>
             <h2>Nog iets kwijt?</h2>
 
             <div class="demo-form__row">
