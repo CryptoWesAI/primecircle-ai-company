@@ -48,7 +48,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 4 | De automatiseringen: n8n, sms, push, chat | **gedaan, iteratie 4** |
 | 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | **gedaan, iteratie 5** |
 | 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | **gedaan, iteratie 6** |
-| 7 | Storing en support: wat er gebeurt als het stukgaat | open |
+| 7 | Storing en support: wat er gebeurt als het stukgaat | **opgegaan in 2, 4 en 6** |
 | 8 | Prijs- en pakketstructuur | open |
 | 9 | Retentie: waarom een klant na maand 6 blijft | open |
 | 10 | De wow: wat een vakman ongevraagd aan een collega vertelt | open |
@@ -763,5 +763,59 @@ dagkaartje met drie regels waarvan de derde altijd de kleinste moet zijn, meet h
 een oordeel van te maken.
 
 Geen van beide is een systeem dat gebouwd moet worden. Dat is precies waarom ze hier passen.
+
+### Uitgediept: beheer door begrenzing
+
+**De dragende zin die alles bij elkaar houdt:** *het systeem is 24/7, de mens is werkdagen 8
+tot 18* — en die twee worden in de verkoop nooit door elkaar gehaald.
+
+**Het weekritme.** Maandag tot en met donderdag één triageslot van twintig minuten (20:00 tot
+20:20) waarin elk bericht in precies twee bakjes valt: SITE PLAT of KLANT-BLIND rijdt direct,
+al het andere is verzamelvracht. Geen derde bakje, dus sorteren kost seconden. Cut-off donderdag
+17:00. Vrijdagavond 18:00 tot 22:00 rijdt de rit: alle tekstwijzigingen, kennisbank-updates en
+configuratiewerk van 25 klanten in één blok, WIP-limiet drie. Zaterdagochtend buffer en
+onboarding. Maandagochtend 07:00 gaat de gezondheidsmail automatisch uit.
+
+**Bij 25 klanten is dat ~7,5 tot 8 uur per week** naast een fulltime baan, mits nieuwe klanten
+apart begroot worden op drie uur onboarding elk.
+
+**Buiten 8 tot 18 is er technisch geen kanaal.** Supportnummer naar voicemail met
+terugbelnotitie, automatische mailreply (*"we lezen dit op de eerstvolgende werkdag vanaf 8:00.
+Uw klanten worden ondertussen gewoon opgevangen, dat stopt nooit"*), en één apart alarmnummer
+dat uitsluitend afgaat bij KLANT-BLIND.
+
+**Dragend risico: de founder sloopt de muur zelf bij klant 1 tot 5, en kan hem daarna niet meer
+terugzetten bij klant 20.** Precedent is duurder dan een verloren deal. Wie op 21:00 antwoordt,
+verkoopt stilzwijgend 21:00 aan alle 25 volgende klanten.
+
+**Het antwoord op de verkoopspanning is niet wegmoffelen maar hardop splitsen.** *"Wij zorgen
+dat u geen klant meer mist"* gaat over uw klanten, en dat systeem staat 24 uur per dag aan.
+*"Werkdagen 8 tot 18"* gaat over mij, en dat is precies waarom het systeem zo gebouwd is dat het
+mij 's nachts niet nodig heeft. **Een leverancier die 's nachts moet ingrijpen om uw telefoon te
+laten werken, heeft iets slechts gebouwd.** Bewijs het met een echt nachttranscript. Wie hierna
+alsnog 24/7 menselijke bereikbaarheid eist, is geen €99-klant maar een klant die de marge opeet.
+
+**De vrijdagrit is het echte pijnpunt**, en het antwoord is tweeledig: tarieven, openingstijden
+en een spoedmelding zet de klant **zelf** live in het dashboard (die categorie mag nooit in de
+rit, want vier dagen wachten kost hem geld), en voor de rest is er één betaalde klep:
+**spoedwijziging buiten de rit, €49, binnen 4 werkuren.** Die prijs is geen omzetmodel maar een
+filter: wie echt haast heeft betaalt, de rest ontdekt dat vrijdag prima was, en de founder hoeft
+nooit meer op gevoel te beoordelen of iets "echt dringend" is.
+
+**Eerste stap, 90 minuten en €0, geen code.** Schrijf de Serviceafspraak op één A4 (max 350
+woorden, geen juridische taal): bereikbaarheid, systeem 24/7, de twee storingsklassen, de
+vrijdagrit met cut-off, de zelfbedieningsvelden, de €49-spoedklep, twee onderhoudsweken per
+jaar, en de twee uitzonderingen. Publiceer op `belvanger.nl/serviceafspraak`, hang hem onder de
+offerte, en zet de auto-reply en voicemailtekst nu al live — **vóórdat prospect nummer één iets
+anders heeft gehoord. Verwachtingen zijn gratis om vooraf te zetten en peperduur om achteraf
+terug te draaien.**
+
+**Kinderen.** Eén zelfbedienbaar veldenblok (tarieven, openingstijden, "even niet bereikbaar"),
+geen volledig CMS · zichtbare wachtrij plus spoedknop: *"Rit van vrijdag 15 augustus, 2 van 3
+plekken bezet"* · de belofte-splitsing als vast blok op de site · een **precedentlogboek** van
+één regel per doorbreking, waarbij drie doorbrekingen in een maand een herziening van het ritme
+triggeren en niet van de discipline · de eerste veertien dagen verkopen als benoemd
+"Startprogramma" met drie vaste belmomenten en een expliciet einde, zodat het enige onbatchbare
+werk eindig en verkoopbaar wordt.
 
 ---
