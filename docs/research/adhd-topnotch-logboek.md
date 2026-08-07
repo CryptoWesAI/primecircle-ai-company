@@ -17,8 +17,8 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 7 |
-| Oppervlakken gedekt | 8 van 15 (7 opgegaan in 2/4/6) |
+| Iteraties gedraaid | 8 |
+| Oppervlakken gedekt | 12 van 15 (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
 | Fase | divergentie |
 
 **Commercieel beslissende vondst (iteratie 7):** de vlakke €99 subsidieert de beste
@@ -57,13 +57,13 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | **gedaan, iteratie 6** |
 | 7 | Storing en support: wat er gebeurt als het stukgaat | **opgegaan in 2, 4 en 6** |
 | 8 | Prijs- en pakketstructuur | **gedaan, iteratie 7** |
-| 9 | Retentie: waarom een klant na maand 6 blijft | open |
-| 10 | De wow: wat een vakman ongevraagd aan een collega vertelt | open |
+| 9 | Retentie: waarom een klant na maand 6 blijft | **gedaan, iteratie 8** |
+| 10 | De wow: wat een vakman ongevraagd aan een collega vertelt | **gedaan, iteratie 8** |
 | 11 | De AI-laag: chat, spraak, triage, tegenover de concurrentie | open |
 | 12 | Data en AVG als product in plaats van als plicht | open |
-| 13 | Het iOS-gat en mobiele levering | open |
-| 14 | Offboarding en eigendom | open |
-| 15 | Meetbaarheid: aan welk cijfer leest de klant zijn waarde af | open |
+| 13 | Het iOS-gat en mobiele levering | **opgegaan in 2 en 4** (sms als ruggengraat) |
+| 14 | Offboarding en eigendom | **opgegaan in 5** (eigendomslaag, exit-knop, weglooptest) |
+| 15 | Meetbaarheid: aan welk cijfer leest de klant zijn waarde af | **gedaan, iteratie 8** |
 
 Daarna verschuift de loop van divergentie naar **synthese en snoeien**: tegenspraken
 tussen oppervlakken oplossen, dubbelingen samenvoegen, en de lijst terugbrengen tot wat
@@ -934,5 +934,67 @@ zodat je de bundel kalibreert op echt verbruik vóór de telling geld waard word
 gesprekken waarop de beller antwoordde tellen mee, waarmee de prijs van een kostenpost een
 succesvergoeding wordt · de staffel tonen en niet uitleggen · de doorgestreepte prijs vervangen
 door drie echte, geanonimiseerde offertes van lokale webbouwers.
+
+---
+
+## Iteratie 8 — Retentie, mond-tot-mond en meetbaarheid
+
+Drie oppervlakken samengevoegd (9, 10 en 15), omdat het één systeem is: een klant die zijn
+waarde ziet, blijft én vertelt het door, en beide hangen aan hetzelfde mechanisme.
+
+Frames: biologie · game designer · markten · inversie. Vier geïsoleerde takken, 24 ideeën.
+
+### De convergentie
+
+Vier onafhankelijke frames komen op hetzelfde uit, en het corrigeert het antwoord dat iteratie 2
+gaf. Daar was het tegengif voor onzichtbaarheid een maandbericht met **aantallen**. Deze ronde
+zegt: **anonieme aantallen repareren de onzichtbaarheid niet. De waarde moet een naam en een
+tijdstip krijgen, en de verdienste moet bij de vakman liggen, niet bij Belvanger.**
+
+De sabotageformulering uit het inversie-frame maakt het scherp: *wie nooit één concreet gezicht
+heeft gezien dat anders was weggelopen, kan in december geen enkele zin noemen over wat het hem
+opleverde.*
+
+### Clusters
+
+**De waarde krijgt een naam en een gezicht**
+- Eén sms per maand met een gezicht erin, niet met een totaal: *"nummer 4 was Jansen Bouw, die belde zondag om 21:40"* `[N9 V9 F10]`
+- Het cijfer gaat over hem, niet over het product: *"je belde 11 van de 14 terug, gemiddeld binnen 22 minuten"* `[N9 V8 F10]`
+- Eén cijfer per maand dat hij zelf niet kan weten: *"14 mensen belden die je niet opnam, 9 daarvan hadden je nog nooit eerder gebeld"* `[N9 V8 F10]`
+- In maand vijf belt de founder om te vragen welke opgevangen bellers klus zijn geworden, en dat bedrag staat daarna elke maand in de sms `[N8 V7 F10]`
+- Elke gemiste-oproep-sms sluit af met het lopende totaal sinds de startdatum `[N8 V9 F9]`
+- Onthoudingsdemo: één keer per kwartaal tonen wat hij zónder Belvanger niet had gezien `[N9 V7 F8]`
+
+**Hij bouwt iets op dat van hem is**
+- Het klantendossier: elke opgevangen oproep wordt een regel in zijn eigen adressenlijst, exporteerbaar met één knop `[N8 V9 F10]`
+- Zijn eigen antwoorden zitten in de chatbot: onbekende vragen komen per sms naar hem toe, hij antwoordt in gewone taal, de bot leert het `[N9 V8 F10]`
+- Imprinting op de stem: de bot neemt in de eerste 30 dagen zijn eigen groet en afsluitzin over `[N9 V7 F9]`
+- Maandelijkse PDF plus CSV die hij bij opzegging gewoon meeneemt; wat hij verliest is niet zijn data maar de doorlopende reeks `[N8 V9 F9]`
+
+**Doorvertellen zonder erom te vragen**
+- Een fysiek A4 twee keer per jaar, met een extra exemplaar "voor als iemand ernaar vraagt" `[N9 V8 F9]`
+- De collega-koppeling: hij mag één vakgenoot een half jaar gratis meenemen, zelf gekozen, en er wordt daarna nooit meer om een naam gevraagd `[N9 V8 F9]`
+- Elke terugbel-sms aan de eindklant sluit af met één regel in zijn stem, zodat de particulier de vector wordt `[N9 V8 F8]`
+- Een maandelijks regionaal feit dat gemaakt is om ongewijzigd in een WhatsApp-vakgroep geplakt te worden `[N8 V7 F8]`
+- Openbare regiopagina met alleen de vakmensen die aantoonbaar binnen X uur terugbellen `[N10 V6 F9]` **[wacht op klanten]**
+
+**Wederkerigheid en territorium** — **[wacht op klanten]**
+- Leads die buiten zijn vakgebied vallen met één sms doorsturen naar een collega die hij zelf heeft aangedragen, waarmee hij een netwerk van openstaande wederdiensten opbouwt `[N10 V6 F9]`
+- Territoriummarkering: tonen hoeveel aanvragen in zijn postcodegebied nog rondzwerven, met een beperkt aantal plekken per gemeente `[N9 V6 F8]`
+- Jaarlijkse regiobrief per vak, waarbij een opgezegde klant de laatste editie houdt `[N8 V7 F8]`
+
+**Het ritme moet een gezicht hebben**
+- De vrijdagrit bevestigen met één zin van de founder over wát er veranderde en waarom het geld scheelt, niet met een automatische mail `[N8 V8 F9]`
+- De onderhoudsweken vooraf aankondigen mét een concrete verbetering die hij niet had gevraagd `[N8 V8 F8]`
+- Eén keer per kwartaal belt Belvanger hém, vier minuten, waarin hij als vakman wordt behandeld en niet als gebruiker `[N8 V7 F9]`
+
+### Waarom dit iteratie 2 corrigeert
+
+Iteratie 2 ontwierp een product dat je nooit hoeft te openen, en noemde waarde-onzichtbaarheid
+als het dragende risico met een maandbericht als oplossing. Iteratie 8 laat zien dat dat
+maandbericht in de voorgestelde vorm (*"23 aanvragen, 19 binnen het uur"*) het probleem niet
+oplost, omdat een aantal geen verhaal is. **Een naam en een tijdstip zijn dat wel**, en het cijfer
+moet over zijn eigen prestatie gaan, want daar is hij trots op en dat noemt hij uit zichzelf bij
+de groothandel.
 
 ---
