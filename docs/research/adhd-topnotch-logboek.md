@@ -417,3 +417,73 @@ en de exacte toegevoegde regel · twee korte gesprekken (20 minuten intake, 10 m
 larve-doorloop) in plaats van e-mailpingpong, allebei ingepland tijdens het eerste gesprek.
 
 ---
+
+## Iteratie 4 — De automatiseringen: n8n, sms, push, chat
+
+Frames: inversie · de aanvaller · speedrunner · tienjarig kind. Vier geïsoleerde takken,
+24 ideeën.
+
+**De ongemakkelijke convergentie van deze ronde:** meerdere frames zeggen onafhankelijk
+*haal eruit* in plaats van *bouw erbij*. Het tienjarige kind vraagt waarom er zes systemen
+tussen "iemand belt" en "de vakman weet het" zitten, de speedrunner wil n8n en de pushlaag
+schrappen, en de inversie laat zien dat de bestaande stille fouten juist ontstonden op de
+naden tussen die systemen.
+
+### Clusters
+
+**Controleer de keten van buitenaf, en laat het kritieke pad buiten je eigen server lopen**
+- Een synthetische testklant belt elk uur écht binnen; de keten moet zichzelf binnen 90 seconden de volledige sms plus melding terugleveren `[N8 V9 F10]`
+- Twilio Studio stuurt zelf de sms bij een gemiste oproep, zodat dat pad blijft werken als de VPS plat ligt `[N8 V9 F10]`
+- Meet het **antwoordpad**, niet de verzendbevestiging: een tweede echt nummer leest de sms terug en antwoordt "ja" `[N9 V8 F10]`
+- Alarmeren mag nooit via het kanaal dat kapot is: dead man's switch bij een externe dienst die mailt als de VPS zwijgt `[N7 V9 F10]`
+- Stiltealarm: wie normaal 12 leads per week krijgt en er nu 2 heeft, is dat de markt of de keten `[N9 V8 F9]`
+- Ruwe payload wegschrijven vóór enige verwerking, zodat een mislukte verwerking herspeelbaar is zonder de beller opnieuw te storen `[N7 V9 F9]`
+
+**Kostenbommen en misbruik**
+- Dagbudget in euro's per kanaal, zachte drempel op 60% naar de vakman, harde drempel die degradeert naar een statisch belnummer `[N8 V9 F10]`
+- Uitgaande sms-begrenzer per beller, per vakman, per uur, met "X pogingen onderdrukt" zichtbaar in plaats van stil `[N8 V9 F9]`
+- Nummerverificatie: geen sms naar een nieuw nummer tot Twilio bevestigt dat de oproep daar echt vandaan kwam; formulierleads krijgen alleen e-mail `[N9 V8 F9]`
+- Onveranderlijke bron-stempel per lead, met "geverifieerde oproep" versus "onbevestigd webformulier" zichtbaar in het dashboard `[N8 V8 F9]`
+
+**De machine mag niet namens de vakman spreken**
+- Uitgaande filter op de chatbot: blokkeer elk antwoord met een prijs, termijn, garantie of toezegging die niet letterlijk in de goedgekeurde feitenlijst staat `[N9 V8 F10]`
+
+**Minder systemen**
+- n8n volledig verwijderen; de webhook-handlers zijn vijftig regels in de Node-server die de founder al beheerst `[N8 V8 F9]`
+- De dagelijkse "alles groen"-mail vervangen door een dead man's switch `[N8 V9 F9]`
+- Web Push en de PWA schrappen ten gunste van sms `[N7 V9 F8]` — zie waarschuwing hieronder
+- De AI-chatbot uitzetten tot een klant er expliciet om vraagt `[N7 V9 F7]` — zie waarschuwing hieronder
+- Activiteitenlog vervangen door één gedeeld Google Sheet `[N8 V7 F6]` **trap**
+
+**De keten is één telefoonnummer** (het naïeve frame, en het is minder naïef dan het klinkt)
+- Bij geen gehoor gaat de telefoon meteen weer over met een stem: *"Er heeft net iemand gebeld op nul zes..."*, druk groen en je belt al `[N10 V7 F10]`
+- Een gemiste oproep van een vast nummer dat hij opslaat als "GEMISTE KLANT"; terugbellen verbindt automatisch door met de laatste beller `[N10 V7 F9]`
+- Het systeem belt de vakman én de klant en verbindt ze door, zodat er niets te tikken valt `[N10 V6 F10]`
+- Alles wordt één WhatsApp-bericht in een groep waar alleen de vakman in zit `[N8 V7 F9]`
+- Het antwoordbericht komt van het eigen mobiele nummer van de vakman `[N9 V5 F10]`
+
+### Waarschuwingen bij het schrap-cluster
+
+- **Google Sheet als leaddatabase is een trap.** Het gaat om telefoonnummers en
+  gespreksinhoud van klanten van de klant, dus persoonsgegevens van derden, en het dashboard
+  met export bestaat al. Dit ruilt een AVG-verantwoording in voor gemak.
+- **PWA en Web Push schrappen is te ver, maar de these erachter klopt.** Iteratie 2 kwam er
+  al op uit: push moet luxe zijn en sms de ruggengraat. Dat is iets anders dan de PWA
+  weggooien die al werkt en waarvan de crypto op een echt toestel is bewezen.
+- **De chatbot uitzetten is te ver.** Hij staat op de site als onderdeel van het aanbod en
+  is een verkoopargument. Wat wél klopt: hij mag in fase één geen prijzen in zijn context
+  hebben, en dat is precies wat de uitgaande filter afdwingt.
+
+### Het patroon dat zich over twee iteraties heen aftekent
+
+Iteratie 3 zei: harde data mag nooit uit een transcriptie komen. Iteratie 4 zegt: de chatbot
+mag geen prijs noemen die niet in de goedgekeurde feitenlijst staat. Dat is twee keer
+hetzelfde principe, uit twee onafhankelijke oppervlakken:
+
+> **De machine mag nooit een getal of een belofte uitspreken namens de vakman.** Zachte taal
+> mag gegenereerd worden, harde toezeggingen komen uitsluitend van een mens en zijn
+> schriftelijk bevestigd.
+
+Dit is de eerste kandidaat voor een vast ontwerpprincipe van het hele product.
+
+---
