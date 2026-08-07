@@ -53,7 +53,7 @@ zijn je waardevolste contacten en het zijn geen prospects.
 
 | Naam | Wat hij deed | Bedankt | "Ken je er nog meer?" gevraagd |
 |---|---|---|---|
-| Georgina Tan | tagde Marcel Bruinenberg en Friesland Schilderwerken onder de post | **ja** | nog niet |
+| Georgina Tan | tagde Marcel Bruinenberg en Friesland Schilderwerken onder de post | **ja** | **nog niet — goedkoopste openstaande actie in dit bestand** |
 | _(naam invullen)_ | deelde de post ook | ? | nog niet |
 
 **Wat het delen heeft opgeleverd: nul geïnteresseerden.** Twee mensen hebben de post
@@ -64,6 +64,28 @@ bereikt mensen die op dat moment niets missen en geen reden hebben om zich te me
 
 Conclusie voor het kanaal, niet voor het aanbod: het aanbod is hiermee **niet** getoetst,
 want er is niemand geweest die het heeft afgewezen. Er is alleen niemand geweest.
+
+### Post 2, 2026-08-07
+
+De founder heeft zelf een tweede Facebook-post geplaatst
+(`facebook.com/share/p/1BkbSBL8Ez`). Inhoud niet vastgelegd: de sessie waarin dit is
+opgeschreven kon `facebook.com` niet bereiken (egress-blokkade), dus hier staat alleen
+dát hij bestaat, niet wat erin staat. Vul de tekst aan als je hem beoordeeld wilt hebben.
+
+**Deze post staat bewust niet in het grootboek.** Zie de regel daar: een tijdlijnpost is
+zichtbaarheid, geen contact.
+
+**Wat een post wél kan doen, en wat er de vorige keer ook gebeurde:** hij levert je namen.
+Georgina tagde twee mensen onder post 1, en precies díe twee werden de enige twee regels
+in het grootboek. De post was de aanleiding, het bericht was het contact.
+
+Daarom hoort er bij deze post één ding op de agenda, en het is geen bouwwerk:
+
+- [ ] **Kijk wie er reageert, deelt of liket — en stuur die persoon een bericht.** Ook
+      "gewoon" een like is een aanleiding. Dát is de regel die in het grootboek komt.
+- [ ] **Vraag Georgina "ken je er nog meer?"** Ze is bedankt maar die vraag is nooit
+      gesteld, en ze heeft al bewezen dat ze namen kent. Dit is de goedkoopste openstaande
+      actie in dit hele bestand.
 
 ## Grootboek
 
