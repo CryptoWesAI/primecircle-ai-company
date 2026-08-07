@@ -278,10 +278,22 @@ als referentiekopie in `infra/dcg/config.toml`. Gevolg voor het werk: `docker rm
 
 **Nog open, en dit vraagt de founder:**
 
-1. **AB Uitvaartzorg heeft een AI-chat en bezoekersstatistieken terwijl de
-   privacyverklaring daar zegt dat de site geen trackingtechnieken gebruikt.** De juiste
-   alinea ligt klaar in `clients/ab-uitvaartzorg/docs/chatbot-privacy-alinea.md`. Dit is de
-   grootste juridische post en het is een live klantsite, dus founder-akkoord nodig.
+1. ~~**AB Uitvaartzorg heeft een AI-chat en bezoekersstatistieken terwijl de
+   privacyverklaring daar zegt dat de site geen trackingtechnieken gebruikt.**~~
+   **Achterhaald, gecorrigeerd op 2026-08-07.** Deze regel is geschreven op 28 juli om 20:36;
+   de tekst is diezelfde avond om 21:27 daadwerkelijk toegepast in NL én EN en live
+   geverifieerd (commit `21e387e`). De regel bleef staan omdat hij 51 minuten ouder is dan de
+   oplossing. **Er stond dus maandenlang onterecht dat de grootste juridische post open was.**
+
+   Wat er wél nog open staat is kleiner en van een andere soort, en het staat als checklist
+   onderaan `clients/ab-uitvaartzorg/docs/chatbot-privacy-alinea.md`:
+   - **Alien moet de tekst nalezen.** Zij is verwerkingsverantwoordelijke; het is haar
+     document, niet het onze. De correctie is doorgevoerd omdat de oude tekst aantoonbaar
+     onjuist was, maar dat vervangt haar akkoord niet.
+   - **Het databeleid en de verwerkersketen van OpenRouter naar Google** zijn nog niet
+     gecontroleerd en vastgelegd. Zolang dat niet is gebeurd, is de alinea "Delen met derden"
+     wel eerlijk (hij claimt geen waarborgen) maar nog niet compleet. Zet in OpenRouter ook
+     de logging- en retentie-instelling op de meest privacyvriendelijke stand.
 2. **Activiteitenlog vullen**: `node tools/activiteitenlog-vullen.mjs` met `BV_EMAIL`/`BV_PASS`,
    code uit de mail. Elf regels staan klaar in `tools/activiteitenlog.json`.
 3. **Dashboardwachtwoord wisselen**: het is op 28 juli in een gesprek geplakt.
