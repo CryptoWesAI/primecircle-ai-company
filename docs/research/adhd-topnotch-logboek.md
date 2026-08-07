@@ -17,8 +17,8 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 1 |
-| Oppervlakken gedekt | 1 van 15 |
+| Iteraties gedraaid | 2 |
+| Oppervlakken gedekt | 2 van 15 |
 | Fase | divergentie |
 
 **Sterkste vondst tot nu toe:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
@@ -43,7 +43,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | # | Oppervlak | Status |
 |---|---|---|
 | 1 | Website belvanger.nl: vertrouwen en conversie | **gedaan, iteratie 1** |
-| 2 | Klantdashboard: het dagelijkse gebruik door de vakman | open |
+| 2 | Klantdashboard: het dagelijkse gebruik door de vakman | **gedaan, iteratie 2** |
 | 3 | Onboarding: van "ja" tot live | open |
 | 4 | De automatiseringen: n8n, sms, push, chat | open |
 | 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | open |
@@ -174,5 +174,135 @@ Het patroon achter de sterkste ideeën is niet "mooier" maar **ondergaan in plaa
 lezen**. Dat is een lens die op de volgende oppervlakken ook getest moet worden: kan de
 vakman het dashboard ondergaan voordat hij klant is, kan hij de onboarding ondergaan, kan
 hij de storingsafhandeling ondergaan. Meenemen naar iteratie 2.
+
+---
+
+## Iteratie 2 — Klantdashboard: het dagelijkse gebruik
+
+Frames: de monteur die om 3 uur 's nachts gebeld wordt · logistiek · hardware-engineer ·
+mierenkolonie. Vier geïsoleerde takken, 24 ideeën.
+
+**De convergentie van deze ronde:** drie van de vier frames kwamen onafhankelijk uit op
+een variant van *"het beste dashboard is er een die hij nooit opent"*. Dat is niet één
+idee maar een productthese, en die is uitgediept in plaats van een losse functie.
+
+### Clusters
+
+**Het dashboard hoeft niet geopend te worden**
+- Elke lead binnen 10 seconden óók als sms, zodat push luxe is en geen belofte `[N7 V9 F10]`
+- Alleen "een klant wacht op jou, nu" mag pushen; al het andere is ophaalmateriaal `[N8 V9 F9]`
+- Dagelijks spraakbericht om 17:30, af te luisteren zonder inloggen `[N9 V7 F8]`
+- Het telefoonnummer als primair invoerkanaal: bel voor een gesproken samenvatting van open leads, 1-toets doorverbinden `[N10 V6 F9]`
+- Push op iOS vervangen door sms of WhatsApp met deeplink: laat het besturingssysteem het transport leveren `[N7 V9 F9]`
+- Dagroute om 06:30 als één afvinkbare stoplijst, gesorteerd op adres-nabijheid `[N8 V7 F8]`
+
+**Tijd als ordenend principe in plaats van status**
+- Bederfklok: elke lead heeft resterende houdbaarheid (formulier 15 min, gemiste oproep 1 uur, e-mail 4 uur) en zakt zichtbaar door van vers naar bedorven `[N9 V9 F9]`
+- Retourbak: "geen deal" en "geen gehoor" komen na 14, 45 en 120 dagen terug als kant-en-klaar sms-sjabloon `[N8 V9 F9]`
+- Trackingnummer plus publieke statuspagina die de vakman naar zijn klant sms't: ontvangen → gebeld → offerte → ingepland `[N9 V8 F9]`
+- Prioriteitsklassen op signaalwoorden (lekkage, storing, verbouwing) plus kanaal `[N7 V8 F8]`
+
+**Bediening onder fysieke omstandigheden**
+- Eén "Ik ben aan het werk"-schuif die doorschakeling, bereikbaarheid en antwoordtekst tegelijk omzet `[N8 V9 F9]`
+- Eén duim, drie seconden, 64px raakvlakken onderaan, contrast dat in vol zonlicht standhoudt zonder op kleur te leunen `[N6 V9 F8]`
+- Offline als normale bedrijfsmodus: altijd uit een lokale buffer lezen, met alleen een "laatst ververst"-stempel `[N7 V7 F8]`
+- Outbox met write-behind: elke handeling wordt lokaal bevestigd en verstuurt zodra er bereik is `[N7 V7 F8]`
+
+**Beheer zonder beheerder**
+- De configuratie schrijft zichzelf: na elke handmatige handeling één ja/nee-vraag om er een regel van te maken `[N10 V6 F9]`
+- Eén tik "wel/geen klus?" na elke gemiste oproep, waarmee de vakman ongemerkt de routering traint `[N9 V7 F9]`
+- Hartslag: het systeem belt zichzelf elk kwartier, de klant ziet één vinkje met tijdstempel `[N7 V9 F8]`
+- Elk foutscherm toont één zelfhulpactie plus een "Herstel dit nu"-knop `[N7 V8 F7]`
+- Zwarte doos: laatste 200 gebeurtenissen per klant, één knop stuurt ze als leesbaar rapport naar de founder `[N7 V9 F6]`
+
+**Het collectief als motor** — allemaal **[wacht op klanten]**
+- Nieuwe klanten erven de sms-teksten die over alle accounts heen de hoogste terugbelratio halen `[N9 V6 F7]`
+- "61% van de dakdekkers laat dit aan" naast elke schakelaar `[N8 V7 F7]`
+- Configuratie overnemen van de collega die je doorverwees, via een link die alléén instellingen meedraagt en nul contacten `[N9 V7 F8]`
+- Cross-docking: één tik zet een lead die niet past door naar een bevriende collega, met terugverwijzing `[N10 V6 F9]`
+- Geanonimiseerd regionaal signaal ("12% meer lekkages deze week") terug naar alle dashboards `[N8 V5 F6]`
+
+### Waarschuwing bij het hele collectief-cluster
+
+Vijf van deze ideeën zijn sterk en allemaal onbruikbaar bij nul klanten: ze hebben een
+kolonie nodig om te bestaan. Bouw er geen enkele voordat er tien betalende klanten zijn,
+maar ontwerp het datamodel er wel nu al naar, want achteraf een geanonimiseerde
+aggregatielaag inbouwen is duurder dan hem meteen goed neerzetten.
+
+### Uitgediept: het dashboard dat hij nooit opent
+
+**Schets.** Belvanger houdt op een dashboard te zijn en wordt **een sms-lijn met een
+archief erachter**. Elke aanvraag verlaat het systeem binnen 10 seconden als één sms van
+een gewoon 06-nummer, in strikt één GSM-7-segment:
+
+> `Nieuwe aanvraag 09:12 - Marja de Groot, 06 23456789 - lekkage keuken, Zwolle. Bellen: bel.vg/m3 - Belvanger`
+
+Push is dezelfde tekst een halve seconde eerder, voor wie hem heeft. Daarmee is het
+iOS-gat een comfortkwestie in plaats van een productgat.
+
+Op een gewone dinsdag opent hij het dashboard niet: twee of drie sms'jes, tikken op het
+nummer, terugbellen. Het systeem leidt uit dat gesprek af dat de lead is opgepakt, dus er
+is niets af te vinken. Opent hij het wel, dan ziet hij één scherm: bovenaan de schuif
+"Ik werk" / "Ik kan bellen", daaronder maximaal vijf mensen op volgorde van resterende
+versheid, elk met één grote belknop.
+
+**Van vijf secties blijven er twee over.** Overzicht wordt de versheidslijst met de schuif
+erin. Contacten wordt "Mensen": archief plus retourbak, nu ook handmatig aanvulbaar en
+exporteerbaar. Kanalen en Zichtbaarheid verdwijnen als sectie en komen terug als één
+maandbericht op de 1e. Hulp verdwijnt als sectie en wordt een vaste belknop onderaan elk
+scherm, plus het woord SPOED als sms-antwoord dat de founder direct piept.
+
+**Dragend risico: waarde-onzichtbaarheid.** Een product dat perfect werkt en nooit geopend
+wordt, voelt na drie maanden als €99 voor een sms'je dat hij "zelf ook wel had gehad".
+Onzichtbaarheid is hier tegelijk de feature en de opzegreden. Het maandbericht is daarom
+geen versiering maar het retentiemechanisme.
+
+**De kostenkant, en dit is het belangrijkste getal uit deze ronde.** Reken met €0,08 per
+segment. Een drukke vakman met 10 leads per dag is 220 leads per maand: €17,60 aan alerts
+plus €17,60 aan de textback naar de beller plus ~€1,15 nummerhuur = **€36 op €99, oftewel
+36% van de omzet.** Bij twee segmenten €55, oftewel 56%.
+
+Fataal is niet het volume maar **één verkeerd teken**: één é, één emoji of één typografisch
+aanhalingsteken schakelt de sms naar UCS-2 (70 tekens per segment) en verdrievoudigt de
+rekening stilletjes. De sjabloon moet met een test op GSM-7 worden vastgeklikt. De
+gemiddelde klant (3 leads per dag) kost ~€11 en dat is prima; dek de staart af met fair use
+van 200 alert-sms per maand, en stuur daarboven automatisch één samenvattings-sms per drie
+leads in plaats van door te belasten. Zo hangt de marge nooit van de drukte van de klant af.
+
+**De bederfklok mag geen schuldgevoel-machine worden.** Geen terugblik-statistiek per lead,
+geen rood, geen "gemist", geen streak. De klok bestaat alleen vooruit, om te sorteren. Wat
+over de houdbaarheid gaat verdwijnt geruisloos naar "Later bellen" mét een kant-en-klaar
+sms-sjabloon, in plaats van als verwijt.
+
+**Zelflerende configuratie is bij één klant geen leren maar bevestigen.** Drempel van drie
+identieke handelingen, maximaal één vraag per week, expliciete JA vereist, elke regel
+zichtbaar en met één tik terug te draaien, en de harde grens dat een regel **alleen de
+meldingssterkte mag wijzigen en nooit de opslag of aflevering van een lead**. Een verkeerd
+geleerde regel kost dan hooguit een trage terugbelactie, geen klus.
+
+**Het ontwerpprincipe voor uitval, en dit is de scherpste zin uit de hele ronde:** vallen
+sms én push samen uit, dan is het antwoord geen derde meldingskanaal maar degraderen naar
+de telefonie zelf. Een canary-lead om 06:55 moet binnen 60 seconden een delivery-receipt
+opleveren; zonder dat receipt zet het systeem de doorschakeling automatisch uit zodat de
+telefoon van de vakman gewoon overgaat zoals vóór Belvanger. **De slechtst mogelijke dag
+met Belvanger moet gelijk zijn aan een normale dag zonder Belvanger.**
+
+**Eerste stap.** Deze week alleen de sms-ruggengraat voor één kanaal (het webformulier),
+op de bestaande Twilio-opzet: webhook naar sms binnen 10 seconden, met delivery-callback,
+de 06:55-canary, en de tekst hard vastgeklikt op één GSM-7-segment via een unit-test die
+elk niet-GSM-teken laat falen. Zeven dagen draaien op zijn eigen telefoon met drie tot vijf
+zelfgemaakte leads per dag. Definition of done: zeven dagen achtereen elke testlead binnen
+10 seconden afgeleverd, gemeten kostprijs per lead op papier, en één bewust uitgeschakelde
+gateway die aantoonbaar de doorschakeling uitzette.
+
+**Kinderen.** Het maandbericht op de 1e als enige uiting richting bestaande klanten (*"Juli:
+23 aanvragen, 19 binnen het uur, 4 die je zonder Belvanger niet had gezien. Waarde bij je
+gemiddelde klus van €340: €1.360"*) · terugbellen ís afvinken, de status komt uit de
+handeling en niet uit een knop · canary met degradatie naar kale doorschakeling · de
+retourbak als bevestig-sms in plaats van een scherm ("JA" kost drie seconden en €0,08, en
+levert bij een klus van €340 al rendement bij 1 op 100) · **onboarding is dezelfde schuif**:
+de nieuwe klant belt éénmalig vanaf zijn eigen mobiel naar het Belvanger-nummer, waarmee
+opvangnummer, beltijden en afzender automatisch vaststaan. Dat laatste haalt de laatste
+reden weg om ooit een instellingenpagina te bouwen, en het is de brug naar iteratie 3.
 
 ---
