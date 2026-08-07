@@ -41,14 +41,14 @@
         <h1 style="font-size:clamp(2rem,1.5rem + 2.2vw,3.1rem);max-width:18ch">Vertel ons over je bedrijf.</h1>
         <p style="max-width:62ch;font-size:1.08rem;color:var(--staal);margin-top:1rem">
           Met onderstaande gegevens zetten we je website en dashboard goed op. Neem
-          rustig de tijd, het hoeft niet in één keer: wat je niet weet of nog niet
-          hebt, mag je gewoon overslaan. Zodra je verstuurt, ontvangen we je gegevens
-          en gaan we ermee aan de slag.
+          rustig de tijd, het hoeft niet in één keer. Wat je niet weet of nog niet hebt,
+          mag je overslaan, maar zes vragen bepalen of je site op die van je concurrent
+          lijkt of niet. Die staan hieronder gemarkeerd.
         </p>
         <div class="intake-hero__meta">
           <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>10&ndash;15 minuten</span>
           <span><svg viewBox="0 0 24 24"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Alleen bedrijfsnaam, vak, regio, telefoon, e-mail en diensten zijn verplicht</span>
-          <span><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 8h16"/></svg>Rest mag je overslaan</span>
+          <span><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="M4 8h16"/></svg>Zes vragen bepalen het resultaat, de rest mag je overslaan</span>
         </div>
       </div>
     </section>
@@ -62,12 +62,27 @@
              ingesproken antwoord levert zijn eigen taal, en dat is precies het materiaal
              waar de site en de chatbot van moeten leven. Kost nul bouwwerk en hergebruikt
              het patroon dat er al is voor "logo stuur ik apart na". -->
-        <p class="intake-section__hint" style="max-width:760px;margin:0 0 1.5rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2)">
-          <strong>Liever inspreken dan typen?</strong> Dat mag, en het levert meestal een betere site op.
-          Stuur je antwoorden als spraakbericht naar <a href="https://wa.me/31646733277">06 4673 3277</a>,
-          begin met je bedrijfsnaam. Vul hieronder dan alleen de gegevens in die exact moeten
-          kloppen: naam, telefoon, KvK, btw en werkgebied.
-        </p>
+        <!-- Bewust GEEN "hoe meer je invult, hoe beter". Dat is waar en zwak tegelijk: op een
+             formulier van deze lengte leidt het ertoe dat iemand zorgvuldig zijn btw-nummer
+             invult en het klusverhaal overslaat, terwijl dat laatste het enige is dat zijn
+             site onderscheidt van die van zijn concurrent. Daarom: expliciet benoemen welke
+             velden het resultaat bepalen, en wat er gebeurt als ze leeg blijven. -->
+        <div class="intake-section__hint" style="max-width:760px;margin:0 0 1.5rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2)">
+          <p style="margin:0 0 .6rem"><strong>Het meeste hieronder is optioneel. Dat betekent niet dat het niet uitmaakt.</strong></p>
+          <p style="margin:0 0 .6rem">
+            De verplichte velden zorgen dat je site <em>klopt</em>. De velden met het label
+            <span class="ffield__opt">bepaalt het resultaat</span> zorgen dat hij niet lijkt op die van
+            de collega drie straten verderop. Dat zijn er zes, ze staan verspreid door het formulier,
+            en ze kosten je samen misschien tien minuten. Sla je ze over, dan verzinnen wij niets:
+            dan staat het er gewoon niet.
+          </p>
+          <p style="margin:0">
+            <strong>Liever inspreken dan typen?</strong> Dat mag, en het levert meestal een betere site op.
+            Stuur je antwoorden als spraakbericht naar <a href="https://wa.me/31646733277">06 4673 3277</a>,
+            begin met je bedrijfsnaam. Vul hieronder dan alleen de gegevens in die exact moeten
+            kloppen: naam, telefoon, KvK, btw en werkgebied.
+          </p>
+        </div>
 
         <form class="intake-form" data-intake-form novalidate>
 
@@ -268,14 +283,14 @@
                  vak heeft dezelfde zes. -->
             <div class="demo-form__row">
               <label class="ffield">
-                <span class="ffield__label">Beschrijf één klus van de afgelopen maand <span class="ffield__opt">(wat was er aan de hand, wat heb je gedaan, wat kostte het ongeveer, hoe reageerde de klant)</span></span>
+                <span class="ffield__label">Beschrijf één klus van de afgelopen maand <span class="ffield__opt">bepaalt het resultaat</span><br><span class="ffield__opt">Wat was er aan de hand, wat heb je gedaan, wat kostte het ongeveer, hoe reageerde de klant</span></span>
                 <textarea name="voorbeeldKlus" rows="4" placeholder="Gewoon zoals je het aan een kennis zou vertellen. Liever te lang dan te kort."></textarea>
                 <span class="ffield__err" data-err></span>
               </label>
             </div>
             <div class="demo-form__row">
               <label class="ffield">
-                <span class="ffield__label">Wat verandert er zichtbaar als jij klaar bent? <span class="ffield__opt">(in één zin)</span></span>
+                <span class="ffield__label">Wat verandert er zichtbaar als jij klaar bent? <span class="ffield__opt">bepaalt het resultaat</span></span>
                 <input type="text" name="zichtbaarResultaat" placeholder="bijv. de druppel is weg en de vloer is droog" />
                 <span class="ffield__err" data-err></span>
               </label>
@@ -321,7 +336,7 @@
             </div>
             <div class="demo-form__row">
               <label class="ffield">
-                <span class="ffield__label">Welke klussen neem je expres <em>niet</em> aan, en waarom?</span>
+                <span class="ffield__label">Welke klussen neem je expres <em>niet</em> aan, en waarom? <span class="ffield__opt">bepaalt het resultaat</span></span>
                 <input type="text" name="nietDoen" placeholder="bijv. geen nieuwbouw, ik wil dezelfde dag klaar zijn" />
                 <span class="ffield__err" data-err></span>
               </label>
@@ -386,7 +401,7 @@
                  consequent "kwaliteit, service en betrouwbaarheid" op. -->
             <div class="demo-form__row">
               <label class="ffield">
-                <span class="ffield__label">Wat voor klant past <em>niet</em> bij je? <span class="ffield__opt">(eerlijk mag)</span></span>
+                <span class="ffield__label">Wat voor klant past <em>niet</em> bij je? <span class="ffield__opt">bepaalt het resultaat</span></span>
                 <input type="text" name="nietVoor" placeholder="bijv. wie alleen op de laagste prijs let" />
                 <span class="ffield__err" data-err></span>
               </label>
@@ -496,14 +511,14 @@
                  de bot alleen doorverwijzen; mét deze antwoorden kan hij helpen. -->
             <div class="demo-form__row">
               <label class="ffield">
-                <span class="ffield__label">De drie vragen die klanten je het vaakst stellen, met jouw antwoord erbij</span>
+                <span class="ffield__label">De drie vragen die klanten je het vaakst stellen, met jouw antwoord erbij <span class="ffield__opt">bepaalt het resultaat</span></span>
                 <textarea name="veelgesteldeVragen" rows="5" placeholder="bijv.&#10;Kom je ook 's avonds? &ndash; Ja, tot 20:00, daarna alleen bij spoed.&#10;Wat kost voorrijden? &ndash; Binnen 15 km niks."></textarea>
                 <span class="ffield__err" data-err></span>
               </label>
             </div>
             <div class="demo-form__row">
               <label class="ffield">
-                <span class="ffield__label">Waar twijfelen klanten het vaakst over, of waarover wordt onderhandeld?</span>
+                <span class="ffield__label">Waar twijfelen klanten het vaakst over, of waarover wordt onderhandeld? <span class="ffield__opt">bepaalt het resultaat</span></span>
                 <input type="text" name="bezwaar" placeholder="bijv. of ik het echt dezelfde week kan doen" />
                 <span class="ffield__err" data-err></span>
               </label>
