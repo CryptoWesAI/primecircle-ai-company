@@ -17,9 +17,9 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 11 |
+| Iteraties gedraaid | 12 (afgerond) |
 | Oppervlakken gedekt | 15 van 15 (12 opgegaan in 3/4/5/9) (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
-| Fase | **synthese, adversarieel gedraaid** (divergentie afgerond op 9 iteraties) |
+| Fase | **afgerond** — divergentie (9), synthese (10), adversarieel (11), volledigheid (12) |
 
 **Commercieel beslissende vondst, na correctie in iteratie 11:** de vlakke €99 subsidieert
 de beste klanten. Een tweedelig tarief repareert dát, maar **niet het inkomensdoel**: de
@@ -225,6 +225,98 @@ negen klanten en ~€1.400 marge per maand.
 **Het plan klopt niet op €149.** Het minimum om het wél te laten kloppen: **prijs naar €199 tot
 €249 per maand**, of het doel bijstellen naar €1.800 netto. En vóór alles: **twintig
 verkoopgesprekken voeren en de prijs testen. De hele spreadsheet is nu fictie.**
+
+## Iteratie 12 — Wat ontbreekt, en het oordeel over deze loop zelf
+
+### De kritiek op de loop, en die is terecht
+
+**Bouwbias.** Elke ronde eindigde in een bouwbaar artefact: een `klant.json`, een dashboard, een
+onboardingpijplijn, een terugbelkaart. De enige uitkomst zonder artefact, namelijk bellen, staat
+al drie weken open. **Het systeem beloont wat de founder toch al wilde doen.**
+
+**En de adversariële ronde deelde de aannames van de verdediger**, want dezelfde auteur bedacht de
+aanvallers. Daardoor werd de enige echte weerlegging — *de vakman die niet wil terugbellen koopt
+een AI-telefonist* — geparkeerd als "openstaand" in plaats van behandeld als **kill-criterium**.
+
+Elf ronden op één corpus, de eigen documentatie. Er kwam geen nieuwe informatie het systeem
+binnen, dus leverde divergentie variatie op dezelfde aanname. Dat is de eerlijke grens van deze
+hele analyse.
+
+### Stakeholders die niet aan het woord zijn geweest
+
+- **De werkgever van de founder.** Nevenwerkzaamheden-, concurrentie- en IP-beding zijn nergens
+  getoetst terwijl er al een live bedrijf staat. **Dit kan het hele plan onwettig maken.** Dichten:
+  eigen arbeidsovereenkomst herlezen. Twintig minuten, nul euro.
+- **De beller van de vakman.** Het hele product is een sms naar een onbekende in stress, en er is
+  nooit getoetst of een 68-jarige met een lekkage een link van een onbekende afzender opent of hem
+  als phishing leest. Dichten: laat tien willekeurige mensen de echte sms op hun eigen telefoon
+  zien en vraag of ze erop klikken.
+- **De partner van de vakman.** In veel zzp-klusbedrijven neemt zij de telefoon en doet zij de
+  administratie. Zij is tegelijk de gebruiker én degene wiens werk je vervangt: de stille
+  blokkeerder van de deal. Standaardvraag in elk gesprek: *"wie neemt nu op als jij op een dak
+  staat?"*
+- **De partner van de founder.** Draagt het risico zonder stem, en is de feitelijke achtervang bij
+  uitval. Eén gesprek van dertig minuten met drie vragen: hoeveel uur per week tot welke datum,
+  welk bedrag mag verloren gaan, en bij welk signaal stoppen we.
+
+### Scenario's die niet zijn doordacht
+
+**Succes** (vier tekenaars in één maand naast een fulltime baan, zonder wachtlijsttekst) ·
+**uitval** (alle sleutels, DNS en kennis in één persoon; twee weken griep is twintig klanten zonder
+storingsafhandeling) · **publiek incident** (geen datalekdraaiboek, geen 72-uursroute naar de AP; in
+een dorp is reputatie één Facebookpost) · **boze klant** (*"ik heb er niks aan gehad, ik betaal
+niet"* heeft nu geen antwoord).
+
+### Onaangeroerde oppervlakken
+
+Geen KvK, geen rechtsvormkeuze (**eenmanszaak betekent privé aansprakelijk als een misgelopen sms
+een klus van €4.000 kost**), geen beroepsaansprakelijkheidsverzekering, en **geen algemene
+voorwaarden**, alleen een verwerkersovereenkomst-concept. Verder: btw en KOR, incassomandaat bij
+wanbetaling, telecomregels rond afzender-ID en ongevraagde sms aan consumenten, merkregistratie bij
+BOIP terwijl "Belvanger" al live staat, en overdraagbaarheid van een bedrijf dat aan één persoonlijk
+Hostinger-account hangt. **Samen één middag en onder de €500, tegenover een nu onbegrensd risico.**
+
+### Metingen die ontbreken
+
+- **De nulmeting bij de klant:** hoeveel oproepen mist hij nu écht. Zonder dat is de ROI
+  onbewijsbaar en de opzegging onweerlegbaar. Bied een gratis gemiste-oproepen-rapport van één week
+  aan; **dat rapport ís tegelijk het verkoopgesprek.**
+- **Omzet in plaats van leads.** Het dashboard telt leads, de klant zegt op om euro's.
+- **Founderuren per klant per maand, gelogd vanaf klant één.** Zonder dat is de cap van 20 fictie.
+- **De 8 seconden zijn nooit end-to-end op een echt NL-nummer gemeten.** Dat is de kern van de
+  belofte.
+- **p95-afleverlatency**, niet het gemiddelde.
+
+### De aanname die de klassieke omkering is
+
+**De prijs van €199 tot €249 is afgeleid uit het inkomensdoel van de founder, niet uit
+betalingsbereidheid van de klant.** Dat is de fout waar de hele analyse op rust, en geen enkele
+iteratie kan hem oplossen.
+
+---
+
+## Slotoordeel: de loop stopt hier
+
+Twaalf iteraties, ~250 ideeën, negen oppervlakken, één synthese, één adversariële ronde en één
+volledigheidsronde. Er is geen dertiende ronde die hier iets aan toevoegt, want het corpus is
+uitgeput: elke volgende iteratie herkauwt dezelfde documentatie.
+
+**De vijf dingen die je doet, in deze volgorde:**
+
+1. **Lees je arbeidsovereenkomst.** Twintig minuten, nul euro. Als daar een concurrentie- of
+   nevenwerkzaamhedenbeding in staat, is de rest van deze lijst irrelevant tot dat is opgelost.
+2. **Voer twintig verkoopgesprekken.** Niet vijf. Het gratis gemiste-oproepen-rapport van één week
+   is je opener en je nulmeting tegelijk.
+3. **Leg de prijskaart voor aan die twintig mensen** met vier vragen, en laat ze de prijs bepalen
+   in plaats van je inkomensdoel.
+4. **Dicht de juridische basis** als er een mondelinge ja is: KvK, algemene voorwaarden,
+   aansprakelijkheidsverzekering, rechtsvorm. Eén middag, onder €500.
+5. **Meet de 8 seconden end-to-end** op een echt Nederlands nummer voordat je hem ooit belooft.
+
+**Wat je níet doet:** de terugbelkaart bouwen, het genoom schrijven, de canary opzetten, of nog een
+iteratie draaien. Dat staat allemaal in dit document en het loopt niet weg.
+
+Dit logboek is af. Wat het waard is, blijkt uit gesprek nummer één.
 
 ## Oppervlakken-wachtrij
 
