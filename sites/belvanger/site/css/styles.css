@@ -569,19 +569,20 @@ input[type="range"]::-moz-range-thumb {
 /* ─────────────────────────── Voorbeelden ─────────────────────────── */
 .voorbeelden { padding: var(--sp-section) 0; background: var(--surface-2); }
 .voorbeelden .section-lead { max-width: 60ch; }
-/* Alle zeven vakken in één raster, niets om te schuiven.
-   Was een horizontale schuifrij, maar met zeven vakken stonden er drie buiten beeld en
-   moest de bezoeker gaan slepen om zijn eigen vak te vinden. Precies het omgekeerde van
-   wat deze sectie moet doen. Een automatisch schuivende band lost dat niet op: dan wordt
-   je eigen vak een bewegend doel waar je op moet wachten en dan op moet mikken.
-   Zeven kaarten in vier kolommen wordt 4 + 3, wat een normale, rustige afsluiting geeft. */
+/* Alle vakken in één raster, niets om te schuiven.
+   Was een horizontale schuifrij, maar dan staan er kaarten buiten beeld en moet de bezoeker
+   gaan slepen om zijn eigen vak te vinden. Precies het omgekeerde van wat deze sectie moet
+   doen. Een automatisch schuivende band lost dat niet op: dan wordt je eigen vak een
+   bewegend doel waar je op moet wachten en dan op moet mikken. */
 .voorbeelden__scroll {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 2.2rem;
 }
-/* De achtste kaart is geen vak maar de vraag "en mijn vak dan?". Die vult het lege vak in
-   het raster en vangt de bezoeker op wiens beroep er niet tussen staat, in plaats van hem
-   te laten afhaken. Geen foto, dus duidelijk anders van aard, maar wel een echte kaart en
-   niet een gat met tekst. */
+/* De laatste kaart is geen vak maar de vraag "en mijn vak dan?". Hij vangt de bezoeker op
+   wiens beroep er niet tussen staat, in plaats van hem te laten afhaken. Geen foto, dus
+   duidelijk anders van aard, maar wel een echte kaart en niet een gat met tekst.
+   Omdat hij geen foto heeft mag hij van vorm veranderen, en dat is precies wat hem geschikt
+   maakt om het raster vol te maken: hij rekt uit tot de rij past. Zie de opspanregels
+   verderop — die hangen af van het AANTAL VAKKEN, dus reken ze na als er een vak bij komt. */
 .voorbeelden__card--vraag {
   display: grid; align-content: center; justify-items: start; gap: .7rem;
   padding: clamp(1.1rem, 2vw, 1.6rem); text-align: left;
@@ -605,13 +606,27 @@ input[type="range"]::-moz-range-thumb {
    niet tegenaan lopen. */
 .voorbeelden__card--vraag .voorbeelden__label { position: static; margin-top: .2rem; }
 
-/* Acht kaarten vullen 4 kolommen (2 rijen) en 2 kolommen (4 rijen) precies. Bij 3 kolommen
-   blijft er één vak over, want 8 is niet deelbaar door 3. Daar laat de vraagkaart zich over
-   twee vakken uitstrekken: 9 vakken, 3 volle rijen, geen gat. Hij heeft geen foto, dus liggend
-   is voor deze kaart geen probleem. */
+/* ── Hoeveel vakken beslaat de vraagkaart? ──────────────────────────────────────────────
+   Er zijn nu ACHT vakken. Acht is deelbaar door 4 en door 2, maar niet door 3. De vraagkaart
+   erachteraan moet dus per kolomaantal een andere breedte krijgen om de laatste rij vol te
+   maken:
+
+     4 kolommen : 8 vakken = 2 volle rijen, de vraagkaart krijgt rij 3  → span 4
+     3 kolommen : 8 vakken = 2 volle rijen + 2, de vraagkaart is de negende → span 1
+     2 kolommen : 8 vakken = 4 volle rijen, de vraagkaart krijgt rij 5   → span 2
+
+   Komt er een negende vak bij, dan klopt dit niet meer. Reken het dan opnieuw: het aantal
+   vakken plus de opspanning van de vraagkaart moet deelbaar zijn door het kolomaantal. */
+/* De selector is bewust zwaarder dan één klasse. `.voorbeelden__card` zet verderop in dit
+   bestand `aspect-ratio: 4/5`, en dat is dezelfde specificiteit maar staat lager, dus het
+   won. Gevolg: een kaart over de volle vier kolommen werd 1180 breed én 1475 hoog. */
+.voorbeelden__scroll .voorbeelden__card--vraag {
+  grid-column: span 4; aspect-ratio: auto; min-height: 200px;
+}
 @media (max-width: 900px) and (min-width: 621px) {
   .voorbeelden__scroll { grid-template-columns: repeat(3, 1fr); }
-  .voorbeelden__card--vraag { grid-column: span 2; aspect-ratio: auto; min-height: 200px; }
+  /* Eén kolom breed, dus hier mag de gewone kaartverhouding gewoon gelden. */
+  .voorbeelden__scroll .voorbeelden__card--vraag { grid-column: span 1; aspect-ratio: 4/5; }
 }
 @media (max-width: 620px) {
   .voorbeelden__scroll { grid-template-columns: repeat(2, 1fr); gap: .8rem; }
@@ -621,6 +636,8 @@ input[type="range"]::-moz-range-thumb {
      toch niet nodig. */
   .voorbeelden__label { left: .75rem; right: .75rem; bottom: .7rem; font-size: .92rem; }
   .voorbeelden__label-arrow { display: none; }
+  /* Acht vakken zijn hier vier volle rijen; de vraagkaart pakt rij vijf helemaal. */
+  .voorbeelden__scroll .voorbeelden__card--vraag { grid-column: span 2; }
 }
 /* Elk kaartje is een volledig beeld met een eigen vak-accent: de foto vult de hele kaart,
    naam en icoon liggen als overlay op een gradient-scrim eroverheen. Uniforme maat voor
