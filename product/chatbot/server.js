@@ -1455,7 +1455,10 @@ function serveNotFound(res, urlPath, isHead) {
   })(0);
 }
 
-http
+// De server wordt hieronder gebouwd én gestart. De guard op INTAKE_TEST bestaat zodat een
+// test de generatorfuncties kan importeren zonder dat er een poort wordt geopend; zonder die
+// variabele gedraagt dit bestand zich exact zoals altijd.
+const _server = http
   .createServer((req, res) => {
    try {
     const start = Date.now();
@@ -1555,12 +1558,20 @@ http
     else { res.writeHead(500, { "Content-Type": "text/plain; charset=utf-8" }); res.end("Interne fout"); }
    }
   })
-  .listen(PORT, () => {
+  ;
+if (!process.env.INTAKE_TEST) {
+  _server.listen(PORT, () => {
     console.log(`Chat-assistent (${CONFIG.businessName}) draait op http://localhost:${PORT}  (model: ${MODEL}, rate: ${RATE_MAX}/min, vragen loggen: ${LOG_QUESTIONS})`);
     if (!process.env.OPENROUTER_API_KEY) {
       console.warn("LET OP: OPENROUTER_API_KEY is niet gezet — chatverzoeken zullen falen.");
     }
   });
+}
+
+// Alleen voor tests/intake.mjs. Deze functies zijn puur (data in, tekst uit) en worden
+// nergens anders geëxporteerd of gemuteerd.
+export { buildDesignPrompt, buildChatbotSystemPromptDraft, buildChatbotKnowledgeBaseDraft,
+         intakeEmailText, intakeEmailHtml, misgelopenPerMaand, nlGetal };
 
 // Derde laag. Zonder dit is een fout buiten de request-afhandeling (een timer, een callback,
 // een afgewezen promise die niemand opvangt) meteen fataal en stil: het proces verdwijnt en

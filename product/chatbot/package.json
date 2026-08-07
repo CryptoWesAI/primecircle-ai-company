@@ -4,6 +4,7 @@
   "description": "Knowledge-grounded chat assistant for AB Uitvaartzorg (PrimeCircle first build). Reusable vertical-chatbot pattern.",
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node tests/intake.mjs"
   }
 }
