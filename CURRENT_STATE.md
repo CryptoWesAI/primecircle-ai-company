@@ -99,6 +99,37 @@ These are candidates, not final decisions.
 - [x] First build live (AB Uitvaartzorg chatbot + dashboard, HTTPS, private repo, Art. 50 disclosure), reference case done
 - [~] **Validate the trades wedge**, twee prospects aangeschreven op 2026-07-27 (zie `SELLING.md`), nul gesprekken geboekt. Blijft open tot er een gesprek is geweest. Oorspronkelijke opzet: one casual discovery conversation with a warm/hungry trade contact (crux: missed calls/week × job value × willingness-to-pay). Script ready. THEN build MVP v0 (`docs/build/mvp-missed-call-textback.md`). Use the `opportunity-check` skill for any further niche/offer decisions.
 
+### Concurrentieonderzoek + ADHD-divergentie (2026-08-07)
+
+Aanleiding: de founder krijgt Facebook-advertenties van MHS Media, NDK-Marketing,
+Adsplode Agency en The A-Team Agency. Volledig rapport:
+`docs/research/concurrentie-vakmarketing-adhd-2026-08-07.md`.
+
+Twee bevindingen die het beeld in `docs/research/belvanger-klantperspectief-en-concurrentie-2026-07-21.md`
+bijstellen:
+
+1. **"Gemiste telefoontjes opvangen" is geen witte vlek meer.** Naast Klusio,
+   InstallatieTelefoniste en Sainer draaien nu ook Voicelabs, LoodgieterAI, TalkMate,
+   secretaresse.ai, VakWerkSysteem en Beller.io. "Geen jaarcontract" en "exclusieve
+   leads" zijn eveneens verzadigde claims.
+2. **Het gat zit niet in functionaliteit maar in toetsbaarheid en distributie.** Geen
+   enkel vakmensen-bureau publiceert een prijs vóór het gesprek, geen enkele garantie
+   gaat verder dan de lead, en geen enkele belofte is nakijkbaar. The A-Team adverteert
+   "Wij garanderen leads, afspraken én omzet. Geen resultaat? Dan betaal je niet!"
+   zonder aantal, definitie of terugbetaalvoorwaarde.
+
+Geen bouwadvies eruit. De drie hoogst scorende zetten zijn verkoopwerk: de **belproef**
+(bel tien vakmensen drie keer, meet, lever het feitelijk terug), de **Lekcheck** (vraag
+hun Werkspot/Solvari-factuur en reken kosten per binnengehaalde klus uit), en de
+**anti-belofte** (publiceer wat je niet belooft plus je wél-beloftes in bedragen en
+werkdagen). Die laatste kan pas na KvK-inschrijving: een ondertekende toezegging met
+terugbetaalbedrag is ook zonder inschrijving bindend, terwijl er dan geen
+beroepsaansprakelijkheidsverzekering achter staat.
+
+Caveat: de sessie-egress blokkeerde alle externe hosts, dus alles komt uit
+zoekmachinesamenvattingen. Geen citaat is letterlijk geverifieerd en de Meta Ad Library
+is niet bekeken.
+
 ### Belvanger klantdashboard als Android-app (2026-07-25)
 
 Route gekozen na ADHD-onderzoek (`docs/research/belvanger-android-app-adhd-onderzoek-2026-07-25.md`):
