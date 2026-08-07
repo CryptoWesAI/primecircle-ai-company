@@ -147,6 +147,11 @@
     .stat b{display:block;font-family:var(--display);font-weight:600;font-size:2rem;line-height:1}
     .stat span{display:block;color:rgba(243,231,233,.6);font-size:.84rem;margin-top:.4rem}
     .stat .stars{color:var(--gold)}
+    /* De regel .stat span{display:block} hierboven pakt ELKE span in .stat, dus ook het
+       sterretje binnen de <b>. Dat werd daardoor een blok op een eigen regel, waardoor het
+       reviewblok hoger werd dan de andere drie en het label eronder uit de rij liep.
+       Gemeten met getComputedStyle op alle acht de voorbeeldpagina's, niet op het oog. */
+    .stat b .stars{display:inline;font-size:inherit;margin:0}
 
     /* ============ Section base ============ */
     section.block{padding:clamp(4rem,8vw,7rem) 0}

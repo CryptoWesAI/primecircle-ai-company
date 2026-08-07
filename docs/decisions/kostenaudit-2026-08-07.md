@@ -294,7 +294,7 @@ staat in een kostenaudit omdat het daar is opgedoken, niet omdat het erin thuish
 | Een dossier, intake of gespreksnotitie | Nul documenten in de hele repo |
 | Een regel in `SELLING.md` | Niets. De teller staat op 0 gesprekken |
 | Het compose-bestand | Alleen op de VPS |
-| Een voorbeeldpagina voor zijn vak | Er zijn er zeven, glaszetter zit er niet bij |
+| Een voorbeeldpagina voor zijn vak | Ontbrak; op 2026-08-07 gebouwd, staat nog niet in de galerij |
 | Een regel in `product/chatbot/galerij.json` | Ontbrak, nu toegevoegd (leeg, niet geraden) |
 
 **De dichtstbijzijnde kandidaat voor klant #1 bestaat dus nergens in de administratie.**
@@ -370,13 +370,23 @@ Stap 1 en 2 kosten samen een half uur en er hoeft niets voor gebouwd te worden.
 
 ### Wat dit betekent voor de zeven vakken op de site
 
-`sites/belvanger/site/voorbeelden/` heeft schilder, loodgieter, elektricien, installateur,
+`sites/belvanger/site/voorbeelden/` had schilder, loodgieter, elektricien, installateur,
 dakdekker, hovenier en klusbedrijf — **geen glaszetter**, terwijl dat vak op de logica van
-het aanbod beter scoort dan minstens de helft van die zeven. Dat is geen bezwaar tegen de
-bestaande pagina's (de bouwkosten zijn al gemaakt), maar wel een signaal: **als Siedsma
-ja zegt, is zijn site meteen de achtste voorbeeldpagina en het beste verhaal dat je hebt.**
-Een klant in een vak waar de pijn scherp en aantoonbaar is, is een betere referentie dan
-drie in een vak waar hij vaag is.
+het aanbod beter scoort dan minstens de helft van die zeven.
+
+**Gebouwd op 2026-08-07:** `voorbeelden/glaszetter-premium.html`, fictief bedrijf
+"Van Beek Glastechniek", eigen azuren kleurspoor en een hero-idee dat nog niet gebruikt
+was (de kop staat achter een ruit, met haarscheur). Spoed staat er bovenaan in plaats van
+in een dienstenlijst, want dat is het hele verschil met de andere vakken.
+
+**Nog niet in de galerij op de homepage.** Die acht kaarten gebruiken een echte vakfoto als
+thumbnail (900×1200 webp) en die is er voor dit vak niet; hij moet bovendien in NL én EN
+tegelijk (`tests/taalpariteit.mjs` vergelijkt het aantal kaarten). De pagina is dus wel te
+tonen en te sturen, maar nog niet vindbaar vanaf de homepage.
+
+Blijft staan: **als Siedsma ja zegt, is zijn site het beste verhaal dat je hebt.** Een
+klant in een vak waar de pijn scherp en aantoonbaar is, is een betere referentie dan drie
+in een vak waar hij vaag is.
 
 ---
 

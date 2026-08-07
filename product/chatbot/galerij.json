@@ -21,18 +21,20 @@
     { "vak": "klusbedrijf", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
     {
       "vak": "glaszetter",
-      "klant": "Glasservice Siedsma (proefsite, draait op de VPS)",
-      "accentkleur": "",
-      "archetype": "",
+      "klant": "voorbeeldpagina Van Beek Glastechniek",
+      "accentkleur": "#0F5FA8",
+      "archetype": "glasplaat-hero: kop achter een halftransparant paneel met haarscheur, volledig CSS",
       "_let_op": [
-        "Toegevoegd 2026-08-07. Glaszetter was geen van de zeven vakken: er is geen",
-        "voorbeeldpagina in sites/belvanger/site/voorbeelden/ en er stond hier niets.",
-        "De proefsite bestaat wel, maar staat niet in git, dus kleur en indeling zijn",
-        "onbekend. Bewust leeg gelaten in plaats van geraden — vul ze in zodra je op de",
-        "VPS hebt gekeken.",
-        "Bij het ontwerpen van een glaszettersite: spoed is hier het hele verhaal.",
-        "Kapot glas kan niet wachten, dus bereikbaarheid en 'wanneer ben je er' horen",
-        "boven de vouw, niet in een dienstenlijst. Zie paragraaf 7 van",
+        "Vak toegevoegd 2026-08-07, voorbeeldpagina gebouwd op dezelfde dag:",
+        "sites/belvanger/site/voorbeelden/glaszetter-premium.html.",
+        "Azuur zit bewust tussen het petrol van de loodgieter (#0E7490) en het indigo van",
+        "de installateur (#3949AB) in.",
+        "Deze pagina heeft als enige GEEN fotobestanden nodig; de hero-scene is CSS.",
+        "Nog niet in de galerij op de homepage: die kaarten gebruiken een echte vakfoto",
+        "als thumbnail (900x1200 webp), en die is er voor dit vak nog niet.",
+        "Bij het ontwerpen van een glaszettersite: spoed is het hele verhaal. Kapot glas",
+        "kan niet wachten, dus bereikbaarheid en 'wanneer ben je er' horen boven de vouw,",
+        "niet in een dienstenlijst. Zie paragraaf 7 van",
         "docs/decisions/kostenaudit-2026-08-07.md."
       ]
     }
