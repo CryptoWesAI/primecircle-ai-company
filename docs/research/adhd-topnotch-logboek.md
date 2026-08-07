@@ -17,8 +17,8 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 8 |
-| Oppervlakken gedekt | 12 van 15 (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
+| Iteraties gedraaid | 9 |
+| Oppervlakken gedekt | 13 van 15 (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
 | Fase | divergentie |
 
 **Commercieel beslissende vondst (iteratie 7):** de vlakke €99 subsidieert de beste
@@ -59,7 +59,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 8 | Prijs- en pakketstructuur | **gedaan, iteratie 7** |
 | 9 | Retentie: waarom een klant na maand 6 blijft | **gedaan, iteratie 8** |
 | 10 | De wow: wat een vakman ongevraagd aan een collega vertelt | **gedaan, iteratie 8** |
-| 11 | De AI-laag: chat, spraak, triage, tegenover de concurrentie | open |
+| 11 | De AI-laag: chat, spraak, triage, tegenover de concurrentie | **gedaan, iteratie 9** |
 | 12 | Data en AVG als product in plaats van als plicht | open |
 | 13 | Het iOS-gat en mobiele levering | **opgegaan in 2 en 4** (sms als ruggengraat) |
 | 14 | Offboarding en eigendom | **opgegaan in 5** (eigendomslaag, exit-knop, weglooptest) |
@@ -996,5 +996,119 @@ maandbericht in de voorgestelde vorm (*"23 aanvragen, 19 binnen het uur"*) het p
 oplost, omdat een aantal geen verhaal is. **Een naam en een tijdstip zijn dat wel**, en het cijfer
 moet over zijn eigen prestatie gaan, want daar is hij trots op en dat noemt hij uit zichzelf bij
 de groothandel.
+
+### Uitgediept: de verdienste is van hem
+
+**Het ritme over twaalf maanden.** Maand 1, bij de intake: schrijf letterlijk op welke vraag hij
+zelf altijd aan de telefoon stelt (*"waar zit het, en staat er nu nog water?"*), die zin wordt
+regel één van de chatbot. En maak één meetafspraak die de rest van het jaar draagt: terugbellen
+doe je via de knop in het sms'je, want dat is de teller.
+
+Vanaf dag 30 één sms per maand, altijd dezelfde dag, drie dingen en nul links:
+
+> *"Belvanger, augustus. Je hebt 7 bellers teruggebeld die je anders was misgelopen, gemiddeld
+> binnen 22 minuten. De laatste was Jansen Bouw, zondagavond om 21:40. Je hoeft niets te doen."*
+
+Maand 3: het eerste A4 op de mat, zijn bedrijfsnaam groot bovenaan, Belvanger klein onderaan,
+plus een tweede exemplaar. Precies in de maand waarin het opzeggevoel opkomt en een sms allang
+uit de inbox is. Maand 5: tien minuten bellen, **niet** met de open vraag wat het heeft opgeleverd
+maar met de namenlijst in de hand: *"Jansen Bouw, badkamer, 12 januari, is die doorgegaan?"* Een
+geheugentaak in plaats van een beoordeling. Vanaf maand 6 staat zijn eigen geld in de sms, en de
+collega-koppeling komt niet als vraag maar als voorwerp: het tweede A4 krijgt één regel mee.
+
+**Dragend risico, en het is niet wat je zou denken.** Niet de AVG en niet de prijs, maar dit:
+**het cijfer gaat over hem, dus moet het kloppen in zijn beleving, en Belvanger meet iets wat het
+strikt genomen niet ziet.** Belt hij terug vanuit zijn eigen oproeplijst in plaats van via de
+knop, dan zegt de sms *"je belde er 2 terug"* terwijl hij er 14 belde. **Een bericht dat hem
+onterecht klein maakt vernietigt meer vertrouwen dan helemaal geen bericht.** Daarom hoort de
+meetafspraak in maand 1 en niet later, en valt de sms bij een onbetrouwbare teller terug op alleen
+het opvang-aantal plus de naam.
+
+**De AVG-lijn is scherper dan verwacht en werkt in je voordeel.** De beller gaf zijn naam zélf in
+de sms-dialoog, met exact het doel om door die vakman teruggebeld te worden. Diezelfde naam in het
+maandbericht aan diezelfde vakman zetten is geen nieuwe verstrekking. **Wat niet mag:** namen
+verrijken via nummerherkenning, KvK of telefoongids; namen op een A4 dat op de balie kan blijven
+liggen; namen in marketing, testimonials of screenshots; namen langer dan twaalf maanden bewaren.
+Waar de beller geen naam gaf, wordt het gezicht **een tijdstip plus onderwerp**: *"de beller van
+zondag 21:40 over een lekkage in de badkamer"* — even concreet, en geen persoonsgegeven van een
+derde.
+
+**Nooit een noemer.** Geen "11 van de 14", geen percentage, geen woord over wie hij liet lopen.
+Openstaande bellers krijgen wél aandacht, maar **op de dag zelf en operationeel**, één keer, en die
+regel komt nooit terug in een maandbericht. *Terugkijken is voor trots, vooruit duwen is voor
+vandaag.*
+
+**Het nulscenario is vooraf dichtgetimmerd.** Het maand-5-gesprek gaat alleen door als de teller
+terugbellen laat zien; staat die op nul, dan is het geen waardegesprek maar een reparatiegesprek
+dat de founder zelf opent. Blijkt het antwoord tóch nul klussen, dan volgt geen prijsgesprek en
+geen korting, maar één concrete aanpassing plus een hercheck in maand 7.
+
+**Tijd bij 20 klanten:** ~40 minuten maand-sms, ~30 minuten maand-5-gesprekken, en twee A4-rondes
+van 80 minuten per jaar. Ongeveer **1,5 uur per maand op €2.980 maandomzet.** Harde grens: kost
+dit ritme meer dan drie minuten per klant per maand, dan deugt het ontwerp niet.
+
+**Eerste stap, 30 tot 40 minuten.** Twee blokken in `docs/templates/belvanger-klant-intake.md`:
+(A) *"Wat is de eerste vraag die je zelf stelt als iemand belt? Zeg het precies zoals je het
+zegt"*, woordelijk overnemen, geen herformulering. (B) De meetafspraak. En in de sms-flow: de
+belknop registreert de tik, en de naam die de beller zelf opgeeft wordt gelabeld als "door beller
+opgegeven", want alleen die naam mag straks in de maand-sms. **Dit kost bij nul klanten niets en is
+achteraf niet te reconstrueren: klant één levert vanaf dag één de data die maand 12 draagt.**
+
+---
+
+## Iteratie 9 — De AI-laag tegenover de concurrentie
+
+Frames: de vijandige concurrent · toezichthouder · hardware-engineer · tienjarig kind. Vier
+geïsoleerde takken, 24 ideeën. **Strategisch de belangrijkste ronde na de prijs.**
+
+### De convergentie
+
+Vier onafhankelijke frames draaien het gat met de concurrentie om: **stop met concurreren op "wie
+neemt het snelst op" en verplaats de meetlat naar "hoe snel helpt een echt mens". Wees daarbij
+luidruchtig eerlijk dat er geen robot opneemt.**
+
+De natuurkunde geeft daar dekking voor: een mens verwacht antwoord binnen ~300 ms, en een
+spraakketen van herkenning, model en synthese haalt dat niet betrouwbaar over een mobiele
+verbinding met een boormachine op de achtergrond. Tekst kent die eis niet.
+
+### Clusters
+
+**Verplaats de meetlat**
+- Publiceer het echte "wachttijd tot mens"-getal als productkenmerk, met boeteclausule `[N9 V8 F10]`
+- Live reactietijd-teller op de site van de vakman zelf: *hun 3 seconden leiden naar een robot, jouw 8 seconden leiden naar een mens* `[N9 V8 F10]`
+- Elke gemiste oproep binnen 8 seconden een sms met naam, klus en terugbelknop `[N7 V9 F9]`
+
+**"Wij nemen nooit op met een robot" als merkbelofte**
+- Met garantie: hoort een klant ooit een robot, dan is die maand gratis `[N10 V8 F10]`
+- De omkering hardop zeggen: *"ik ben geen mens en ik ga je niet ophouden, ik regel alleen dat Jan je belt"* `[N9 V9 F10]`
+- Een openbare vergelijkingsgids waarin je de AI-telefonisten van de concurrentie zelf belt, de blunders publiceert, en eerlijk zegt wanneer zij de betere keuze zijn `[N9 V7 F8]`
+
+**Vervang gesprek door structuur** (ruisimmuun bij dialect, paniek en keukengeluid)
+- Genummerd sms-keuzemenu: 1 = lekkage nu, 2 = offerte, 3 = afspraak verzetten `[N8 V9 F10]`
+- Grote knoppen in de chat in plaats van antwoorden: *"Loopt er water? JA / NEE"* `[N8 V9 F10]`
+- Vooraf opgenomen menselijke stem met toetskeuze, zonder herkenning en synthese in het pad `[N8 V8 F9]`
+- Voicemail die binnen 60 seconden getranscribeerd als push aankomt, met de ruwe audio als bijlage `[N7 V9 F9]`
+
+**Zet de intelligentie waar vertraging gratis is**
+- Bij terugbellen krijgt de vakman eerst 15 seconden briefing voordat de lijn doorschakelt `[N10 V7 F10]`
+- Terugbelcoach: geen kale melding maar drie regels met wat de beller zei, wat het waarschijnlijk oplevert, en de eerste zin die hij uitspreekt `[N9 V8 F10]`
+- Terugbelplanner: de sms biedt drie tijdvakken die de vakman zelf vooraf vrijgaf, de eerste tik boekt `[N9 V8 F9]`
+
+**Eerste hulp vóór het gesprek**
+- *"Zet je kraan dicht bij de meter, hier is een filmpje van 20 seconden, Jan belt je over 12 minuten"* `[N10 V8 F10]`
+- De aftelklok: wat de beller eng vindt is niet de stilte maar het niet-weten `[N9 V8 F9]`
+- Eén echt spraakbericht van 15 seconden per dag van de vakman zelf, naar elke gemiste beller `[N9 V8 F9]`
+
+**Toetsbaarheid van een AI die met consumenten praat**
+- Harde noodwoordenlijst (gaslucht, rook, water bij de meterkast, geen verwarming bij vorst) die de AI onmiddellijk uit het script haalt `[N8 V9 F10]`
+- Niveau-verklaring in de eerste zin: niet alleen *dat* het AI is maar *wat* het mag: *"ik noteer uw vraag, ik maak geen afspraak en ik noem geen prijs"* `[N8 V9 F10]`
+- Herkomstlabel per toezegging, verwijzend naar de versie van de door de vakman ondertekende feitenlijst `[N9 V8 F9]`
+- Kwetsbaarheidsdetector die bij paniek of verwarring afbreekt en een mens forceert, met een teller die de vakman maandelijks ziet `[N9 V7 F9]`
+- Publieke AI-bijsluiter per klant: model, land van verwerking, bewaartermijn, wat de AI weigert, hoe je een mens bereikt `[N8 V9 F9]`
+- Gespreksbewijs: tijdgestempeld transcript naar vakman én beller, zodat *"maar uw robot zei..."* weerlegbaar wordt `[N8 V8 F9]`
+
+**Trap:** bij een gemiste oproep ook de drie collega's in de buurt sms'en en de eerste die "JA"
+stuurt de klant geven `[N9 V5 F7]`. Elegant vanuit de beller gezien, maar het verandert Belvanger
+in een leadmarktplaats en dat is precies het model waar vakmensen elkaar voor waarschuwen.
 
 ---
