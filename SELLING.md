@@ -68,9 +68,27 @@ want er is niemand geweest die het heeft afgewezen. Er is alleen niemand geweest
 ### Post 2, 2026-08-07
 
 De founder heeft zelf een tweede Facebook-post geplaatst
-(`facebook.com/share/p/1BkbSBL8Ez`). Inhoud niet vastgelegd: de sessie waarin dit is
-opgeschreven kon `facebook.com` niet bereiken (egress-blokkade), dus hier staat alleen
-dát hij bestaat, niet wat erin staat. Vul de tekst aan als je hem beoordeeld wilt hebben.
+(`facebook.com/share/p/1BkbSBL8Ez`), met een foto van hemzelf op Karpathos achter een
+laptop waarop de hero van belvanger.nl staat: *"Mis nooit meer een klant."*
+
+**De strekking:** een anti-goeroe-post. Hij begon aan iets dat "toch simpel op te lossen"
+moest zijn en is weken verder; hij zet zich af tegen de ondernemersposts met Dubai,
+cocktails, sportschool en dikke auto's; hij is gewoon op vakantie en dat is verdiend; maar
+stilzitten lukt niet. Afsluitend: link naar belvanger.nl plus de vraag *"Ken je een
+ondernemer, klusser, vakman of iemand die regelmatig zijn telefoon niet kan opnemen tijdens
+het werk? Tag diegene hieronder of deel dit bericht."*
+
+**Wat er sterk aan is.** De anti-goeroe-hoek is echte differentiatie, geen grap: uit
+`docs/research/concurrentie-vakmarketing-adhd-2026-08-07.md` blijkt dat geen van de
+concurrenten een prijs, een aantal of een nakijkbare belofte publiceert. Alleen houding. Een
+post die het scherm laat zien in plaats van de auto is precies het onderscheid, in
+socialevorm.
+
+**Wat er beter kan, uitgewerkt met een kant-en-klare post 3 in
+`docs/offers/belvanger-facebook-post-3.md`:** het probleem van de lezer staat pas in alinea
+15, er staat geen enkel getal in terwijl toetsbaarheid de hele edge is, de deel-vraag is
+voor zichzelf gesteld in plaats van namens de getagde, en "wordt vervolgd" zegt *nog niet*
+terwijl alles er staat.
 
 **Deze post staat bewust niet in het grootboek.** Zie de regel daar: een tijdlijnpost is
 zichtbaarheid, geen contact.
@@ -86,6 +104,18 @@ Daarom hoort er bij deze post één ding op de agenda, en het is geen bouwwerk:
 - [ ] **Vraag Georgina "ken je er nog meer?"** Ze is bedankt maar die vraag is nooit
       gesteld, en ze heeft al bewezen dat ze namen kent. Dit is de goedkoopste openstaande
       actie in dit hele bestand.
+
+### Post 3 ligt klaar, maar mag nog niet
+
+`docs/offers/belvanger-facebook-post-3.md`. Twee voorwaarden, allebei thuis te doen:
+
+1. **Eerst deployen.** De post stuurt mensen naar acht voorbeeldsites; de achtste
+   (glaszetter) staat nog alleen in git.
+2. **Eerst de prijs rechtzetten.** De site zegt in de FAQ én in de structured data **€99
+   per maand**, de prijskaart zegt **€199**. Die €199 komt uit de ronde die aantoonde dat
+   €99 vlak je marge laat dálen naarmate een klant méér belletjes krijgt. Zolang dat niet
+   gelijk is, stuur je verkeer naar een prijs waarvan je zelf hebt uitgerekend dat hij niet
+   klopt.
 
 ## Grootboek
 
