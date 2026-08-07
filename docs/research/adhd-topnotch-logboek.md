@@ -638,4 +638,66 @@ onderhoudslast van wat er staat actief omlaag moet (n8n vervangen door cronscrip
 daarvan het goedkoopste voorbeeld, want het haalt een heel tweede systeem met eigen UI,
 updates en storingsmodus weg zonder dat één klant het merkt).
 
+### Uitgediept: eigendom bij de klant
+
+**Wat er overeind blijft.** Drie lagen die je één keer bouwt en daarna vergeet: een
+**eigendomslaag** (domein en telefoonnummer op naam van de vakman, Belvanger raakt ze aan maar
+bezit ze nooit), een **scheidingslaag** (registrar, DNS, VPS, mailbox en herstel-adres bij vijf
+verschillende partijen, nooit twee lagen bij dezelfde leverancier), en een **uitgangslaag**
+(wekelijkse export van het leesbare eindproduct plus een papieren herstelpakket).
+
+**Wat er sneuvelt, en dat is eerlijk.** Eigen leveranciersaccounts per klant is in zuivere vorm
+**niet houdbaar** voor een eenmansbedrijf. Twintig klanten betekent twintig Twilio-accounts,
+twintig facturen, twintig kaarten die verlopen, en twintig keer een vakman die jou belt als
+helpdesk voor een leverancier waar je niets aan verdient. Dat botst frontaal met iteratie 3.
+Erger: een vakman die zijn eigen account beheert kan het ook slopen. Zegt hij per ongeluk het
+nummer op, dan is het na 30 dagen quarantaine definitief weg; weigert zijn kaart, dan schort
+Twilio het account op en stopt de opvang midden in een werkweek, en de eerste die het merkt is
+zijn klant die geen sms terugkrijgt. **Dat is precies de faalmodus die je verkocht hebt weg te
+nemen.**
+
+**Het compromis dat de verkoopwaarde behoudt zonder de last:** één Twilio-**subaccount** per
+klant onder het hoofdaccount, plus een geschreven **sleutelbos-clausule**: *"Wil je dat alles op
+je eigen naam komt te staan, dan zet ik het binnen tien werkdagen over, kosteloos, ook als je
+weggaat."* Subaccounts zijn gratis, de factuur blijft één factuur, de klant kan zijn eigen account
+niet slopen, en de administratieve last ontstaat alleen bij wie er echt om vraagt. In de praktijk
+is dat bijna niemand.
+
+**Wat kan er nu al, zonder KvK.** Vier van de vijf: de eigendomslaag voor het nummer, de
+vier-partijen-scheiding, de exportflow en het herstelpakket. Alleen de eigen leveranciersaccounts
+wachten op inschrijving, want zonder KvK is er geen zakelijke rekening, geen btw-factuur, geen
+Mollie (KvK verplicht) en geen geloofwaardige rol als beheerder namens een ander.
+
+**Wat de vakman ervan merkt bij aanmelden.** Vier concrete dingen: *"je eigen nummer blijft je
+eigen nummer, ik koop nooit een nummer dat op je bus staat"* · het domein komt op zijn naam en
+*"vraag je de verhuiscode, dan krijg je hem dezelfde dag, zonder dat ik eerst iets van je wil"* ·
+op dag 30 de **weglooptest**, waarbij hij zelf de doorschakeling uitzet en weer aanzet · en elke
+maandag de map met zijn eigen bestanden, met *"ook als ik morgen wegval, heb je alles wat je
+nodig hebt, in bestanden die je zonder mij kunt openen."*
+
+**Kosten van het houdbare deel:** ongeveer een avond voor de splitsing (domein €10-15 per jaar,
+Cloudflare DNS gratis, aparte mailbox €19-60 per jaar), 3 tot 4 uur voor de exportflow, en een
+uur plus €0 tot €110 voor het herstelpakket. Wat je ervoor terugkrijgt is het enige dat in dit
+segment nog vrij is: een belofte die de klant zelf kan nakijken.
+
+**Het tweede-orde-risico, en dit is het eerlijkste dat de verdieping oplevert:** dit is
+aantrekkelijk werk voor iemand die liever bouwt dan verkoopt. Bij nul betalende klanten is elke
+dag infrastructuurhygiëne een dag niet bellen. **Doe daarom alleen het deel dat in één avond af
+is en daarna nul aandacht vraagt, en laat de rest landen als er een klant is die ervoor betaalt.**
+
+**Eerste stap, twee uur.** Haal het herstelpad los van Hostinger: een neutraal herstel-mailadres
+bij een andere partij, dat instellen op het Hostinger-account, DNS voor belvanger.nl naar
+Cloudflare (gratis, nameserverwissel, ~15 minuten plus propagatie), en de 2FA-recoverycodes van
+Hostinger, Cloudflare, GitHub, Twilio en OpenRouter op papier, bewaard buiten huis. Dit neemt
+vandaag het scenario weg waarin één betaalgeschil je site, je DNS én het mailadres waar de
+wachtwoordreset heen moet in één klap uitschakelt. **De domeinverhuizing en de exportflow plan je
+in dezelfde week, maar niet vóór je eerstvolgende verkoopactie.**
+
+**Kinderen.** De weglooptest op dag 30 als vast agendapunt · de maandagmap als één n8n-flow die
+tegelijk winterslaap-export, AVG-exportplicht en wekelijks zichtbaar waardebewijs is · de
+sleutelbos-clausule in de voorwaarden · vier-partijen-scheiding als vaste opzetregel voor elk
+nieuw domein, ook dat van klanten · een A4 **"Wat er gebeurt als ik wegval"** bij elke offerte,
+dat het grootste onuitgesproken bezwaar tegen een eenmanszaak zonder KvK zelf op tafel legt, en
+dat je niet kunt schrijven zolang de export niet draait.
+
 ---
