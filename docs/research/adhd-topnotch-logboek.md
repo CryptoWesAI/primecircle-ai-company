@@ -17,8 +17,8 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 5 |
-| Oppervlakken gedekt | 5 van 15 |
+| Iteraties gedraaid | 6 |
+| Oppervlakken gedekt | 6 van 15 |
 | Fase | divergentie |
 
 **Sterkste vondst tot nu toe:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
@@ -47,7 +47,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 3 | Onboarding: van "ja" tot live | **gedaan, iteratie 3** |
 | 4 | De automatiseringen: n8n, sms, push, chat | **gedaan, iteratie 4** |
 | 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | **gedaan, iteratie 5** |
-| 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | open |
+| 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | **gedaan, iteratie 6** |
 | 7 | Storing en support: wat er gebeurt als het stukgaat | open |
 | 8 | Prijs- en pakketstructuur | open |
 | 9 | Retentie: waarom een klant na maand 6 blijft | open |
@@ -699,5 +699,69 @@ sleutelbos-clausule in de voorwaarden · vier-partijen-scheiding als vaste opzet
 nieuw domein, ook dat van klanten · een A4 **"Wat er gebeurt als ik wegval"** bij elke offerte,
 dat het grootste onuitgesproken bezwaar tegen een eenmanszaak zonder KvK zelf op tafel legt, en
 dat je niet kunt schrijven zolang de export niet draait.
+
+---
+
+## Iteratie 6 — Beheer: 25 klanten met één persoon
+
+Frames: de monteur die om 3 uur 's nachts gebeld wordt · logistiek (toegepast op het werk van
+de founder, niet op de leads) · mierenkolonie · game designer (met de **founder** als speler).
+Vier geïsoleerde takken, 24 ideeën.
+
+**De convergentie van deze ronde: beheer wordt beheersbaar door begrenzing, niet door
+automatisering.** Bijna elk frame zegt onafhankelijk "zet er een muur omheen" in plaats van
+"optimaliseer erbinnen". Dat is een niet voor de hand liggend antwoord op "makkelijk te
+beheren", want de reflex is automatiseren.
+
+### Clusters
+
+**Begrenzing: wat je niet belooft hoef je niet waar te maken**
+- Verkoop expliciet "werkdagen 8 tot 18, buiten die uren vangt het systeem op", en dwing technisch af dat er 's nachts geen kanaal naar de founder is `[N8 V9 F10]`
+- Twee storingsklassen en niet meer: KLANT-BLIND wekt, al het andere wacht tot de ochtend `[N8 V9 F10]`
+- Eén vaste rit per week voor alle klantwijzigingen, cut-off donderdag 17:00 `[N8 V9 F10]`
+- Twee prioriteitsklassen: "site plat" rijdt direct, de rest is verzamelvracht `[N7 V9 F9]`
+- Kanban-limiet van drie open klantzaken, met een wachtrij die klanten zelf kunnen zien `[N8 V8 F8]`
+- De vakantieschakelaar: één knop zet alle accounts in gedegradeerde maar werkende modus, vooraf verkocht als onderhoudsweek `[N9 V8 F10]`
+- Nooit batchen: de eerste veertien dagen van een nieuwe klant, en elk betaalprobleem `[N8 V9 F9]`
+
+**De omstel verlagen in plaats van de batch vergroten**
+- Elke klantklus start vanaf één identiek startpunt met dezelfde mapstructuur, commando's en volgorde `[N8 V9 F9]`
+- Magazijnvoorraad: vijf kant-en-klare ongebonden klantomgevingen die alleen nog een naam nodig hebben `[N9 V8 F9]`
+- Onboarding als speedrun met een zichtbare klok en een persoonlijk record; elke trage run levert precies één toegestane bouwtaak op om de volgende sneller te maken `[N9 V8 F9]`
+
+**Support die zichzelf wegneemt**
+- Klantzelfbediening als één Instellingen-tegel met terug-naar-standaard en een audit-log `[N6 V9 F10]`
+- Wekelijkse gezondheidsmail per klant met "alles werkt / dit staat open", die de hele categorie geruststellingsbelletjes wegneemt `[N7 V9 F9]`
+- Supportvragen per WhatsApp eerst beantwoord door de chatbot van zijn eigen product, alleen doorzetten als het spoor te zwak is `[N9 V7 F10]`
+- Tekstwijzigingen door inspreken: het systeem toont een voorstel, de klant keurt goed, de founder ziet alleen een log `[N9 V7 F10]`
+- Elke klantsite statisch en gecached, zodat hij blijft staan als het backend plat ligt `[N8 V8 F9]`
+
+**Het spoor van de vorige klant verlaagt het werk bij de volgende** — grotendeels **[wacht op klanten]**
+- Elke instelling die ooit is aangepast wordt de default-suggestie voor de volgende klant in hetzelfde vak en dezelfde regio `[N9 V7 F9]`
+- Een gedeelde vak-kennisbank die alleen groeit uit geanonimiseerde vraagpatronen, met een eigen laag eroverheen die zwaarder weegt `[N9 V7 F8]`
+- Doorverwijzing geeft de verwijzer korting en laat de nieuwe klant zijn instellingenprofiel overerven `[N9 V7 F9]`
+- Het systeem detecteert wanneer meerdere klanten dezelfde onbeantwoorde vraag krijgen en zet die bovenaan, zodat de founder per patroon werkt in plaats van per klant `[N9 V7 F9]`
+
+**De founder als speler** (het frame dat over hem gaat, niet over het product)
+- Bouwkrediet: elk gesprek met een prospect levert 30 minuten bouwtijd op, en zonder saldo gaat de editor niet open `[N10 V6 F10]`
+- Dagelijkse eindstand op een fysiek kaartje: hoeveel mensen gesproken, hoeveel klanten gered, hoeveel minuten gebouwd, **waarbij de derde regel altijd de kleinste moet zijn** `[N9 V8 F10]`
+- Seizoensplit: maandag tot en met donderdag is de editor dicht, het weekend is bouwseizoen `[N8 V6 F9]`
+- HP-balk per klant die leegloopt zonder contact, zodat beheer 25 healthbars boven de rode lijn houden wordt `[N9 V7 F8]`
+- Permadeath op features die 60 dagen door geen betalende klant zijn aangeraakt `[N9 V5 F7]` **trap**
+
+**Trap:** permadeath op ongebruikte features klinkt streng en zuiverend, maar bij nul betalende
+klanten verwijdert die regel letterlijk alles wat er staat. Hij kan pas bestaan als er klanten
+zijn om "aangeraakt" mee te meten.
+
+### Wat de game-designtak hier eigenlijk zegt
+
+Twee van deze ideeën gaan niet over het product maar over de founder, en ze zijn de moeite van
+het serieus nemen waard omdat ze aansluiten op wat in `SELLING.md` al zelf is vastgesteld:
+bouwen is de vorm die uitstel hier aanneemt. Het bouwkrediet maakt van de vermeden activiteit
+de **valuta** in plaats van de straf, waardoor de beloning van bouwen intact blijft. Het
+dagkaartje met drie regels waarvan de derde altijd de kleinste moet zijn, meet het zonder er
+een oordeel van te maken.
+
+Geen van beide is een systeem dat gebouwd moet worden. Dat is precies waarom ze hier passen.
 
 ---
