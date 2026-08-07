@@ -67,6 +67,20 @@ Standaard staat op **Leeuwarden met een straal van 40 km**, de eigen regio. Dat 
 Drachten, Heerenveen, Sneek, Bolsward, Franeker, Harlingen, Dokkum, Burgum, Grou, Joure
 en Wolvega. Andere plek: `--plaats "Drachten" --straal 25`.
 
+Overijssel en Groningen zijn ook werkgebied. Drie regio's achter elkaar en samenvoegen:
+
+```bash
+for p in Leeuwarden Zwolle Groningen; do
+  node tools/prospects-verzamelen.mjs --plaats "$p" --straal 40 --uit "tools/prospects-$p.csv"
+done
+head -1 tools/prospects-Leeuwarden.csv > tools/prospects.csv
+tail -q -n +2 tools/prospects-*.csv | sort -u >> tools/prospects.csv
+```
+
+`sort -u` vangt de dubbelen op die in twee stralen tegelijk vallen (Heerenveen en
+Meppel liggen in het overlapgebied). Bel Friesland eerst af: "ik zit hier om de hoek"
+is een argument dat je in Groningen niet hebt.
+
 Levert naam, vak, telefoon, website, plaats. Gesorteerd met belbare nummers bovenaan,
 en na de keuring met de hoogste kans bovenaan.
 
