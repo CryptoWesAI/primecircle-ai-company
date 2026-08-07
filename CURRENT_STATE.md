@@ -130,6 +130,37 @@ Caveat: de sessie-egress blokkeerde alle externe hosts, dus alles komt uit
 zoekmachinesamenvattingen. Geen citaat is letterlijk geverifieerd en de Meta Ad Library
 is niet bekeken.
 
+### Kostenaudit (2026-08-07)
+
+Volledig rapport: `docs/decisions/kostenaudit-2026-08-07.md`. Elk bedrag is een
+**schatting**, want deze sessie kon geen enkele externe host bereiken en had geen
+toegang tot facturen, Hostinger, Twilio of OpenRouter. Het rapport bevat een lijst van
+zeven dingen die de founder in tien minuten in zijn eigen accounts kan nakijken om de
+schattingen naar feiten te tillen.
+
+**Kern:** de infrastructuur kost naar schatting **€15-25 per maand**, niet de €350 uit
+`docs/research/adhd-topnotch-logboek.md`. Dat verschil is geen fout maar een
+tijdsverschil: de €350 zijn de lasten **ná KvK-inschrijving**, en de inschrijving is de
+aan-knop daarvan. Er valt in de kosten niets te snijden dat in de buurt komt van wat één
+klant (€199) oplevert.
+
+Wat de audit wél oplevert, en het gaat over risico in plaats van geld:
+
+1. **De AB-container en Traefik staan niet in git.** De enige container die een echte
+   klant bedient, en de laag waar alle HTTPS doorheen gaat, zijn nergens gereproduceerd.
+   `infra/backup/README.md` noemt Traefik al als bekend gat.
+2. **Meer dan de helft van de VPS draait iets anders dan Belvanger:**
+   `glasservice-siedsma` (geen document, geen map in `clients/`, dus onbekend wat het is),
+   `knifensharp`, `primecircle`, `primecircle-*` en `agent-zero`.
+3. **`knifensharp` claimt de apex `primecircle.cloud` en zijn ACME faalt permanent.**
+   Let's Encrypt heeft weeklimieten; haal de apex-labels weg.
+4. **Geen enkele container heeft een geheugenlimiet of logrotatie.** Eén weggelopen
+   proces neemt de site van AB Uitvaartzorg mee.
+5. **Het Twilio-nummer `+14474274008` is geen NL-nummer** en `sms_url` staat nog op
+   `demo.twilio.com`, dus wie ernaartoe sms't krijgt een Twilio-demo-antwoord terug.
+   Advies: nu al inruilen voor een NL-nummer met sms én voice, zodat je de opstelling
+   test die je gaat verkopen.
+
 ### Belvanger klantdashboard als Android-app (2026-07-25)
 
 Route gekozen na ADHD-onderzoek (`docs/research/belvanger-android-app-adhd-onderzoek-2026-07-25.md`):
