@@ -17,8 +17,8 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 2 |
-| Oppervlakken gedekt | 2 van 15 |
+| Iteraties gedraaid | 3 |
+| Oppervlakken gedekt | 3 van 15 |
 | Fase | divergentie |
 
 **Sterkste vondst tot nu toe:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
@@ -44,7 +44,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 |---|---|---|
 | 1 | Website belvanger.nl: vertrouwen en conversie | **gedaan, iteratie 1** |
 | 2 | Klantdashboard: het dagelijkse gebruik door de vakman | **gedaan, iteratie 2** |
-| 3 | Onboarding: van "ja" tot live | open |
+| 3 | Onboarding: van "ja" tot live | **gedaan, iteratie 3** |
 | 4 | De automatiseringen: n8n, sms, push, chat | open |
 | 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | open |
 | 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | open |
@@ -304,5 +304,116 @@ levert bij een klus van €340 al rendement bij 1 op 100) · **onboarding is dez
 de nieuwe klant belt éénmalig vanaf zijn eigen mobiel naar het Belvanger-nummer, waarmee
 opvangnummer, beltijden en afzender automatisch vaststaan. Dat laatste haalt de laatste
 reden weg om ooit een instellingenpagina te bouwen, en het is de brug naar iteratie 3.
+
+---
+
+## Iteratie 3 — Onboarding: van "ja" tot live
+
+Frames: biologie · speedrunner · oneindig budget en tien jaar · toezichthouder.
+Vier geïsoleerde takken, 24 ideeën.
+
+**Waarom dit oppervlak zwaarder telt dan het klinkt.** Een setup kost nu ongeveer een dag.
+Bij dat tempo is 15 tot 25 klanten het maximum naast een baan, en het inkomensdoel vraagt
+er 30 tot 40. Setuptijd is dus niet comfort maar de plek waar het verdienmodel breekt.
+
+### Clusters
+
+**De setup is een build, geen bouwsessie** (de convergentie van deze ronde)
+- Het klantgenoom: één `klant.json` waaruit site, chatbot, n8n, Twilio en dashboard ontkiemen `[N8 V9 F10]`
+- Zeven demo-sites staan al live; bij "ja" wissel je naam, telefoon, plaats en logo `[N8 V9 F10]`
+- Eén commando provisioneert container, Traefik-route, DNS, Twilio, n8n en dashboardaccount; de PWA gaat via een QR aan het eind van het gesprek `[N8 V8 F10]`
+- Epigenetische deploy: geen enkele per-klant fork, alleen de omgeving verschilt, dus één verbetering landt bij alle veertig `[N7 V9 F10]`
+- Littekenweefsel: elke fout wordt binnen 24 uur een permanente check of default, zodat klant 30 sneller live is dan klant 3 `[N8 V8 F9]`
+- Immuunsysteem: een preflight-poort blokkeert de bouw bij ontbrekende data in plaats van halverwege te repareren `[N7 V9 F9]`
+
+**De input komt uit spraak, niet uit typen**
+- De intake is één telefoongesprek van 20 minuten, opgenomen en getranscribeerd, en die transcriptie is de bron `[N9 V8 F10]`
+- Darmflora-kennisbank: tien spraakberichten op WhatsApp worden de chatbot-kennisbank `[N9 V8 F10]`
+- Cameraploeg mee in de bus, schaduwversie: 45 minuten videobellen terwijl hij rondloopt en praat `[N8 V7 F9]`
+- Foto's via WhatsApp, live met vaktypische beelden die automatisch vervangen worden `[N8 V8 F9]`
+
+**Ga live voordat het af is**
+- Larve-fase: binnen een uur een werkende site op een subdomein met voorlopige gegevens die de klant zelf corrigeert `[N8 V8 F10]`
+- Live met doorschakeling naar zijn eigen mobiel en de chatbot in neem-bericht-aan-modus; de kennisbank vul je in week twee met de vragen die klanten echt stelden `[N9 V9 F10]`
+
+**Eigendom en toetsbaarheid als onboarding-stap**
+- Eigendomsbewijs op dag nul: domein, DNS en repo op naam van de vakman, met PDF-bewijs, vóór er één regel gebouwd is `[N9 V9 F10]`
+- Permanente exit-knop: ZIP met site, leads-CSV, kennisbank en logs, met de datum van de laatste geslaagde export zichtbaar `[N8 V9 F9]`
+- Verplicht scherm waarin de vakman de AI-disclosure voor zijn eigen bellers kiest, niet uitzetbaar `[N8 V9 F8]`
+- Tweekliks-keuze over doorgifte buiten de EER, EU-only als standaard, onwijzigbaar gelogd `[N8 V8 F8]`
+- Geen klant aannemen zonder KvK van de founder plus een aansprakelijkheidsplafond gelijk aan de jaarvergoeding `[N6 V9 F9]`
+- Bewaartermijnen als code: retentie-annotatie per tabel, nachtelijke job, teller in het dashboard `[N7 V8 F8]`
+
+**Traps**
+- **Schaduwprofielen van elke zzp-vakman in Nederland vooraf bouwen** `[N10 V4 F8]`. Scraping op schaal, doorway-pagina's, en AVG-problemen met profielen van mensen die nergens om vroegen.
+- **Google Bedrijfsprofiel scrapen als intake** `[N9 V7 F10]`. Aantrekkelijk en tegen de voorwaarden van Google. De KvK heeft wel een officiële API; die route is schoon.
+- **Generatieve portfoliobeelden** `[N8 V7 F7]`. Een AI-beeld tonen als "ons werk" is misleiding. Alleen bruikbaar als het zichtbaar een illustratie is, en dan is de waarde beperkt.
+
+### Uitgediept: onboarding als build
+
+**Schets.** Eén telefoongesprek van twintig minuten, geopend met een vaste zin: *"Ik neem
+dit gesprek op zodat ik je website eruit kan bouwen, dan hoef jij niets te typen. Vind je
+dat goed?"* Het gesprek stopt als het antwoord nee is. In die twintig minuten loopt de
+founder twaalf vragenblokken af en typt hij tegelijk **zes harde velden** zelf in: uurtarief
+en voorrijkosten, telefoonnummer, KvK/btw, werkgebied, domeinnaam en huisstijlkleur. Die zes
+komen nooit uit de transcriptie.
+
+Binnen het uur daarna draait één commando: transcriptie op de eigen VPS, een LLM genereert
+een concept-`klant.json`, de founder leest die vijf minuten na, en de generator zet site,
+chatbot-config, subdomein met certificaat, n8n-flow en dashboardaccount neer. De larve staat
+op `jansen.belvanger.nl` achter noindex en een niet-raadbare link, met een zichtbare banner
+*"CONCEPT, teksten door AI opgesteld uit ons gesprek, tarieven nog niet gecontroleerd"* en
+met **alle prijsvelden op "op aanvraag"** in plaats van bedragen.
+
+In week één één keer tien minuten bellen met scherm delen: de klant corrigeert hardop, de
+founder wijzigt de JSON en herdeployt in twee minuten. De zes harde velden gaan als los
+WhatsApp-kaartje terug met *"Klopt dit precies? Antwoord met JA"*, en pas bij die JA staan ze
+live. Bij akkoord volgt de metamorfose: eigen domein, echt nummer, opvang aan, en pas dán de
+factuur. In week twee leest de founder de echte vragen uit de logs en vult daaruit de
+kennisbank.
+
+**Eerlijke schatting, en dit is een correctie op het enthousiasme:** klant 3 kost ongeveer
+**3,5 uur** founder-tijd verspreid over tien dagen, klant 30 ongeveer **75 tot 90 minuten**.
+Geen tien minuten. Maar het verschuift het plafond wel van 15-25 klanten naar 40, en dat was
+het hele punt.
+
+**Dragend risico: autoriteit, niet snelheid.** Zodra een gegenereerde tekst een getal of een
+belofte bevat, spreekt de machine namens de vakman, en de vakman wordt daarop afgerekend.
+Daarom loopt er één harde scheiding door het hele proces:
+
+> **Zachte data** (toon, over-ons, welke klussen, FAQ-onderwerpen) mag uit de transcriptie
+> komen. **Harde data** (tarieven, voorrijkosten, garantietermijnen, spoedbeloftes,
+> werkgebied, KvK) nooit.
+
+Een boormachine op de achtergrond, een Twents accent, en "vijfenzeventig" dat "vijfenvijftig"
+wordt, is precies het scenario dat je niet mág kunnen hebben. De transcriptiepijplijn markeert
+elk getal en elk woord onder ~90% zekerheid met `??`, en de deploy blokkeert zolang er een
+`??` in de JSON staat.
+
+**Wanneer voorlopig schadelijk wordt:** zodra een derde het kan zien. Google, een klant van de
+klant, of een doorgestuurde WhatsApp-link. Vandaar noindex, een niet-raadbare URL, en geen
+echte bedrijfsnaam in de subdomeintitel tot akkoord. Een verkeerd geraden "over ons"-alinea is
+charmant; een verkeerd tarief op een site waar net €625 voor is toegezegd is schadelijk.
+
+**Het antwoord op "kan er niet ook nog even een offertemodule bij":** *"Dat zit niet in de €99,
+die prijs bestaat juist omdat iedereen hetzelfde draait. Ik zet het op de lijst; vragen drie
+klanten hetzelfde, dan bouw ik het voor iedereen en krijg jij het gratis. Wil je het nu, dan is
+het een los project."* Elke afwijking wordt een vlag in het genoom, nooit een fork. **Een fork
+bij klant 4 kost je klant 30.**
+
+**Eerste stap.** Twee uur: schrijf `klant.json` schema v1 waarin elk veld een `bron` draagt
+(`mens` voor de zes harde velden, `transcript` voor de rest), plus de 20-minuten vragenlijst
+waarin elke vraag letterlijk de veldnaam noemt die hij vult. Verifieer het schema door de twee
+bestaande dossiers in `product/chatbot/customers/` er retroactief in te persen: elk veld dat
+daar niet in past, of dat in beide gevallen hetzelfde is, hoort niet in het genoom. Pas daarna
+heeft het zin om de generator te schrijven, want het schema is het contract waar de generator,
+de transcriptieprompt, de vragenlijst en de validator alle vier aan hangen.
+
+**Kinderen.** Een deploy-blokkerende validator `klant-keuren.mjs` in het verlengde van het
+bestaande `tools/website-keuren.mjs` · het WhatsApp-bevestigingskaartje met de zes harde velden
+als vast processtuk en audit trail · genoomvlaggen in plaats van forks, met een verzoekenregister
+en de drie-klanten-regel · een littekenregister met 24-uursdeadline, inclusief datum, klantnummer
+en de exacte toegevoegde regel · twee korte gesprekken (20 minuten intake, 10 minuten
+larve-doorloop) in plaats van e-mailpingpong, allebei ingepland tijdens het eerste gesprek.
 
 ---
