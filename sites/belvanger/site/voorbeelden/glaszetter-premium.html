@@ -113,6 +113,14 @@
         rgba(255,255,255,0) 58px 104px);}
     .hero__grain{position:absolute;inset:0;background-image:var(--grain);background-size:180px;
       opacity:.09;mix-blend-mode:overlay;pointer-events:none;z-index:1}
+    /* Herofoto. De scène hierboven blijft eronder liggen, zodat de hero ook af is als de
+       foto ontbreekt of nog laadt. Het verloop houdt de linkerhelft donker genoeg voor
+       witte tekst, hoe licht de foto ook uitvalt — de foto is er wel op gemaakt (donkere
+       linkerderde), maar daar mag de leesbaarheid niet van afhangen. */
+    .hero__photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+      object-position:65% center;z-index:0}
+    .hero__scrim{position:absolute;inset:0;z-index:1;pointer-events:none;
+      background:linear-gradient(100deg, rgba(8,15,25,.88) 0%, rgba(8,15,25,.60) 44%, rgba(8,15,25,.24) 100%)}
     .hero__inner{position:relative;z-index:3;width:100%;
       padding:clamp(8rem,15vh,11rem) 0 clamp(2.4rem,6vh,4rem)}
 
@@ -160,6 +168,10 @@
       .hero{min-height:0}
       .hero__inner{padding:6.5rem 0 2.6rem}
       .pane{border-radius:var(--r)}
+      /* Een 16:9-foto in een smalle staande hero is een krappe uitsnede: op 65% viel de
+         glaszetter er helemaal buiten en bleef er alleen donkere straat over. Verder naar
+         rechts brengt hem en het verlichte raam terug in beeld. */
+      .hero__photo{object-position:80% center}
     }
 
     /* ============ Stat band ============ */
@@ -296,12 +308,17 @@
   <p class="demo-note">Fictief voorbeeldbedrijf, gebouwd door Belvanger om te laten zien wat mogelijk is. <a href="../index.html#gesprek">Zelf zo'n website laten bouwen &rarr;</a></p>
 
   <!-- ============ HERO (glasplaat) ============
-       Deze pagina heeft bewust GEEN fotobestanden nodig: de scène is CSS. Komt er later een
-       echte foto, plaats hem dan als <img class="hero__photo"> direct na .hero__bg met
-       position:absolute;inset:0;object-fit:cover;z-index:1 — de ruit en de tekst liggen op
-       z-index 3 en blijven dan gewoon staan. -->
+       De scène is volledig CSS, dus deze pagina is ook zonder fotobestand af. Ligt er wel
+       een herofoto, dan komt die als eerste kind van de header en gaat er een verloop
+       overheen dat de linkerhelft donker houdt; ruit en tekst liggen hoger en blijven staan.
+       Zie de stijlregels bij de hero, en tools/glaszetter-beelden-inbouwen.mjs.
+       LET OP: geen klassenamen tussen aanhalingstekens en geen bestandspaden in dit
+       commentaar. Dat script herkent aan zulke tekst of het werk al gedaan is, en heeft
+       zichzelf twee keer om de tuin geleid door zijn eigen documentatie mee te lezen. -->
   <header class="hero">
     <div class="hero__bg"></div>
+    <img class="hero__photo" src="../assets/voorbeelden/glaszetter-hero.webp" alt="Glaszetter plaatst een ruit in een woning bij schemer" fetchpriority="high" decoding="async" />
+    <div class="hero__scrim"></div>
     <div class="hero__rays"></div>
     <div class="hero__grain"></div>
 
@@ -396,10 +413,12 @@
   </section>
 
   <!-- ============ ONS WERK (self-insert slots) ============
-       Nog geen foto's: de twee gevulde kaders staan er als glaspaneel met een lichtval,
-       niet als lege gaten. Zodra er echte foto's zijn, plaats je binnen .werk-frame een
-       <img class="werk-frame__img" src="../assets/voorbeelden/glaszetter-werk-1.webp" alt="..." loading="lazy" />
-       en haal je de .werk-frame__sheen weg. -->
+       Twee kaders plus een open slot. Zit er nog geen foto in een kader, dan draagt het de
+       glas-variant en tekent de CSS er een roedeverdeling met lichtval in, zodat het als
+       raam leest in plaats van als lege plek. Komt er een foto, dan vervangt die de
+       opvulling en gaan de variantklasse en de lichtval eruit.
+       Het omzetten doet tools/glaszetter-beelden-inbouwen.mjs; met de hand mag ook.
+       LET OP: geen bestandspaden in dit commentaar, zie de opmerking bij de hero. -->
   <section class="block" id="werk">
     <div class="wrap">
       <div class="sec-head reveal">
@@ -408,8 +427,8 @@
         <p>Straks staan hier de echte foto's van úw projecten. Zo laat u nieuwe klanten precies zien wat ze van u kunnen verwachten.</p>
       </div>
       <div class="werk-grid reveal">
-        <div class="werk-frame werk-frame--glas"><div class="werk-frame__sheen"></div><div class="werk-frame__grain"></div><span class="werk-frame__tag">Winkelpui hersteld &middot; Zwolle</span></div>
-        <div class="werk-frame werk-frame--glas"><div class="werk-frame__sheen"></div><div class="werk-frame__grain"></div><span class="werk-frame__tag">HR++ geplaatst &middot; Kampen</span></div>
+        <div class="werk-frame"><img class="werk-frame__img" src="../assets/voorbeelden/glaszetter-werk-1.webp" alt="Herstelde winkelpui" loading="lazy" /><div class="werk-frame__grain"></div><span class="werk-frame__tag">Winkelpui hersteld &middot; Zwolle</span></div>
+        <div class="werk-frame"><img class="werk-frame__img" src="../assets/voorbeelden/glaszetter-werk-2.webp" alt="Nieuw isolatieglas geplaatst" loading="lazy" /><div class="werk-frame__grain"></div><span class="werk-frame__tag">HR++ geplaatst &middot; Kampen</span></div>
         <div class="werk-frame werk-frame--slot"><span>+ Hier komen straks<br>foto's van úw projecten</span></div>
       </div>
     </div>

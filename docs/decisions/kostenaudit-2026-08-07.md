@@ -294,7 +294,7 @@ staat in een kostenaudit omdat het daar is opgedoken, niet omdat het erin thuish
 | Een dossier, intake of gespreksnotitie | Nul documenten in de hele repo |
 | Een regel in `SELLING.md` | Niets. De teller staat op 0 gesprekken |
 | Het compose-bestand | Alleen op de VPS |
-| Een voorbeeldpagina voor zijn vak | Ontbrak; op 2026-08-07 gebouwd, staat nog niet in de galerij |
+| Een voorbeeldpagina voor zijn vak | Ontbrak; op 2026-08-07 gebouwd en in de galerij gezet |
 | Een regel in `product/chatbot/galerij.json` | Ontbrak, nu toegevoegd (leeg, niet geraden) |
 
 **De dichtstbijzijnde kandidaat voor klant #1 bestaat dus nergens in de administratie.**
@@ -379,10 +379,9 @@ het aanbod beter scoort dan minstens de helft van die zeven.
 was (de kop staat achter een ruit, met haarscheur). Spoed staat er bovenaan in plaats van
 in een dienstenlijst, want dat is het hele verschil met de andere vakken.
 
-**Nog niet in de galerij op de homepage.** Die acht kaarten gebruiken een echte vakfoto als
-thumbnail (900×1200 webp) en die is er voor dit vak niet; hij moet bovendien in NL én EN
-tegelijk (`tests/taalpariteit.mjs` vergelijkt het aantal kaarten). De pagina is dus wel te
-tonen en te sturen, maar nog niet vindbaar vanaf de homepage.
+**Staat sinds dezelfde dag in de galerij**, in NL en EN, met vier eigen beelden die met
+OpenArt zijn gemaakt (herofoto, twee werkfoto's en de thumbnail). Hoe dat is gegaan, wat het
+kostte en welke voetangels erin zaten: `docs/build/glaszetter-beelden.md`.
 
 Blijft staan: **als Siedsma ja zegt, is zijn site het beste verhaal dat je hebt.** Een
 klant in een vak waar de pijn scherp en aantoonbaar is, is een betere referentie dan drie
