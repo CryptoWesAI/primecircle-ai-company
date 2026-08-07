@@ -583,7 +583,14 @@ function buildDesignPrompt(d) {
     `Regio: ${orDash(d.werkgebied)}`,
     `Telefoon: ${orDash(d.telefoon)}`,
     `${jaren}`,
-    `Google: ${oneLine(d.googleSterren) || "-"} sterren, ${oneLine(d.googleReviews) || "-"} reviews`,
+    // De overgetypte score gaat bewust NIET als getal de site op: die is zelfgerapporteerd
+    // en veroudert, en dan publiceren wij een onware claim op de site van een betalende
+    // klant. Zie docs/build/google-reviews-op-klantsites.md.
+    `Google-profiel: ${orDash(d.googleProfielUrl)}`,
+    `Google (zelf opgegeven, ALLEEN ter inschatting, NIET op de site zetten): ${oneLine(d.googleSterren) || "-"} sterren, ${oneLine(d.googleReviews) || "-"} reviews`,
+    oneLine(d.googleProfielUrl)
+      ? "Reviewblok: plaats een badge die de score LIVE ophaalt bij de bron, met ophaaldatum en een klikbare link naar bovenstaand profiel. Geen aggregateRating in de JSON-LD. Onder ~10 reviews of onder 4,0 sterren: laat het reviewblok helemaal weg en toon in plaats daarvan het oprichtingsjaar en de certificeringen."
+      : "Reviewblok: GEEN profiel-link aangeleverd, dus geen reviewblok en geen sterren. Vraag de link alsnog op; veel vakmensen hebben een profiel dat nooit is geclaimd en dat claimen is gratis waarde die je in het gesprek kunt leveren.",
     `Certificeringen/badges: ${orDash(d.certificeringen)}`,
     `KvK: ${orDash(d.kvk)}`,
     "",
@@ -936,7 +943,8 @@ function intakeEmailHtml(d, prompt, imageAttachCount) {
     ].join(""))}
     ${section("C. Fotos en bewijs", [
       row("Eigen fotos", orDash(d.eigenFotos)), row("Voor/na", orDash(d.voorNa)),
-      row("Google", `${oneLine(d.googleSterren) || "-"} sterren, ${oneLine(d.googleReviews) || "-"} reviews`),
+      row("Google-profiel", orDash(d.googleProfielUrl)),
+      row("Google (zelf opgegeven, niet publiceren)", `${oneLine(d.googleSterren) || "-"} sterren, ${oneLine(d.googleReviews) || "-"} reviews`),
       row("Certificeringen", orDash(d.certificeringen)), row("Actief sinds", orDash(d.actiefSinds)),
     ].join(""))}
     ${section("D. Diensten", [row("Diensten", cleanMulti(d.diensten, 3000).replace(/\n/g, "; ") || "-"),

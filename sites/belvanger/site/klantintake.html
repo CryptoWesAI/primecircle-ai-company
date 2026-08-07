@@ -416,7 +416,10 @@
             <div class="demo-form__row">
               <span class="intake-section__legend">Bel je een gemiste oproep normaal gesproken zelf terug?</span>
               <div class="radio-pills" role="radiogroup" aria-label="Terugbelgedrag">
-                <label class="radio-pill"><input type="radio" name="terugbelgedrag" value="binnen het uur" checked /><span>Meestal binnen het uur</span></label>
+                <!-- Bewust GEEN checked: dit is de diskwalificerende vraag, en het vooraf
+                     aanvinken van het vleiende antwoord garandeert dat je nooit een eerlijk
+                     antwoord krijgt. Niets ingevuld is zelf ook een signaal. -->
+                <label class="radio-pill"><input type="radio" name="terugbelgedrag" value="binnen het uur" /><span>Meestal binnen het uur</span></label>
                 <label class="radio-pill"><input type="radio" name="terugbelgedrag" value="zelfde dag" /><span>Vaak pas 's avonds</span></label>
                 <label class="radio-pill"><input type="radio" name="terugbelgedrag" value="niet altijd" /><span>Eerlijk gezegd niet altijd</span></label>
               </div>
