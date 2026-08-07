@@ -17,8 +17,8 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 4 |
-| Oppervlakken gedekt | 4 van 15 |
+| Iteraties gedraaid | 5 |
+| Oppervlakken gedekt | 5 van 15 |
 | Fase | divergentie |
 
 **Sterkste vondst tot nu toe:** bel-de-demo (iteratie 1). Twee onafhankelijke frames
@@ -46,7 +46,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 2 | Klantdashboard: het dagelijkse gebruik door de vakman | **gedaan, iteratie 2** |
 | 3 | Onboarding: van "ja" tot live | **gedaan, iteratie 3** |
 | 4 | De automatiseringen: n8n, sms, push, chat | **gedaan, iteratie 4** |
-| 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | open |
+| 5 | Backend-stack: Twilio/Bird, OpenRouter, NocoDB, Cal.com, Mollie | **gedaan, iteratie 5** |
 | 6 | Beheer: hoe één persoon 25 klanten draait zonder te verzuipen | open |
 | 7 | Storing en support: wat er gebeurt als het stukgaat | open |
 | 8 | Prijs- en pakketstructuur | open |
@@ -565,5 +565,77 @@ verkoop en prior voor de stiltedrempel · `CRITICAL_PATH.md` met de logica in
 leverancier-neutrale pseudocode, zodat de logica in het document woont en niet bij Twilio ·
 ruwe webhooks append-only naar `raw/YYYY-MM-DD.jsonl` met een dagelijkse teller van
 niet-verwerkte regels, precies het soort stille fout dat de 07:00-mail nu niet ziet.
+
+---
+
+## Iteratie 5 — Backend-stack: de leveranciers
+
+Frames: markten · de vijandige leverancier · geen budget en één uur · dragende aanname
+weghalen. Vier geïsoleerde takken, 25 ideeën.
+
+**De convergentie van deze ronde is eigendom**, en hij sluit rechtstreeks aan op iteratie 3.
+
+### Clusters
+
+**Wat onvervangbaar is, hoort op naam van de klant**
+- Koop alleen doorschakelnummers; het nummer dat zijn klanten kennen staat nooit op het Twilio-account van Belvanger `[N9 V9 F10]`
+- Elke klant eigen accounts bij Twilio, Google en Cal.com op zijn naam en betaalmiddel; Belvanger krijgt gedelegeerde toegang en verkoopt configuratie plus onderhoud `[N10 V7 F10]`
+- Postgres als enige echte database; NocoDB, Baserow en Cal.com zijn vervangbare UI-lagen erboven `[N8 V8 F9]`
+- Belvanger levert geen software maar een telefoonnummer met mens en AI erachter, en kiest zelf zijn gereedschap `[N9 V7 F10]`
+
+**Niets mag tegelijk omvallen**
+- Registrar, DNS-hosting, VPS en mailbox bij vier verschillende partijen `[N8 V9 F10]`
+- Noodtelefoonnummer geport-klaar bij een aparte carrier, met een vooraf ingesproken voicemail `[N9 V7 F10]`
+- Fysiek herstelpakket: 2FA-codes op papier, tweede TOTP-toestel, twee betaalmiddelen bij verschillende banken, neutraal herstel-mailadres, buiten huis bewaard `[N7 V9 F9]`
+- Winterslaap-export: wekelijks het leesbare eindproduct van elke dienst, niet de database-dump `[N9 V8 F9]`
+- Koud kruispunt: een VPS van €5 bij een andere hoster in een ander land, één keer per kwartaal aangeraakt `[N8 V8 F9]`
+- Uitvaldraaiboek van één pagina per leverancier, en elk kwartaal er één 24 uur echt live testen `[N8 V8 F9]`
+- Elke leverancierskoppeling achter één vaste interne interface `[N7 V8 F9]`
+
+**Kosten variabel maken in plaats van vast**
+- Sms-doorbelasting bij kostprijs plus 30% in het contract, zodat de duurste variabele post meebeweegt met volume `[N8 V8 F9]`
+- Kanaalrouter per klant per berichttype, met sms expliciet als premium-optie naast WhatsApp `[N8 V8 F9]`
+- Modelketen met confidence-drempel: goedkoop model eerst, duur model alleen als de drempel niet gehaald wordt, met tokenkosten per klant gelogd `[N8 V7 F8]`
+- Drie promptversies per taak (Gemini, generiek-OpenAI, lokaal klein model), maandelijks getest op tien voorbeeldgesprekken `[N8 V7 F8]`
+
+**Nog niet bouwen**
+- Mollie, Cal.com en Retell AI op de wachtlijst; de eerste drie klanten handmatig factureren `[N7 V9 F10]`
+- Geen NocoDB of Baserow: één SQLite-bestand, en de eerste vijf klanten hebben geen admin-UI `[N7 V9 F9]`
+- n8n uit, twee cronscripts; n8n mag terugkomen als een klant een flow wil kunnen zien `[N8 V8 F8]`
+- AI lokaal op een mini-pc thuis voor niet-urgente taken, live pad regelgestuurd zonder model `[N9 V6 F9]`
+
+### Traps
+
+- **De mailbox en agenda van de vakman als enige database** `[N9 V5 F7]`. Breekt de
+  dashboardbelofte en gaat uit van Google Workspace dat lang niet elke vakman heeft.
+- **Een aparte stack en eigen VPS per klant** `[N8 V6 F7]`. Dit botst frontaal met iteratie 3,
+  die juist concludeerde dat er geen enkele fork mag zijn omdat het beheer anders meeschaalt
+  met het klantenaantal. Zie de tegenspraak hieronder.
+- **Geen server, alleen een laptop met cron** `[N9 V5 F7]`. Voor een betaalde dienst met een
+  bereikbaarheidsbelofte is dit niet verdedigbaar.
+
+### Twee dingen die eerlijk benoemd moeten worden
+
+**1. Een echte tegenspraak tussen iteratie 3 en 5.** Iteratie 3 zegt: geen forks, alle
+klanten op één codebase, want anders schaalt het beheer mee met het klantenaantal. Iteratie 5
+zegt: eigen accounts en desnoods een eigen omgeving per klant, want anders sleept één
+leveranciersprobleem iedereen mee. Beide hebben gelijk over hun eigen faalmodus. Dit is
+precies het soort conflict dat de synthesefase moet oplossen, en het antwoord ligt
+waarschijnlijk in de scheiding: **één gedeelde codebase, gescheiden accounts en data.** Nog
+niet vastgesteld.
+
+**2. Dit is de derde iteratie op rij waarin een onafhankelijk frame zegt dat er iets moet
+worden weggehaald dat al gebouwd is.** Iteratie 2 zei push moet luxe zijn, iteratie 4 zei
+n8n en de check-mail eruit, iteratie 5 zegt n8n eruit, de zelfgebouwde Web Push-crypto eruit,
+en het dashboard uitstellen tot een klant erom vraagt. Dat is geen ruis meer, dat is een
+patroon.
+
+De eerlijke lezing: **er is meer gebouwd dan er verkocht is, en de frames zien dat vanuit
+elke hoek.** De juiste conclusie is niet om werkende dingen te slopen, want de bouwkosten zijn
+al gemaakt en het dashboard is op een echt toestel bewezen. De juiste conclusie is dat er
+vanaf nu **niets meer bij mag** tot er een betalende klant is die erom vraagt, en dat de
+onderhoudslast van wat er staat actief omlaag moet (n8n vervangen door cronscripts is
+daarvan het goedkoopste voorbeeld, want het haalt een heel tweede systeem met eigen UI,
+updates en storingsmodus weg zonder dat één klant het merkt).
 
 ---
