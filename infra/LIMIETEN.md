@@ -84,10 +84,15 @@ Draai dit **direct na de uitrol en nog een keer een dag later**. Waar je op let:
 ## De containers die hier níet in staan
 
 De limieten hierboven gelden alleen voor de vier projecten die in deze repo staan. Op de
-VPS draaien er meer, en juist die zijn het risico: `ab-uitvaartzorg` (de enige container
-die een echte klant bedient en die **nergens in git staat**), Traefik, en de vreemde
-projecten `knifensharp`, `primecircle`, `primecircle-*`, `agent-zero` en
-`glasservice-siedsma`.
+VPS draaien er meer, en juist die zijn het risico:
+
+- **`ab-uitvaartzorg`** — de referentiecase van PrimeCircle (geen Belvanger-klant), de
+  enige container met echte bezoekers, en hij staat **nergens in git**.
+- **`glasservice-siedsma`** — de proefsite van de buurman van de founder, glazenwasser,
+  mogelijk klant #1. Staat ook niet in git. **Niets aan uitzetten of weggooien.**
+- **Traefik** — alle HTTPS loopt hierdoorheen, staat niet in git.
+- **`knifensharp`, `primecircle`, `primecircle-*`, `agent-zero`** — vreemde projecten,
+  zie punt 5 en 6 van de kostenaudit.
 
 Voor logrotatie kun je die in één klap meenemen met een daemon-brede standaard:
 
@@ -109,8 +114,10 @@ twijfelt: sla het over. De per-container-regels hierboven dekken al onze eigen b
 en de vreemde projecten kunnen beter helemaal weg (punt 6 van de kostenaudit).
 
 Voor `mem_limit` bestaat er géén daemon-brede standaard. Die moet per container. Voor
-`ab-uitvaartzorg` betekent dat: **eerst het compose-bestand in git krijgen**, want zolang
-dat alleen op de VPS staat is elke wijziging eraan onreproduceerbaar.
+`ab-uitvaartzorg` en `glasservice-siedsma` betekent dat: **eerst het compose-bestand in
+git krijgen**, want zolang dat alleen op de VPS staat is elke wijziging eraan
+onreproduceerbaar. Voor Siedsma geldt dat dubbel: als hij klant #1 wordt, is dat de
+container die je als eerste opnieuw moet kunnen opbouwen.
 
 ## Gotchas
 

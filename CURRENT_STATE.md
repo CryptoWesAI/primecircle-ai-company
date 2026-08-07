@@ -146,11 +146,11 @@ klant (€199) oplevert.
 
 Wat de audit wél oplevert, en het gaat over risico in plaats van geld:
 
-1. **De AB-container en Traefik staan niet in git.** De enige container die een echte
-   klant bedient, en de laag waar alle HTTPS doorheen gaat, zijn nergens gereproduceerd.
-   `infra/backup/README.md` noemt Traefik al als bekend gat.
-2. **Meer dan de helft van de VPS draait iets anders dan Belvanger:**
-   `glasservice-siedsma` (geen document, geen map in `clients/`, dus onbekend wat het is),
+1. **Drie containers staan niet in git:** `ab-uitvaartzorg` (de referentiecase, de enige
+   met echte bezoekers), `glasservice-siedsma` (de proefsite van de buurman) en Traefik
+   (waar alle HTTPS doorheen gaat). `infra/backup/README.md` noemt Traefik al als bekend
+   gat.
+2. **Vier van de elf containers draaien iets dat niet van het bedrijf is:**
    `knifensharp`, `primecircle`, `primecircle-*` en `agent-zero`.
 3. **`knifensharp` claimt de apex `primecircle.cloud` en zijn ACME faalt permanent.**
    Let's Encrypt heeft weeklimieten; haal de apex-labels weg.
@@ -168,6 +168,22 @@ Wat de audit wél oplevert, en het gaat over risico in plaats van geld:
    `demo.twilio.com`, dus wie ernaartoe sms't krijgt een Twilio-demo-antwoord terug.
    Advies: nu al inruilen voor een NL-nummer met sms én voice, zodat je de opstelling
    test die je gaat verkopen.
+
+**En de bevinding die er niet in hoorde maar de belangrijkste is (§7 van het rapport).**
+De audit zocht containers die geld kosten en vond er één die dat niet doet:
+`glasservice-siedsma`, de proefsite van de buurman van de founder, glazenwasser,
+**mogelijk klant #1**. Die bestaat nergens in de administratie: geen map in `clients/`,
+geen dossier, geen regel in `SELLING.md`, geen voorbeeldpagina voor zijn vak, en het
+compose-bestand staat alleen op de VPS. Twee koud aangeschreven prospects staan wél in
+`SELLING.md`; de warme buurman met een draaiend product niet.
+
+Eén ding moet vóór het gesprek bekend zijn: **de rekensom van Belvanger werkt niet
+ongewijzigd voor een glazenwasser.** De pitch en de "bespaard"-widget draaien op
+`avg_job_value`, standaard **€250** (`sites/belvanger-portal/src/server.js:93`). Een beurt
+glazenwassen is eerder €30-60, en dan kost Belvanger hem acht gemiste oproepen per maand
+voordat het quitte speelt. Bij hem verkoop je **contractwaarde** (terugkerende rondes ×
+jaren), niet klusprijs. Dat is een aanname, geen meting — het is precies de eerste vraag
+die je hem stelt.
 
 ### Belvanger klantdashboard als Android-app (2026-07-25)
 

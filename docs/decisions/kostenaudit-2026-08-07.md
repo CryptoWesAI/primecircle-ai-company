@@ -48,6 +48,19 @@ eigen accounts kunt nakijken en die deze audit van schatting naar feit tillen.
 
 ## 1. Wat er draait
 
+> **Gecorrigeerd op 2026-08-07 door de founder, na de eerste versie van dit document.**
+> Twee dingen die ik uit de repo niet kon weten en verkeerd had ingedeeld:
+>
+> 1. **AB Uitvaartzorg valt niet onder Belvanger.** Het is de referentiecase van
+>    PrimeCircle, geen Belvanger-klant. Het telt dus **niet** mee in de twintig klanten
+>    van het inkomensmodel en het draagt geen Belvanger-omzet. Voor de risico's verandert
+>    er niets — het blijft de enige container met echte bezoekers en hij staat nog steeds
+>    niet in git.
+> 2. **`glasservice-siedsma` is geen administratief gat maar een warme prospect.** Het is
+>    de buurman van de founder, glazenwasser, met een **proefwebsite die al draait** en
+>    die mogelijk klant #1 wordt. Zie §7: dat is de belangrijkste bevinding van deze
+>    hele audit geworden, en het is er geen over kosten.
+
 ### 1a. Belvanger en klanten (dit hoort er te zijn)
 
 | Project | Container(s) | Waar bereikbaar | Bron |
@@ -55,6 +68,7 @@ eigen accounts kunt nakijken en die deze audit van schatting naar feit tillen.
 | `belvanger` | 1 (site + chat + `/api/intake` in één) | `belvanger.nl`, `www.belvanger.nl`, `bvaanbod.primecircle.cloud` | `sites/belvanger/docker-compose.yml` |
 | `belvanger-portal` | 2 (Node + `postgres:17-alpine`) | `dashboard.belvanger.nl` | `sites/belvanger-portal/docker-compose.yml` |
 | `ab-uitvaartzorg` | 1 **[onbekend, geen compose in de repo]** | `ab.primecircle.cloud` | `CURRENT_STATE.md`, back-upvolume `ab-uitvaartzorg-data` |
+| `glasservice-siedsma` | 1 **[onbekend, geen compose in de repo]** | **[onbekend]** | `infra/dashboard/SPEC.md` |
 | `n8n` | 1 (`n8nio/n8n:2.30.7`) | `n8n.primecircle.cloud` | `infra/n8n/docker-compose.yml` |
 | `dashboard` (privé) | 1 | alleen via Tailscale, `127.0.0.1:8095` | `infra/dashboard/docker-compose.yml` |
 | Traefik | 1 | de reverse proxy voor alles | **[feit]** genoemd, staat **niet** in de repo |
@@ -69,18 +83,17 @@ eigen accounts kunt nakijken en die deze audit van schatting naar feit tillen.
 
 Uit `infra/dashboard/SPEC.md` en `docs/decisions/DECISIONS_LOG.md`:
 
-| Project | Wat ik ervan weet | Van Belvanger? |
+| Project | Wat ik ervan weet | Weg mee? |
 |---|---|---|
-| `glasservice-siedsma` | Heeft een `.env`, staat in de beheerbare set. **Geen map in `clients/`, geen enkel document.** | **[onbekend]** |
-| `knifensharp` | Ouder project. Claimt de apex `primecircle.cloud` + `www` in Traefik, **en zijn certificaataanvraag mislukt** | Nee |
-| `primecircle` | Heeft `backend/.env`, dus een echte applicatie | Nee |
-| `primecircle-*` | Meervoud, aantal onbekend | Nee |
-| `agent-zero` | Secrets in `docker-compose.yml` zelf | Nee |
+| `knifensharp` | Ouder project. Claimt de apex `primecircle.cloud` + `www` in Traefik, **en zijn certificaataanvraag mislukt** | Apex-labels weg, container laten staan |
+| `primecircle` | Heeft `backend/.env`, dus een echte applicatie | Stoppen en een week kijken |
+| `primecircle-*` | Meervoud, aantal onbekend | Stoppen en een week kijken |
+| `agent-zero` | Secrets in `docker-compose.yml` zelf | Stoppen en een week kijken |
 
 Het besluitenlogboek van 18 juli spreekt van **"9+ containers"** als de reden dat je het
-privé-dashboard hebt gebouwd. Dat getal klopt: zes hierboven plus deze vijf is elf.
+privé-dashboard hebt gebouwd. Dat getal klopt: zeven hierboven plus deze vier is elf.
 
-**Meer dan de helft van je VPS draait dus iets dat niets met je bedrijf te maken heeft.**
+**Vier van de elf containers draaien iets dat niets met het bedrijf te maken heeft.**
 
 ---
 
@@ -167,7 +180,12 @@ per maand wint zou onzin zijn.
 |---|---|---|---|
 | 5 | **`knifensharp` stoppen of zijn apex-claim weghalen** | Stopt een mislukkende certificaataanvraag | **Laag, maar kijk eerst.** Dit project claimt `primecircle.cloud` + `www` en zijn ACME faalt **[feit, `CURRENT_STATE.md`]**. Let's Encrypt heeft weeklimieten; een aanvraag die permanent faalt vreet daarvan. In het slechtste geval raakt een verlenging van een cert dat wél werkt geblokkeerd. **Zet hem niet weg, haal alleen de Traefik-labels van de apex af** |
 | 6 | **`agent-zero`, `primecircle`, `primecircle-*` stoppen** | Geheugen. Je VPS zit op 45% | **Onbekend, want ik weet niet wat het is.** Aanpak: `docker stop`, een week niets doen, dan pas `docker rm`. Stoppen is omkeerbaar, weggooien niet |
-| 7 | **Uitzoeken wat `glasservice-siedsma` is** | Mogelijk niets, mogelijk een klant | **Hier moet je niets uitzetten voordat je het weet.** Er is een `.env`, dus er is ooit iets ingericht, maar er is geen enkel document en geen map in `clients/`. Als dit een echte klant is, is het een gat in je administratie. Als het niets is, kan het weg |
+
+### Níet aanraken
+
+| # | Onderdeel | Waarom |
+|---|---|---|
+| 7 | **`glasservice-siedsma`** | Dit is de proefwebsite van de buurman, glazenwasser, **mogelijk klant #1**. Zet hier niets uit en gooi hier niets weg. Wat er wél moet gebeuren staat in §7 en dat is geen kostenwerk |
 
 ### Wel bekijken, maar níet uitzetten
 
@@ -254,14 +272,78 @@ nergens.
 
 ---
 
+## 7. Siedsma: wat deze audit per ongeluk vond
+
+Ik zocht naar containers die geld kosten en vond er één die dat niet doet. Dit onderdeel
+staat in een kostenaudit omdat het daar is opgedoken, niet omdat het erin thuishoort.
+
+**Wat er is:** een draaiende proefwebsite voor de buurman van de founder, glazenwasser,
+mogelijk klant #1.
+
+**Wat er niet is, en dit is de bevinding:**
+
+| Zou er moeten zijn | Staat er |
+|---|---|
+| `clients/glasservice-siedsma/` | Bestaat niet |
+| Een dossier, intake of gespreksnotitie | Nul documenten in de hele repo |
+| Een regel in `SELLING.md` | Niets. De teller staat op 0 gesprekken |
+| Het compose-bestand | Alleen op de VPS |
+| Een voorbeeldpagina voor zijn vak | Er zijn er zeven, glazenwasser zit er niet bij |
+| Een regel in `product/chatbot/galerij.json` | Ontbrak, nu toegevoegd (leeg, niet geraden) |
+
+**De dichtstbijzijnde kandidaat voor klant #1 bestaat dus nergens in de administratie.**
+Twee mensen zijn koud aangeschreven en staan wél in `SELLING.md`; de buurman voor wie al
+een site draait, staat er niet in. Dat is geen boekhoudfoutje: het is precies de reden
+dat de verkoopteller op nul staat terwijl er een warme prospect met een gebouwd product
+naast de deur woont.
+
+### Eén ding dat je moet weten voordat je hem pitcht
+
+**De rekensom van Belvanger werkt niet zoals hij is voor een glazenwasser.** De hele
+pitch en de "bespaard"-widget draaien op `avg_job_value`, met een standaard van **€250**
+per klus (`sites/belvanger-portal/src/server.js:93`, en dezelfde aanname zit in de
+rekenmachine op de homepage). Een gemiste oproep is dan ~€150 misgelopen omzet, en €199
+per maand verdient zichzelf terug bij anderhalve gemiste klus.
+
+Een glazenwasser draait geen klussen van €250. Eén beurt is eerder €30 tot €60. Zet je
+zijn echte klusbedrag in het dashboard, dan zegt de widget iets in de orde van €25 per
+gemiste oproep, en dan kost Belvanger hem acht gemiste oproepen per maand voordat het
+quitte speelt. **Op het huidige verhaal valt hij door de mand, en dat merk je pas tijdens
+het gesprek.**
+
+Dat betekent niet dat hij geen goede klant is — het betekent dat je bij hem iets anders
+verkoopt. Een glazenwasser leeft van **terugkerende rondes**, niet van losse klussen. Een
+nieuwe klant die vier keer per jaar €45 betaalt en drie jaar blijft is €540 waard, geen
+€45. **Als je hem pitcht, reken dan met contractwaarde en niet met klusprijs**, en zet
+`avg_job_value` op de waarde van een gewonnen *ronde*, niet van een beurt — met die keuze
+opgeschreven op zijn klantkaart, anders is het over een half jaar een onverklaarbaar getal.
+
+Dit is een aanname van mij, geen meting: ik weet niet wat Siedsma rekent en hoe vaak hij
+terugkomt. **Dat is precies de eerste vraag die je hem stelt**, en het is een prettige
+vraag om mee te beginnen, want het is oprechte interesse in zijn bedrijf en geen pitch.
+
+### Wat er moet gebeuren, in deze volgorde
+
+1. **Vraag hem hoe het met de proefsite is.** Geen aanbod, geen prijs. Je hebt iets voor
+   hem gebouwd en je wilt weten of hij er iets aan heeft. Dat is het hele gesprek.
+2. **Vraag naar zijn cijfers**: wat kost een beurt, hoe vaak per jaar, hoeveel klanten
+   blijven, en hoe vaak belt er iemand die hij niet opneemt.
+3. **Leg beide vast** in `clients/glasservice-siedsma/docs/` en zet hem als regel in
+   `SELLING.md`. Zolang hij daar niet in staat, telt hij voor niemand mee, ook niet voor
+   jezelf.
+4. **Pas daarna** de rekensom en een aanbod, met contractwaarde als basis.
+
+Stap 1 en 2 kosten samen een half uur en er hoeft niets voor gebouwd te worden.
+
+---
+
 ## Hoogste-hefboom vervolgactie
 
-**Niet uit deze audit.** Er is hier ongeveer €3 per maand te winnen, en dat is precies de
-reden dat deze audit klaar is: je kostenkant is gezond en er valt niets te snijden dat
-ertoe doet. De vier configuratiewijzigingen uit §3 zijn een uur werk en gaan over risico,
-niet over geld — doe ze als je toch op de VPS bent.
+**Niet uit deze audit, en niet uit de prospectlijst.** Er is hier ongeveer €3 per maand te
+winnen; je kostenkant is gezond en er valt niets te snijden dat ertoe doet. De vier
+configuratiewijzigingen uit §3 zijn een uur werk en gaan over risico, niet over geld.
 
-De hefboom ligt aan de andere kant van de rekening. Er staat één klant op de teller die
-niet betaalt, en `SELLING.md` staat op nul gesprekken. **Bel de eerste tien vakmensen uit
-de prospectlijst.** Eén ja is €199 per maand, en dat is acht keer je hele
-infrastructuurrekening.
+De hefboom is §7. **Spreek de buurman.** Er draait al een site voor hem, hij woont naast
+je, en hij staat in geen enkel bestand. Dat is een kortere weg naar klant #1 dan honderd
+koude nummers, en het is de enige actie in dit hele document waar geen enkele schatting
+in zit.
