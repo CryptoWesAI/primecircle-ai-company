@@ -18,8 +18,8 @@
 | | |
 |---|---|
 | Iteraties gedraaid | 9 |
-| Oppervlakken gedekt | 13 van 15 (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
-| Fase | divergentie |
+| Oppervlakken gedekt | 15 van 15 (12 opgegaan in 3/4/5/9) (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
+| Fase | **synthese** (divergentie afgerond op 9 iteraties) |
 
 **Commercieel beslissende vondst (iteratie 7):** de vlakke €99 subsidieert de beste
 klanten en haalt het inkomensdoel niet. Een tweedelig tarief (€595 opstart, €149 per maand
@@ -60,7 +60,7 @@ Elke iteratie pakt het bovenste onbezochte oppervlak. Founder mag de volgorde om
 | 9 | Retentie: waarom een klant na maand 6 blijft | **gedaan, iteratie 8** |
 | 10 | De wow: wat een vakman ongevraagd aan een collega vertelt | **gedaan, iteratie 8** |
 | 11 | De AI-laag: chat, spraak, triage, tegenover de concurrentie | **gedaan, iteratie 9** |
-| 12 | Data en AVG als product in plaats van als plicht | open |
+| 12 | Data en AVG als product in plaats van als plicht | **opgegaan in 3, 4, 5 en 9** |
 | 13 | Het iOS-gat en mobiele levering | **opgegaan in 2 en 4** (sms als ruggengraat) |
 | 14 | Offboarding en eigendom | **opgegaan in 5** (eigendomslaag, exit-knop, weglooptest) |
 | 15 | Meetbaarheid: aan welk cijfer leest de klant zijn waarde af | **gedaan, iteratie 8** |
@@ -1110,5 +1110,78 @@ verbinding met een boormachine op de achtergrond. Tekst kent die eis niet.
 **Trap:** bij een gemiste oproep ook de drie collega's in de buurt sms'en en de eerste die "JA"
 stuurt de klant geven `[N9 V5 F7]`. Elegant vanuit de beller gezien, maar het verandert Belvanger
 in een leadmarktplaats en dat is precies het model waar vakmensen elkaar voor waarschuwen.
+
+### Uitgediept: de Terugbelkaart
+
+**Eén product, één positionering.** Op t+8 seconden precies één sms (plafond twee segmenten,
+~€0,16):
+
+> *"Je belde Jan van Loodgietersbedrijf Jansen. Jan staat nu onder een aanrecht. Bij ons neemt
+> nooit een robot op. Antwoord 1 = lekkage/storing NU, 2 = offerte, 3 = afspraak. Of tik:
+> blvg.nl/x7k2"*
+
+Die link opent **de Terugbelkaart**, en daar staat alles wat anders extra sms'jes zou kosten, dus
+gratis: drie duimgrote knoppen, eerste hulp bij zijn keuze (*"draai de hoofdkraan dicht bij de
+meter, filmpje 22 seconden"*), en onderaan een aftellende klok naar een tijdstip **dat de vakman
+zelf heeft gezet**: *"Jan belt je vóór 14:45, nog 11:38."*
+
+De vakman krijgt één push: *"14:12 gemist, 06-…, koos 1 SPOED, Herenweg 4 Zwolle, bestaande klant,
+cv-ketel maart 2025"* met drie knoppen: **ik bel binnen 15 min / 30 min / vanavond**. Die tik zet
+de klok bij de klant. Heeft hij op T-2 minuten nog niet gebeld, dan vraagt Belvanger om te
+herzetten en stuurt automatisch *"Jan zit nog vast bij een storing, nieuwe tijd: 15:10"* — **een
+gebroken belofte wordt zo een proactieve update**, wat de beller eigenlijk wilde. Belt hij, dan
+hoort hij eerst 15 seconden briefing voordat de lijn opengaat; daar is vertraging gratis.
+
+De zin op de site: *"Bij Belvanger neemt nooit een robot op. Je klant weet binnen 60 seconden wie
+hem terugbelt en hoe laat, deze maand gemiddeld na 11 minuten een echt mens. Hoor je ooit een
+robot, dan is die maand gratis."*
+
+**Dragend risico, en dit is de scherpste bevinding van de hele loop.** De positionering leunt op
+gedrag dat Belvanger niet bezit: het terugbellen zelf. Bij een slordige vakman publiceert het
+product zijn eigen falen en krijgt Belvanger de schuld en de opzegging.
+
+**Erger: precies de vakman die het meest voor opvang wil betalen, is degene die níét wil
+terugbellen. Die koopt Klusio.** Belvanger selecteert dus op vakmensen die al fatsoenlijk
+terugbellen, en dat is een kleinere markt die het probleem het minst voelt.
+
+De mitigatie is een **diskwalificerende intakevraag**: *"bel jij je gemiste oproepen normaal binnen
+het uur terug?"* Een nee is geen klant. Verder: de klok wordt door de vakman zelf gezet en nooit
+door het systeem geraden, verstrijken is een update en geen stilte, en de boete geldt **alleen**
+voor sms-snelheid en de robotbelofte.
+
+**Het eerlijke antwoord op nacht en weekend**, dat je hardop moet durven zeggen:
+
+> *"Klopt, hún robot neemt om 2 uur 's nachts op en noteert. En daarna belt er tot 8 uur alsnog
+> niemand terug. Bij ons neemt om 2 uur ook niemand op, maar je klant weet binnen een minuut dat
+> jij hem om 07:10 belt, en dat gebeurt ook. Vraag ze eens naar hun mediane tijd tot een echt mens
+> 's nachts. Dat cijfer publiceert niemand, ik wel."*
+
+Voor echte 24/7-spoed verlies je die deal gewoon, **en dat is goedkoper dan hem winnen.**
+
+**Hoe je voorkomt dat "wij nemen nooit op" klinkt als een gebrek:** laat het bewijs van de keuze
+zien. De klikbare demokaart, **de eigen afgekeurde AI-testopname met een boormachine op de
+achtergrond**, en de live mensmeter. De spraakrobot is het goedkope deel; triage, briefing en
+eerste hulp zijn het dure deel, en dat is wat je wél hebt gebouwd.
+
+**Wat vandaag gratis is:** de zin, de garantie, het gemeten getal, de demokaart en de afgekeurde
+AI-opname. Dat is positionering, geen bouwwerk. **Wat kan wachten:** de fluisterbriefing, de
+eerste-hulpfilmpjes per vak, klantgeschiedenis en de automatische herzet-flow. Bij drie klanten
+draai je die met de hand.
+
+**Eerste stap, ~2 uur.** Eén statische demo-Terugbelkaart op `belvanger.nl/terugbelkaart`: drie
+knoppen, het eerste-hulpblok voor lekkage, een JS-klok die live aftelt, en de robotbelofte met
+garantie erboven. Neem daarnaast met je eigen telefoon één echte testcall op met de AI-belrobot van
+een concurrent, mét afzuigkap of boormachine op de achtergrond, en zet die veertig seconden audio
+ernaast. Stuur die ene link naar de twee prospects die al zijn aangeschreven: *"ik heb dit gebouwd
+voor mensen zoals jij, mag ik tien minuten om te horen of het klopt?"* **Een klikbare kaart vraagt
+om een reactie, een pdf niet.**
+
+**Kinderen.** De mensmeter als embed-badge op de site van de vakman zelf (conversiewinst voor hem,
+gratis distributie voor jou, en een schakelkosten-anker) · de afkeurband als content die de
+concurrent niet kan beantwoorden zonder zijn eigen product te bekritiseren · het dagelijkse
+spraakbericht van 15 seconden dat de hele dag bovenaan elke Terugbelkaart staat · **concierge-modus
+voor klant 1 tot 3**: geen automatisering, de founder draait de relay met de hand in een servicevenster
+van 08:00 tot 20:00 · de asymmetrische boeteclausule die luid scheidt wat Belvanger beheerst van wat
+de vakman beheerst.
 
 ---
