@@ -542,10 +542,30 @@ function misgelopenPerMaand(d) {
   return `Rekensom: ${Math.round(perMaand)} gemiste bellers per maand x EUR ${Math.round(waarde)} = EUR ${euro} aan gesprekken die hij nu niet voert. Bij ${Math.round(GEMISTE_LEAD_CONVERSIE * 100)}% die een klus was geworden: ~EUR ${netto} per maand. Die ${Math.round(GEMISTE_LEAD_CONVERSIE * 100)}% is een AANNAME, geen meting. Noem hem hardop in het gesprek.`;
 }
 
+// Al vergeven kleuren en indelingen. Zonder deze lijst is "kies iets wat nog niet gebruikt
+// is" een instructie die het model onmogelijk kan opvolgen, en dus wordt genegeerd. Wordt
+// eenmalig bij het starten gelezen; een ontbrekend of kapot bestand mag een intake nooit
+// blokkeren, dan valt de prompt terug op de oude, zwakkere formulering.
+let GALERIJ = null;
+try {
+  GALERIJ = JSON.parse(fs.readFileSync(path.join(__dirname, "galerij.json"), "utf8"));
+} catch (e) {
+  console.warn("galerij.json niet gelezen (" + (e?.message || e) + "), layout-instructie blijft algemeen");
+}
+function galerijBlok() {
+  const rijen = (GALERIJ?.vergeven || []).filter((r) => r && (r.accentkleur || r.archetype));
+  if (!rijen.length) {
+    return "Al vergeven kleuren/indelingen: onbekend, galerij.json is nog niet bijgewerkt. Controleer de bestaande voorbeeldpagina's zelf voordat je een kleur of indeling kiest.";
+  }
+  return ["Al vergeven, dus NIET opnieuw gebruiken:"]
+    .concat(rijen.map((r) => `- ${r.vak}: ${r.accentkleur || "kleur onbekend"}${r.archetype ? ` / ${r.archetype}` : ""}`))
+    .join("\n");
+}
+
 function buildDesignPrompt(d) {
   const vak = orDash(d.vak);
   const naam = orDash(d.handelsnaam) !== "-" ? orDash(d.handelsnaam) : orDash(d.bedrijfsnaam);
-  const jaren = oneLine(d.actiefSinds) ? `sinds ${oneLine(d.actiefSinds)}` : "-";
+  const jaren = oneLine(d.actiefSinds) ? `Actief sinds: ${oneLine(d.actiefSinds)}` : "Actief sinds: niet opgegeven";
   const kleur = oneLine(d.kleur)
     ? oneLine(d.kleur)
     : "geen voorkeur, kies passend bij het vak en nog niet gebruikt door een andere Belvanger-klant";
@@ -594,12 +614,34 @@ function buildDesignPrompt(d) {
     `Certificeringen/badges: ${orDash(d.certificeringen)}`,
     `KvK: ${orDash(d.kvk)}`,
     "",
-    "Diensten (met korte omschrijving):",
+    "Diensten (kale opsomming, de verkooptekst maak jij uit de stem hieronder):",
     listBlock(d.diensten),
     "",
     `Specialiteit: ${orDash(d.specialiteit)}`,
     `Doelgroep en positionering: ${orDash(d.doelgroep)}, ${orDash(d.positionering)}`,
     `Tagline/kernboodschap: ${orDash(d.tagline)}`,
+    "",
+    // Dit blok is het enige materiaal dat deze site onderscheidt van elke andere site in
+    // dit vak. De feiten hierboven maken een correcte site; dit maakt een site die van
+    // hem is. Gebruik zijn formuleringen, herschrijf ze niet naar marketingtaal.
+    "=== DE STEM VAN DE KLANT, HIER KOMT HET ONDERSCHEID VANDAAN ===",
+    "Gebruik onderstaande antwoorden als bron voor de kop, de over-ons, de FAQ en de toon.",
+    "Neem zijn formuleringen over. Zet ze NIET om in gladde marketingtaal, want dan is de",
+    "site weer inwisselbaar met die van elke collega in hetzelfde vak.",
+    `Eén echte klus, in zijn woorden: ${orDash(d.voorbeeldKlus)}`,
+    `Wat er zichtbaar verandert als hij klaar is: ${orDash(d.zichtbaarResultaat)}`,
+    `Wat hij expres NIET aanneemt, en waarom: ${orDash(d.nietDoen)}`,
+    `Voor wat voor klant hij NIET is: ${orDash(d.nietVoor)}`,
+    `Waar klanten het vaakst over twijfelen: ${orDash(d.bezwaar)}`,
+    `Zijn eigen openingsvraag aan de telefoon: ${orDash(d.eigenOpeningsvraag)}`,
+    oneLine(d.veelgesteldeVragen)
+      ? `Veelgestelde vragen met zijn eigen antwoorden:\n${listBlock(d.veelgesteldeVragen)}`
+      : "Veelgestelde vragen: NIET INGEVULD. Zonder deze antwoorden kan de chatbot alleen doorverwijzen in plaats van helpen. Haal ze op vóór livegang en zet ze in de kennisbank.",
+    "",
+    oneLine(d.zichtbaarResultaat)
+      ? `Signatuur-animatie: bouw één beweging die hoort bij dit vak, afgeleid van "${oneLine(d.zichtbaarResultaat)}". Precies één, scroll-gestuurd, pure CSS, en de eindstand is ook de beginstand zodat wie beweging uit heeft het afgeleverde werk ziet en geen halve klus.`
+      : "Signatuur-animatie: niet ingevuld wat er zichtbaar verandert. Vraag dat na voordat je een beweging verzint, want een animatie die niet bij het vak hoort valt bij deze doelgroep meteen door de mand.",
+    "=== EINDE STEM VAN DE KLANT ===",
     "",
     `Kleur: ${kleur}`,
     `Stijlvoorbeelden die de klant mooi vindt: ${orDash(d.stijlMooi)}`,
@@ -621,8 +663,9 @@ function buildDesignPrompt(d) {
     "grond, en de vakman werkt zijwaarts. Voor een hele gevel is een rolsteiger",
     "geloofwaardiger dan een ladder.",
     "",
-    "Layout-archetype: kies een indeling die nog niet gebruikt is binnen de bestaande",
-    "voorbeeldengalerij, zodat de galerij bespoke blijft ogen in plaats van sjabloonherhaling.",
+    "Layout-archetype en kleur: kies een indeling en een accentkleur die nog NIET in de lijst",
+    "hieronder staan, zodat de galerij bespoke blijft ogen in plaats van sjabloonherhaling.",
+    galerijBlok(),
     "",
     `Overige wensen: ${orDash(d.moetErOp)}. Vermijden: ${orDash(d.vermijden)}. ${orDash(d.opmerkingen) !== "-" ? oneLine(d.opmerkingen) : ""}`.trim(),
   ].join("\n");
@@ -751,6 +794,7 @@ function buildChatbotSystemPromptDraft(d) {
     `- Geen exacte prijzen of totaalbedragen toezeggen die niet in de kennisbank staan${prijsmodel ? ` (prijsmodel: ${prijsmodel}, geen vaste bedragen verzinnen)` : ""}.`,
     "- Geen resultaatgaranties of garanties geven die niet in de kennisbank staan.",
     "- Niets verzinnen dat niet in de kennisbank staat. Overdrijf niet.",
+    ...(oneLine(d.nietDoen) ? [`- Dit bedrijf neemt bewust niet aan: ${oneLine(d.nietDoen)}. Vraagt iemand daarnaar, zeg dat eerlijk en verwijs door in plaats van te doen alsof het wel kan.`] : []),
     spoedBlock,
     "TAAL",
     "- Antwoord in de taal van de bezoeker (Nederlands standaard).",
@@ -797,9 +841,22 @@ function buildChatbotKnowledgeBaseDraft(d) {
     `- Google: ${oneLine(d.googleSterren) || "-"} sterren, ${oneLine(d.googleReviews) || "-"} reviews`,
     `- Certificeringen/keurmerken: ${orDash(d.certificeringen)}`,
     "",
+    "## Wat dit bedrijf NIET doet",
+    "",
+    `- Neemt expres niet aan: ${orDash(d.nietDoen)}`,
+    `- Past niet bij: ${orDash(d.nietVoor)}`,
+    `- Geen nadruk op: ${orDash(d.vermijdenDiensten)}`,
+    "",
+    "## Voorbeeld van een klus, in de woorden van de vakman",
+    "",
+    orDash(d.voorbeeldKlus),
+    "",
     "## Veelgestelde vragen",
     "",
-    "[Nog aan te vullen, met de echte vragen die klanten aan dit bedrijf stellen.]",
+    oneLine(d.veelgesteldeVragen)
+      ? listBlock(d.veelgesteldeVragen)
+      : "[Niet ingevuld bij de intake. Vul dit aan met de echte vragen die klanten stellen; zonder deze sectie kan de bot alleen doorverwijzen.]",
+    `\nWaar klanten het vaakst over twijfelen: ${orDash(d.bezwaar)}`,
     "",
     "## Grenzen voor de assistent",
     "",
@@ -888,7 +945,8 @@ function intakeEmailText(d, prompt, imageAttachCount) {
     "E. Doelgroep",
     `Doelgroep: ${orDash(d.doelgroep)}`,
     `Positionering: ${orDash(d.positionering)}`,
-    `Te vermijden diensten: ${orDash(d.vermijdenDiensten)}`, "",
+    `Te vermijden diensten: ${orDash(d.vermijdenDiensten)}`,
+    `Past NIET bij: ${orDash(d.nietVoor)}`, "",
     "F. Techniek en koppelingen",
     `Telefoon voor opvang: ${orDash(d.opvangTelefoon)}`,
     "Dashboardgebruikers:",
@@ -900,6 +958,12 @@ function intakeEmailText(d, prompt, imageAttachCount) {
     misgelopenPerMaand(d),
     `Belt gemiste oproepen zelf terug: ${orDash(d.terugbelgedrag)}${oneLine(d.terugbelgedrag) === "niet altijd" ? "   <-- LET OP: dit is de diskwalificerende vraag. Wie niet terugbelt heeft geen vangnet nodig maar een telefoniste. Voer het gesprek voordat je iets bouwt." : ""}`,
     `Zijn eigen openingsvraag: ${orDash(d.eigenOpeningsvraag)}`,
+    `Veelgestelde vragen met zijn antwoorden:`,
+    listBlock(d.veelgesteldeVragen),
+    `Grootste twijfel bij klanten: ${orDash(d.bezwaar)}`,
+    `Voorbeeldklus: ${orDash(d.voorbeeldKlus)}`,
+    `Zichtbaar resultaat: ${orDash(d.zichtbaarResultaat)}`,
+    `Neemt expres niet aan: ${orDash(d.nietDoen)}`,
     `Wie neemt nu op als hij werkt: ${orDash(d.wieNeemtOp)}`, "",
     "H. Overig",
     `Moet erop staan: ${orDash(d.moetErOp)}`,
@@ -964,6 +1028,12 @@ function intakeEmailHtml(d, prompt, imageAttachCount) {
       row("Belt zelf terug", orDash(d.terugbelgedrag) + (oneLine(d.terugbelgedrag) === "niet altijd" ? "  <-- diskwalificerend, eerst bellen" : "")),
       row("Eigen openingsvraag", orDash(d.eigenOpeningsvraag)),
       row("Wie neemt nu op", orDash(d.wieNeemtOp)),
+      row("Veelgestelde vragen", cleanMulti(d.veelgesteldeVragen, 2000).replace(/\n/g, " | ") || "-"),
+      row("Grootste twijfel", orDash(d.bezwaar)),
+      row("Voorbeeldklus", orDash(d.voorbeeldKlus)),
+      row("Zichtbaar resultaat", orDash(d.zichtbaarResultaat)),
+      row("Neemt niet aan", orDash(d.nietDoen)),
+      row("Past niet bij", orDash(d.nietVoor)),
     ].join(""))}
     ${section("H. Overig", [row("Moet erop", orDash(d.moetErOp)), row("Vermijden", orDash(d.vermijden)),
       row("Opmerkingen", cleanMulti(d.opmerkingen, 2000) || "-")].join(""))}

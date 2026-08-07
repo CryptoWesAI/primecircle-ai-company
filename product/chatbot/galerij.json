@@ -1,0 +1,23 @@
+{
+  "_lees_dit_eerst": [
+    "Dit bestand bestaat omdat de bouwprompt zei 'kies een indeling die nog niet gebruikt is',",
+    "terwijl het model niet kon weten wat er al gebruikt was. Een instructie die niet uitvoerbaar",
+    "is, wordt genegeerd, en dan krijg je sjabloonherhaling. Vul dit bij ELKE oplevering bij.",
+    "Alleen 'schilder' is hier ingevuld op basis van sites/belvanger/STATUS.md; de rest is niet",
+    "gedocumenteerd en is bewust leeg gelaten in plaats van geraden."
+  ],
+  "vergeven": [
+    {
+      "vak": "schilder",
+      "klant": "voorbeeldpagina Van Rijn Schilderwerken",
+      "accentkleur": "#7E4A9E",
+      "archetype": "split-screen hero met plakkende verfscene, scroll-gestuurd"
+    },
+    { "vak": "loodgieter", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
+    { "vak": "elektricien", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
+    { "vak": "installateur", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
+    { "vak": "dakdekker", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
+    { "vak": "hovenier", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
+    { "vak": "klusbedrijf", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" }
+  ]
+}

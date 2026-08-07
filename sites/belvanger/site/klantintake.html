@@ -56,6 +56,19 @@
     <!-- ══════════════════════════ FORMULIER ══════════════════════════ -->
     <section class="block">
       <div class="wrap" style="max-width:760px">
+        <!-- De grootste hefboom op de kwaliteit van de gegenereerde site is niet een extra
+             veld maar het kanaal: vakmensen typen niet. In een tekstvak komt "lekkages, cv,
+             badkamers" te staan, en daar valt geen onderscheidende site uit te maken. Een
+             ingesproken antwoord levert zijn eigen taal, en dat is precies het materiaal
+             waar de site en de chatbot van moeten leven. Kost nul bouwwerk en hergebruikt
+             het patroon dat er al is voor "logo stuur ik apart na". -->
+        <p class="intake-section__hint" style="max-width:760px;margin:0 0 1.5rem;padding:1rem 1.1rem;border:1px solid var(--line);border-radius:var(--r-sm);background:var(--surface-2)">
+          <strong>Liever inspreken dan typen?</strong> Dat mag, en het levert meestal een betere site op.
+          Stuur je antwoorden als spraakbericht naar <a href="https://wa.me/31646733277">06 4673 3277</a>,
+          begin met je bedrijfsnaam. Vul hieronder dan alleen de gegevens in die exact moeten
+          kloppen: naam, telefoon, KvK, btw en werkgebied.
+        </p>
+
         <form class="intake-form" data-intake-form novalidate>
 
           <!-- A. Bedrijfsgegevens -->
@@ -250,6 +263,23 @@
                  naar zijn Google-profiel: dat is de bron, en tegelijk de knop waar bezoekers
                  straks op klikken om een review achter te laten. Zie
                  docs/build/google-reviews-op-klantsites.md. -->
+            <!-- Eén echt verhaal met een bedrag erin voedt de hero, de casesectie en de
+                 chatbot. Zes dienstomschrijvingen voeden niets, want elke vakman in dit
+                 vak heeft dezelfde zes. -->
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Beschrijf één klus van de afgelopen maand <span class="ffield__opt">(wat was er aan de hand, wat heb je gedaan, wat kostte het ongeveer, hoe reageerde de klant)</span></span>
+                <textarea name="voorbeeldKlus" rows="4" placeholder="Gewoon zoals je het aan een kennis zou vertellen. Liever te lang dan te kort."></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Wat verandert er zichtbaar als jij klaar bent? <span class="ffield__opt">(in één zin)</span></span>
+                <input type="text" name="zichtbaarResultaat" placeholder="bijv. de druppel is weg en de vloer is droog" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
             <div class="demo-form__row">
               <label class="ffield">
                 <span class="ffield__label">Link naar je Google-bedrijfsprofiel <span class="ffield__opt">(zoek je bedrijf op Google Maps en plak de link)</span></span>
@@ -278,10 +308,21 @@
             <p class="intake-section__eyebrow">D &middot; Diensten</p>
             <h2>Wat je aanbiedt</h2>
 
+            <!-- Bewust ingekort tot kale opsomming. Dienstomschrijvingen die de vakman zelf
+                 typt zijn precies het generieke materiaal dat elke vakmanssite hetzelfde
+                 maakt ("snel, netjes, betrouwbaar"). De onderscheidende taal halen we uit
+                 het klusverhaal, uit wat hij NIET doet en uit zijn eigen woorden. -->
             <div class="demo-form__row">
               <label class="ffield">
-                <span class="ffield__label">Diensten, één per regel met korte omschrijving</span>
-                <textarea name="diensten" rows="5" required placeholder="bijv.&#10;Lekkage verhelpen &ndash; snel gevonden, netjes gerepareerd&#10;Cv-onderhoud &ndash; jaarlijkse beurt of storing"></textarea>
+                <span class="ffield__label">Diensten, één per regel <span class="ffield__opt">(gewoon de naam, geen verkooptekst)</span></span>
+                <textarea name="diensten" rows="4" required placeholder="bijv.&#10;Lekkage verhelpen&#10;Cv-onderhoud&#10;Dakgoot reinigen"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Welke klussen neem je expres <em>niet</em> aan, en waarom?</span>
+                <input type="text" name="nietDoen" placeholder="bijv. geen nieuwbouw, ik wil dezelfde dag klaar zijn" />
                 <span class="ffield__err" data-err></span>
               </label>
             </div>
@@ -337,6 +378,16 @@
               <label class="ffield">
                 <span class="ffield__label">Diensten waar je juist niet de nadruk op wilt <span class="ffield__opt">(optioneel)</span></span>
                 <textarea name="vermijdenDiensten" rows="2"></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <!-- Wie hij niet wil, scherpt de positionering harder dan wie hij wel wil.
+                 De directe vraag "wat maakt jou anders" is bewust weggelaten: die levert
+                 consequent "kwaliteit, service en betrouwbaarheid" op. -->
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Wat voor klant past <em>niet</em> bij je? <span class="ffield__opt">(eerlijk mag)</span></span>
+                <input type="text" name="nietVoor" placeholder="bijv. wie alleen op de laagste prijs let" />
                 <span class="ffield__err" data-err></span>
               </label>
             </div>
@@ -437,6 +488,23 @@
               <label class="ffield">
                 <span class="ffield__label">Wie neemt nu op als jij op een dak staat? <span class="ffield__opt">(optioneel)</span></span>
                 <input type="text" name="wieNeemtOp" placeholder="bijv. mijn vrouw, of niemand" />
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+
+            <!-- Dit tweetal IS de kennisbank van zijn chatbot. Zonder deze antwoorden kan
+                 de bot alleen doorverwijzen; mét deze antwoorden kan hij helpen. -->
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">De drie vragen die klanten je het vaakst stellen, met jouw antwoord erbij</span>
+                <textarea name="veelgesteldeVragen" rows="5" placeholder="bijv.&#10;Kom je ook 's avonds? &ndash; Ja, tot 20:00, daarna alleen bij spoed.&#10;Wat kost voorrijden? &ndash; Binnen 15 km niks."></textarea>
+                <span class="ffield__err" data-err></span>
+              </label>
+            </div>
+            <div class="demo-form__row">
+              <label class="ffield">
+                <span class="ffield__label">Waar twijfelen klanten het vaakst over, of waarover wordt onderhandeld?</span>
+                <input type="text" name="bezwaar" placeholder="bijv. of ik het echt dezelfde week kan doen" />
                 <span class="ffield__err" data-err></span>
               </label>
             </div>
