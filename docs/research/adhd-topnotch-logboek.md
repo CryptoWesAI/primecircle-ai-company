@@ -17,7 +17,7 @@
 
 | | |
 |---|---|
-| Iteraties gedraaid | 9 |
+| Iteraties gedraaid | 10 |
 | Oppervlakken gedekt | 15 van 15 (12 opgegaan in 3/4/5/9) (7 opgegaan in 2/4/6; 9, 10 en 15 samengevoegd in iteratie 8) |
 | Fase | **synthese** (divergentie afgerond op 9 iteraties) |
 
@@ -42,6 +42,90 @@ betalende klanten en nul gevoerde gesprekken. Elk idee in dit logboek is daarom 
 **hypothese over wat een vakman wil**, niet een bevinding. Zodra er één betalende klant
 is, vervangt zijn gedrag elke aanname hieronder. Tot die tijd geldt: ideeën die alleen
 werken bij tien klanten worden gemarkeerd als **[wacht op klanten]** en niet gebouwd.
+
+## Synthese (iteratie 10)
+
+Negen iteraties, ~220 ideeën, vijftien oppervlakken. Dit is wat er overblijft als je de
+dubbelingen samenvoegt en de tegenspraken oplost.
+
+### Het ene beeld
+
+**Belvanger is geen software. Het is een toetsbare belofte over de tijd tot een echt mens.**
+
+Alles wat hoog scoorde over alle negen iteraties heen valt onder die zin. Het product is een
+sms plus een kaart, de prijs is tweedelig, het beheer is begrensd, en het bewijs komt één keer
+per maand met een naam erin. De concurrentie verkoopt het wegnemen van gesprekken; Belvanger
+verkoopt het winnen ervan, en publiceert als enige een getal waarop je hem kunt afrekenen.
+
+### Vijf ontwerpprincipes die uit meerdere oppervlakken tegelijk kwamen
+
+1. **De machine spreekt nooit een getal of een belofte uit namens de vakman.** Zachte taal mag
+   gegenereerd worden, harde toezeggingen komen van een mens en zijn schriftelijk bevestigd.
+   *(Iteratie 3 via de transcriptie, iteratie 4 via de chatbot, iteratie 9 via de niveau-verklaring.)*
+2. **Ondergaan in plaats van lezen.** Wat je kunt laten voelen, moet je niet beschrijven.
+   *(Iteratie 1: bel-de-demo. Iteratie 9: de klikbare kaart in plaats van een pdf.)*
+3. **De slechtst mogelijke dag met Belvanger moet gelijk zijn aan een normale dag zonder
+   Belvanger.** Bij uitval degradeer je naar kale doorschakeling, niet naar een derde kanaal.
+   *(Iteratie 2, bevestigd in 4.)*
+4. **Beloof alleen wat je zelf beheerst.** Sms-snelheid en de robotbelofte wel; het terugbelgedrag
+   van de vakman niet. *(Iteratie 6 en 9, onafhankelijk.)*
+5. **De verdienste is van hem.** Het cijfer gaat over wat hij deed, nooit over wat het product
+   deed, en nooit met een noemer erin. *(Iteratie 8.)*
+
+### De drie tegenspraken, opgelost
+
+**1. Eén codebase (it. 3) versus gescheiden per klant (it. 5).** Beide hebben gelijk over hun
+eigen faalmodus. De oplossing is de scheiding op de juiste laag leggen: **één gedeelde codebase
+zonder enkele fork, met gescheiden accounts en data.** Concreet: een Twilio-subaccount per klant
+onder het hoofdaccount (gratis, één factuur, klant kan het niet slopen) plus de
+sleutelbos-clausule voor wie er echt om vraagt. Afwijkende wensen worden een vlag in het genoom,
+nooit een fork. *Een fork bij klant 4 kost je klant 30.*
+
+**2. Onzichtbaar product (it. 2) versus zichtbare waarde (it. 8).** Geen echte tegenspraak zodra
+je ze in de tijd scheidt: **onzichtbaar in de dagelijkse werking, zichtbaar één keer per maand,
+en dan met een naam en een tijdstip in plaats van met aantallen.**
+
+**3. Alles weghalen (it. 4, 5) versus wat er al gebouwd is.** De frames zien terecht dat er meer
+gebouwd is dan verkocht, maar de conclusie is niet slopen. Het is: **er mag niets meer bij tot een
+betalende klant erom vraagt, en de onderhoudslast van wat er staat moet omlaag.** n8n vervangen
+door cronscripts is het goedkoopste voorbeeld: een compleet tweede systeem weg, geen enkele klant
+merkt het.
+
+### Wat dit kost aan geld en wat het oplevert
+
+| | Nu | Na synthese |
+|---|---|---|
+| Prijs | €625 setup + €99/mnd vlak | €595 + €149/mnd incl. 150 gesprekken, €0,60 daarboven, plafond €249 |
+| Marge bij drukke klant | daalt naar ~€63 | stijgt naar ~€203 |
+| Klanten nodig voor het doel | 30 tot 40 | **17 tot 24** |
+| Leveringscapaciteit | 15 tot 25 | 15 tot 25 |
+| Haalbaar? | **nee** | **ja, met de cap op 20** |
+
+### De vijf dingen die vandaag gratis zijn
+
+Alles hieronder is positionering of tekst, geen bouwwerk, en alles kan vóór de eerste klant:
+
+1. **De serviceafspraak op één A4** (bereikbaarheid, twee storingsklassen, vrijdagrit, spoedklep).
+   Verwachtingen zijn gratis om vooraf te zetten en peperduur om achteraf terug te draaien.
+2. **De robotbelofte plus garantie** op de site, met de afgekeurde AI-testopname ernaast als bewijs
+   dat het een keuze is en geen gebrek.
+3. **De prijskaart op één A4**, voorgelegd aan vijf echte vakmensen met vier vragen.
+4. **De meetafspraak en de eigen-woorden-vraag** in het intake-sjabloon. Achteraf niet te
+   reconstrueren.
+5. **Het herstelpad losmaken van Hostinger** (neutraal herstel-mailadres, DNS elders,
+   2FA-codes op papier buiten huis). Twee uur.
+
+### De ongemakkelijke kern
+
+Twee bevindingen die tegen elkaar in werken en samen de grootste openstaande vraag vormen:
+
+- **De vakman die het meest voor opvang wil betalen, is degene die niet wil terugbellen.** Die
+  koopt een AI-telefonist. Belvanger selecteert op vakmensen die al fatsoenlijk terugbellen, en
+  dat is een kleinere markt die het probleem het minst voelt.
+- **Elk cijfer in dit document is een hypothese.** Nul betalende klanten, nul gevoerde gesprekken,
+  en een prijs die nooit aan een echte vakman is gevraagd.
+
+Beide worden beantwoord door hetzelfde: **vijf gesprekken.** Niet door nog een iteratie.
 
 ## Oppervlakken-wachtrij
 
