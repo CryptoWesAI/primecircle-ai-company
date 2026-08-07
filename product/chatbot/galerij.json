@@ -20,18 +20,20 @@
     { "vak": "hovenier", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
     { "vak": "klusbedrijf", "klant": "voorbeeldpagina", "accentkleur": "", "archetype": "" },
     {
-      "vak": "glazenwasser",
+      "vak": "glaszetter",
       "klant": "Glasservice Siedsma (proefsite, draait op de VPS)",
       "accentkleur": "",
       "archetype": "",
       "_let_op": [
-        "Toegevoegd 2026-08-07. Glazenwasser was geen van de zeven vakken: er is geen",
+        "Toegevoegd 2026-08-07. Glaszetter was geen van de zeven vakken: er is geen",
         "voorbeeldpagina in sites/belvanger/site/voorbeelden/ en er stond hier niets.",
         "De proefsite bestaat wel, maar staat niet in git, dus kleur en indeling zijn",
         "onbekend. Bewust leeg gelaten in plaats van geraden — vul ze in zodra je op de",
         "VPS hebt gekeken.",
-        "Voor de pitch geldt bovendien een andere rekensom dan bij de andere vakken:",
-        "zie paragraaf 7 van docs/decisions/kostenaudit-2026-08-07.md."
+        "Bij het ontwerpen van een glaszettersite: spoed is hier het hele verhaal.",
+        "Kapot glas kan niet wachten, dus bereikbaarheid en 'wanneer ben je er' horen",
+        "boven de vouw, niet in een dienstenlijst. Zie paragraaf 7 van",
+        "docs/decisions/kostenaudit-2026-08-07.md."
       ]
     }
   ]

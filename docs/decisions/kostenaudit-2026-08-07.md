@@ -57,9 +57,15 @@ eigen accounts kunt nakijken en die deze audit van schatting naar feit tillen.
 >    er niets — het blijft de enige container met echte bezoekers en hij staat nog steeds
 >    niet in git.
 > 2. **`glasservice-siedsma` is geen administratief gat maar een warme prospect.** Het is
->    de buurman van de founder, glazenwasser, met een **proefwebsite die al draait** en
->    die mogelijk klant #1 wordt. Zie §7: dat is de belangrijkste bevinding van deze
+>    de buurman van de founder, **glaszetbedrijf**, met een **proefwebsite die al draait**
+>    en die mogelijk klant #1 wordt. Zie §7: dat is de belangrijkste bevinding van deze
 >    hele audit geworden, en het is er geen over kosten.
+>
+> **Correctie op mijn eigen correctie (zelfde dag).** In de eerste versie van §7 stond
+> "glazenwasser", en daar had ik een hele rekensom op gebouwd die concludeerde dat het
+> aanbod voor hem niet uitkomt. **Dat was fout en de conclusie draait om.** Een
+> glaszetbedrijf doet geen beurten van €40 maar klussen van honderden euro's, vaak met
+> spoed. Zie §7.
 
 ### 1a. Belvanger en klanten (dit hoort er te zijn)
 
@@ -185,7 +191,7 @@ per maand wint zou onzin zijn.
 
 | # | Onderdeel | Waarom |
 |---|---|---|
-| 7 | **`glasservice-siedsma`** | Dit is de proefwebsite van de buurman, glazenwasser, **mogelijk klant #1**. Zet hier niets uit en gooi hier niets weg. Wat er wél moet gebeuren staat in §7 en dat is geen kostenwerk |
+| 7 | **`glasservice-siedsma`** | Dit is de proefwebsite van de buurman, glaszetbedrijf, **mogelijk klant #1**. Zet hier niets uit en gooi hier niets weg. Wat er wél moet gebeuren staat in §7 en dat is geen kostenwerk |
 
 ### Wel bekijken, maar níet uitzetten
 
@@ -277,8 +283,8 @@ nergens.
 Ik zocht naar containers die geld kosten en vond er één die dat niet doet. Dit onderdeel
 staat in een kostenaudit omdat het daar is opgedoken, niet omdat het erin thuishoort.
 
-**Wat er is:** een draaiende proefwebsite voor de buurman van de founder, glazenwasser,
-mogelijk klant #1.
+**Wat er is:** een draaiende proefwebsite voor de buurman van de founder,
+**glaszetbedrijf**, mogelijk klant #1.
 
 **Wat er niet is, en dit is de bevinding:**
 
@@ -288,7 +294,7 @@ mogelijk klant #1.
 | Een dossier, intake of gespreksnotitie | Nul documenten in de hele repo |
 | Een regel in `SELLING.md` | Niets. De teller staat op 0 gesprekken |
 | Het compose-bestand | Alleen op de VPS |
-| Een voorbeeldpagina voor zijn vak | Er zijn er zeven, glazenwasser zit er niet bij |
+| Een voorbeeldpagina voor zijn vak | Er zijn er zeven, glaszetter zit er niet bij |
 | Een regel in `product/chatbot/galerij.json` | Ontbrak, nu toegevoegd (leeg, niet geraden) |
 
 **De dichtstbijzijnde kandidaat voor klant #1 bestaat dus nergens in de administratie.**
@@ -297,43 +303,80 @@ een site draait, staat er niet in. Dat is geen boekhoudfoutje: het is precies de
 dat de verkoopteller op nul staat terwijl er een warme prospect met een gebouwd product
 naast de deur woont.
 
-### Eén ding dat je moet weten voordat je hem pitcht
+### Waarom een glaszetbedrijf beter past dan de zeven vakken op de site
 
-**De rekensom van Belvanger werkt niet zoals hij is voor een glazenwasser.** De hele
-pitch en de "bespaard"-widget draaien op `avg_job_value`, met een standaard van **€250**
-per klus (`sites/belvanger-portal/src/server.js:93`, en dezelfde aanname zit in de
-rekenmachine op de homepage). Een gemiste oproep is dan ~€150 misgelopen omzet, en €199
-per maand verdient zichzelf terug bij anderhalve gemiste klus.
+Een glaszetter is niet zomaar een van de vakken. Van alle bedrijven die tot nu toe zijn
+bekeken, is dit **de sterkste zaak voor "mis nooit meer een klant"** die er is, en dat
+komt door één eigenschap die de andere zeven niet in deze mate hebben.
 
-Een glazenwasser draait geen klussen van €250. Eén beurt is eerder €30 tot €60. Zet je
-zijn echte klusbedrag in het dashboard, dan zegt de widget iets in de orde van €25 per
-gemiste oproep, en dan kost Belvanger hem acht gemiste oproepen per maand voordat het
-quitte speelt. **Op het huidige verhaal valt hij door de mand, en dat merk je pas tijdens
-het gesprek.**
+**Kapot glas kan niet wachten.** Wie een ingegooide ruit heeft, kan zijn huis of winkel
+niet achterlaten. Hij gaat niet zitten wachten op een terugbelverzoek, hij belt de
+volgende glaszetter en die klus komt nooit meer terug. Bij een schilder of hovenier ligt
+een gemiste oproep dagen later nog open; bij glasschade is hij binnen een kwartier weg.
 
-Dat betekent niet dat hij geen goede klant is — het betekent dat je bij hem iets anders
-verkoopt. Een glazenwasser leeft van **terugkerende rondes**, niet van losse klussen. Een
-nieuwe klant die vier keer per jaar €45 betaalt en drie jaar blijft is €540 waard, geen
-€45. **Als je hem pitcht, reken dan met contractwaarde en niet met klusprijs**, en zet
-`avg_job_value` op de waarde van een gewonnen *ronde*, niet van een beurt — met die keuze
-opgeschreven op zijn klantkaart, anders is het over een half jaar een onverklaarbaar getal.
+Dat maakt de drie pijlers van het aanbod hier allemaal sterker tegelijk:
 
-Dit is een aanname van mij, geen meting: ik weet niet wat Siedsma rekent en hoe vaak hij
-terugkomt. **Dat is precies de eerste vraag die je hem stelt**, en het is een prettige
-vraag om mee te beginnen, want het is oprechte interesse in zijn bedrijf en geen pitch.
+| Pijler | Waarom hij bij glas harder aankomt |
+|---|---|
+| **Gemiste oproep opvangen** | Een gemiste spoedoproep is niet uitgesteld werk maar verloren werk |
+| **Buiten kantooruren** | Glasschade komt 's avonds, in het weekend en bij storm. Precies wanneer hij niet opneemt |
+| **Direct antwoord op de site** | Een paniekerige beller wil binnen een minuut weten óf je komt en wanneer |
+
+**Wat dit ook betekent: je concurreert hier niet tegen niets.** Grote spelers met een
+24/7-lijn (Glasgarage en vergelijkbare landelijke ketens) pikken precies deze oproepen op.
+Dat is een voordeel voor de pitch, want de pijn is aantoonbaar en hij kent hem — maar ook
+een waarschuwing: bij hem is "wij nemen wel op" geen nieuw idee, het is inhalen op een
+partij die het al doet. Dat argument moet je zelf noemen voordat hij het doet.
+
+### De rekensom, gecorrigeerd
+
+**Ik had hier eerst "glazenwasser" staan en daaruit geconcludeerd dat het aanbod voor hem
+niet uitkomt. Dat was fout en de conclusie draait om.**
+
+De pitch en de "bespaard"-widget draaien op `avg_job_value`, standaard **€250**
+(`sites/belvanger-portal/src/server.js:93`, dezelfde aanname als de rekenmachine op de
+homepage; de widget rekent met 60% van de gemiste oproepen als echte klus-kans).
+
+Voor een glaszetbedrijf is €250 **niet te hoog maar eerder aan de lage kant**
+**[schatting]**: één ruit vervangen loopt al snel in de honderden euro's, isolatieglas per
+raam hoger, en een hele woning of een winkelpui gaat de duizenden in. Bij €250 verdient
+€199 per maand zich terug bij **anderhalve** teruggewonnen klus; ligt zijn werkelijke
+klusbedrag hoger, dan is het minder dan één.
+
+Er komt bij glas nog iets bij dat de andere vakken niet hebben: **een deel van het werk
+loopt via de verzekering.** Dat betekent dat de klant vaak niet zelf op de prijs let en
+dat de vraag is wie er als eerste kan komen. Dat is precies wat een opgevangen oproep
+oplost.
+
+**Alle bedragen hierboven zijn mijn schatting, niet zijn cijfers.** Ik heb geen netwerk
+en ken zijn tarieven niet. **Vraag ze, en reken de som mét hem uit in plaats van vóór
+hem** — dat is overtuigender dan elk getal dat jij meebrengt, en je hoeft niets te
+beloven wat je niet weet.
 
 ### Wat er moet gebeuren, in deze volgorde
 
 1. **Vraag hem hoe het met de proefsite is.** Geen aanbod, geen prijs. Je hebt iets voor
    hem gebouwd en je wilt weten of hij er iets aan heeft. Dat is het hele gesprek.
-2. **Vraag naar zijn cijfers**: wat kost een beurt, hoe vaak per jaar, hoeveel klanten
-   blijven, en hoe vaak belt er iemand die hij niet opneemt.
+2. **Vraag naar zijn cijfers**, in deze volgorde, want de derde is de belangrijkste:
+   - wat brengt een gemiddelde klus op, en hoe verschilt spoed van gepland werk;
+   - hoeveel van zijn werk komt 's avonds, in het weekend of bij storm binnen;
+   - **hoe vaak belt er iemand die hij niet opneemt, en wat denkt hij dat er dan gebeurt.**
 3. **Leg beide vast** in `clients/glasservice-siedsma/docs/` en zet hem als regel in
    `SELLING.md`. Zolang hij daar niet in staat, telt hij voor niemand mee, ook niet voor
    jezelf.
-4. **Pas daarna** de rekensom en een aanbod, met contractwaarde als basis.
+4. **Pas daarna** de rekensom en een aanbod, met zijn eigen getallen erin.
 
 Stap 1 en 2 kosten samen een half uur en er hoeft niets voor gebouwd te worden.
+
+### Wat dit betekent voor de zeven vakken op de site
+
+`sites/belvanger/site/voorbeelden/` heeft schilder, loodgieter, elektricien, installateur,
+dakdekker, hovenier en klusbedrijf — **geen glaszetter**, terwijl dat vak op de logica van
+het aanbod beter scoort dan minstens de helft van die zeven. Dat is geen bezwaar tegen de
+bestaande pagina's (de bouwkosten zijn al gemaakt), maar wel een signaal: **als Siedsma
+ja zegt, is zijn site meteen de achtste voorbeeldpagina en het beste verhaal dat je hebt.**
+Een klant in een vak waar de pijn scherp en aantoonbaar is, is een betere referentie dan
+drie in een vak waar hij vaag is.
 
 ---
 

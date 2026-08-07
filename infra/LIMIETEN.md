@@ -88,7 +88,7 @@ VPS draaien er meer, en juist die zijn het risico:
 
 - **`ab-uitvaartzorg`** — de referentiecase van PrimeCircle (geen Belvanger-klant), de
   enige container met echte bezoekers, en hij staat **nergens in git**.
-- **`glasservice-siedsma`** — de proefsite van de buurman van de founder, glazenwasser,
+- **`glasservice-siedsma`** — de proefsite van de buurman van de founder, glaszetbedrijf,
   mogelijk klant #1. Staat ook niet in git. **Niets aan uitzetten of weggooien.**
 - **Traefik** — alle HTTPS loopt hierdoorheen, staat niet in git.
 - **`knifensharp`, `primecircle`, `primecircle-*`, `agent-zero`** — vreemde projecten,

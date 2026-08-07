@@ -171,19 +171,24 @@ Wat de audit wél oplevert, en het gaat over risico in plaats van geld:
 
 **En de bevinding die er niet in hoorde maar de belangrijkste is (§7 van het rapport).**
 De audit zocht containers die geld kosten en vond er één die dat niet doet:
-`glasservice-siedsma`, de proefsite van de buurman van de founder, glazenwasser,
+`glasservice-siedsma`, de proefsite van de buurman van de founder, **glaszetbedrijf**,
 **mogelijk klant #1**. Die bestaat nergens in de administratie: geen map in `clients/`,
 geen dossier, geen regel in `SELLING.md`, geen voorbeeldpagina voor zijn vak, en het
 compose-bestand staat alleen op de VPS. Twee koud aangeschreven prospects staan wél in
 `SELLING.md`; de warme buurman met een draaiend product niet.
 
-Eén ding moet vóór het gesprek bekend zijn: **de rekensom van Belvanger werkt niet
-ongewijzigd voor een glazenwasser.** De pitch en de "bespaard"-widget draaien op
-`avg_job_value`, standaard **€250** (`sites/belvanger-portal/src/server.js:93`). Een beurt
-glazenwassen is eerder €30-60, en dan kost Belvanger hem acht gemiste oproepen per maand
-voordat het quitte speelt. Bij hem verkoop je **contractwaarde** (terugkerende rondes ×
-jaren), niet klusprijs. Dat is een aanname, geen meting — het is precies de eerste vraag
-die je hem stelt.
+**Een glaszetbedrijf is van alle tot nu toe bekeken vakken de sterkste zaak voor "mis
+nooit meer een klant".** Kapot glas kan niet wachten: wie een ingegooide ruit heeft laat
+zijn huis of winkel niet onbeheerd achter, dus een gemiste spoedoproep is geen uitgesteld
+werk maar verloren werk, en die klus komt nooit terug. Glasschade komt bovendien 's avonds,
+in het weekend en bij storm — precies wanneer hij niet opneemt. De standaard `avg_job_value`
+van €250 (`sites/belvanger-portal/src/server.js:93`) is voor dit vak eerder te laag dan te
+hoog, dus €199 per maand verdient zich terug bij ruim één teruggewonnen klus.
+
+Twee dingen om niet te vergeten: een deel van het werk loopt via de verzekering (dan telt
+wie er als eerste kan komen, niet de prijs), en bij glas concurreer je wél tegen landelijke
+ketens met een echte 24/7-lijn. Noem dat zelf voordat hij het doet. Alle bedragen zijn
+schattingen; reken de som mét hem uit, niet vóór hem.
 
 ### Belvanger klantdashboard als Android-app (2026-07-25)
 
