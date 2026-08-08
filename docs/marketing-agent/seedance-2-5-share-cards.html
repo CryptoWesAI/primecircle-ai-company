@@ -1,0 +1,287 @@
+<title>Seedance 2.5 — The Receipts</title>
+
+<style>
+  :root {
+    --ground: #0C0E0B;
+    --surface: #161A15;
+    --ink: #EDEFE9;
+    --muted: #8E958A;
+    --rule: #2C322A;
+    --signal: #E2543A;
+    --pass: #5FA88E;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    margin: 0;
+    padding: 24px 16px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .note {
+    max-width: 1000px;
+    margin: 0 auto 22px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .note b { color: var(--signal); font-weight: 600; }
+
+  /* Each card is sized to screenshot cleanly at X's 16:9 crop */
+  .card {
+    max-width: 1000px;
+    margin: 0 auto 44px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 44px 48px;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--signal);
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+    line-height: 1.08;
+    letter-spacing: -0.028em;
+    font-weight: 800;
+    margin: 0 0 22px;
+    text-wrap: balance;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(0.95rem, 1.7vw, 1.2rem);
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-align: left;
+    font-weight: 500;
+    padding: 0 14px 10px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  td {
+    padding: 11px 14px 11px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .fail { color: var(--signal); font-weight: 700; }
+  .pass { color: var(--pass); font-weight: 700; }
+  .mono { font-family: var(--mono); }
+
+  .kicker {
+    margin-top: 22px;
+    font-size: clamp(1rem, 1.9vw, 1.25rem);
+    line-height: 1.45;
+    color: var(--ink);
+    max-width: 62ch;
+  }
+
+  .kicker b { color: var(--signal); }
+
+  .sig {
+    margin-top: auto;
+    padding-top: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .big {
+    font-size: clamp(2.4rem, 6.5vw, 4.4rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 800;
+    margin: 0 0 6px;
+  }
+
+  .big .unit { font-size: 0.42em; color: var(--muted); font-weight: 500; letter-spacing: 0; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 26px 40px;
+  }
+
+  .stat .label {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .stat .sub { font-size: 0.95rem; color: var(--muted); line-height: 1.4; }
+
+  code {
+    font-family: var(--mono);
+    background: #0C0E0B;
+    padding: 2px 7px;
+    font-size: 0.85em;
+    color: var(--ink);
+  }
+
+  @media (max-width: 760px) {
+    .card { aspect-ratio: auto; padding: 30px 24px; }
+    .grid { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>
+
+<div class="note">
+  <b>How to use:</b> screenshot each card individually and attach it to the post or reply.
+  Cards are cropped 16:9 so X shows them uncropped. Do not attach the link — attach the card.
+</div>
+
+<!-- CARD 1 — the experiment -->
+<div class="card">
+  <div class="eyebrow">Seedance 2.5 · Controlled test · 8 Aug 2026</div>
+  <h2>Asking Seedance 2.5 for music destroys your render — after you’ve paid for it</h2>
+
+  <table>
+    <thead>
+      <tr><th>Run</th><th>Music</th><th>Dialogue</th><th>Result</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="mono">1</td><td>in <code>( )</code></td><td>yes</td><td class="fail">BLOCKED</td></tr>
+      <tr><td class="mono">2</td><td>in <code>( )</code></td><td>yes</td><td class="fail">BLOCKED</td></tr>
+      <tr><td class="mono">3</td><td>in <code>( )</code></td><td>no</td><td class="fail">BLOCKED</td></tr>
+      <tr><td class="mono">4</td><td>plain prose</td><td>yes</td><td class="fail">BLOCKED</td></tr>
+      <tr><td class="mono">5</td><td><strong>none</strong></td><td>yes</td><td class="pass">RENDERED</td></tr>
+    </tbody>
+  </table>
+
+  <p class="kicker">
+    Same seed. Same shot. One variable at a time. The moderation pass fires
+    <b>after</b> generation, so the credits are already spent.
+  </p>
+
+  <div class="sig">
+    <span>Fix: “no music of any kind, diegetic sound only”</span>
+    <span>Add music in the edit</span>
+  </div>
+</div>
+
+<!-- CARD 2 — the resolution -->
+<div class="card">
+  <div class="eyebrow">Seedance 2.5 · Live schema · 8 Aug 2026</div>
+  <h2>There is no 4K. There is no 1080p.</h2>
+
+  <div class="grid">
+    <div class="stat">
+      <div class="label">Resolution enum, verbatim</div>
+      <div class="big" style="font-size:clamp(1.1rem,2.6vw,1.7rem);"><code>["480p", "720p"]</code></div>
+      <div class="sub">Default is <strong>480p</strong>. Most people never change it.</div>
+    </div>
+    <div class="stat">
+      <div class="label">Seedance 2.0, same account</div>
+      <div class="big">3840<span class="unit">×2160</span></div>
+      <div class="sub">Genuine 4K — from the <em>older</em> model.</div>
+    </div>
+  </div>
+
+  <p class="kicker">
+    Seedance 2.5 outputs at <b>lower resolution than 2.0</b>, and costs about
+    <b>60% more per second</b> to do it. You’re buying duration and reference control,
+    not pixels. Fine trade — just not the one the launch pages describe.
+  </p>
+
+  <div class="sig">
+    <span>Pulled from the live endpoint, not a blog post</span>
+    <span>24 fps · 854×480 · 1280×720</span>
+  </div>
+</div>
+
+<!-- CARD 3 — pricing -->
+<div class="card">
+  <div class="eyebrow">Seedance 2.5 · Measured pricing · 8 Aug 2026</div>
+  <h2>Turning audio off saves you nothing</h2>
+
+  <table>
+    <thead>
+      <tr><th>Configuration</th><th>Credits</th><th>Per second</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>5s / 480p</td><td class="mono">300</td><td class="mono">60.0</td></tr>
+      <tr><td>30s / 480p</td><td class="mono">1,810</td><td class="mono">60.3</td></tr>
+      <tr><td>5s / 720p</td><td class="mono">650</td><td class="mono">130.0</td></tr>
+      <tr><td>30s / 720p</td><td class="mono">3,905</td><td class="mono">130.2</td></tr>
+      <tr><td>5s / 720p — <strong>audio OFF</strong></td><td class="mono fail">650</td><td class="mono">130.0</td></tr>
+    </tbody>
+  </table>
+
+  <p class="kicker">
+    Pricing is <b>perfectly linear</b> — 30s costs exactly six 5s clips, no discount,
+    no penalty. And audio is <b>free</b>. If you’ve been disabling it to save credits,
+    you saved nothing and gave up the model’s best feature.
+  </p>
+
+  <div class="sig">
+    <span>Choose duration for story reasons, never cost</span>
+    <span>Prototype 480p → finish 720p</span>
+  </div>
+</div>
+
+<!-- CARD 4 — depth map -->
+<div class="card">
+  <div class="eyebrow">Seedance 2.5 · Technique</div>
+  <h2>Why your transferred motion keeps drifting</h2>
+
+  <p class="kicker" style="font-size:clamp(1.05rem,2.1vw,1.45rem); margin-top:0;">
+    Feed the model a video of someone dancing and it tries to interpret
+    <b>everything</b> — the person, the clothes, the lighting, the room, and somewhere
+    in there, the movement.
+  </p>
+
+  <p class="kicker" style="font-size:clamp(1.05rem,2.1vw,1.45rem);">
+    Feed it a <b>depth map</b> and there’s nothing left to interpret but the motion.
+  </p>
+
+  <p class="kicker">
+    The problem was never the model. You handed it ten variables when you meant to hand
+    it one. It also replaces paragraphs of camera description — stop writing “slow orbit
+    from a low angle rising to eye level” and just show it the geometry.
+  </p>
+
+  <div class="sig">
+    <span>Depth map → framing &amp; motion</span>
+    <span>Style ref → tone</span>
+    <span>Character sheet → identity</span>
+  </div>
+</div>

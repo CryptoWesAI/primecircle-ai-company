@@ -247,3 +247,45 @@ None of this guarantees 100k. It changes the odds from "depends entirely on
 follower count" to "depends on whether the findings are good enough that people
 with audiences want to repeat them." The findings are good. That is the part
 that was actually in our control, and it's done.
+
+---
+
+## Share cards (attach these, not the link)
+
+At 615 followers your findings have to travel **without** the link, because a
+link costs 50–90% of reach and a large account will not quote-post a URL. They
+will quote-post an image.
+
+Four screenshot-ready cards, cropped 16:9 so X displays them uncropped:
+`docs/marketing-agent/seedance-2-5-share-cards.html`
+(published: https://claude.ai/code/artifact/4df50919-3feb-460b-a0a1-e19dba7fe9b3)
+
+| Card | Carries | Use on |
+|---|---|---|
+| 1 — the experiment | 5 runs, one variable, BLOCKED ×4 / RENDERED ×1 | The main post. This is the amplification asset. |
+| 2 — no 4K | The resolution enum vs 2.0's 3840×2160 | Launch and announcement threads |
+| 3 — pricing | Linear per second, audio free | Pricing threads |
+| 4 — depth map | Why transferred motion drifts | @NexlowX / @_OAK200 threads |
+
+Screenshot each card individually. Card 1 is the one most likely to get
+repeated — it is a result someone can rerun, which is what makes it safe for a
+large account to endorse.
+
+## Showcase clips (native video, all verified rendered)
+
+Native video is the biggest single reach lever available. All four were built to
+this guide's own rules — one subject, one action, a camera move with a reason,
+and no music — and all four passed moderation, which is itself a third
+confirmation the fix works.
+
+| Clip | Format | historyId |
+|---|---|---|
+| Espresso macro | 9:16 · 720×1280 | `OREUnyKxOvJp0i92h8l2` |
+| Icelandic fisherman, spoken line | 16:9 · 1280×720 | `cGS0jpxXScaAB9YHRntZ` |
+| Glassblower at the furnace | 9:16 · 720×1280 | `vnNA9pPAAgNeDBclNpVD` |
+| Empty swimming pool, crane down | 21:9 · 1470×630 | `jbQvqUrPJiuMLeiQLaD5` |
+
+Use a **vertical** clip on the main post — it fills more of the mobile feed.
+
+Note: 21:9 at the 720p tier resolves to **1470×630**, wider than the 16:9 tier's
+1280. Useful if you want maximum horizontal pixels out of this model.
