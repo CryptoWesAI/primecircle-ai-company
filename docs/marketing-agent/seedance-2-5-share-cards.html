@@ -1,51 +1,65 @@
-<title>Seedance 2.5 — The Receipts</title>
+<title>Seedance 2.5 — The Receipts | PrimeCircle</title>
 
 <style>
+  /* PrimeCircle design system — sourced from website/css/styles.css.
+     Deliberately single-theme dark: the house style sets color-scheme: dark. */
   :root {
-    --ground: #0C0E0B;
-    --surface: #161A15;
-    --ink: #EDEFE9;
-    --muted: #8E958A;
-    --rule: #2C322A;
-    --signal: #E2543A;
-    --pass: #5FA88E;
-    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
-    --sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color-scheme: dark;
+
+    --navy-deep: #07111f;
+    --navy-mid: #13213b;
+    --ink: #f5f7ff;
+    --ink-soft: #dfe8ff;
+    --ink-muted: rgba(223, 232, 255, 0.58);
+    --accent: #70c7ff;
+    --on-accent: #041320;
+
+    --glass: rgba(255, 255, 255, 0.08);
+    --glass-line: rgba(255, 255, 255, 0.16);
+    --glass-deep: rgba(4, 12, 26, 0.42);
+
+    --blocked: #ff7d6e;
+    --passed: #6ee7a8;
+
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    --sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
   }
 
   * { box-sizing: border-box; }
 
   body {
-    background: var(--ground);
+    margin: 0;
+    padding: 32px 20px 72px;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+    background-attachment: fixed;
     color: var(--ink);
     font-family: var(--sans);
-    margin: 0;
-    padding: 24px 16px 60px;
     -webkit-font-smoothing: antialiased;
   }
 
   .note {
     max-width: 1000px;
-    margin: 0 auto 22px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    line-height: 1.6;
+    margin: 0 auto 26px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--ink-muted);
   }
 
-  .note b { color: var(--signal); font-weight: 600; }
+  .note b { color: var(--accent); font-weight: 600; }
 
-  /* Sized to screenshot near X's 16:9 crop. min-height rather than
-     aspect-ratio + overflow:hidden — a fixed box clips content silently,
+  /* Glass card, PrimeCircle house style.
+     min-height rather than a fixed ratio — a hard box clips content silently
      and a card that screenshots with its last row missing is worthless. */
   .card {
     max-width: 1000px;
-    margin: 0 auto 44px;
-    background: var(--surface);
-    border: 1px solid var(--rule);
-    padding: 40px 48px;
+    margin: 0 auto 40px;
+    background: var(--glass);
+    border: 1px solid var(--glass-line);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+    padding: 44px 48px;
     min-height: 562px;
     display: flex;
     flex-direction: column;
@@ -53,20 +67,20 @@
   }
 
   .eyebrow {
-    font-family: var(--mono);
-    font-size: 13px;
-    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--signal);
-    margin-bottom: 16px;
+    letter-spacing: 0.34em;
+    font-size: 0.72rem;
+    color: var(--accent);
+    margin-bottom: 18px;
+    font-weight: 500;
   }
 
   h2 {
     font-size: clamp(1.7rem, 3.6vw, 2.6rem);
-    line-height: 1.08;
-    letter-spacing: -0.028em;
-    font-weight: 800;
-    margin: 0 0 22px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 24px;
     text-wrap: balance;
   }
 
@@ -74,106 +88,150 @@
     width: 100%;
     border-collapse: collapse;
     font-variant-numeric: tabular-nums;
-    font-size: clamp(0.95rem, 1.7vw, 1.2rem);
+    font-size: clamp(0.95rem, 1.7vw, 1.15rem);
   }
 
   th {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: var(--muted);
+    letter-spacing: 0.18em;
+    font-size: 0.68rem;
+    color: var(--ink-muted);
     text-align: left;
     font-weight: 500;
-    padding: 0 14px 10px 0;
-    border-bottom: 1px solid var(--rule);
+    padding: 0 14px 12px 0;
+    border-bottom: 1px solid var(--glass-line);
   }
 
   td {
-    padding: 11px 14px 11px 0;
-    border-bottom: 1px solid var(--rule);
+    padding: 12px 14px 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    color: var(--ink-soft);
   }
 
   tr:last-child td { border-bottom: none; }
 
-  .fail { color: var(--signal); font-weight: 700; }
-  .pass { color: var(--pass); font-weight: 700; }
-  .mono { font-family: var(--mono); }
+  .blocked { color: var(--blocked); font-weight: 700; letter-spacing: 0.04em; }
+  .passed { color: var(--passed); font-weight: 700; letter-spacing: 0.04em; }
+  .mono { font-family: var(--mono); color: var(--ink-muted); }
 
   .kicker {
-    margin-top: 22px;
-    font-size: clamp(1rem, 1.9vw, 1.25rem);
-    line-height: 1.45;
-    color: var(--ink);
+    margin: 24px 0 0;
+    font-size: clamp(1rem, 1.9vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--ink-soft);
     max-width: 62ch;
   }
 
-  .kicker b { color: var(--signal); }
+  .kicker b { color: var(--accent); font-weight: 600; }
 
   .sig {
     margin-top: auto;
-    padding-top: 20px;
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
+    padding-top: 26px;
     display: flex;
-    justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
-  .big {
-    font-size: clamp(2.4rem, 6.5vw, 4.4rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-    font-weight: 800;
-    margin: 0 0 6px;
+  /* Pill, matching the house .btn radius */
+  .pill {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border: 1px solid var(--glass-line);
+    color: var(--ink-soft);
   }
 
-  .big .unit { font-size: 0.42em; color: var(--muted); font-weight: 500; letter-spacing: 0; }
+  .pill.solid {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: transparent;
+  }
+
+  .big {
+    font-size: clamp(2.3rem, 6vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+
+  .big .unit {
+    font-size: 0.4em;
+    color: var(--ink-muted);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
 
   .grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 26px 40px;
+    gap: 28px 40px;
   }
 
   .stat .label {
-    font-family: var(--mono);
-    font-size: 12px;
-    letter-spacing: 0.13em;
     text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
+    letter-spacing: 0.18em;
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+    margin-bottom: 12px;
   }
 
-  .stat .sub { font-size: 0.95rem; color: var(--muted); line-height: 1.4; }
+  .stat .sub {
+    font-size: 0.92rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
 
   code {
     font-family: var(--mono);
-    background: #0C0E0B;
-    padding: 2px 7px;
-    font-size: 0.85em;
-    color: var(--ink);
+    background: var(--glass-deep);
+    border: 1px solid var(--glass-line);
+    border-radius: 8px;
+    padding: 3px 9px;
+    font-size: 0.88em;
+    color: var(--accent);
+  }
+
+  .brand {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 8px;
+    font-size: 0.75rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .brand .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
   }
 
   @media (max-width: 760px) {
-    .card { min-height: 0; padding: 30px 24px; }
-    .grid { grid-template-columns: 1fr; gap: 20px; }
-    .sig { flex-direction: column; gap: 6px; }
+    body { padding: 24px 14px 56px; }
+    .card { min-height: 0; padding: 30px 24px; border-radius: 20px; }
+    .grid { grid-template-columns: 1fr; gap: 22px; }
+    h2 { font-size: 1.5rem; }
   }
 </style>
 
-<div class="note">
-  <b>How to use:</b> screenshot each card individually and attach it to the post or reply.
-  Cards are cropped 16:9 so X shows them uncropped. Do not attach the link — attach the card.
-</div>
+<p class="note">
+  <b>How to use:</b> screenshot each card on its own and attach it to the post or reply.
+  Attach the card, not the link — a link costs most of your reach.
+</p>
 
 <!-- CARD 1 — the experiment -->
 <div class="card">
-  <div class="eyebrow">Seedance 2.5 · Controlled test · 8 Aug 2026</div>
+  <div class="eyebrow">Controlled test · 8 Aug 2026</div>
   <h2>Asking Seedance 2.5 for music destroys your render — after you’ve paid for it</h2>
 
   <table>
@@ -181,34 +239,34 @@
       <tr><th>Run</th><th>Music</th><th>Dialogue</th><th>Result</th></tr>
     </thead>
     <tbody>
-      <tr><td class="mono">1</td><td>in <code>( )</code></td><td>yes</td><td class="fail">BLOCKED</td></tr>
-      <tr><td class="mono">2</td><td>in <code>( )</code></td><td>yes</td><td class="fail">BLOCKED</td></tr>
-      <tr><td class="mono">3</td><td>in <code>( )</code></td><td>no</td><td class="fail">BLOCKED</td></tr>
-      <tr><td class="mono">4</td><td>plain prose</td><td>yes</td><td class="fail">BLOCKED</td></tr>
-      <tr><td class="mono">5</td><td><strong>none</strong></td><td>yes</td><td class="pass">RENDERED</td></tr>
+      <tr><td class="mono">01</td><td>in <code>( )</code></td><td>yes</td><td class="blocked">BLOCKED</td></tr>
+      <tr><td class="mono">02</td><td>in <code>( )</code></td><td>yes</td><td class="blocked">BLOCKED</td></tr>
+      <tr><td class="mono">03</td><td>in <code>( )</code></td><td>no</td><td class="blocked">BLOCKED</td></tr>
+      <tr><td class="mono">04</td><td>plain prose</td><td>yes</td><td class="blocked">BLOCKED</td></tr>
+      <tr><td class="mono">05</td><td><strong>none</strong></td><td>yes</td><td class="passed">RENDERED</td></tr>
     </tbody>
   </table>
 
   <p class="kicker">
     Same seed. Same shot. One variable at a time. The moderation pass fires
-    <b>after</b> generation, so the credits are already spent.
+    <b>after</b> generation — so the credits are already spent when it rejects you.
   </p>
 
   <div class="sig">
-    <span>Fix: “no music of any kind, diegetic sound only”</span>
-    <span>Add music in the edit</span>
+    <span class="pill solid">Fix: “no music of any kind, diegetic sound only”</span>
+    <span class="pill">Add music in the edit</span>
   </div>
 </div>
 
 <!-- CARD 2 — the resolution -->
 <div class="card">
-  <div class="eyebrow">Seedance 2.5 · Live schema · 8 Aug 2026</div>
+  <div class="eyebrow">Live schema · 8 Aug 2026</div>
   <h2>There is no 4K. There is no 1080p.</h2>
 
   <div class="grid">
     <div class="stat">
       <div class="label">Resolution enum, verbatim</div>
-      <div class="big" style="font-size:clamp(1.1rem,2.6vw,1.7rem);"><code>["480p", "720p"]</code></div>
+      <div class="big" style="font-size:clamp(1.1rem,2.4vw,1.6rem);"><code>["480p", "720p"]</code></div>
       <div class="sub">Default is <strong>480p</strong>. Most people never change it.</div>
     </div>
     <div class="stat">
@@ -221,18 +279,18 @@
   <p class="kicker">
     Seedance 2.5 outputs at <b>lower resolution than 2.0</b>, and costs about
     <b>60% more per second</b> to do it. You’re buying duration and reference control,
-    not pixels. Fine trade — just not the one the launch pages describe.
+    not pixels. A fine trade — just not the one the launch pages describe.
   </p>
 
   <div class="sig">
-    <span>Pulled from the live endpoint, not a blog post</span>
-    <span>24 fps · 854×480 · 1280×720</span>
+    <span class="pill solid">Pulled from the live endpoint</span>
+    <span class="pill">24 fps · 854×480 · 1280×720</span>
   </div>
 </div>
 
 <!-- CARD 3 — pricing -->
 <div class="card">
-  <div class="eyebrow">Seedance 2.5 · Measured pricing · 8 Aug 2026</div>
+  <div class="eyebrow">Measured pricing · 8 Aug 2026</div>
   <h2>Turning audio off saves you nothing</h2>
 
   <table>
@@ -244,46 +302,48 @@
       <tr><td>30s / 480p</td><td class="mono">1,810</td><td class="mono">60.3</td></tr>
       <tr><td>5s / 720p</td><td class="mono">650</td><td class="mono">130.0</td></tr>
       <tr><td>30s / 720p</td><td class="mono">3,905</td><td class="mono">130.2</td></tr>
-      <tr><td>5s / 720p — <strong>audio OFF</strong></td><td class="mono fail">650</td><td class="mono">130.0</td></tr>
+      <tr><td>5s / 720p — <strong>audio OFF</strong></td><td class="blocked">650</td><td class="mono">130.0</td></tr>
     </tbody>
   </table>
 
   <p class="kicker">
-    Pricing is <b>perfectly linear</b> — 30s costs exactly six 5s clips, no discount,
+    Pricing is <b>perfectly linear</b> — 30s costs exactly six 5s clips. No discount,
     no penalty. And audio is <b>free</b>. If you’ve been disabling it to save credits,
     you saved nothing and gave up the model’s best feature.
   </p>
 
   <div class="sig">
-    <span>Choose duration for story reasons, never cost</span>
-    <span>Prototype 480p → finish 720p</span>
+    <span class="pill solid">Pick duration for story, never cost</span>
+    <span class="pill">Prototype 480p → finish 720p</span>
   </div>
 </div>
 
 <!-- CARD 4 — depth map -->
 <div class="card">
-  <div class="eyebrow">Seedance 2.5 · Technique</div>
+  <div class="eyebrow">Technique · the one nobody uses</div>
   <h2>Why your transferred motion keeps drifting</h2>
 
-  <p class="kicker" style="font-size:clamp(1.05rem,2.1vw,1.45rem); margin-top:0;">
+  <p class="kicker" style="margin-top:0; font-size:clamp(1.05rem,2.1vw,1.4rem);">
     Feed the model a video of someone dancing and it tries to interpret
     <b>everything</b> — the person, the clothes, the lighting, the room, and somewhere
     in there, the movement.
   </p>
 
-  <p class="kicker" style="font-size:clamp(1.05rem,2.1vw,1.45rem);">
+  <p class="kicker" style="font-size:clamp(1.05rem,2.1vw,1.4rem);">
     Feed it a <b>depth map</b> and there’s nothing left to interpret but the motion.
   </p>
 
   <p class="kicker">
     The problem was never the model. You handed it ten variables when you meant to hand
-    it one. It also replaces paragraphs of camera description — stop writing “slow orbit
+    it one. It also replaces paragraphs of camera direction — stop writing “slow orbit
     from a low angle rising to eye level” and just show it the geometry.
   </p>
 
   <div class="sig">
-    <span>Depth map → framing &amp; motion</span>
-    <span>Style ref → tone</span>
-    <span>Character sheet → identity</span>
+    <span class="pill solid">Depth map → framing &amp; motion</span>
+    <span class="pill">Style ref → tone</span>
+    <span class="pill">Character sheet → identity</span>
   </div>
 </div>
+
+<div class="brand"><span class="dot"></span> PrimeCircle · Seedance 2.5 Field Research</div>

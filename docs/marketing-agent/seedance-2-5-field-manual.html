@@ -1,0 +1,1169 @@
+<title>Seedance 2.5: The Field Manual | PrimeCircle</title>
+
+<style>
+  /* PrimeCircle design system — sourced from website/css/styles.css.
+     Deliberately single-theme dark: the house style sets color-scheme: dark. */
+  :root {
+    color-scheme: dark;
+
+    --navy-deep: #07111f;
+    --navy-mid: #13213b;
+    --ink: #f5f7ff;
+    --ink-soft: #dfe8ff;
+    --ink-muted: rgba(223, 232, 255, 0.58);
+    --ink-faint: rgba(223, 232, 255, 0.4);
+    --accent: #70c7ff;
+    --on-accent: #041320;
+
+    --glass: rgba(255, 255, 255, 0.08);
+    --glass-soft: rgba(255, 255, 255, 0.045);
+    --glass-line: rgba(255, 255, 255, 0.16);
+    --glass-hair: rgba(255, 255, 255, 0.09);
+    --glass-deep: rgba(4, 12, 26, 0.45);
+
+    --blocked: #ff7d6e;
+    --passed: #6ee7a8;
+
+    --shadow: 0 20px 60px rgba(0, 0, 0, 0.28);
+    --sans: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-mid) 100%);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px 110px; }
+
+  /* ---------- masthead ---------- */
+
+  .masthead { padding: 60px 0 40px; }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.34em;
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-weight: 500;
+    margin: 0 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .dot {
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    flex: none;
+  }
+
+  h1 {
+    font-size: clamp(2.4rem, 6.5vw, 4.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.032em;
+    font-weight: 700;
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+
+  h1 em {
+    font-style: normal;
+    display: block;
+    color: var(--ink-muted);
+    font-weight: 300;
+    font-size: 0.5em;
+    letter-spacing: -0.02em;
+    margin-top: 10px;
+  }
+
+  .standfirst {
+    font-size: clamp(1.05rem, 2.1vw, 1.3rem);
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  /* ---------- chips ---------- */
+
+  .chip {
+    display: inline-block;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 0.66rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 600;
+    white-space: nowrap;
+    vertical-align: 1px;
+    border: 1px solid currentColor;
+  }
+
+  .chip.m { color: var(--passed); }
+  .chip.r { color: var(--ink-faint); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 30px;
+    align-items: center;
+    background: var(--glass-soft);
+    border: 1px solid var(--glass-hair);
+    border-radius: 20px;
+    padding: 20px 26px;
+    font-size: 0.9rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+
+  /* ---------- toc ---------- */
+
+  .toc {
+    margin: 26px 0 0;
+    columns: 2;
+    column-gap: 32px;
+  }
+
+  .toc a {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--glass-hair);
+    break-inside: avoid;
+    transition: color .15s ease;
+  }
+
+  .toc a:hover { color: var(--accent); }
+  .toc a b { color: var(--accent); font-weight: 600; margin-right: 12px; font-variant-numeric: tabular-nums; }
+  .toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+  /* ---------- sections ---------- */
+
+  section {
+    display: grid;
+    grid-template-columns: 118px minmax(0, 1fr);
+    gap: 0 34px;
+    padding: 56px 0;
+    border-bottom: 1px solid var(--glass-hair);
+  }
+
+  .rail {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+
+  .rail .tick {
+    display: block;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0 0 20px;
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 34px 0 10px;
+  }
+
+  p { margin: 0 0 16px; max-width: 66ch; color: var(--ink-soft); }
+  .body > *:last-child { margin-bottom: 0; }
+
+  ul { margin: 0 0 16px; padding-left: 22px; max-width: 66ch; color: var(--ink-soft); }
+  li { margin-bottom: 10px; }
+
+  strong { color: var(--ink); font-weight: 600; }
+  em { color: var(--ink); }
+
+  a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ---------- pull quote ---------- */
+
+  blockquote {
+    margin: 28px 0;
+    padding: 6px 0 6px 24px;
+    border-left: 2px solid var(--accent);
+    font-size: 1.2rem;
+    line-height: 1.5;
+    letter-spacing: -0.012em;
+    color: var(--ink);
+    max-width: 58ch;
+  }
+
+  blockquote cite {
+    display: block;
+    margin-top: 12px;
+    font-size: 0.7rem;
+    font-style: normal;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  /* ---------- glass panels ---------- */
+
+  .plate, .rules, .slate {
+    background: var(--glass);
+    border: 1px solid var(--glass-line);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+    padding: 28px 30px;
+    margin: 28px 0;
+  }
+
+  .plate { overflow-x: auto; }
+
+  .plate h4, .rules h4 {
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    font-size: 0.68rem;
+    color: var(--accent);
+    margin: 0 0 20px;
+    font-weight: 500;
+  }
+
+  .rules ul { margin: 0; }
+  .rules li:last-child { margin-bottom: 0; }
+
+  .slate { border-color: rgba(255, 125, 110, 0.42); }
+  .slate h3 {
+    margin: 0 0 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.72rem;
+    color: var(--blocked);
+    font-weight: 600;
+  }
+  .slate p:last-child { margin-bottom: 0; }
+
+  /* ---------- tables ---------- */
+
+  .scroll { overflow-x: auto; margin: 24px 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  th {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.64rem;
+    color: var(--ink-faint);
+    text-align: left;
+    font-weight: 500;
+    padding: 0 16px 11px 0;
+    border-bottom: 1px solid var(--glass-line);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 11px 16px 11px 0;
+    border-bottom: 1px solid var(--glass-hair);
+    vertical-align: top;
+    color: var(--ink-soft);
+  }
+
+  td.num, th.num { text-align: right; padding-right: 0; }
+  tr:last-child td { border-bottom: none; }
+
+  .blocked { color: var(--blocked); font-weight: 700; }
+  .passed { color: var(--passed); font-weight: 700; }
+  .hit { color: var(--blocked); font-weight: 600; }
+
+  /* ---------- code ---------- */
+
+  pre {
+    background: var(--glass-deep);
+    border: 1px solid var(--glass-line);
+    border-radius: 18px;
+    padding: 22px 24px;
+    overflow-x: auto;
+    margin: 22px 0;
+    font-family: var(--mono);
+    font-size: 0.83rem;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    background: var(--glass-deep);
+    border: 1px solid var(--glass-hair);
+    border-radius: 7px;
+    padding: 2px 7px;
+    color: var(--accent);
+  }
+
+  pre code { background: none; border: none; padding: 0; font-size: inherit; color: inherit; }
+
+  /* ---------- footer ---------- */
+
+  footer {
+    padding: 48px 0 0;
+    font-size: 0.95rem;
+    color: var(--ink-muted);
+    max-width: 68ch;
+  }
+
+  footer strong { color: var(--ink); }
+
+  .brandmark {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--glass-hair);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 760px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 18px 70px; }
+    section { grid-template-columns: 1fr; gap: 16px; padding: 42px 0; }
+    .rail { display: flex; gap: 12px; align-items: baseline; }
+    .rail .tick { margin-bottom: 0; }
+    .toc { columns: 1; }
+    .plate, .rules, .slate { padding: 22px 20px; border-radius: 20px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">
+      <span class="dot"></span>
+      <span>PrimeCircle Field Research</span>
+      <span>Rev. 08 Aug 2026</span>
+      <span>Tested against a live endpoint</span>
+    </p>
+    <h1>Seedance 2.5<em>The parts the launch pages left out.</em></h1>
+    <p class="standfirst">
+      ByteDance shipped a 30-second one-take video model with 50 reference slots and
+      native audio. It is not a straight upgrade over 2.0 — it trades resolution for
+      length and control. Here is the prompt grammar, a price list measured against the
+      live API, and the one prompt clause that will silently destroy your renders after
+      you have paid for them.
+    </p>
+  </header>
+
+  <div class="legend">
+    <span><span class="chip m">Measured</span> &nbsp;I ran it against a live Seedance&nbsp;2.5 endpoint and read the result back.</span>
+    <span><span class="chip r">Reported</span> &nbsp;Consistent across published sources. Not independently confirmed.</span>
+  </div>
+
+  <nav class="toc">
+    <a href="#cheatsheet"><b>00</b> Cheat sheet — one screen</a>
+    <a href="#resolution"><b>01</b> The resolution nobody mentions</a>
+    <a href="#price"><b>02</b> What it actually costs</a>
+    <a href="#formula"><b>03</b> The six-part formula</a>
+    <a href="#brackets"><b>04</b> The four brackets</a>
+    <a href="#voice"><b>05</b> The accent trap</a>
+    <a href="#refs"><b>06</b> Reference tags</a>
+    <a href="#depthmap"><b>07</b> The depth map trick</a>
+    <a href="#oneshot"><b>08</b> The mistake everyone makes</a>
+    <a href="#camera"><b>09</b> Camera vocabulary</a>
+    <a href="#modes"><b>10</b> The modes nobody uses</a>
+    <a href="#moderation"><b>11</b> The credit-eating trap</a>
+    <a href="#specs"><b>12</b> Hard specs</a>
+    <a href="#versus"><b>13</b> When to use something else</a>
+    <a href="#templates"><b>14</b> Copy-paste templates</a>
+    <a href="#workflow"><b>15</b> The working loop</a>
+  </nav>
+
+  <section id="cheatsheet">
+    <div class="rail"><span class="tick">00</span>Cheat sheet</div>
+    <div class="body">
+      <h2>The whole manual on one screen</h2>
+
+      <div class="plate">
+        <h4>Seedance 2.5 — operating card</h4>
+        <table>
+          <tbody>
+            <tr><td>Resolution</td><td><strong>480p / 720p only.</strong> No 4K. Default is 480p — change it.</td></tr>
+            <tr><td>Frame rate</td><td>24 fps</td></tr>
+            <tr><td>Duration</td><td>4–30s native; 180s beta long mode</td></tr>
+            <tr><td>Prompt ceiling</td><td>30,000 characters</td></tr>
+            <tr><td>References</td><td>30 images + 10 videos + 10 audio = 50</td></tr>
+            <tr><td>Audio</td><td>Free. Never turn it off.</td></tr>
+            <tr><td>Music</td><td><span class="hit">Never let it generate music.</span> Trips a copyright block after you pay.</td></tr>
+            <tr><td>Pricing</td><td>Linear per second. 30s = six 5s clips exactly.</td></tr>
+            <tr><td>Formula</td><td>Subject → Action → Scene → Style → Camera → Audio</td></tr>
+            <tr><td>Brackets</td><td>( ) music &nbsp;·&nbsp; &lt; &gt; SFX &nbsp;·&nbsp; { } dialogue &nbsp;·&nbsp; 【 】 subtitles</td></tr>
+            <tr><td>Camera</td><td>shot size → angle → movement. “Cinematic” is not a move.</td></tr>
+            <tr><td>Motion transfer</td><td>Use a <strong>depth map</strong>, not source footage.</td></tr>
+            <tr><td>Identity</td><td>Use a <strong>character sheet</strong>, not a hero shot.</td></tr>
+            <tr><td>Biggest mistake</td><td>Trying to oneshot the whole video.</td></tr>
+            <tr><td>Loop</td><td>Prototype 480p → lock seed → finish 720p → upscale</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="resolution">
+    <div class="rail"><span class="tick">01</span>Resolution</div>
+    <div class="body">
+      <h2>Every “4K &amp; 30s” page is selling a spec that isn’t there</h2>
+
+      <p>
+        I pulled the schema from a live Seedance 2.5 endpoint. The <code>resolution</code>
+        field is an enum, and it contains exactly two values. <span class="chip m">Measured</span>
+      </p>
+
+      <pre><code>"resolution": { "enum": ["480p", "720p"], "default": "480p" }</code></pre>
+
+      <p>
+        No 1080p. No 4K. And the default is <strong>480p</strong> — so everyone who never
+        touched that dropdown has been generating at the lowest setting available.
+      </p>
+
+      <p>
+        It gets sharper. I checked an older <strong>Seedance 2.0</strong> job on the same
+        account. It returned <strong>3840×2160</strong> — genuine 4K. <span class="chip m">Measured</span>
+      </p>
+
+      <blockquote>
+        Seedance 2.5 outputs at lower resolution than Seedance 2.0, and costs 62.5% more
+        per second to do it.
+      </blockquote>
+
+      <p>
+        That isn’t a scandal, it’s a trade: you are buying length and control, not pixels.
+        But you should know you’re making it. Runway’s own docs reportedly tell users to
+        switch back to 2.0 when they need 1080p — which tells you ByteDance knows exactly
+        what this model is for. <span class="chip r">Reported</span>
+      </p>
+
+      <div class="rules">
+        <h4>Working rule</h4>
+        <ul>
+          <li>Generate at 720p, always. Change the default the moment you open the tool.</li>
+          <li>Budget a separate upscale pass. For client work it is not optional.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="price">
+    <div class="rail"><span class="tick">02</span>Economics</div>
+    <div class="body">
+      <h2>Measured prices, not estimates</h2>
+
+      <p>
+        Every pricing figure in circulation is an estimate. These were priced against a
+        live endpoint on 8 August 2026, in OpenArt credits. <span class="chip m">Measured</span>
+      </p>
+
+      <div class="plate">
+        <h4>Price list — Seedance 2.5 unless noted</h4>
+        <table>
+          <thead>
+            <tr><th>Configuration</th><th class="num">Credits</th><th class="num">Per second</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>5s / 480p</td><td class="num">300</td><td class="num">60.0</td></tr>
+            <tr><td>30s / 480p</td><td class="num">1,810</td><td class="num">60.3</td></tr>
+            <tr><td>5s / 720p</td><td class="num">650</td><td class="num">130.0</td></tr>
+            <tr><td>30s / 720p</td><td class="num">3,905</td><td class="num">130.2</td></tr>
+            <tr><td>5s / 720p — <span class="hit">audio OFF</span></td><td class="num hit">650</td><td class="num">130.0</td></tr>
+            <tr><td>Seedance <strong>2.0</strong> — 5s / 720p</td><td class="num">400</td><td class="num">80.0</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Three things fall out of that table, and each one changes how you work.</p>
+
+      <h3>Pricing is perfectly linear</h3>
+      <p>
+        A 30-second generation costs the same as six 5-second ones. No volume discount, no
+        long-clip penalty. So choose duration for <em>story</em> reasons only — cost is not
+        an argument in this decision.
+      </p>
+
+      <h3>Audio is free</h3>
+      <p>
+        720p/5s costs 650 credits whether audio is on or off. If you have been switching
+        audio off to save money, you saved nothing and threw away the model’s best feature.
+        Leave it on. Always.
+      </p>
+
+      <h3>720p is 2.17× the price of 480p</h3>
+      <p>Worth it — and it makes the working loop obvious: prototype at 480p, finish at 720p.</p>
+    </div>
+  </section>
+
+  <section id="formula">
+    <div class="rail"><span class="tick">03</span>Grammar</div>
+    <div class="body">
+      <h2>ByteDance published an actual formula</h2>
+
+      <p>Six slots, in this order. <span class="chip r">Reported</span></p>
+
+      <pre><code>Subject → Action / Event → Scene &amp; Environment →
+Visual Style → Camera Movement or Cut → Audio</code></pre>
+
+      <p>Most people write slot 1 and slot 3, then wonder why the camera does nothing.</p>
+
+      <p>
+        The order matters because the model reads it as a priority stack. Put what you care
+        about most earliest — and never contradict an earlier slot with a later one.
+        Contradiction, not length, is what breaks these prompts.
+      </p>
+    </div>
+  </section>
+
+  <section id="brackets">
+    <div class="rail"><span class="tick">04</span>Audio syntax</div>
+    <div class="body">
+      <h2>Four brackets, four output channels</h2>
+
+      <p>
+        The model is said to route bracket types to different channels.
+        <span class="chip r">Reported</span>
+      </p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Bracket</th><th>Routes to</th></tr></thead>
+          <tbody>
+            <tr><td><code>( )</code></td><td>Music</td></tr>
+            <tr><td><code>&lt; &gt;</code></td><td>Sound effects</td></tr>
+            <tr><td><code>{ }</code></td><td>Dialogue</td></tr>
+            <tr><td><code>【 】</code></td><td>Subtitles / on-screen text</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>So instead of a mushy sentence about “cinematic ambient audio”, you write:</p>
+
+      <pre><code>&lt;heavy swell slapping the steel hull, wind buffeting the mic, distant gulls&gt;
+(sparse low cello drone, single sustained note, no melody)
+{The sea does not care what you planned today.}</code></pre>
+
+      <p>Three channels, separately addressed, no ambiguity about which is which.</p>
+
+      <div class="slate">
+        <h3>Honesty note — I tested this and it did not hold up</h3>
+        <p>
+          Prompts using these brackets are <strong>accepted without error</strong>. But I ran
+          a probe designed to detect whether <code>( )</code> actually routes to a dedicated
+          music channel: I requested identical music in plain prose with no parentheses,
+          holding everything else byte-identical.
+        </p>
+        <p>
+          If the bracket routed music somewhere prose could not reach, that run should have
+          behaved differently. <strong>It behaved identically.</strong> The model responded to
+          the <em>intent</em> to have music, not to the syntax.
+        </p>
+        <p>
+          That is one probe against one bracket, so it does not disprove the system — but it
+          is the only firsthand evidence I have, and it points away from the claim. Treat the
+          four-bracket table as a <strong>useful way to organise your prompt</strong>, which it
+          genuinely is, rather than as a documented routing mechanism.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="voice">
+    <div class="rail"><span class="tick">05</span>Voice</div>
+    <div class="body">
+      <h2>Name the accent, or the model invents one</h2>
+
+      <p>Native audio is the reason to use this model. Two rules. <span class="chip r">Reported</span></p>
+
+      <h3>Name the regional variety, not the language</h3>
+      <p>
+        “English” gets you a neutral read. “Authentic Los Angeles English” gets you a
+        performance. There is a widely-repeated case where a character kept receiving an
+        unrequested British accent: <code>"American"</code> fixed it, and
+        <code>"American English"</code> did <strong>not</strong>. The model is more sensitive
+        to how you name the variety than seems reasonable.
+      </p>
+
+      <h3>Voice is inferred from your image references</h3>
+      <p>
+        Supply a character reference and say nothing about voice, and the model guesses what
+        that face sounds like. It is frequently wrong and always confident.
+      </p>
+
+      <pre><code>Dialogue language: [language + regional variety].
+The [character] says, [delivery direction]: {the actual line}</code></pre>
+
+      <p>
+        Keep lines <strong>short</strong>. Lip-sync in 2.5 is good enough that a short line
+        lands cleanly and a long one exposes it.
+      </p>
+    </div>
+  </section>
+
+  <section id="refs">
+    <div class="rail"><span class="tick">06</span>References</div>
+    <div class="body">
+      <h2>Fifty slots is a ceiling, not a target</h2>
+
+      <p>
+        Seedance 2.5 takes <strong>50 references</strong>: 30 images, 10 videos, 10 audio
+        clips. Each file gets a handle — <code>@Image1</code>, <code>@Video1</code>,
+        <code>@Audio1</code>. <span class="chip r">Reported</span>
+      </p>
+
+      <h3>Rename the handles to roles</h3>
+      <p>
+        <code>@Image1</code> tells the model nothing. <code>@lead_character</code>,
+        <code>@urban_night_style</code>, <code>@slow_dolly_motion</code> tell it a job. On API
+        surfaces this is the <code>label</code> field on each reference object — I confirmed
+        it exists in the live schema. <span class="chip m">Measured</span>
+      </p>
+
+      <h3>Give every reference exactly one job, in a sentence</h3>
+
+      <pre><code>@lead_character provides Nia's face, hairstyle and jacket only.
+@urban_night_style provides the colour palette and lighting, not the subject.
+@slow_dolly_motion provides the camera path and pacing, not the content.
+@dramatic_voice provides Nia's speaking voice.</code></pre>
+
+      <p>
+        Never let two assets define the same property. Two references both claiming “the
+        style” is the most reliable way to get mush.
+      </p>
+
+      <div class="rules">
+        <h4>Do not fill the budget</h4>
+        <ul>
+          <li>Past a point, extra references <strong>dilute</strong> strong features and add noise.</li>
+          <li>Conflicting assets weaken direction rather than strengthening it.</li>
+          <li>Video and audio references work best at <strong>5–10 seconds</strong>, even though 30s is allowed.</li>
+        </ul>
+      </div>
+
+      <h3>Multi-keyframe storyboarding</h3>
+      <p>You can hand the model an ordered storyboard:</p>
+
+      <pre><code>Use @Image 1 through @Image 5 as keyframes in this order.
+@Image 1 — she stands at the door, hand on the frame.
+@Image 2 — she is halfway down the corridor, lights failing behind her.</code></pre>
+
+      <p>
+        Upload the frames <strong>individually</strong> — separate images align better than a
+        collaged contact sheet. Keyframes control stage <em>order</em>, not literal frame
+        reproduction: they are waypoints, not a flipbook.
+      </p>
+    </div>
+  </section>
+
+  <section id="depthmap">
+    <div class="rail"><span class="tick">07</span>Depth maps</div>
+    <div class="body">
+      <h2>The best-kept secret in the model</h2>
+
+      <p>
+        This is the most useful technique I found, and almost nobody outside a handful of
+        creators is using it. <span class="chip r">Reported</span>
+      </p>
+
+      <p>
+        The problem it solves: you want to transfer a motion — a dance, a walk, a specific
+        camera move — onto your own character. So you hand Seedance the source video as a
+        reference. And the choreography drifts.
+      </p>
+
+      <blockquote>
+        Feed the model a video of someone dancing and it tries to interpret everything — the
+        person, the clothes, the lighting, the room, and somewhere in there, the movement.
+        Feed it a depth map and there’s nothing left to interpret but the motion.
+        <cite>You handed it ten variables when you meant to hand it one</cite>
+      </blockquote>
+
+      <p>
+        A depth map is motion and geometry with <strong>every other variable stripped out</strong>.
+        No identity, no wardrobe, no lighting, no colour. It is the purest possible expression
+        of “this reference has exactly one job” — the entire design principle of the reference
+        system.
+      </p>
+
+      <h3>The workflow</h3>
+      <ul>
+        <li>Build your storyboard normally, in GPT Image 2 or Nano Banana 2.</li>
+        <li><strong>Convert that storyboard into a depth map</strong> using the same image model.</li>
+        <li>Hand Seedance three references, each with exactly one job:
+          <br>— the <strong>depth map</strong> → composition, framing, camera geometry, motion
+          <br>— a <strong>style reference</strong> → tone, palette, lighting
+          <br>— a <strong>character sheet</strong> → identity
+        </li>
+      </ul>
+
+      <p>
+        Reported result: Seedance “understands AI-generated depth maps surprisingly well,
+        giving you much more control with fewer tokens and less need to describe camera angles
+        and compositions.”
+      </p>
+
+      <p>
+        That last clause is the kicker. <strong>A depth map replaces paragraphs of camera
+        description.</strong> You stop writing “slow orbit from a low angle rising to eye
+        level” and just show it the geometry. Fewer words, less contradiction, less drift.
+      </p>
+
+      <h3>The character sheet pipeline</h3>
+      <p>
+        Multiple creators converged on this independently. Nobody serious generates a hero
+        shot and hopes it holds across a sequence.
+      </p>
+
+      <ul>
+        <li>Create the character once.</li>
+        <li>Turn it into a <strong>reference sheet</strong>: multiple angles, close-up portraits, clothing, accessories, textures, colours, proportions — instructing the image model to keep design and visual direction identical to the source.</li>
+        <li>Feed the <em>sheet</em>, not the hero shot, as your identity reference.</li>
+      </ul>
+
+      <p>
+        A sheet gives the model a structured, readable breakdown and forces it to focus on
+        essential visual information rather than stylistic noise. For a multi-scene sequence
+        this is the difference between a character holding and their face quietly becoming
+        someone else by shot four.
+      </p>
+    </div>
+  </section>
+
+  <section id="oneshot">
+    <div class="rail"><span class="tick">08</span>Method</div>
+    <div class="body">
+      <h2>The mistake almost everyone is making</h2>
+
+      <blockquote>
+        Almost everyone prompting Seedance 2.5 right now is making the same mistake: trying
+        to oneshot the whole video.
+        <cite>Recurring observation from creators shipping with 2.5</cite>
+      </blockquote>
+
+      <p>
+        Thirty-second takes with fifty locked references <strong>push the work upstream, into
+        preparation</strong>. Building the reference set, writing the brief, deciding the shot
+        before you generate it. That is pre-production — a healthier place for the work to
+        live than the retry button.
+      </p>
+
+      <p>
+        The principle that follows: <strong>identity, wardrobe, props, location and camera
+        should each have a clear source</strong>, instead of fighting each other inside one
+        paragraph of prose. If all five are competing in your prompt text, you are running a
+        2026 model on a 2024 workflow.
+      </p>
+
+      <h3>Write beats, not paragraphs</h3>
+      <p>Divide the video into consecutive stages. Give each stage <strong>one main change and a visible end state</strong>.</p>
+
+      <pre><code>Timing: 0-5s   hook — establish subject and world
+        5-16s  development — the thing starts happening
+        16-25s escalation or proof
+        25-30s resolution — land it</code></pre>
+
+      <p>
+        Seedance 2.0 rewarded dense, cut-heavy prompts. <strong>2.5 punishes them.</strong>
+        2.0-tuned prompts reportedly produce glitchy output on 2.5, and the model resists
+        rapid one-second-cut styles. Scenes told to breathe do better.
+        <span class="chip r">Reported</span>
+      </p>
+
+      <p>
+        Write ten actions into a four-second clip and you get chaotic morphing. That is not a
+        model failure. That is an instruction failure.
+      </p>
+    </div>
+  </section>
+
+  <section id="camera">
+    <div class="rail"><span class="tick">09</span>Camera</div>
+    <div class="body">
+      <h2>“Cinematic” is not a camera move</h2>
+
+      <p>Specify three things, always, in this order. <span class="chip r">Reported</span></p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Slot</th><th>Options</th></tr></thead>
+          <tbody>
+            <tr><td>Shot size</td><td>wide, medium, close-up, macro, extreme close-up</td></tr>
+            <tr><td>Angle</td><td>eye-level, low angle, high angle, overhead, dutch</td></tr>
+            <tr><td>Movement</td><td>locked-off, dolly-in, push-in, pull-back, pan left, tracking, orbit, crane up, handheld, FPV</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Terms reported to work reliably: <em>slow dolly-in, orbit, handheld, crane up,
+        locked-off, smooth dolly forward, slow pan left, low tracking shot, pull-back, slow
+        push-in, rack focus.</em>
+      </p>
+
+      <p>
+        The rule underneath: a slow push-in <em>feels</em> cinematic; a locked-off static shot
+        feels like a product demo. The word “cinematic” gets you neither — it is a vibe word
+        the model cannot act on. Every vague style adjective (“stunning”, “beautiful”,
+        “photorealistic”) is dead weight. Replace them with things a camera operator could
+        actually execute: <strong>rim lighting, shallow depth of field, slow push-in, low
+        tracking shot.</strong>
+      </p>
+
+      <p>
+        And give the move a <strong>reason</strong>. A push-in that lands on a reaction is
+        direction. A push-in because push-ins look nice is drift.
+      </p>
+    </div>
+  </section>
+
+  <section id="modes">
+    <div class="rail"><span class="tick">10</span>Modes</div>
+    <div class="body">
+      <h2>Text-to-video is the least interesting thing it does</h2>
+
+      <ul>
+        <li><strong>Keyframe</strong> — supply a first frame <em>and</em> a last frame, prompt the motion between. This is how you make a shot end exactly where you need it.</li>
+        <li><strong>Extend</strong> — continue a clip <strong>forwards or backwards</strong>. Backward extension is the underused one: generate the moment <em>before</em> a shot you already like. It also bridges two existing clips.</li>
+        <li><strong>Smart Edit</strong> — change one element in place, region-level, without regenerating the shot. Point at the object or the face, fix that, leave the rest untouched.</li>
+        <li><strong>Long-video mode (beta)</strong> — up to <strong>180 seconds</strong>, currently via Dreamina.</li>
+      </ul>
+
+      <div class="rules">
+        <h4>Why your settings are greyed out</h4>
+        <ul>
+          <li><strong>Edit mode</strong> locks aspect ratio to the input, and duration to input length ±0.3s.</li>
+          <li><strong>First-frame mode</strong> locks aspect ratio to your image, but leaves duration free.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="moderation">
+    <div class="rail"><span class="tick">11</span>Moderation</div>
+    <div class="body">
+      <h2>The trap that eats your credits</h2>
+
+      <p>I hit this one personally, and it is the most expensive gotcha in the model.</p>
+
+      <p>
+        I submitted an entirely benign prompt — an Icelandic fisherman on a trawler
+        delivering one line of dialogue. No violence, no public figure, no brand, no IP
+        reference. It generated, and <em>then</em> failed. <span class="chip m">Measured</span>
+      </p>
+
+      <div class="plate">
+        <h4>Job failure — verbatim</h4>
+        <pre style="margin:0;"><code>errorDisplayCode: "1003: output_moderation_blocked"
+
+[byte-plus] output content rejected by moderation:
+OutputVideoSensitiveContentDetected.PolicyViolation:
+The request failed because the output video may be
+related to copyright restrictions.</code></pre>
+      </div>
+
+      <p>Seedance runs <strong>three separate moderation stages</strong>: <span class="chip r">Reported</span></p>
+
+      <ul>
+        <li>a <strong>prompt filter</strong> on your text, before generation</li>
+        <li>an <strong>upload filter</strong> — computer vision over your reference images, hunting copyrighted visual elements</li>
+        <li>an <strong>output filter</strong> that reviews the finished video</li>
+      </ul>
+
+      <p>
+        Stage three is the one that hurts. Moderation runs during and after inference, so the
+        GPU time is spent and <strong>the credits are charged before the rejection fires</strong>.
+        Several platforms do not refund it. You pay full price for nothing.
+      </p>
+
+      <h3>The culprit is music — and it is provable</h3>
+
+      <p>
+        I ran a five-arm controlled experiment. Same seed, same duration, same resolution,
+        one variable at a time. <span class="chip m">Measured</span>
+      </p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Arm</th><th>Music</th><th>Dialogue</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>Original</td><td>in <code>( )</code></td><td>yes</td><td class="blocked">BLOCKED</td></tr>
+            <tr><td>C1</td><td>in <code>( )</code></td><td>yes</td><td class="blocked">BLOCKED</td></tr>
+            <tr><td>C2</td><td>in <code>( )</code></td><td><strong>no</strong></td><td class="blocked">BLOCKED</td></tr>
+            <tr><td>C3</td><td><strong>none</strong></td><td>yes</td><td class="passed">RENDERED</td></tr>
+            <tr><td>D1</td><td><strong>plain prose</strong></td><td>yes</td><td class="blocked">BLOCKED</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <ul>
+        <li><strong>The block is deterministic.</strong> C1 was an identical resubmission and failed identically. A prompt that trips this trips it every time — you cannot retry your way past it.</li>
+        <li><strong>Dialogue is innocent.</strong> C2 removed the spoken line entirely and still failed.</li>
+        <li><strong>Prompt-requested music is the trigger.</strong> C3 kept the dialogue, the face, the seed and the sound effects, and removed only the music clause. It rendered clean.</li>
+        <li><strong>It is not a syntax problem.</strong> D1 asked for the same music in plain prose, no parentheses, and failed anyway. The model reads the <em>intent</em> to have music, not the bracket. You cannot rephrase your way out.</li>
+      </ul>
+
+      <p>
+        The mechanism: the model generates a score, an audio fingerprint matcher compares it
+        against copyrighted material, and a match destroys the finished video <em>after</em>
+        you have paid for it.
+      </p>
+
+      <p>
+        Context: in February 2026 Hollywood studios formally accused ByteDance of enabling
+        mass copyright infringement via Seedance 2.0. ByteDance publicly committed to
+        tightening controls. Things that passed early in 2026 are blocked now.
+      </p>
+
+      <div class="slate">
+        <h3>Two rules that follow</h3>
+        <p>
+          <strong>Never let the model generate music</strong> for work you care about. Write
+          <code>no music of any kind, diegetic sound only</code> and lay music in during the
+          edit, where you control the licence. Cleaner mix, and you stop tripping the matcher.
+        </p>
+        <p>
+          <strong>Smoke-test borderline concepts at 4s/480p</strong> (240 credits) before
+          committing to 30s/720p (3,905 credits). A 16× cheaper failure is still a failure,
+          but a survivable one.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section id="specs">
+    <div class="rail"><span class="tick">12</span>Spec sheet</div>
+    <div class="body">
+      <h2>Hard specs, read from the live schema</h2>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Parameter</th><th>Value</th><th>Grade</th></tr></thead>
+          <tbody>
+            <tr><td>Prompt length</td><td><strong>up to 30,000 characters</strong></td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>Duration</td><td>4–30s integer; beta long mode to 180s</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>Resolution</td><td><code>480p</code>, <code>720p</code> — default <code>480p</code></td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>480p resolves to</td><td>854 × 480</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>720p 16:9 resolves to</td><td>1280 × 720</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>720p 9:16 resolves to</td><td>720 × 1280</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>720p 21:9 resolves to</td><td>1470 × 630</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>Frame rate</td><td><strong>24 fps</strong></td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>Aspect ratios</td><td>16:9, 4:3, 1:1, 3:4, 9:16, 21:9, adaptive</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>Audio</td><td>on by default, no extra cost</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>Seed</td><td><code>-1</code> random; set it to reproduce</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>Outputs per job</td><td>1–4</td><td><span class="chip m">Measured</span></td></tr>
+            <tr><td>References</td><td>30 images + 10 videos + 10 audio = 50</td><td><span class="chip r">Reported</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        Note the prompt ceiling: <strong>30,000 characters</strong>. Every guide telling you to
+        keep prompts short is giving you a style opinion, not a technical limit.
+      </p>
+
+      <p>
+        And note <strong>24 fps</strong>. If you are cutting this into a 30 or 60fps timeline,
+        conform it deliberately instead of letting your editor guess.
+      </p>
+
+      <h3>Known weaknesses — plan around these</h3>
+      <ul>
+        <li><strong>Physical plausibility in complex motion.</strong> Collisions, cloth, liquids under force — that is where it breaks.</li>
+        <li><strong>Many interacting subjects.</strong> Stability degrades as subject count rises. Two people talking is fine; a crowd is a gamble.</li>
+        <li><strong>Fast action morphs.</strong> Decoherence in rapid sequences persists.</li>
+        <li><strong>Generation stalls.</strong> Normal is 2–3 minutes. I saw 8s/720p jobs exceed <strong>20 minutes</strong>, and one pass 30, on the day the API went wide. <span class="chip m">Measured</span></li>
+      </ul>
+
+      <p>
+        The shot this model wins at: <strong>one clear subject, doing one clear thing, with a
+        camera move that has a reason.</strong>
+      </p>
+    </div>
+  </section>
+
+  <section id="versus">
+    <div class="rail"><span class="tick">13</span>Field</div>
+    <div class="body">
+      <h2>When to reach for something else</h2>
+
+      <p>
+        There is no universal winner, and anyone telling you there is has something to sell.
+        Pick per shot. <span class="chip r">Reported</span>
+      </p>
+
+      <div class="scroll">
+        <table>
+          <thead><tr><th>Model</th><th>Wins at</th><th>Reach for it when</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Seedance 2.5</strong></td>
+              <td>Duration, reference control. The <em>only</em> model accepting <strong>audio reference input</strong>.</td>
+              <td>Character consistency across shots, long takes, ads, anything reference-heavy.</td>
+            </tr>
+            <tr>
+              <td><strong>Veo 3.1</strong></td>
+              <td>Cinematic grade, film-like motion blur, professional lighting, strong native audio.</td>
+              <td>The hero shot, where picture quality is non-negotiable.</td>
+            </tr>
+            <tr>
+              <td><strong>Kling 3.0</strong></td>
+              <td>Raw resolution — 4K/60fps — plus a free tier.</td>
+              <td>Volume social output and prototyping on a budget.</td>
+            </tr>
+            <tr>
+              <td><strong>Sora 2</strong></td>
+              <td>Physics, spatial awareness, eye contact and hand gestures.</td>
+              <td><span class="hit">Nothing new — see below.</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="slate">
+        <h3>Do not start a pipeline on Sora 2</h3>
+        <p>
+          OpenAI deprecated the Videos API and the Sora 2 models on <strong>24 March 2026</strong>
+          and published a shutdown date of <strong>24 September 2026</strong> — 47 days from
+          this revision.
+        </p>
+        <p>
+          Sora 2 still wins on physics, and it will keep topping comparison posts written by
+          people who never checked the deprecation notice. Do not build anything on a model
+          with a published end-of-life inside two months.
+        </p>
+      </div>
+
+      <p>
+        The practical split: <strong>Seedance 2.5</strong> when a character has to survive more
+        than one shot, <strong>Veo 3.1</strong> for the one frame that has to look expensive,
+        <strong>Kling 3.0</strong> for volume.
+      </p>
+    </div>
+  </section>
+
+  <section id="templates">
+    <div class="rail"><span class="tick">14</span>Templates</div>
+    <div class="body">
+      <h2>Copy-paste starting points</h2>
+
+      <h3>Cinematic dialogue shot</h3>
+      <pre><code>[Character: concrete identity anchor — age, build, one memorable
+garment, one facial detail]. [What they do]. [Where, with time of
+day and weather].
+
+Camera: [one move with a reason — push-in, orbit, handheld follow],
+[lens], [depth of field].
+
+Timing: 0-2s [beat]. 2-4s [beat]. 4-6s [beat].
+
+Dialogue language: [language + regional variety], [delivery].
+The [character] says: {short line}
+
+&lt;diegetic sound 1, diegetic sound 2, room tone&gt;
+
+Constraints: one continuous shot, no cuts, no on-screen text,
+no music of any kind, diegetic sound only.</code></pre>
+
+      <h3>Product / macro</h3>
+      <pre><code>[Product] on [surface]. [The one thing that moves].
+
+Camera: [locked-off, then one move], [macro lens], very shallow
+depth of field, rack focus from [A] to [B].
+
+Timing: 0-2s stillness. 2-4s [entry]. 4-6s [the move].
+
+&lt;one or two precise material sounds&gt;
+
+Constraints: single take, no cuts, no text, no logo, [lighting],
+no lens flare, no music.</code></pre>
+
+      <h3>30-second narrative beat sheet</h3>
+      <pre><code>[Subject + world in one sentence.]
+
+Beat 1 (0-5s): hook. [What we see first.]
+Beat 2 (5-16s): development. [What starts happening.]
+Beat 3 (16-25s): escalation. [The turn.]
+Beat 4 (25-30s): resolution. [Where it lands.]
+
+Camera through-line: [one continuous logic across all four beats].
+
+@lead_character provides [exactly one property].
+@style_ref provides [exactly one property].
+
+&lt;ambience&gt;
+
+Constraints: one continuous take, let each beat breathe,
+no rapid cuts, no music.</code></pre>
+    </div>
+  </section>
+
+  <section id="workflow">
+    <div class="rail"><span class="tick">15</span>Loop</div>
+    <div class="body">
+      <h2>The working loop</h2>
+
+      <ul>
+        <li><strong>Prototype at 480p.</strong> 60 credits/second. Iterate the prompt here, not at 720p.</li>
+        <li><strong>Lock the seed</strong> once a take is nearly right, then change one thing at a time.</li>
+        <li><strong>Promote to 720p</strong> only when composition and motion are settled.</li>
+        <li><strong>Upscale as a separate pass.</strong> Build it into the budget from day one.</li>
+        <li><strong>Use Extend and Smart Edit</strong> instead of regenerating. A take you like is expensive to rediscover.</li>
+        <li><strong>Keep audio on</strong> throughout — it is free, and it is the differentiator.</li>
+        <li><strong>Keep music out</strong> of the generation. Add it in the edit.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <strong>How this was researched.</strong> The schema, the resolution enum and 480p
+      default, the 24fps output, the frame dimensions, the full price list, the audio-is-free
+      finding, the 2.0-outputs-4K comparison and the five-arm moderation experiment were all
+      verified firsthand against a live Seedance 2.5 endpoint on 8 August 2026.
+    </p>
+    <p>
+      Everything marked <span class="chip r">Reported</span> — the bracket syntax, the accent
+      behaviour, the <code>@tag</code> semantics, the modes and parameter locks — comes from
+      published guides and creator reports that could not be opened directly, because the
+      research environment blocked outbound page fetches. It is consistent across multiple
+      independent sources, which is why it is here. It is not the same grade of evidence as
+      the measured numbers.
+    </p>
+    <p>A guide with its seams showing beats one that sounds certain and isn’t.</p>
+
+    <div class="brandmark"><span class="dot"></span> PrimeCircle · Field Research</div>
+  </footer>
+
+</div>
