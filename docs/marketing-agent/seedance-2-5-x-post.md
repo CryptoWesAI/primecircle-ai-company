@@ -170,6 +170,22 @@ naked text post. Use the vertical espresso clip (`m8So2O6kSEcjsui3jG26`,
 > If all five are competing in your prompt text, you're running a 2026 model on a
 > 2024 workflow.
 >
+> One more, since every comparison post is about to get this wrong:
+>
+> Don't start anything new on Sora 2. OpenAI deprecated the Videos API and the
+> Sora 2 models in March, with a published shutdown on 24 September 2026. That's
+> 47 days out.
+>
+> It still wins on physics, and it'll keep topping "best AI video model" lists
+> written by people who never checked the deprecation notice. Doesn't matter. You
+> don't build a pipeline on something with an end-of-life inside two months.
+>
+> The split I'd actually use: Seedance 2.5 when a character has to survive more
+> than one shot. Veo 3.1 for the one frame that has to look expensive. Kling 3.0
+> for volume.
+>
+> —
+>
 > I wrote the whole thing up — the six-part formula, the reference tagging system,
 > the modes nobody uses (backward extension is the good one), the parameter locks,
 > and copy-paste templates.

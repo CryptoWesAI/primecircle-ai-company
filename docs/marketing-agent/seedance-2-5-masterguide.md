@@ -5,6 +5,26 @@ prompt grammar almost nobody is using. Researched 8 August 2026.*
 
 ---
 
+## 00. Cheat sheet — the whole manual on one screen
+
+| | |
+|---|---|
+| Resolution | **480p / 720p only.** No 4K. Default is 480p — change it. |
+| Frame rate | 24 fps |
+| Duration | 4–30s native; 180s beta long mode |
+| Prompt ceiling | 30,000 characters |
+| References | 30 images + 10 videos + 10 audio = 50 |
+| Audio | Free. Never turn it off. |
+| Music | **Never let it generate music.** Trips a copyright block after you pay. |
+| Pricing | Linear per second. 30s = six 5s clips exactly. |
+| Formula | Subject → Action → Scene → Style → Camera → Audio |
+| Brackets | `( )` music · `< >` SFX · `{ }` dialogue · `【 】` subtitles |
+| Camera | shot size → angle → movement. "Cinematic" is not a move. |
+| Motion transfer | Use a **depth map**, not source footage. |
+| Identity | Use a **character sheet**, not a hero shot. |
+| Biggest mistake | Trying to oneshot the whole video. |
+| Loop | Prototype 480p → lock seed → finish 720p → upscale |
+
 ## 0. The 60-second version
 
 Seedance 2.5 is ByteDance's video model, announced at Volcano Engine FORCE on
@@ -492,6 +512,30 @@ Straight from ByteDance's own stated limitations plus consistent creator reports
 camera move that has a reason. That is the shot this model wins at.
 
 ---
+
+## 10b. When to reach for something else
+
+No universal winner. Pick per shot.
+
+| Model | Wins at | Reach for it when |
+|---|---|---|
+| **Seedance 2.5** | Duration, reference control. The **only** model accepting audio reference input. | A character must survive more than one shot. Ads, remixing, reference-heavy work. |
+| **Veo 3.1** | Cinematic grade, film-like motion blur, professional lighting, strong native audio. | The hero shot, where picture quality is non-negotiable. |
+| **Kling 3.0** | Raw resolution — 4K/60fps — plus a free tier. | Volume social output, prototyping on a budget. |
+| **Sora 2** | Physics, spatial awareness, eye contact, hand gestures. | Nothing new. See below. |
+
+### Do not start a pipeline on Sora 2
+
+OpenAI deprecated the Videos API and the Sora 2 models on **24 March 2026**, with
+a published shutdown of **24 September 2026** — 47 days from this revision.
+
+Sora 2 still wins on physics, and it will keep topping comparison posts written
+by people who never checked the deprecation notice. Do not build on a model with
+a published end-of-life inside two months.
+
+**The practical split:** Seedance 2.5 for anything where a character has to
+survive more than one shot. Veo 3.1 for the one frame that has to look
+expensive. Kling 3.0 for volume.
 
 ## 11. Copy-paste starting templates
 
