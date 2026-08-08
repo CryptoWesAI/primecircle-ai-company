@@ -289,3 +289,26 @@ Use a **vertical** clip on the main post — it fills more of the mobile feed.
 
 Note: 21:9 at the 720p tier resolves to **1470×630**, wider than the 16:9 tier's
 1280. Useful if you want maximum horizontal pixels out of this model.
+
+---
+
+## Before you post: fix the link
+
+The guide currently lives at a `claude.ai/code/artifact/...` URL. Two problems:
+
+1. **Artifacts are private by default.** You must open the page's share menu and
+   share it, or every click lands on nothing. Check this in a logged-out browser
+   before posting — not after.
+2. **It's an unfamiliar domain.** On X, a link nobody recognises gets fewer
+   clicks and reads as gated or promotional. It also means the asset lives on
+   someone else's infrastructure.
+
+**Better option, entirely your call:** the guide is committed as a standalone,
+self-contained HTML file — `docs/marketing-agent/seedance-2-5-share-cards.html`
+and the field manual source — with no external dependencies. Dropping it on your
+own domain would look more credible, build an asset you own, and give you the
+SEO. That touches VPS/DNS, which is a human-validation zone, so it is not
+something to do without you deciding. Flagging it, not doing it.
+
+Either way: **verify the link works logged-out before you post it.** A dead link
+in reply 1 wastes the entire launch.
