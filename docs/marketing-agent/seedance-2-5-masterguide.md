@@ -483,7 +483,8 @@ Straight from ByteDance's own stated limitations plus consistent creator reports
 - **720p ceiling** — upscaling is part of the pipeline, not a nice-to-have.
 - **Generation stalls.** 10+ minute waits during peak load are reported;
   normal is 2–3 minutes. I saw 8s/720p jobs exceed **20 minutes** on the day the
-  API went wide — build that into any deadline.
+  API went wide, and one pass **30 minutes** and keep going. Do not promise
+  same-hour turnaround during a launch window.
 - **"Generation failed"** usually means a content-policy trip or a genuinely
   ambiguous instruction, not a bug.
 

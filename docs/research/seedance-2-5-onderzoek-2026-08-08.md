@@ -171,7 +171,34 @@ borderline concept at 4s/480p (240 credits) before committing to 30s/720p
 
 16. **720p 16:9 resolves to 1280×720**; 720p 9:16 resolves to 720×1280.
 17. **Peak-load latency is real.** 8s/720p jobs exceeded **20 minutes** on
-    2026-08-08, against a reported 2–3 minute norm.
+    2026-08-08, against a reported 2–3 minute norm. One job passed **30 minutes**
+    still RUNNING. Do not promise same-hour turnaround on launch week.
+
+### Open test — D1, the bracket probe (result pending)
+
+`0qRoizn0j7umA8R2BVLu` — still RUNNING at end of session.
+
+This is a clever probe worth finishing, because it tests the **bracket syntax**
+indirectly through an observable outcome rather than through pixels I cannot see.
+
+- The failing arms all requested music **inside parentheses**: `(sparse low
+  cello drone…)`.
+- D1 requests the *same* music in **plain prose**, no parentheses: "A sparse low
+  cello drone plays underneath the scene…". Everything else is byte-identical to
+  the original failing prompt, same seed 1234.
+
+**How to read the result:**
+
+| D1 outcome | What it means |
+|---|---|
+| **FAILS** | The model interprets a music request semantically regardless of syntax. The rule generalises to "never request music in any form". The brackets are not doing special routing here. |
+| **PASSES** | The `()` bracket specifically routes to a music channel that plain prose does not reach. That would be **firsthand evidence the four-bracket system is real** — currently our only unverified headline claim. |
+
+Either result is publishable. The second would be a significant upgrade,
+promoting §4 of the guide from REPORTED to MEASURED.
+
+**To check:** `openart_creation_get` on `0qRoizn0j7umA8R2BVLu`, or just look in
+the OpenArt history.
 
 ### Spend
 
