@@ -174,31 +174,38 @@ borderline concept at 4s/480p (240 credits) before committing to 30s/720p
     2026-08-08, against a reported 2–3 minute norm. One job passed **30 minutes**
     still RUNNING. Do not promise same-hour turnaround on launch week.
 
-### Open test — D1, the bracket probe (result pending)
+### D1, the bracket probe — RESOLVED
 
-`0qRoizn0j7umA8R2BVLu` — still RUNNING at end of session.
+`0qRoizn0j7umA8R2BVLu` → **FAILED**, same `output_moderation_blocked`.
 
-This is a clever probe worth finishing, because it tests the **bracket syntax**
-indirectly through an observable outcome rather than through pixels I cannot see.
+D1 requested the *same* music in **plain prose** with no parentheses ("A sparse
+low cello drone plays underneath the scene…"), everything else byte-identical to
+the original failing prompt, same seed 1234.
 
-- The failing arms all requested music **inside parentheses**: `(sparse low
-  cello drone…)`.
-- D1 requests the *same* music in **plain prose**, no parentheses: "A sparse low
-  cello drone plays underneath the scene…". Everything else is byte-identical to
-  the original failing prompt, same seed 1234.
+**The full five-arm experiment:**
 
-**How to read the result:**
+| Arm | Music | Dialogue | Result |
+|---|---|---|---|
+| Original | in `()` | yes | FAILED |
+| C1 | in `()` | yes | FAILED |
+| C2 | in `()` | **no** | FAILED |
+| C3 | **none** | yes | **PASSED** |
+| D1 | **plain prose** | yes | FAILED |
 
-| D1 outcome | What it means |
-|---|---|
-| **FAILS** | The model interprets a music request semantically regardless of syntax. The rule generalises to "never request music in any form". The brackets are not doing special routing here. |
-| **PASSES** | The `()` bracket specifically routes to a music channel that plain prose does not reach. That would be **firsthand evidence the four-bracket system is real** — currently our only unverified headline claim. |
+**Conclusions:**
 
-Either result is publishable. The second would be a significant upgrade,
-promoting §4 of the guide from REPORTED to MEASURED.
+18. **The model reads a music request semantically, not syntactically.** Removing
+    the parentheses changed nothing. The rule is therefore simpler and broader
+    than first written: *any* request for music, in any phrasing, risks the
+    block. It is not a bracket problem.
+19. **This gave no support to the four-bracket claim.** If `()` routed to a
+    dedicated music channel that prose could not reach, D1 should have passed.
+    It did not. §4 of the guide stays **REPORTED**, correctly.
+20. The only arm that passed is the only arm with **no music request at all**.
+    C3 is the control that proves the fix.
 
-**To check:** `openart_creation_get` on `0qRoizn0j7umA8R2BVLu`, or just look in
-the OpenArt history.
+This is now a genuinely well-controlled finding: one variable, five arms, a
+reproducible failure and a working control.
 
 ### Spend
 

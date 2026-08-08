@@ -146,11 +146,19 @@ write:
 
 Three channels, separately addressed, no ambiguity about which is which.
 
-**Caveat, stated honestly:** I verified that prompts using these brackets are
-accepted without error. I could not verify that they change the output, because
-the environment I researched from could not download the rendered videos. This
-is the highest-value claim in this guide and it deserves your own 10-minute
-A/B test before you build a workflow on it.
+**Caveat — I tested this and it did not hold up.** Prompts using these brackets
+are accepted without error. But I ran a probe designed to detect whether `()`
+actually routes to a dedicated music channel: I requested identical music in
+plain prose with no parentheses, everything else byte-identical.
+
+If the bracket routed music somewhere prose could not reach, that run should
+have behaved differently. **It behaved identically** — same moderation block.
+The model responded to the *intent* to have music, not to the syntax.
+
+That is one probe against one bracket, so it does not disprove the system. But
+it is the only firsthand evidence I have and it points away from the claim.
+Treat this table as a **useful way to organise your prompt** — which it
+genuinely is — rather than as a documented routing mechanism.
 
 ---
 
@@ -457,22 +465,25 @@ several platforms do not refund it. You pay full price for nothing.
 experiment, same seed, same duration, same resolution, changing one thing at a
 time:
 
-| Arm | What changed | Result |
-|---|---|---|
-| Original | dialogue + SFX + music | **FAILED** |
-| C1 | exact resubmission | **FAILED** |
-| C2 | dialogue removed, music kept | **FAILED** |
-| C3 | dialogue kept, **music removed** | **PASSED** |
+| Arm | Music | Dialogue | Result |
+|---|---|---|---|
+| Original | in `()` | yes | **FAILED** |
+| C1 | in `()` | yes | **FAILED** |
+| C2 | in `()` | **no** | **FAILED** |
+| C3 | **none** | yes | **PASSED** |
+| D1 | **plain prose** | yes | **FAILED** |
 
-Three things fall out of that:
+Four things fall out of that:
 
 - **The block is deterministic.** C1 was an identical resubmission and failed
   identically. A prompt that trips this will trip it every time. You cannot
   retry your way past it.
 - **Dialogue is innocent.** C2 removed the spoken line entirely and still failed.
 - **Prompt-requested music is the trigger.** C3 kept the dialogue, the face, the
-  seed and the sound effects, and removed only the `(sparse low cello drone…)`
-  clause. It rendered clean.
+  seed and the sound effects, and removed only the music clause. It rendered clean.
+- **It is not a syntax problem.** D1 asked for the same music in plain prose with
+  no parentheses and failed anyway. The model reads the *intent* to have music,
+  not the bracket. You cannot dodge it by rephrasing.
 
 The mechanism: the model generates a score, an audio fingerprint matcher
 compares it against copyrighted material, and a match destroys the finished

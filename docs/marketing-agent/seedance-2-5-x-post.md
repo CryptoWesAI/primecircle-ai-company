@@ -93,6 +93,10 @@ naked text post. Use the vertical espresso clip (`m8So2O6kSEcjsui3jG26`,
 > The trigger is the music. I kept the face, the dialogue, the seed and the sound
 > effects, and deleted one clause — "(sparse low cello drone)". It rendered clean.
 >
+> Then I checked whether it was a syntax thing — same music request, plain prose,
+> no parentheses. Failed anyway. The model reads the intent to have music, not the
+> phrasing. You can't rewrite your way out of it.
+>
 > The model generates a score, an audio fingerprint matcher compares it to
 > copyrighted material, and a match destroys the finished video after you've paid
 > for it.
