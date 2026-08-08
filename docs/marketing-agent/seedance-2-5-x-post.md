@@ -32,7 +32,36 @@ naked text post. Use the vertical espresso clip (`m8So2O6kSEcjsui3jG26`,
 
 ---
 
-## MAIN POST
+## MAIN POST (use this one)
+
+Short by design. The field manual is the reference; the post only has to earn
+the click.
+
+> Spent a day testing Seedance 2.5 against the live API instead of reading launch pages.
+>
+> The one that cost me something: it moderates the output *after* the render finishes. Asking for music trips a copyright block. Credits already gone.
+>
+> 5 runs, same seed, one variable at a time. Remove the music clause and the identical shot renders clean. Rephrasing doesn't help, it reads intent not wording.
+>
+> Also, there's no 4K in the API. Two values, 480p and 720p, default 480p. A 2.0 job on the same account gave me 3840x2160.
+>
+> Wrote the rest up as a field manual. Free, no email gate. Link below.
+
+**Reply 1:**
+
+> [link]
+>
+> Every claim marked MEASURED or REPORTED so you can see what I verified myself.
+
+**Note:** X does not accept PDF attachments. Link the artifact page, or host the
+PDF somewhere with a URL and link that instead.
+
+---
+
+## LONG VERSION (fallback only)
+
+Kept in case a long-form post is wanted later. Not the default: it reproduces
+most of the field manual, which removes the reason to click through.
 
 > I spent a day testing ByteDance's Seedance 2.5 against the live API on OpenArt instead of reading launch pages.
 >
