@@ -3,22 +3,45 @@
 The guide is finished. This file is about the part that actually determines
 whether it gets seen, because a good guide with no distribution gets zero views.
 
-## The uncomfortable arithmetic
+## The account, and the uncomfortable arithmetic
+
+**@0PTIMUS_ONE — 615 followers, 528 following, X Premium.** (Confirmed
+2026-08-08.)
 
 A post's reach is roughly *your reachable audience × how hard the algorithm
-pushes it*. The guide is built to maximise the second factor. It cannot do
-anything about the first.
+pushes it*. The guide is built to maximise the second factor. It can do nothing
+about the first.
 
 | Follower base | Realistic first-post ceiling | What 100k requires |
 |---|---|---|
-| < 1,000 | 2k–15k | A large account amplifying it |
+| **< 1,000 ← we are here** | **2k–10k** | **A large account amplifying it** |
 | 1k–10k | 10k–60k | One good quote-post from a big account |
 | 10k–50k | 40k–250k | Just good execution |
 | 50k+ | 100k+ | Posting it at all |
 
-If the founder is in the first two rows — likely, since this is a new company
-account — **posting the guide cold is the lowest-odds move available.** The
-guide is not the constraint. Reach into an existing audience is.
+**State it plainly: 100k organic from 615 followers will not happen.** The gap
+is roughly 20×, not 2×. Posting the guide cold is the lowest-odds move
+available, and it also burns the asset — you only get one launch.
+
+So the objective is not "write a post that reaches 100k". It is:
+
+> **Get one account with 100k+ followers to quote-post the finding.**
+
+That is the only mechanism that closes a 20× gap. Everything below is engineered
+backwards from it.
+
+### What this changes
+
+- The **moderation experiment is the product**, not the guide. A five-arm
+  controlled test with a reproducible result is the kind of thing a large
+  account repeats, because repeating it makes *them* look informed. The guide is
+  what people click after they see the finding.
+- **Premium matters more than usual.** Verified replies get placed higher in
+  large threads. At 615 followers, replies on big threads are a bigger surface
+  than your own timeline — by a wide margin.
+- **Follower count is the real KPI for this post.** Going 615 → 2,000 off this
+  guide is a genuine win and makes the *next* thing viable. Measuring this post
+  against 100k and calling it a failure would be the wrong read.
 
 ## The strategy: earn the audience before you ask for it
 
@@ -124,6 +147,73 @@ Each one gives away something real. **Do not paste a link into any of these.**
 > start a new pipeline on it.
 
 ---
+
+## Engineering the amplification (the actual job)
+
+A large account quote-posts something when repeating it makes them look
+informed to *their* audience. So give them something that does that.
+
+**What gets quote-posted:**
+- A number that contradicts a consensus ("there is no 4K, here's the enum")
+- A test someone else can rerun and confirm
+- A warning that saves the reader money
+- A screenshot-able artefact
+
+The moderation experiment is all four at once. That is the asset. Lead with it
+everywhere.
+
+**What does not get quote-posted:**
+- "I wrote a guide"
+- A link with no finding attached
+- Anything they'd have to take on trust
+
+### The four-line format that travels
+
+Big accounts repeat *compressed* findings. Give them the compressed version and
+they don't have to do the work:
+
+> Seedance 2.5 has an output-side moderation pass that fires after generation —
+> credits already spent.
+> 5 runs, same seed, one variable at a time.
+> Asking for music is what trips it. Remove the music clause, identical shot
+> renders clean.
+> Rephrasing doesn't help — it reads intent, not wording.
+
+Four lines, no link, fully self-contained. Someone with 200k followers can quote
+that without needing to verify anything first. **That is the unit of
+distribution.** The guide is the destination, not the message.
+
+### Realistic targets, ranked by odds
+
+Prioritise accounts that post Seedance content *regularly* — they need a steady
+supply of findings and are structurally receptive.
+
+1. **@NexlowX and @_OAK200** — both published depth-map findings. Smallest
+   accounts on the list, highest reply-back odds, and most likely to genuinely
+   engage on method. Start here.
+2. **@JSFILMZ0412** — actively prepping 30s Seedance prompts. Your moderation
+   finding saves them a real render. Highest "useful to them right now" score.
+3. **@EXM7777 (Machina)** — posts Seedance guides constantly, so needs material.
+4. **@minchoi, @EHuanglu, @WesRoth** — largest reach, lowest reply-back odds.
+   Only worth approaching once the finding has already been repeated once or
+   twice elsewhere and has social proof.
+
+Do not start at the top. A reply from a small account with no history reads as
+noise to a 300k-follower account. Earn one repeat at the bottom first.
+
+## Expectation setting
+
+| Outcome | Odds at 615 followers | Verdict |
+|---|---|---|
+| Guide reaches 2k–8k views | Likely | Normal, not failure |
+| Gains 200–1,000 followers | Plausible with good replies | **This is the real win** |
+| One mid-size quote-post (10k–50k) | Realistic if replies land | Strong result |
+| 100k+ views | Needs a large-account quote-post | Possible, not plannable |
+
+Treat 100k as the outcome of a *sequence*, not of this post. The findings are
+strong enough to be repeated. Whether they get repeated by someone large is
+partly luck, and luck needs several attempts — which is why the warm-up replies
+matter more than the launch.
 
 ## Rules for the warm-up
 
