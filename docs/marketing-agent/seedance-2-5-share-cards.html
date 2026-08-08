@@ -37,18 +37,19 @@
 
   .note b { color: var(--signal); font-weight: 600; }
 
-  /* Each card is sized to screenshot cleanly at X's 16:9 crop */
+  /* Sized to screenshot near X's 16:9 crop. min-height rather than
+     aspect-ratio + overflow:hidden — a fixed box clips content silently,
+     and a card that screenshots with its last row missing is worthless. */
   .card {
     max-width: 1000px;
     margin: 0 auto 44px;
     background: var(--surface);
     border: 1px solid var(--rule);
-    padding: 44px 48px;
-    aspect-ratio: 16 / 9;
+    padding: 40px 48px;
+    min-height: 562px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow: hidden;
   }
 
   .eyebrow {
@@ -159,8 +160,9 @@
   }
 
   @media (max-width: 760px) {
-    .card { aspect-ratio: auto; padding: 30px 24px; }
+    .card { min-height: 0; padding: 30px 24px; }
     .grid { grid-template-columns: 1fr; gap: 20px; }
+    .sig { flex-direction: column; gap: 6px; }
   }
 </style>
 
