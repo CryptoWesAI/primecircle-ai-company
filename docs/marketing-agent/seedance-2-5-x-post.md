@@ -135,6 +135,32 @@ naked text post. Use the vertical espresso clip (`m8So2O6kSEcjsui3jG26`,
 >
 > —
 >
+> The best technique I found, and almost nobody is using it:
+>
+> You want to transfer a motion onto your own character. So you hand Seedance the
+> source video as a reference. And the choreography drifts.
+>
+> Here's why. Feed it a video of someone dancing and it tries to interpret
+> everything — the person, the clothes, the lighting, the room, and somewhere in
+> there, the movement.
+>
+> Feed it a depth map and there's nothing left to interpret but the motion.
+>
+> The problem was never the model. You handed it ten variables when you meant to
+> hand it one.
+>
+> So: build your storyboard, convert it to a depth map in Nano Banana 2 or GPT
+> Image 2, then give Seedance three references with one job each —
+>
+> depth map → composition, framing, camera geometry
+> style ref → tone, palette, lighting
+> character sheet → identity
+>
+> A depth map replaces paragraphs of camera description. You stop writing "slow
+> orbit from a low angle rising to eye level" and just show it the geometry.
+>
+> —
+>
 > The mistake almost everyone is making: trying to oneshot the whole video.
 >
 > 30-second takes with 50 reference slots push the work upstream into

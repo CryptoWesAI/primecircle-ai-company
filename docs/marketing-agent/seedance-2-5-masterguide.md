@@ -218,6 +218,29 @@ That is not a model failure, it is an instruction failure.
 
 ---
 
+## 7b. Camera vocabulary that actually lands
+
+Specify three things, always, in this order: **shot size → angle → movement.**
+
+- **Shot size**: wide, medium, close-up, macro, extreme close-up
+- **Angle**: eye-level, low angle, high angle, overhead, dutch
+- **Movement**: static / locked-off, dolly-in, push-in, pull-back, pan left,
+  tracking shot, orbit, crane up, handheld, FPV
+
+Terms reported to work reliably: *slow dolly-in, orbit, handheld, crane up,
+locked-off, smooth dolly forward, slow pan left, low tracking shot, pull-back,
+slow push-in, rack focus.*
+
+The rule underneath: **"cinematic" is not a camera move.** A slow push-in feels
+cinematic. A locked-off static shot feels like a product demo. The word
+"cinematic" gets you neither — it's a vibe word the model can't act on. Every
+vague style adjective ("stunning", "beautiful", "photorealistic") is dead
+weight. Replace them with *rim lighting, shallow depth of field, slow push-in,
+low tracking shot* — things a camera operator could actually execute.
+
+And give the move a **reason**. A push-in that lands on a reaction is direction.
+A push-in because push-ins look nice is drift.
+
 ## 8. The modes people don't know exist
 
 Text-to-video is the least interesting thing this model does.
@@ -288,6 +311,69 @@ Concretely: divide the video into consecutive stages, and give each stage **one
 main change plus a visible end state**. Not "lots happens" — one change, one
 end state, per beat.
 
+## 6b. The depth map trick — the best-kept secret in the model
+
+This is the single most useful technique I found, and almost nobody outside a
+handful of creators is using it.
+
+The problem it solves: you want to transfer a motion — a dance, a walk, a
+specific camera move — onto your own character. So you hand Seedance the source
+video as a reference. And the choreography drifts.
+
+Here is why, put better than I could:
+
+> Feed the model a video of someone dancing and it tries to interpret
+> everything — the person, the clothes, the lighting, the room, and somewhere in
+> there, the movement. Feed it a depth map and there's nothing left to interpret
+> but the motion.
+>
+> The problem isn't the model. It's that you handed it ten variables when you
+> meant to hand it one.
+
+A depth map is motion and geometry with **every other variable stripped out**.
+No identity, no wardrobe, no lighting, no colour. It is the purest possible
+expression of "this reference has exactly one job" — which, as §6 covers, is the
+whole design principle of the reference system.
+
+**The workflow:**
+
+1. Build your storyboard normally (GPT Image 2 / Nano Banana 2).
+2. **Convert the storyboard into a depth map** using the same image model.
+3. Feed Seedance three references, each with one job:
+   - the **depth map** → composition, framing, camera geometry, motion
+   - a **style reference** → tone, palette, lighting
+   - a **character sheet** → identity
+
+Reported result: Seedance "understands AI-generated depth maps surprisingly
+well, giving you much more control with fewer tokens and less need to describe
+camera angles and compositions."
+
+That last clause is the kicker. **A depth map replaces paragraphs of camera
+description.** You stop writing "slow orbit from a low angle rising to eye
+level" and just show it the geometry. Fewer words, less contradiction, less
+drift.
+
+## 6c. The character sheet pipeline
+
+Independently converged on by multiple creators shipping consistent characters.
+Nobody serious generates a hero shot and hopes it holds.
+
+1. Create your character once (Midjourney / GPT Image 2 / Nano Banana 2).
+2. Turn it into a **character reference sheet**: multiple angles, close-up
+   portraits, clothing, accessories, textures, colours, proportions, scale
+   references — with explicit instruction to keep design, colours and visual
+   direction identical to the source.
+3. Feed the *sheet*, not the hero shot, into Seedance as the identity reference.
+
+Why it works: a sheet gives the model a structured, readable breakdown and
+forces it to focus on essential visual information rather than stylistic noise.
+Including expressions and head angles measurably improves believable acting and
+varied poses without losing character integrity.
+
+For a multi-scene sequence — a character crossing many shots — this is the
+difference between identity holding and the face quietly becoming someone else
+by shot four.
+
 ## 9c. Multi-keyframe storyboarding
 
 Underused and powerful. You can hand the model an ordered storyboard:
@@ -304,6 +390,23 @@ Two notes that matter:
   storyboard into one contact sheet — upload the frames individually.
 - Keyframes control **stage order**, not literal frame reproduction. They are
   waypoints, not a flipbook.
+
+**A conflict worth knowing about:** some creators do successfully use a single
+collaged storyboard grid (e.g. a 2×5 board of ten numbered frames) with prompts
+like *"follow the storyboard @image2, transition smoothly through all 7 panels
+in strict order."* Other sources insist separate uploads align better. Both
+approaches are in active use. My read: the grid is convenient and works for
+loose sequencing, separate frames give tighter alignment — start separate, and
+only collage if you're hitting the reference budget.
+
+**The multi-shot continuity string.** For a sequence that must not break
+identity or world between shots, creators append a constraint block like:
+
+```
+Style: cinematic, consistent lighting, same environment,
+no cuts in continuity (only camera changes).
+Character: same subject, no transformation.
+```
 
 ## 9d. The moderation trap that eats your credits
 
