@@ -111,13 +111,16 @@ Each one gives away something real. **Do not paste a link into any of these.**
 
 ### B — the resolution finding (use on launch/announcement threads)
 
-> One thing that surprised me: there's no 4K. I pulled the schema and the
-> resolution enum is exactly ["480p","720p"], defaulting to 480p.
+> One thing that surprised me: on OpenArt's endpoint there's no 4K. I pulled the
+> schema and the resolution enum is exactly ["480p","720p"], defaulting to 480p.
 >
-> A 2.0 job on the same account returned 3840×2160. So 2.5 is actually a
-> resolution downgrade from 2.0, at ~60% more per second. You're buying duration
-> and reference control, not pixels — which is a fine trade, just not the one the
-> landing pages describe.
+> A 2.0 job on the same account returned 3840×2160. So on that platform 2.5 is
+> actually a resolution downgrade from 2.0, at ~60% more per second. You're
+> buying duration and reference control, not pixels — a fine trade, just not the
+> one the landing pages describe.
+>
+> Haven't tested Dreamina or Volcano Ark, so I can't say 4K exists nowhere — only
+> that it isn't where I looked.
 
 ### C — the depth map extension (use on @NexlowX / @_OAK200 threads — credit them)
 
@@ -131,7 +134,8 @@ Each one gives away something real. **Do not paste a link into any of these.**
 
 ### D — the cost finding (use on pricing threads)
 
-> Priced it properly against a live endpoint: it's perfectly linear per second.
+> Priced it properly against OpenArt's live endpoint: it's perfectly linear per
+> second.
 > A 30s generation costs exactly what six 5s generations cost. No bulk discount,
 > no long-clip penalty.
 >
@@ -167,13 +171,21 @@ everywhere.
 - A link with no finding attached
 - Anything they'd have to take on trust
 
+### Always name the test surface
+
+Every claim you repeat should carry "on OpenArt" or "on the endpoint I tested".
+It costs four words and it is the difference between a finding that survives a
+challenge and one that gets dismissed wholesale. Someone replying "I get 1080p
+on Dreamina" refutes an unscoped claim completely — and refutes a scoped one not
+at all.
+
 ### The four-line format that travels
 
 Big accounts repeat *compressed* findings. Give them the compressed version and
 they don't have to do the work:
 
 > Seedance 2.5 has an output-side moderation pass that fires after generation —
-> credits already spent.
+> credits already spent. (Tested on OpenArt.)
 > 5 runs, same seed, one variable at a time.
 > Asking for music is what trips it. Remove the music clause, identical shot
 > renders clean.

@@ -3,20 +3,26 @@
 *Everything ByteDance shipped, what the marketing pages get wrong, and the
 prompt grammar almost nobody is using. Researched 8 August 2026.*
 
+*All firsthand testing was run on **OpenArt's** Seedance 2.5 endpoint
+(`byte-plus-seedance-2-5`) — 13 generations, including a five-arm controlled
+experiment. Measured figures are stated for that platform; other surfaces
+(Dreamina, Volcano Ark, fal, Higgsfield) may differ, and that is flagged where
+it matters.*
+
 ---
 
 ## 00. Cheat sheet — the whole manual on one screen
 
 | | |
 |---|---|
-| Resolution | **480p / 720p only.** No 4K. Default is 480p — change it. |
+| Resolution | **480p / 720p** on OpenArt. No 4K there. Default is 480p — change it. |
 | Frame rate | 24 fps |
 | Duration | 4–30s native; 180s beta long mode |
 | Prompt ceiling | 30,000 characters |
 | References | 30 images + 10 videos + 10 audio = 50 |
 | Audio | Free. Never turn it off. |
 | Music | **Never let it generate music.** Trips a copyright block after you pay. |
-| Pricing | Linear per second. 30s = six 5s clips exactly. |
+| Pricing | Linear per second. 30s = six 5s clips exactly. (OpenArt credits.) |
 | Formula | Subject → Action → Scene → Style → Camera → Audio |
 | Brackets | `( )` music · `< >` SFX · `{ }` dialogue · `【 】` subtitles |
 | Camera | shot size → angle → movement. "Cinematic" is not a move. |
@@ -46,12 +52,19 @@ than you did last month and blame yourself.
 
 ---
 
-## 1. The resolution lie
+## 1. The resolution claim
 
-Every "Seedance 2.5 — 4K & 30s" landing page is selling you a spec that does
-not exist on the surfaces you can actually use.
+Every "Seedance 2.5 — 4K & 30s" landing page is selling you a spec that did not
+exist on the surface I could actually test.
 
-I pulled the live schema from a production Seedance 2.5 endpoint. The
+**Scope first, because this is the claim most likely to be challenged:** all my
+firsthand testing ran on **OpenArt's** Seedance 2.5 endpoint
+(`byte-plus-seedance-2-5`). I did not test Dreamina, Volcano Ark, fal or
+Higgsfield. So the honest statement is "no 4K where I looked", not "no 4K
+anywhere" — and that scoping is what makes the finding survive a reply showing
+1080p somewhere else.
+
+I pulled the live schema from OpenArt's production Seedance 2.5 endpoint. The
 `resolution` field is an enum. It contains exactly two values:
 
 ```
@@ -80,7 +93,11 @@ Budget for that pass — it is not optional for client work.
 ## 2. Real numbers, measured — not estimated
 
 Every pricing figure you'll find in a blog post is an estimate. These are
-measured against a live endpoint on 8 August 2026, in OpenArt credits:
+measured against **OpenArt's** live endpoint on 8 August 2026, in **OpenArt
+credits**. Credits are a platform currency, so the absolute numbers apply to
+OpenArt only — the *ratios* are the portable part, and they are what the
+conclusions rest on. Volcano Ark's published examples show roughly the same
+~2.2x step from 480p to 720p, which is a useful cross-check:
 
 | Config | Credits | Per second |
 |---|---:|---:|

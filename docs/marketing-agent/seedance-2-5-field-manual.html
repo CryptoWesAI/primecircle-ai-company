@@ -379,11 +379,21 @@
       live API, and the one prompt clause that will silently destroy your renders after
       you have paid for them.
     </p>
+    <p class="standfirst" style="font-size:0.92rem; color:var(--ink-muted); margin-top:16px;">
+      All firsthand testing was run on <strong>OpenArt’s</strong> Seedance 2.5 endpoint —
+      13 generations, including a five-arm controlled experiment. Figures and available
+      options are stated for that platform; other surfaces may differ.
+    </p>
   </header>
 
   <div class="legend">
-    <span><span class="chip m">Measured</span> &nbsp;I ran it against a live Seedance&nbsp;2.5 endpoint and read the result back.</span>
+    <span><span class="chip m">Measured</span> &nbsp;I ran it against <strong>OpenArt’s live Seedance&nbsp;2.5 endpoint</strong> and read the result back.</span>
     <span><span class="chip r">Reported</span> &nbsp;Consistent across published sources. Not independently confirmed.</span>
+    <span style="flex-basis:100%; color:var(--ink-faint); font-size:0.85rem;">
+      Every measured figure comes from one platform — OpenArt — on 8 August 2026. Other
+      surfaces (Dreamina, Volcano Ark, fal, Higgsfield) may expose different options and
+      price differently. Where that matters, it is flagged in the text.
+    </span>
   </div>
 
   <nav class="toc">
@@ -414,14 +424,14 @@
         <h4>Seedance 2.5 — operating card</h4>
         <table>
           <tbody>
-            <tr><td>Resolution</td><td><strong>480p / 720p only.</strong> No 4K. Default is 480p — change it.</td></tr>
+            <tr><td>Resolution</td><td><strong>480p / 720p</strong> on OpenArt. No 4K there. Default is 480p — change it.</td></tr>
             <tr><td>Frame rate</td><td>24 fps</td></tr>
             <tr><td>Duration</td><td>4–30s native; 180s beta long mode</td></tr>
             <tr><td>Prompt ceiling</td><td>30,000 characters</td></tr>
             <tr><td>References</td><td>30 images + 10 videos + 10 audio = 50</td></tr>
             <tr><td>Audio</td><td>Free. Never turn it off.</td></tr>
             <tr><td>Music</td><td><span class="hit">Never let it generate music.</span> Trips a copyright block after you pay.</td></tr>
-            <tr><td>Pricing</td><td>Linear per second. 30s = six 5s clips exactly.</td></tr>
+            <tr><td>Pricing</td><td>Linear per second. 30s = six 5s clips exactly. (OpenArt credits.)</td></tr>
             <tr><td>Formula</td><td>Subject → Action → Scene → Style → Camera → Audio</td></tr>
             <tr><td>Brackets</td><td>( ) music &nbsp;·&nbsp; &lt; &gt; SFX &nbsp;·&nbsp; { } dialogue &nbsp;·&nbsp; 【 】 subtitles</td></tr>
             <tr><td>Camera</td><td>shot size → angle → movement. “Cinematic” is not a move.</td></tr>
@@ -438,11 +448,12 @@
   <section id="resolution">
     <div class="rail"><span class="tick">01</span>Resolution</div>
     <div class="body">
-      <h2>Every “4K &amp; 30s” page is selling a spec that isn’t there</h2>
+      <h2>The “4K &amp; 30s” headline does not survive contact with the API</h2>
 
       <p>
-        I pulled the schema from a live Seedance 2.5 endpoint. The <code>resolution</code>
-        field is an enum, and it contains exactly two values. <span class="chip m">Measured</span>
+        I pulled the schema from <strong>OpenArt’s</strong> live Seedance 2.5 endpoint. The
+        <code>resolution</code> field is an enum, and it contains exactly two values.
+        <span class="chip m">Measured</span>
       </p>
 
       <pre><code>"resolution": { "enum": ["480p", "720p"], "default": "480p" }</code></pre>
@@ -454,8 +465,26 @@
 
       <p>
         It gets sharper. I checked an older <strong>Seedance 2.0</strong> job on the same
-        account. It returned <strong>3840×2160</strong> — genuine 4K. <span class="chip m">Measured</span>
+        account. It returned <strong>3840×2160</strong> — genuine 4K, from the older model,
+        on the same platform. <span class="chip m">Measured</span>
       </p>
+
+      <div class="slate" style="border-color: var(--glass-line);">
+        <h3 style="color: var(--accent);">Scope this claim before you repeat it</h3>
+        <p>
+          What I verified is that <strong>OpenArt exposes 480p and 720p only</strong>. I did
+          not test Dreamina, Volcano Ark, fal or Higgsfield, so I cannot tell you 4K exists
+          nowhere — only that it did not exist where I looked, while the same account got 4K
+          out of Seedance 2.0.
+        </p>
+        <p>
+          That distinction matters. Say “no 4K anywhere” and one reply showing 1080p on
+          another surface takes down everything else you claimed. Say “no 4K on the endpoint
+          I tested, and 2.0 gave me 4K on that same endpoint” and the finding holds.
+          Independent reports of a 720p ceiling and of Runway pointing users back to 2.0 for
+          1080p line up with this, but they are <span class="chip r">Reported</span>, not mine.
+        </p>
+      </div>
 
       <blockquote>
         Seedance 2.5 outputs at lower resolution than Seedance 2.0, and costs 62.5% more
@@ -485,12 +514,20 @@
       <h2>Measured prices, not estimates</h2>
 
       <p>
-        Every pricing figure in circulation is an estimate. These were priced against a
-        live endpoint on 8 August 2026, in OpenArt credits. <span class="chip m">Measured</span>
+        Every pricing figure in circulation is an estimate. These were priced against
+        <strong>OpenArt’s</strong> live endpoint on 8 August 2026, in <strong>OpenArt
+        credits</strong>. <span class="chip m">Measured</span>
+      </p>
+
+      <p>
+        Credits are a platform currency, so the absolute numbers only apply to OpenArt. The
+        <em>ratios</em> are the portable part — and they are what the conclusions rest on.
+        As a sanity check, Volcano Ark’s published examples show roughly the same ~2.2×
+        step from 480p to 720p. <span class="chip r">Reported</span>
       </p>
 
       <div class="plate">
-        <h4>Price list — Seedance 2.5 unless noted</h4>
+        <h4>Price list — OpenArt credits · Seedance 2.5 unless noted</h4>
         <table>
           <thead>
             <tr><th>Configuration</th><th class="num">Credits</th><th class="num">Per second</th></tr>
@@ -1151,7 +1188,16 @@ no rapid cuts, no music.</code></pre>
       <strong>How this was researched.</strong> The schema, the resolution enum and 480p
       default, the 24fps output, the frame dimensions, the full price list, the audio-is-free
       finding, the 2.0-outputs-4K comparison and the five-arm moderation experiment were all
-      verified firsthand against a live Seedance 2.5 endpoint on 8 August 2026.
+      verified firsthand on <strong>OpenArt’s</strong> Seedance 2.5 endpoint
+      (<code>byte-plus-seedance-2-5</code>) on 8 August 2026 — 13 generations in total.
+    </p>
+    <p>
+      <strong>What that scopes.</strong> OpenArt serves ByteDance’s model, it is not
+      ByteDance. Available resolutions, credit prices and moderation behaviour are what
+      OpenArt exposed on that date. The moderation block originates upstream — the error
+      string is returned verbatim from <code>byte-plus</code> — so that finding should
+      travel across platforms. The resolution ceiling and the credit prices are the ones
+      most likely to differ elsewhere, and are flagged where they appear.
     </p>
     <p>
       Everything marked <span class="chip r">Reported</span> — the bracket syntax, the accent

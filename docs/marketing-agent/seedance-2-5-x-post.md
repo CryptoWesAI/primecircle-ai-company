@@ -22,15 +22,18 @@ naked text post. Use the vertical espresso clip (`m8So2O6kSEcjsui3jG26`,
 
 ## MAIN POST
 
-> I spent a day testing ByteDance's new Seedance 2.5 against the live API instead
-> of reading launch pages.
+> I spent a day testing ByteDance's new Seedance 2.5 against the live API on
+> OpenArt instead of reading launch pages.
 >
 > Three things everyone is repeating are wrong.
 >
-> 1. There is no 4K.
+> 1. The 4K isn't in the API.
 >
 > I pulled the actual schema. The resolution field is an enum with exactly two
 > values: 480p and 720p. That's it. No 1080p. No 4K.
+>
+> Caveat so nobody has to correct me: that's OpenArt's endpoint. I didn't test
+> Dreamina or Volcano Ark. If 4K exists somewhere, it isn't there.
 >
 > And the default is 480p — so most people have been generating at the lowest
 > setting available without knowing.
@@ -45,7 +48,8 @@ naked text post. Use the vertical espresso clip (`m8So2O6kSEcjsui3jG26`,
 >
 > 3. Turning audio off saves you nothing.
 >
-> Measured, same endpoint, same day:
+> Measured on OpenArt, same endpoint, same day (credits are OpenArt's — the
+> ratios are the portable part):
 >
 > 5s / 480p — 300 credits
 > 5s / 720p — 650 credits

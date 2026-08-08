@@ -24,6 +24,14 @@ challenged publicly.
 
 ## Tier 1 — Verified firsthand via the live OpenArt API
 
+**Platform scope, stated up front.** Every Tier-1 figure below was measured on
+**OpenArt's** Seedance 2.5 endpoint. OpenArt serves ByteDance's model; it is not
+ByteDance. Dreamina, Volcano Ark, fal and Higgsfield were NOT tested. The two
+findings most likely to be platform-specific are the **resolution ceiling** and
+the **credit prices**. The finding most likely to generalise is the **moderation
+block**, because the error string is returned verbatim from `byte-plus` — i.e.
+upstream of OpenArt.
+
 Model id: `byte-plus-seedance-2-5`. Account plan "Wonder", balance 74,660
 credits at session start.
 
