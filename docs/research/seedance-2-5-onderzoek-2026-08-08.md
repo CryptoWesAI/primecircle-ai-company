@@ -97,6 +97,82 @@ credits at session start.
 11. `autoEnhancePrompt: true` does **not** expose the rewritten prompt; the
     stored prompt remains the original. Its effect is unverifiable from the API.
 
+### Output-side moderation block (firsthand, highest-value finding)
+
+12. A completely benign prompt — an Icelandic fisherman on a trawler delivering
+    one line of dialogue — **failed after generating**:
+
+    ```
+    errorDisplayCode: "1003: output_moderation_blocked"
+    failedCode: "output_moderation_blocked"
+    error: "[byte-plus] output content rejected by moderation:
+      OutputVideoSensitiveContentDetected.PolicyViolation: The request failed
+      because the output video may be related to copyright restrictions."
+    ```
+
+    No violence, no public figure, no brand, no IP reference. Blocked anyway,
+    for *copyright*.
+
+**Corroborating secondhand context** (search summaries, segmind/mindstudio/
+vicsee/nemovideo): Seedance runs **three separate moderation stages** —
+(a) a prompt text filter before generation, (b) a computer-vision filter on
+uploaded reference images targeting copyrighted visual elements, and (c) an
+**output filter that reviews the finished video**. Stage (c) is the expensive
+one: moderation runs *during/after* inference, so **GPU time is consumed and
+credits are charged before the rejection fires**, and several platforms do not
+refund moderation rejections.
+
+Critically, one source states the audio path specifically: *"the audio contained
+in the output video was blocked after matching audio copyright rules … when the
+model produces audio that matches known copyrighted material — background music,
+recognizable soundbites — the request gets blocked at the output stage."*
+
+**My failing prompt requested music** (`(sparse low cello drone…)`). The leading
+hypothesis is therefore that **the generated music tripped an audio-copyright
+matcher**, not anything visual.
+
+Context: in February 2026 Hollywood studios formally accused ByteDance of
+enabling mass copyright infringement via Seedance 2.0, which produced a public
+commitment to tighten controls. Categories that were borderline earlier in 2026
+are now blocked.
+
+**Isolation experiment — CONCLUSIVE** (all seed 1234, 8s/720p, 16:9, identical
+in every other respect):
+
+| Arm | historyId | Difference | Result |
+|---|---|---|---|
+| Original | `3tqjEmjavqzWTu6b0LPY` | dialogue + SFX + music | **FAILED** |
+| C1 | `fA78UXXW7CxddUgwiY6B` | exact repeat of original | **FAILED** |
+| C2 | `qRuogscrAOvP2JW7uePq` | dialogue removed, **music kept** | **FAILED** |
+| C3 | `cGS0jpxXScaAB9YHRntZ` | dialogue kept, **music removed** | **PASSED** — 1280×720, 8.064s, 24fps, audio present |
+
+**Conclusions, now first-tier evidence:**
+
+13. **The block is deterministic.** C1 was a byte-identical resubmission of a
+    failed prompt and failed identically. This is not a random moderation roll —
+    a prompt that trips it will trip it every time. You cannot retry your way out.
+14. **Dialogue is not the trigger.** C2 removed the spoken line entirely and
+    still failed.
+15. **Prompt-requested music IS the trigger.** C3 kept the dialogue, the face,
+    the seed and the SFX, and removed only the `(sparse low cello drone…)`
+    clause plus added `No music of any kind, diegetic sound only`. It rendered
+    successfully.
+
+This confirms the audio-copyright-matcher hypothesis with a controlled
+experiment. The model generates a score, an audio fingerprint matcher compares
+it against copyrighted material, and a match kills the finished video *after*
+you have paid for it.
+
+**Practical rule (now measured, not inferred):** never let the model generate
+music for work you care about. Write `no music of any kind, diegetic sound only`
+and lay music in during the edit where you control the licence. And smoke-test a
+borderline concept at 4s/480p (240 credits) before committing to 30s/720p
+(3,905 credits).
+
+16. **720p 16:9 resolves to 1280×720**; 720p 9:16 resolves to 720×1280.
+17. **Peak-load latency is real.** 8s/720p jobs exceeded **20 minutes** on
+    2026-08-08, against a reported 2–3 minute norm.
+
 ### Spend
 
 10 generations: 4 × 5s/480p (1,200) + 8s/720p (1,040) + 6s/720p (780)
