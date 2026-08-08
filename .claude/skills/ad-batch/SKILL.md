@@ -214,6 +214,18 @@ welke hoeken in dít land, bij dít vak, tegen dít budget werken. Dat kun je ne
 
 ## Gotchas
 
+- **Laat Seedance NOOIT zelf muziek genereren.** Vraag je in de prompt om muziek, dan
+  keurt Seedance de video ná het renderen af met `1003: output_moderation_blocked`
+  ("copyright restrictions") en zijn de credits al op. Bewezen met een test van vijf
+  runs, zelfde seed, één variabele per keer: dialoog is onschuldig, muziek is de
+  trigger, en het blijft mislukken als je het in gewoon proza vraagt in plaats van
+  tussen haakjes. Het model leest de intentie, niet de formulering. Zet dus altijd
+  `no music of any kind, diegetic sound only` in het negatieve blok en leg muziek er
+  in de montage onder. Juist bij advertenties is dit de val, want daar wil je muziek.
+  Volledige meting: `docs/build/seedance-2-5-best-practices.md` §7.
+- **Kies de Seedance-versie op de klus, niet op het versienummer.** 2.5 levert lagere
+  resolutie dan 2.0 maar wel 30s, native audio en 50 referenties. Zie §0 van hetzelfde
+  document.
 - **De querystring komt niet in de bezoekcijfers.** `serveStatic` strípt hem (`server.js`,
   regel ±1163). Alleen de aanvraag draagt de bron. Reken dus met aanvragen, niet met bezoeken.
 - **`leads.jsonl` bewaart alleen `{ts, vak, taal}`.** De bron staat in de aanvraag*mail*. Bij

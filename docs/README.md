@@ -37,7 +37,12 @@ source of truth for identity, mission, and current state:
   antwoord in het verkoopgesprek. Bevat twee openstaande must-haves vóór klant #1
   (verwerkersovereenkomst, exit-alinea) en het backup-gat op de VPS.
 - `offers/`: GTM strategy (`aanbod-uitvaartniche.md`) + `OFFER_TEMPLATE.md` (PrimeCircle-level only)
-- `build/`: build recipes (trades missed-call MVP)
+- `build/`: build recipes (trades missed-call MVP) and tool practice.
+  `seedance-2-5-best-practices.md` is the library knowledge for the Seedance video
+  models: which version to pick per job (2.5 is **not** a straight upgrade over 2.0),
+  prompt structure, reference discipline, character-drift fixes, and the
+  output-moderation rule that never lets the model generate music. Four skills depend
+  on it (`scroll-film-studio`, `scroll-world`, `ad-batch`).
 
 Client-specific docs live with the client, not here: see
 `../clients/<name>/docs/` (e.g. `../clients/ab-uitvaartzorg/docs/`).

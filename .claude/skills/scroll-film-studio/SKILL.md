@@ -6,8 +6,9 @@ description: >-
   pitches 2-3 named concepts, art-directs the world, then builds it from scratch.
   Two lanes: free pure-code GSAP/Lenis motion (zero setup, works for anyone) or a
   cinematic footage film from the user's own image-to-video engine (Higgsfield Seedance
-  2.0 or newer is the reference and the required model; Kie.ai also serves the same
-  Seedance 2.0 as `bytedance/seedance-2` and is the fallback when Higgsfield is down,
+  2.0 is the reference and the required model — NOT simply the highest version number,
+  since Seedance 2.5 is capped lower in resolution and this lane needs 4K; Kie.ai also
+  serves the same Seedance 2.0 as `bytedance/seedance-2` and is the fallback when Higgsfield is down,
   Veo only as a last resort — the default film is 5 clips x ~5s = 25s / ~600
   frames, chained with BOTH ends pinned; a single ≤15s take is the shorter fallback used
   only when the engine will not honour a start pin).
@@ -175,11 +176,21 @@ everything after a pin spacer.
 
 ### Which video model — not negotiable
 
-**Use Seedance 2.0, or the newest Seedance available when you read this.** It is the
-best image-to-video model on the user's account and the only one this lane is tuned
-for. Before the first generation, list the models the engine actually exposes
-(`higgsfield model list`, or the provider's equivalent) and pick the **highest Seedance
-version present**. Say in chat which one you picked and why.
+**Use Seedance 2.0. Do NOT reflexively pick the highest version number.** It is the
+best image-to-video model on the user's account for *this* lane and the only one this
+lane is tuned for. Before the first generation, list the models the engine actually
+exposes (`higgsfield model list`, or the provider's equivalent). Say in chat which one
+you picked and why.
+
+**Why not the newest.** A scroll film is full-bleed background footage, so it lives or
+dies on resolution. Seedance 2.0 returned true 4K (3840×2160) on this account;
+Seedance 2.5 was capped at 720p on the surface we tested, costs ~60% more per second,
+and spends that premium on duration, 50-reference control and native audio — none of
+which this lane needs. A newer version number is not an upgrade here.
+
+Pick a newer Seedance only if it exposes **1080p or better**. Check the resolution
+options before you commit, not after. Full reasoning and the measured numbers:
+`docs/build/seedance-2-5-best-practices.md` §0.
 
 Never quietly drop to an older Seedance, to Veo, or to anything else because one call
 returned an error — retry, or stop and say the engine is down. A film silently made on a
