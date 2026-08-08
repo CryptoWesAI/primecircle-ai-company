@@ -278,6 +278,18 @@ stated API date — regional staging is the likely explanation, unconfirmed.
 
 ---
 
+## Human review (2026-08-08, after the session)
+
+The founder watched the generated clips and judged them **good**. That upgrades one
+thing and one thing only: **Seedance 2.5's output quality is acceptable in practice**,
+first-party rather than inferred. It does not resolve the A/B questions below, because
+resolving those needs a *comparison* of specific pairs, not a general impression.
+
+Still unresolved, and still cheap to settle:
+
+- seed determinism — compare `AkZlGzWcYdjHcflFj5Lk` against `8QRtSpVZaOGiCOeIA4x1`
+- structured vs vague prompt — compare either of those against `r1fJlglsSZVCn9laomND`
+
 ## Open questions worth resolving before the guide is treated as authoritative
 
 1. **Do the four brackets actually change the audio track?** Requires watching
