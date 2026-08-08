@@ -238,6 +238,21 @@ the moment it happens, so the same mistake is not made twice.
 - **Name the accent, not the language.** "Authentic Los Angeles English" beats
   "English". Voice is otherwise inferred from image references, confidently and often
   wrongly.
+- **Never use a selfie as a face reference.** A selfie is a wide lens at arm's
+  length, so it distorts the subject — nose enlarged, ears narrowed, face rounded.
+  The model treats that distortion as the person's actual face and reproduces it, and
+  the result lands in the uncanny valley of *almost* them. Ask for photos taken on the
+  rear camera from roughly 2 metres, and take three (straight-on, three-quarter,
+  profile) from one session in the same lighting and clothes.
+- **A real person's face survives badly in a hostile shot.** Low angles, partial
+  occlusion, water or dirt on the face, and upside-down framing all break identity no
+  matter how good the references are. If someone specifically needs to be
+  recognisable, the shot has to be rewritten so they are upright and lit, not just
+  better referenced.
+- **Ask whether a recognisable face helps the piece before adding one.** Relatable
+  "this is you" content works because the viewer identifies with an anonymous
+  subject; a known face converts it into an advertisement and the identification
+  breaks. A founder's face earns its place in a piece to camera, not in a mirror.
 - **Aspect ratio cannot be fixed after the fact.** Confirm it before generating.
 - **Edit mode locks aspect ratio to the input and duration to ±0.3s of it;
   first-frame mode locks the ratio but leaves duration free.** That is why settings
