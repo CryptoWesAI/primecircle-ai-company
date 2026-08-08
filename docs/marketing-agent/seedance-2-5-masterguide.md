@@ -461,7 +461,7 @@ Stage 3 is the one that hurts. Moderation runs during/after inference, so **the
 GPU time is spent and the credits are charged before the rejection fires**, and
 several platforms do not refund it. You pay full price for nothing.
 
-**The culprit is music — and I proved it.** I ran a four-arm controlled
+**The culprit is music — and I proved it.** I ran a five-arm controlled
 experiment, same seed, same duration, same resolution, changing one thing at a
 time:
 
