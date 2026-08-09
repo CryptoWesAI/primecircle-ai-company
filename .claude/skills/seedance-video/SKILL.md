@@ -242,6 +242,14 @@ the moment it happens, so the same mistake is not made twice.
   counter" was written as ambience and came back as a visible spanner that then slid
   toward the subject's phone. The model does not separate what you can hear from what
   it should render. Only name objects you actually want in frame, in any slot.
+- **Transparent surfaces are not treated as boundaries.** A glazier holding a pane
+  with suction grips came back with his hands passing *through* the glass and
+  deforming on the far side. The model renders see-through as not-there, so limbs
+  cross it. Never film through a transparent plane, and never have hands contact one.
+  Turn the glass edge-on so it reads as lines rather than a surface, and put the
+  hands on a frame, a rack or a handle instead. Design the failure out rather than
+  forbidding it in the constraints — a constraint cannot make the model understand
+  a boundary it does not perceive.
 - **The model does not know the trade.** It renders work that looks plausible to a
   layman and wrong to a professional — lead flashing laid *over* roof tiles instead
   of into the join, for example. That is fatal when the audience *is* the trade,
