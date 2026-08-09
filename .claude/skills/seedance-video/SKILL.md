@@ -238,6 +238,18 @@ the moment it happens, so the same mistake is not made twice.
 - **Keep the face clear at the emotional beat.** If the shot's payoff is an
   expression, check nothing occludes it: raised arms, an open cabinet door, a low
   angle. Arms above the head inside a boiler hides the very thing the shot is for.
+- **Naming a prop in the sound slot puts it on screen.** "A spanner nudged on the
+  counter" was written as ambience and came back as a visible spanner that then slid
+  toward the subject's phone. The model does not separate what you can hear from what
+  it should render. Only name objects you actually want in frame, in any slot.
+- **The model does not know the trade.** It renders work that looks plausible to a
+  layman and wrong to a professional — lead flashing laid *over* roof tiles instead
+  of into the join, for example. That is fatal when the audience *is* the trade,
+  because being mocked by your own market is worse than not posting. So do not depict
+  skilled technique. Show the subject **holding something heavy or precarious**, or
+  put the technical work out of frame (arms inside a cabinet). In a batch of eight
+  trades shots, every survivor was a simple hold or hidden work, and every failure
+  showed visible craft.
 - **Never pick Seedance by version number.** 2.5 is lower resolution than 2.0. The
   `scroll-film-studio` skill previously said "use the newest Seedance available" and
   that instruction was wrong for its own lane; it has been corrected.
