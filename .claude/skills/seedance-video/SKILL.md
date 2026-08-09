@@ -222,6 +222,22 @@ Keep this list growing. Every correction or round of back-and-forth belongs here
 the moment it happens, so the same mistake is not made twice.
 
 - **Never generate music.** The single most expensive mistake available. See §3.
+- **Audit every beat against the constraint you just wrote.** The model does not
+  sanity-check physical possibility — it will animate the impossible thing and the
+  result looks broken. A prompt that established "both hands are occupied" and then
+  asked the subject to put a torch back in his mouth produced a torch floating back
+  by itself. Before generating, walk each beat and ask: with what the character is
+  holding, can they actually do this? Prefer hands-free props (a head torch, not a
+  torch in the teeth) so the question does not arise.
+- **Do not write a shot around a known weak spot and hope.** Cloth under force,
+  wind, liquids, glass and transparency are where this model visibly breaks. A batch
+  of seven shots lost exactly the three that fought a weakness: flapping membrane in
+  wind, a large pane of glass, and a face hidden behind the subject's own raised
+  arms. Redesign the action instead of adding more constraints — pressing lead flat
+  beats holding a sheet in the wind, and it reads the same to a viewer.
+- **Keep the face clear at the emotional beat.** If the shot's payoff is an
+  expression, check nothing occludes it: raised arms, an open cabinet door, a low
+  angle. Arms above the head inside a boiler hides the very thing the shot is for.
 - **Never pick Seedance by version number.** 2.5 is lower resolution than 2.0. The
   `scroll-film-studio` skill previously said "use the newest Seedance available" and
   that instruction was wrong for its own lane; it has been corrected.
