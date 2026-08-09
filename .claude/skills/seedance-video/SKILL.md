@@ -147,6 +147,13 @@ Three rules carry almost all the value:
 camera should each have a clear source instead of competing inside one paragraph of
 prose.
 
+**Audio references set the voice.** `element2video` accepts audio elements (wav or
+mp3, 2–30s on 2.5, 2–15s on 2.0). Upload a voice sample and say in the prompt which
+subject speaks with it — "the man in image 1 speaks with this voice". This is the fix
+for §6's inference problem: instead of letting the model guess what a face sounds
+like, you hand it the answer. It is also how a recurring line stays identical across
+a series rather than being re-gambled every render.
+
 Two techniques worth reaching for:
 
 - **Character sheet, not hero shot.** For a character across multiple shots, build a

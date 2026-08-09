@@ -235,6 +235,24 @@ instead of asking it to invent one.
 
 ---
 
+## 5b. Voice references and the Director alternative
+
+**Audio elements set the voice directly.** `element2video` accepts audio references
+(wav/mp3, 2–30s on 2.5, 2–15s on 2.0). Upload a sample and name the speaker in the
+prompt: "the man in image 1 speaks with this voice". This removes the guesswork in §6
+entirely, and it is how a recurring line stays identical across a series instead of
+being re-gambled on every render.
+
+**OpenArt Director ("vibe directing") is a different tool, not a better one.** It
+builds coherent multi-shot videos up to five minutes with voices, music and sound,
+holds characters and style across shots, and is edited by conversation rather than
+parameters. Reach for it when the deliverable is a finished film of several shots.
+
+Stay on the API path when the work needs exactness: a locked seed, one variable at a
+time, a known price before generating, an explicit model choice, and prompts kept
+under version control so the same series can be rerun months later. The controlled
+experiment in §7 could not have been run through a conversational interface.
+
 ## 6. Audio
 
 Audio is co-generated with the picture, so **shape it in the prompt** rather
