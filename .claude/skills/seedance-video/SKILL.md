@@ -245,6 +245,20 @@ the moment it happens, so the same mistake is not made twice.
 - **Keep the face clear at the emotional beat.** If the shot's payoff is an
   expression, check nothing occludes it: raised arms, an open cabinet door, a low
   angle. Arms above the head inside a boiler hides the very thing the shot is for.
+- **Never build a joke on text the model cannot render.** A shot was written where
+  a painter writes her phone number on a wall and then rolls paint over it. The
+  constraint said the pencil marks must never be legible, because the model garbles
+  text — but the gag only works if the viewer recognises the marks as a phone number.
+  The prompt was asked to hide the very thing the joke depended on. If the audience
+  must *read* something for the shot to land, either use a self-explanatory object
+  instead (a business card reads as contact details at any blur) or pick a different
+  gag.
+- **Check the idea is an event, not a metaphor, before writing any prompt.** Video
+  shows things happening. "Your website is your business card" is a comparison, so
+  every attempt to film it needed a caption to complete it, while "she hunts through
+  a drawer, finds nothing, and picks up her phone to search" needed none — a
+  consequence is visible, a metaphor is not. When a concept keeps needing an
+  explanatory line underneath, the concept is wrong, not the execution.
 - **Naming a prop in the sound slot puts it on screen.** "A spanner nudged on the
   counter" was written as ambience and came back as a visible spanner that then slid
   toward the subject's phone. The model does not separate what you can hear from what
