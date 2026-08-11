@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- KINETISCHE TEKSTKAARTEN voor de showcase-film. Geen publieke pagina.
+       Bewust HTML en geen AI: videomodellen renderen geen betrouwbare Nederlandse
+       tekst, en de kaarten moeten in de echte merkletters staan (Fraunces + Archivo).
+
+       Verschil met film-tekstkaarten.html: die levert stills, deze BEWEEGT. De
+       animaties staan op `paused` en worden gescrubd via de custom property --t
+       (filmtijd in seconden). Daardoor is elk frame een functie van de tijd in
+       plaats van van de wandklok, en levert het opnamescript twee keer exact
+       dezelfde reeks op. Een animatie op de wandklok screenshotten geeft jitter.
+
+       Aanroepen als ?kaart=1|2|3 en scrubben met window.setTijd(seconden).
+       Zie docs/offers/belvanger-showcasefilm-*.md -->
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Showcase-tekstkaarten (intern)</title>
+  <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=2a9b2761" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #060B0F; overflow: hidden; }
+    body { display: grid; place-items: center; }
+
+    /* ── Overlay-stand (?kaart=hook) ─────────────────────────────────────────
+       De opening moet BOVEN het beeld liggen en niet ervoor. Een kijker die koud
+       in een tijdlijn zit weet anders 2,4 seconden lang niet waar hij naar kijkt,
+       en dan is hij weg voordat de eerste tekstkaart komt. Deze stand rendert een
+       doorzichtige PNG-reeks die in de montage over de openingsshot wordt gelegd.
+       De pagina zelf moet dan ook echt transparant zijn, want puppeteer's
+       omitBackground haalt alleen de achtergrond weg die niet is ingesteld. */
+    html.overlay, body.overlay, body.overlay .kaart { background: none; }
+    body.overlay .kaart { justify-content: flex-end; padding-bottom: 440px; }
+    /* Donkere loper onder de tekst: de verfscene is licht en lila, dus witte
+       letters zouden er zonder deze laag in verdwijnen. Hij bedekt bewust de
+       onderste 45%, want de beweging die de aandacht vasthoudt (de roller die
+       zakt) zit in het midden-boven. */
+    body.overlay .kaart::before {
+      content: ""; position: absolute; inset: 36% 0 0 0;
+      /* VOLLEDIG dekkend vanaf 41%, niet "bijna". Twee eerdere pogingen met een
+         zachte vervaging lieten de eigen bijschriften van de pagina ("Daarna dekt
+         het in één keer. Zo hoort verf te liggen.") dwars door de hooktekst heen
+         lopen, en twee teksten over elkaar is erger dan geen tekst. Wat je opgeeft
+         is de onderkant van de verfscene; wat je overhoudt is de wand en de roller
+         in de bovenste helft, en dat is precies de beweging die het oog vasthoudt. */
+      background: linear-gradient(180deg,
+        rgba(9,14,19,0) 0%, rgba(9,14,19,.55) 30%, rgba(9,14,19,1) 41%, rgba(9,14,19,1) 100%);
+    }
+    /* Donkere chip achter het woordmerk. Zonder deze verdwijnt "Bel" (wit) in de
+       lichte lila achtergrond van de verfscene en leest er alleen nog "vanger". */
+    body.overlay .merk-klein {
+      background: rgba(9,14,19,.78); padding: 12px 26px 16px; border-radius: 999px;
+    }
+    body.overlay .inner { position: relative; margin-top: 0; }
+
+    .kaart {
+      width: 1080px; height: 1920px; position: relative; box-sizing: border-box;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 110px;
+      /* Zelfde radiale gloed als het opnamepodium, zodat de kaarten in dezelfde
+         ruimte lijken te staan als de opgenomen schermen. */
+      background: radial-gradient(120% 80% at 50% 26%, #16232E 0%, #0B1218 55%, #060B0F 100%);
+      color: #F4F2ED;
+      transform: scale(var(--fit, 1)); transform-origin: center center;
+    }
+    /* Tekst blijft buiten de bovenste 15% (288px) en onderste 20% (384px): daar zit
+       de interface van Facebook, Instagram en WhatsApp overheen. */
+    .inner { margin-top: -40px; }
+
+    h1 {
+      font-family: Fraunces, Georgia, serif; font-weight: 600;
+      font-size: 116px; line-height: 1.04; letter-spacing: -0.02em; margin: 0;
+    }
+    h1 em { font-style: italic; color: #FF5C1A; }
+    p.sub {
+      font-family: Archivo, Arial, sans-serif; font-weight: 500;
+      font-size: 48px; line-height: 1.42; margin: 40px 0 0; color: #B6BFC7;
+    }
+    .streep {
+      height: 8px; width: 260px; background: #FF5C1A; margin: 0 0 54px;
+      transform-origin: left center;
+    }
+    /* Klein woordmerk linksboven, vanaf het eerste frame. Niet een merkintro over
+       het hele scherm (dat kost ongeveer 40% van je kijkers), maar wel genoeg dat
+       een koude kijker weet wie er tegen hem praat. Staat op 320px en dus onder de
+       bovenste 15% die Facebook en Instagram met hun interface bedekken. */
+    .merk-klein {
+      position: absolute; left: 110px; top: 320px;
+      font-family: Fraunces, Georgia, serif; font-weight: 600;
+      font-size: 40px; letter-spacing: -0.01em; color: #E7E4DE;
+    }
+    .merk-klein span { color: #FF5C1A; }
+
+    /* Beide staan bewust hoog. De onderste 20% van 1920 is 384px en die wordt door
+       de interface van Facebook, Instagram en WhatsApp bedekt. De eerlijkheidsregel
+       hoort tot de dingen die je júist moet kunnen lezen, dus die blijft boven de
+       1536px-lijn in plaats van dat hij achter een knoppenbalk verdwijnt. */
+    .merk {
+      position: absolute; left: 110px; bottom: 560px;
+      font-family: Fraunces, Georgia, serif; font-weight: 600;
+      font-size: 62px; letter-spacing: -0.01em; color: #F4F2ED;
+    }
+    .merk span { color: #FF5C1A; }
+    .fijn {
+      position: absolute; left: 110px; right: 110px; bottom: 430px;
+      font-family: Archivo, Arial, sans-serif; font-weight: 500;
+      font-size: 32px; line-height: 1.45; color: #96A3AF; margin: 0;
+    }
+
+    /* ── De scrub-machine ────────────────────────────────────────────────────
+       Alles staat gepauzeerd. `animation-delay` wordt teruggerekend vanaf de
+       filmtijd --t, dus de browser toont de stand van de animatie op tijdstip t.
+       Elk element zet zijn eigen startmoment in --in. */
+    [data-anim] {
+      animation-duration: .9s;
+      animation-fill-mode: both;
+      animation-timing-function: cubic-bezier(.16, .84, .3, 1);
+      animation-play-state: paused;
+      animation-delay: calc(var(--in, 0s) - var(--t, 0s));
+    }
+    .regel { display: block; overflow: hidden; padding-bottom: .06em; }
+    .regel > span { display: inline-block; animation-name: opkomen; }
+    @keyframes opkomen { from { transform: translateY(105%); } to { transform: translateY(0); } }
+
+    .streep { animation-name: uitrekken; }
+    @keyframes uitrekken { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    /* Lichtveeg over de kop, één keer, kort nadat de regels zijn opgekomen. Uit de
+       finishing-richtlijn van de scroll-film-studio skill. Het is een strijklicht
+       over de letters, geen glinstering: `plus-lighter` op lage sterkte en een
+       brede zachte verloopband, zodat je het eerder voelt dan ziet. Sterker
+       afgesteld leest het meteen als een sjabloon uit een videobewerker. */
+    /* Over de HELE kop en niet per regel. Per regel werd hij door de overflow van
+       .regel afgeknipt tot een rechthoek met zichtbare randen, en dan zie je een
+       blokje overtrekken in plaats van licht dat over de letters strijkt. Ook de
+       sterkte is terug van .42 naar .22: bij de eerste poging las het meteen als
+       een standaardovergang uit een videobewerker. */
+    h1 { position: relative; }
+    h1::after {
+      content: ""; position: absolute; inset: -12% -6%;
+      background: linear-gradient(102deg,
+        transparent 22%, rgba(255,255,255,.22) 50%, transparent 78%);
+      mix-blend-mode: plus-lighter; pointer-events: none;
+      transform: translateX(-120%);
+      animation: veeg 1.2s cubic-bezier(.32,0,.2,1) both paused;
+      animation-delay: calc(var(--veeg, .7s) - var(--t, 0s));
+    }
+    @keyframes veeg { to { transform: translateX(120%); } }
+
+    .zacht { animation-name: zachtin; }
+    @keyframes zachtin { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+    /* Trage inzoom over de hele kaart: zonder deze drift staat een tekstkaart stil
+       in een film die verder beweegt, en dat voelt als een hapering in plaats van
+       als een rustpunt. */
+    .kaart { animation: drift 6s linear both paused; animation-delay: calc(0s - var(--t, 0s)); }
+    @keyframes drift { from { background-size: 100% 100%; } to { background-size: 118% 118%; } }
+  </style>
+</head>
+<body>
+  <div class="kaart" id="kaart"></div>
+
+  <script>
+    const KAARTEN = {
+      // De opening, als doorzichtige laag over de verfscene. Twee korte regels die
+      // uitleggen waar je naar kijkt. Zonder deze twee regels ziet een koude kijker
+      // 2,4 seconden lang een muur en denkt hij dat dit een advertentie van een
+      // schildersbedrijf is. Geen woordspeling: gedempt en al scrollend wint direct
+      // het altijd van slim.
+      hook: `<div class="merk-klein zacht" data-anim style="--in:0s">Bel<span>vanger</span></div>
+             <div class="inner">
+               <h1>
+                 <span class="regel"><span data-anim style="--in:.15s">Dit is een</span></span>
+                 <span class="regel"><span data-anim style="--in:.25s">website.</span></span>
+               </h1>
+               <p class="sub zacht" data-anim style="--in:1.05s">Gebouwd voor een schilder.</p>
+             </div>`,
+
+      // De streep en de regels komen na elkaar op. De vertragingen staan hier en
+      // niet in de CSS, zodat de kaarten los van elkaar te hertimen zijn.
+      // Deze kaart staat VOOR de zeven vakken en niet erna: eerst de claim, dan het
+      // bewijs. Andersom kijkt de kijker negen seconden naar websites zonder te
+      // weten van wie ze zijn of voor wie ze bedoeld zijn.
+      1: `<div class="merk-klein zacht" data-anim style="--in:0s">Bel<span>vanger</span></div>
+          <div class="inner">
+            <div class="streep" data-anim style="--in:0s"></div>
+            <h1>
+              <span class="regel"><span data-anim style="--in:.10s">Elk vak zijn</span></span>
+              <span class="regel"><span data-anim style="--in:.20s">eigen website.</span></span>
+            </h1>
+            <p class="sub zacht" data-anim style="--in:.62s">Voor loodgieters, dakdekkers, elektriciens, installateurs, hoveniers, klussers en schilders.</p>
+          </div>`,
+      // Drie korte regels en niet twee lange. Bij 116px Fraunces past er ongeveer
+      // veertien tekens in de kolom van 860px; een langere regel breekt binnen de
+      // span af en dan klopt de opkomende maskering niet meer.
+      // Deze kaart is de scharnier van de film: hij vat samen dat er twee kanalen
+      // zijn (bellen en het formulier) en dat ze op één plek uitkomen. Daarna toont
+      // het dashboard precies die twee, en de telefoon de meldingen erbij.
+      2: `<div class="merk-klein zacht" data-anim style="--in:0s">Bel<span>vanger</span></div>
+          <div class="inner">
+            <div class="streep" data-anim style="--in:0s"></div>
+            <h1>
+              <span class="regel"><span data-anim style="--in:.10s">Alles komt op</span></span>
+              <span class="regel"><span data-anim style="--in:.19s"><em>één plek</em> binnen.</span></span>
+            </h1>
+            <p class="sub zacht" data-anim style="--in:.66s">Een ingevuld formulier, of een oproep die je miste.</p>
+          </div>`,
+      3: `<div class="inner">
+            <div class="streep" data-anim style="--in:0s"></div>
+            <h1>
+              <span class="regel"><span data-anim style="--in:.10s">Gemist.</span></span>
+              <span class="regel"><span data-anim style="--in:.24s"><em>Toch binnen.</em></span></span>
+            </h1>
+            <p class="sub zacht" data-anim style="--in:.70s">Elke aanvraag komt binnen, ook als jij niet kunt opnemen.</p>
+          </div>
+          <div class="merk zacht" data-anim style="--in:1.25s">Bel<span>vanger</span></div>
+          <p class="fijn zacht" data-anim style="--in:1.55s">Voorbeeldwebsites van fictieve bedrijven, en voorbeelddata in het dashboard. Geen echte klant.</p>`,
+    };
+
+    const nr = new URLSearchParams(location.search).get("kaart") || "1";
+    document.getElementById("kaart").innerHTML = KAARTEN[nr] || KAARTEN["1"];
+    // Ook op <html>, niet alleen op <body>. `omitBackground` in puppeteer maakt
+    // alleen de STANDAARD achtergrond doorzichtig; een expliciete achtergrond op
+    // html wordt gewoon geschilderd, en dan is de hele laag zwart in plaats van
+    // doorzichtig.
+    if (nr === "hook") {
+      document.documentElement.classList.add("overlay");
+      document.body.classList.add("overlay");
+    }
+
+    // Zet de filmtijd. Het opnamescript roept dit per frame aan.
+    window.setTijd = function (sec) {
+      document.documentElement.style.setProperty("--t", sec + "s");
+    };
+    window.setTijd(0);
+
+    // Alleen voor het bekijken in een gewoon venster: schaal de 1080x1920-kaart
+    // in beeld. Raakt de interne maten niet aan, dus de opname blijft 1:1.
+    const pas = () => document.getElementById("kaart").style.setProperty("--fit",
+      Math.min(innerWidth / 1080, innerHeight / 1920));
+    addEventListener("resize", pas); pas();
+  </script>
+</body>
+</html>

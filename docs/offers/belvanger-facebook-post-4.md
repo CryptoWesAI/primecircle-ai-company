@@ -1,13 +1,13 @@
-# Facebook-post 3: "Kijk of jouw vak erbij staat"
+# Facebook-post 4: "Kijk of jouw vak erbij staat"
 
 **Datum geschreven:** 2026-08-07 · **Status:** klaar om te plaatsen, **maar niet nu** — zie
 de twee voorwaarden onderaan.
 
 ---
 
-## Wat post 2 leerde
+## Wat post 3 leerde
 
-Post 2 (7 augustus, vanaf Karpathos) was goed geschreven en deed één ding echt sterk: de
+Post 3 (7 augustus, vanaf Karpathos) was goed geschreven en deed één ding echt sterk: de
 anti-goeroe-hoek. Uit `docs/research/concurrentie-vakmarketing-adhd-2026-08-07.md` blijkt dat
 MHS Media, The A-Team en Adsplode geen prijs, geen aantal en geen nakijkbare belofte
 publiceren — alleen houding. Een post die het scherm laat zien in plaats van de Lamborghini
@@ -28,7 +28,7 @@ eronder tagde. De post is de aanleiding, het bericht is het contact.
 
 ---
 
-## Post 3, klaar om te plakken
+## Post 4, klaar om te plakken
 
 > Je staat op een ladder. Of je handen zitten in een leiding. Of je ligt onder een auto.
 >
@@ -121,7 +121,7 @@ dálen naarmate een klant méér belletjes krijgt, en dat €149 het inkomensdoe
 uitgerekend dat hij niet klopt — en het staat in structured data, dus Google kan het
 overnemen.
 
-Post 3 noemt daarom geen prijs. Maar iemand die op de link klikt, leest hem alsnog.
+Post 4 noemt daarom geen prijs. Maar iemand die op de link klikt, leest hem alsnog.
 
 **Neem dit ook meteen mee:** vestigingsadres op de site (wettelijk verplicht, ook zonder
 KvK), "excl. btw" bij de prijzen, en de doorgestreepte €1.250 die nooit is gevraagd — punt

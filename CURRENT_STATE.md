@@ -9,7 +9,7 @@ Build a managed AI automation business that can initially be operated by one fou
 Belvanger is gebouwd en live; de eerste twee prospects zijn aangeschreven. Er is
 nog geen betalende klant, en dat is de enige maat die nu telt.
 
-Live: `belvanger.nl` (7 vakken, 7 voorbeeldpagina's, NL+EN, noindex),
+Live: `belvanger.nl` (8 vakken, 8 voorbeeldpagina's, NL+EN, noindex),
 `dashboard.belvanger.nl` (klantportaal, PWA met pushmeldingen),
 `ab.primecircle.cloud` (AB Uitvaartzorg, de referentiecase). Alles op de eigen
 Hostinger-VPS achter Traefik. Verkoopstand staat in `SELLING.md` en wordt elke
@@ -336,6 +336,31 @@ die `docker volume rm belvanger-portal-db` en `DROP DATABASE portal` gewoon door
 als referentiekopie in `infra/dcg/config.toml`. Gevolg voor het werk: `docker rm -f`,
 `git branch -D`, `rm -rf` en `Remove-Item -Recurse -Force` vragen nu om toestemming.
 
+### Showcasefilm "Elk vak zijn eigen website" (2026-07-28, af)
+
+Tweede promotiefilm, 30 seconden verticaal, 14,9 MB, **nul credits**: elk beeld is een
+bestuurde opname van de site die nu draait. `sites/belvanger/film/belvanger-showcase-1080x1920.mp4`.
+
+Opgevangen (25 juli) is de probleemfilm; deze laat zien wát je krijgt, en de twee zijn
+bewust hetzelfde formaat zodat ze als setje te versturen zijn. Het idee komt uit het
+materiaal zelf: de zeven voorbeeldpagina's hebben dezelfde opbouw en onderin dezelfde
+balk in hun eigen vakkleur, dus zeven keer dezelfde compositie in zeven werelden. De
+belknop is de rode draad en landt zeven keer op dezelfde hoogte omdat het script per
+pagina uitmeet waar hij staat.
+
+De film gaat over de eigen website **met een aanvraagformulier**: dat wordt in beeld
+ingevuld, en komt daarna binnen in het dashboard en als pushmelding op de telefoon. De
+sms-conversatie die er eerst in zat is eruit op verzoek van de founder. Het formulier
+bestond nog niet en is daarom eerst op alle zeven voorbeeldpagina's gebouwd, zonder
+`<form>` en zonder JavaScript zodat de nul-JS-regel van die pagina's intact blijft.
+
+Reproduceerbaar met drie scripts (`neem-showcase-op.mjs`, `maak-geluid.mjs`,
+`monteer-showcase.sh`); draaiboek en valkuilen in
+`docs/offers/belvanger-showcasefilm-elk-vak-2026-07-28.md`.
+
+**Volgende stap is verkoop, geen productie.** Er liggen nu twee films en er is nog geen
+betalende klant; een derde film maken zou uitstelgedrag zijn.
+
 **Nog open, en dit vraagt de founder:**
 
 1. ~~**AB Uitvaartzorg heeft een AI-chat en bezoekersstatistieken terwijl de
@@ -355,7 +380,7 @@ als referentiekopie in `infra/dcg/config.toml`. Gevolg voor het werk: `docker rm
      wel eerlijk (hij claimt geen waarborgen) maar nog niet compleet. Zet in OpenRouter ook
      de logging- en retentie-instelling op de meest privacyvriendelijke stand.
 2. **Activiteitenlog vullen**: `node tools/activiteitenlog-vullen.mjs` met `BV_EMAIL`/`BV_PASS`,
-   code uit de mail. Elf regels staan klaar in `tools/activiteitenlog.json`.
+   code uit de mail. Twaalf regels staan klaar in `tools/activiteitenlog.json`.
 3. **Dashboardwachtwoord wisselen**: het is op 28 juli in een gesprek geplakt.
 4. **Ontbreekt op de site**: vestigingsadres (wettelijk verplicht, ook zonder KvK),
    "excl. btw" bij de prijzen, en de doorgestreepte €1.250 die nooit is gevraagd.

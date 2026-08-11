@@ -33,8 +33,15 @@ Praktisch: één spraakbericht van anderhalve minuut, met het geteste script uit
 `docs/offers/belvanger-voice-memo-scripts-2026-07-24.md` (Script A). De tekst bestaat al
 en is al geoefend. Er hoeft niets bedacht te worden.
 
-De film is er nu ook. Bij een vervolgpost hoort de tekst uit
-`docs/offers/belvanger-promotiefilm-opgevangen-2026-07-25.md`, versie A.
+De tweede film ("Elk vak zijn eigen website") staat sinds 29 juli 2026 op de eigen
+tijdlijn. Dat verandert deze actie niet: een post is zichtbaarheid, en de teller
+hieronder gaat pas lopen bij een bericht aan een mens. De post maakt dat bericht wel
+makkelijker, want er is nu een aanleiding: "ik heb net laten zien wat ik gebouwd heb,
+ken jij iemand voor wie dit zou schelen?"
+
+Komt er een reactie met de vraag wat het kost, dan ligt het antwoord met de
+risico-omkering klaar in `docs/offers/belvanger-promotiefilm-opgevangen-2026-07-25.md`.
+Niet improviseren in het moment.
 
 ## Warme lijst
 
@@ -65,7 +72,10 @@ bereikt mensen die op dat moment niets missen en geen reden hebben om zich te me
 Conclusie voor het kanaal, niet voor het aanbod: het aanbod is hiermee **niet** getoetst,
 want er is niemand geweest die het heeft afgewezen. Er is alleen niemand geweest.
 
-### Post 2, 2026-08-07
+### Post 3, 2026-08-07
+
+*(Nummering: post 1 op 27 juli met de tags van Georgina, post 2 op 29 juli met de
+showcasefilm "Elk vak zijn eigen website", en deze op 7 augustus.)*
 
 De founder heeft zelf een tweede Facebook-post geplaatst
 (`facebook.com/share/p/1BkbSBL8Ez`), met een foto van hemzelf op Karpathos achter een
@@ -84,8 +94,8 @@ concurrenten een prijs, een aantal of een nakijkbare belofte publiceert. Alleen 
 post die het scherm laat zien in plaats van de auto is precies het onderscheid, in
 socialevorm.
 
-**Wat er beter kan, uitgewerkt met een kant-en-klare post 3 in
-`docs/offers/belvanger-facebook-post-3.md`:** het probleem van de lezer staat pas in alinea
+**Wat er beter kan, uitgewerkt met een kant-en-klare post 4 in
+`docs/offers/belvanger-facebook-post-4.md`:** het probleem van de lezer staat pas in alinea
 15, er staat geen enkel getal in terwijl toetsbaarheid de hele edge is, de deel-vraag is
 voor zichzelf gesteld in plaats van namens de getagde, en "wordt vervolgd" zegt *nog niet*
 terwijl alles er staat.
@@ -105,9 +115,9 @@ Daarom hoort er bij deze post één ding op de agenda, en het is geen bouwwerk:
       gesteld, en ze heeft al bewezen dat ze namen kent. Dit is de goedkoopste openstaande
       actie in dit hele bestand.
 
-### Post 3 ligt klaar, maar mag nog niet
+### Post 4 ligt klaar, maar mag nog niet
 
-`docs/offers/belvanger-facebook-post-3.md`. Twee voorwaarden, allebei thuis te doen:
+`docs/offers/belvanger-facebook-post-4.md`. Twee voorwaarden, allebei thuis te doen:
 
 1. **Eerst deployen.** De post stuurt mensen naar acht voorbeeldsites; de achtste
    (glaszetter) staat nog alleen in git.
