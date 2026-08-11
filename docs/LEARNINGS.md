@@ -183,6 +183,39 @@ design is unsafe.
 feature list. **Encoded in:** `infra/dashboard/` (localhost-only publish + Tailscale) and its
 `DEPLOY.md` security-model note; v2 plans privilege-separation to remove the socket.
 
+## 2026-07-29: Test de belofte, niet de bouwsteen
+
+**Lesson:** de keten website-formulier naar dashboard bestond uit vier schakels, en drie
+ervan waren "af": het formulier verstuurde, de mail kwam aan, de pushmelding kwam
+binnen. Toch werkte de belofte niet, want het contact belandde niet in de opvolglijst.
+Elke schakel apart afvinken zegt niets; alleen de hele belofte end-to-end doorlopen
+vindt dit. Het waren bovendien twee verschillende gaten achter elkaar: eerst ontbrak de
+aanroep naar het dashboard volledig, daarna heropende de opvolglijst niet.
+**Why:** wat je in verkoopmateriaal belooft is de specificatie. Op belvanger.nl en in de
+promotiefilm stond "elke aanvraag komt direct binnen in uw dashboard, met een melding op
+uw telefoon" terwijl de leiding ertussen niet bestond. Bij een betalende klant betekent
+dat gemiste klussen die hij pas weken later opmerkt.
+**Encoded in:** `meldAanDashboard` in `product/chatbot/server.js`, `HEROPENT_OPVOLGING`
+in `sites/belvanger-portal/src/server.js`, en de opleveringschecklist per klant (zie
+`sites/belvanger/STATUS.md`, 2026-07-29).
+
+## 2026-07-28: Een film voor een DM is geen film voor een tijdlijn
+
+**Lesson:** het anti-reclame charter uit de eerste Belvanger-film (geen logo, geen uitleg,
+laat het beeld het werk doen) is geschreven voor een **DM aan een warm contact**, waar de
+afzender zelf de introductie is. Koud in een tijdlijn is die introductie er niet, en dan
+levert precies datzelfde charter een film op waarvan de kijker niet weet waar hij naar
+kijkt. De showcasefilm opende 2,4 seconden op een muur, noemde pas op 11,6s waar het over
+ging en toonde het merk op 22s. De founder keek hem en zei: geen flauw idee waar dit over
+gaat.
+**Why:** een stijlregel is altijd gekoppeld aan een kanaal en een publiek. Overgenomen naar
+een ander kanaal wordt hij een fout, en die fout voelt bij het maken juist als
+consistentie. Vraag per film: **weet de kijker wie er praat, en waarom hij kijkt, binnen
+twee seconden?**
+**Encoded in:** `docs/offers/belvanger-showcasefilm-elk-vak-2026-07-28.md` (structuur
+claim-dan-bewijs, hooklaag over de openingsshot, klein woordmerk vanaf frame 1) en
+`sites/belvanger/site/film-showcase-kaarten.html`.
+
 ## 2026-07-18: Not every "free" library is free to resell
 
 **Lesson:** run a **license gate** before any third-party component lands in billable

@@ -4,6 +4,142 @@ PrimeCircle's eigen trades-demo/verkoopsite. Live (noindex), gehost op de VPS in
 `/opt/belvanger` achter Traefik. **Deze map is sinds 2026-07-17 de bron-van-waarheid**
 — deploy alleen hiervandaan (`bash deploy-to-vps.sh`).
 
+## Aanvraagformulier op alle zeven voorbeeldpagina's (2026-07-28)
+De pagina's beloofden "automatische leadvangst" en lieten alleen een telefoonnummer zien.
+Een bezoeker die niet wilde bellen kon dus niets. Nu staat er onderaan de contactsectie een
+aanvraagformulier (naam, telefoon, waar gaat het om), in de eigen vakkleur van elk vak.
+
+**Geen `<form>` en geen JavaScript.** De zeven pagina's draaien bewust op nul JS, en een
+fictief voorbeeldbedrijf hoort niets te versturen. Losse velden met een
+`button type="button"` zien er identiek uit en houden die regel intact. Eronder staat:
+"Voorbeeldformulier, dit verstuurt niets. Op uw eigen website komt elke aanvraag direct
+binnen in uw dashboard, met een melding op uw telefoon."
+
+**LIVE sinds 2026-07-29** en geverifieerd op de echte site (niet op localhost): alle zeven
+paginas hebben het formulier met drie velden, geen horizontale overflow op 432px en 1440px,
+geen consolefouten, knopkleur per vak correct (petrol, oranje, goud, indigo, groen, rood,
+violet).
+
+**Bug gevonden bij het deployen:** `assemble.mjs` zette het chatwidget in
+`film-showcase-kaarten.html` en `film-melding.html`, omdat alleen de twee oudere
+filmpaginas in `AB_SITE_EXCLUDE_FILES` stonden. Een chatbubbel in de hoek belandt
+regelrecht in de volgende filmopname. Lijst aangevuld met alle vier de filmpaginas en het
+widget er weer uitgehaald. **Wie een nieuwe film-*.html maakt, zet hem meteen in die lijst.**
+
+## Opvolglijst heropende niet bij een terugkerende klant (2026-07-29), GEFIXT en LIVE
+Gevonden doordat de founder de hele keten testte: mail kwam aan, tijdlijn klopte,
+pushmelding kwam binnen, maar "Nu aandacht nodig" bleef op nul staan.
+
+Oorzaak in `upsertContact` in het portaal: bij een bestaand contact stond er
+`status = CASE WHEN status = 'closed' THEN 'follow_up' ELSE status END`. Alleen een
+AFGESLOTEN contact ging dus terug de opvolglijst in. Zijn eigen contact stond op
+`contacted`, en dan blijft het daar staan.
+
+Dat is precies de faalmodus die dit product hoort te voorkomen: **een klant die je al
+eens gesproken hebt en die opnieuw aanklopt, verdwijnt uit beeld.** Juist die is warm.
+
+Gerepareerd met een expliciete set `HEROPENT_OPVOLGING` (`call.missed`, `website.lead`,
+`sms.inbound`, `email.inbound`, `chat.lead`): komt zo'n gebeurtenis binnen en staat het
+contact niet al op `new` of `follow_up`, dan gaat hij naar `follow_up`. Ons eigen
+verkeer (`sms.outbound`, `sms.status`) en handmatige dashboardacties doen dat niet, net
+zoals bij `INBOUND_PUSH_KINDS`.
+
+Geverifieerd voor de deploy met een read-only SELECT op de echte database: het contact
+op `contacted` wordt `follow_up` bij een websiteaanvraag en blijft `contacted` bij een
+uitgaande sms. Daarna gedeployed en gecontroleerd dat de nieuwe code in de draaiende
+container zit.
+
+**Let op:** bestaande contacten veranderen niet met terugwerkende kracht. Het contact
+gaat pas naar de opvolglijst zodra er een NIEUWE gebeurtenis binnenkomt.
+
+Bij het deployen bleek er geen deployscript voor het portaal te bestaan; dat werd
+handmatig gedaan. `sites/belvanger-portal/deploy-to-vps.sh` staat er nu, naar het model
+van dat van de site: back-up op de server vooraf, en achteraf echt controleren of
+`/healthz` antwoordt in plaats van "klaar" printen.
+
+## Websiteaanvraag naar dashboard + pushmelding (2026-07-29), LIVE
+Getest door de founder: het formulier op belvanger.nl mailt hem netjes en stuurt de
+aanvrager een bevestiging, maar er kwam niets in zijn dashboard en geen melding op zijn
+telefoon. Terwijl de site en de film dat wel beloven.
+
+De portaalkant was al compleet: `POST /api/ingest` met `eventType: "website.lead"` schrijft
+het event, mailt de gebruikers van de tenant en stuurt een webpush. Alleen riep niemand hem
+aan; de chatbot-server mailde en schreef een regel in `leads.jsonl`, meer niet.
+
+Brug gebouwd in `product/chatbot/server.js` (functie `meldAanDashboard`), dus elke klant
+krijgt hem:
+
+- Na de mail gaat dezelfde aanvraag als `website.lead` naar het portaal, met de
+  kanaalsleutel in de `x-ingest-key`-header.
+- **Best-effort met een eigen try/catch en 8 seconden timeout.** De mail is dan al weg, dus
+  de lead is binnen; een storing aan de portaalkant mag de bezoeker nooit een foutmelding
+  geven. Mislukken wordt wel gelogd, anders valt deze koppeling stil zonder dat het opvalt.
+- Dedupe-sleutel per minuut: een dubbelklik op verstuur levert een lead op in plaats van twee.
+- **Env-gated** via `PORTAL_INGEST_URL` en `PORTAL_INGEST_KEY` (zie `.env.example`). Staan ze
+  er niet, dan verandert er niets voor die klant.
+- Getest tegen een nagebouwd ingest-eindpunt: het portaal ontvangt precies het verwachte
+  event met de juiste bron, type, contactgegevens en preview.
+
+**Welke sleutel:** er hoefde er geen aangemaakt te worden. Het portaal heeft een globale
+`INGEST_KEY`, en voor een andere bron dan Twilio valt `resolveIngestTarget` terug op de
+tenant uit `BOOTSTRAP_TENANT_SLUG` (op de VPS: `belvanger`). Die sleutel staat nu in
+`sites/belvanger/.env` als `PORTAL_INGEST_KEY`. `docker-compose.yml` laadt het hele
+`.env` via `env_file`, dus er hoefde daar niets bij.
+
+**Live sinds 2026-07-29 en geverifieerd:** de container heeft beide variabelen, en een
+aanroep vanuit de site-container naar het portaal met een opzettelijk foute sleutel geeft
+netjes `401 Ongeldige ingest-sleutel`. DNS, TLS, route en eindpunt kloppen dus. Er is
+bewust GEEN testevent in het echte dashboard geschreven; die laatste bevestiging is een
+echte formulierinzending door de founder.
+
+**Voor een echte klant straks niet deze globale sleutel gebruiken** maar de kanaalsleutel
+uit het scherm "Nieuwe klant aanmaken". Bekend gat: die wordt maar een keer getoond en er
+is geen scherm om hem opnieuw te bekijken of te vervangen. Dat moet er zijn voordat klant
+nummer een live gaat.
+
+De voorbeeldpagina's blijven bewust een dood formulier: dat zijn fictieve bedrijven, daar
+hoort niets vandaan te komen. Op een echte klantsite is het hetzelfde formulier met de
+sleutel van die klant.
+
+## Showcasefilm "Elk vak zijn eigen website" (2026-07-28), af en geverifieerd
+Tweede promotiefilm naast `belvanger-opgevangen-1080x1920.mp4`, en met een andere taak:
+Opgevangen is de probleemfilm, deze laat zien wat je krijgt. 29,7 seconden, 9:16, 14,9 MB,
+nul credits. Elk beeld is een bestuurde opname van de site die nu draait.
+
+Opbouw: hook over de verfscene, "Elk vak zijn eigen website", de zeven vakken, **het
+formulier dat wordt ingevuld**, een shot van de rinkelende telefoon, "Alles komt op een
+plek binnen", **het dashboard**, **de pushmeldingen op de telefoon**, slotkaart.
+
+- **De sms-conversatie is eruit** (founder-verzoek). Het sterkste verhaal is de eigen
+  website met formulier, en dat beide kanalen op een plek binnenkomen. Wat bleef is een
+  shot van de rinkelende telefoon, zodat "een oproep die je miste" ergens over gaat.
+- **De ingevulde gegevens zijn niet verzonnen**: Sanne Bakker is exact de websiteaanvraag
+  die even later in het dashboard staat. Het typen wordt per frame uitgerekend in plaats
+  van echt getypt, dus elke opname levert dezelfde film.
+- **De pushteksten komen letterlijk uit `belvanger-portal/src/server.js`.** Verandert die
+  tekst daar, verander `site/film-melding.html` mee.
+- **Versie 1 was onbegrijpelijk en is herbouwd.** Hij opende 2,4s op een muur zonder tekst
+  en legde pas op 11,6s uit waar het over ging. Oorzaak: het anti-reclame charter van
+  "Opgevangen" is geschreven voor een DM aan een warm contact, waar de afzender zelf de
+  introductie is. Zie `docs/LEARNINGS.md` 2026-07-28.
+- De zeven vakpagina's hebben dezelfde opbouw en onderin dezelfde balk in hun eigen
+  vakkleur. De **belknop is de rode draad** en landt zeven keer op dezelfde hoogte, omdat
+  het opnamescript per pagina uitmeet waar `.hero a[href^="tel:"]` staat.
+- **De omslag zit op 18,40s**: daar knipt de film weg van de rinkelende telefoon en valt
+  het geluid stil. Bewust geen klap op die snede.
+- Geluid gesynthetiseerd met de tonen uit `js/app.js`, plus toetsklikjes onder het
+  formulier. Geen muziekbed. Gemeten op -16,2 LUFS / -1,4 dBTP.
+- **Afwerking uit de scroll-film-studio skill**: vignet over alles, filmkorrel alleen op
+  de gefilmde delen (korrel over de hele film maakte het bestand 135 MB), en een lichtveeg
+  over de kop van elke tekstkaart. Bewust geen glitch of bloom.
+- Twee compressieniveaus (foto CRF 26, tekst CRF 18) zodat het bestand onder de 16 MB van
+  WhatsApp blijft zonder dat de kleine letters onscherp worden.
+- Nieuw in deze map: `film/neem-showcase-op.mjs`, `film/maak-geluid.mjs`,
+  `film/monteer-showcase.sh`, `site/film-showcase-kaarten.html`, `site/film-melding.html`.
+- Volledig draaiboek, valkuilen en de begeleidende posttekst:
+  `docs/offers/belvanger-showcasefilm-elk-vak-2026-07-28.md`.
+
+
 ## Schilders toegevoegd als zevende vak (2026-07-27), LIVE en geverifieerd
 Aanleiding: de eerste échte prospect (Friesland Schilderwerken, via Georgina Tan) is schilder,
 en dat vak stond niet tussen de zes op de site. Nu overal doorgevoerd, in beide talen:

@@ -33,8 +33,15 @@ Praktisch: één spraakbericht van anderhalve minuut, met het geteste script uit
 `docs/offers/belvanger-voice-memo-scripts-2026-07-24.md` (Script A). De tekst bestaat al
 en is al geoefend. Er hoeft niets bedacht te worden.
 
-De film is er nu ook. Bij een vervolgpost hoort de tekst uit
-`docs/offers/belvanger-promotiefilm-opgevangen-2026-07-25.md`, versie A.
+De tweede film ("Elk vak zijn eigen website") staat sinds 29 juli 2026 op de eigen
+tijdlijn. Dat verandert deze actie niet: een post is zichtbaarheid, en de teller
+hieronder gaat pas lopen bij een bericht aan een mens. De post maakt dat bericht wel
+makkelijker, want er is nu een aanleiding: "ik heb net laten zien wat ik gebouwd heb,
+ken jij iemand voor wie dit zou schelen?"
+
+Komt er een reactie met de vraag wat het kost, dan ligt het antwoord met de
+risico-omkering klaar in `docs/offers/belvanger-promotiefilm-opgevangen-2026-07-25.md`.
+Niet improviseren in het moment.
 
 ## Warme lijst
 

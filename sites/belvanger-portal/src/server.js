@@ -542,7 +542,25 @@ async function changePassword(req, res, user) {
   json(res, 200, { ok: true });
 }
 
-async function upsertContact(client, tenantId, contact, occurredAt) {
+// Gebeurtenissen waarbij een MENS op antwoord wacht. Komt zo'n gebeurtenis binnen bij
+// een contact dat al op "contact gehad" of "afgesloten" staat, dan hoort dat contact
+// terug in de opvolglijst.
+//
+// Waarom dit er expliciet staat: tot 2026-07-29 zette upsertContact alleen 'closed'
+// terug naar 'follow_up'. Een klant die je al eens gesproken had ('contacted') en die
+// daarna opnieuw het formulier invulde, verdween daardoor stilletjes uit "Nu aandacht
+// nodig". Precies de klant die je NIET mag missen, want die is al warm. Gevonden
+// doordat de founder een testaanvraag deed en zijn eigen contact op 'contacted' stond.
+//
+// sms.outbound en sms.status staan hier bewust niet in, net als in INBOUND_PUSH_KINDS:
+// dat is ons eigen systeem dat werkt, niet iemand die wacht.
+const HEROPENT_OPVOLGING = new Set([
+  "call.missed",
+  "website.lead",
+  ...Object.keys(INBOUND_PUSH_KINDS),
+]);
+
+async function upsertContact(client, tenantId, contact, occurredAt, eventType) {
   const phone = normalizePhone(contact?.phone);
   const email = normalizeEmail(contact?.email);
   if (!phone && !email) return null;
@@ -571,10 +589,11 @@ async function upsertContact(client, tenantId, contact, occurredAt) {
       UPDATE contacts SET
         name = COALESCE($1, name), company = COALESCE($2, company),
         phone = COALESCE($3, phone), email = COALESCE($4, email),
-        status = CASE WHEN status = 'closed' THEN 'follow_up' ELSE status END,
+        status = CASE WHEN $7::boolean AND status NOT IN ('new', 'follow_up')
+                      THEN 'follow_up' ELSE status END,
         last_event_at = GREATEST(last_event_at, $5), updated_at = NOW()
       WHERE id = $6
-    `, [name, company, phone, email, occurredAt, id]);
+    `, [name, company, phone, email, occurredAt, id, HEROPENT_OPVOLGING.has(eventType)]);
     return id;
   }
   const inserted = await client.query(`
@@ -659,7 +678,7 @@ async function ingest(req, res) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
-    const contactId = await upsertContact(client, target.tenant_id, body.contact || {}, occurredAt);
+    const contactId = await upsertContact(client, target.tenant_id, body.contact || {}, occurredAt, eventType);
     const inserted = await client.query(`
       INSERT INTO events (tenant_id, contact_id, source, event_type, direction, external_id, status, subject, preview, metadata, dedupe_key, occurred_at)
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11,$12)
@@ -1954,6 +1973,8 @@ async function createContact(req, res, user) {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
+    // Bewust zonder eventType: iemand voegt hier zelf een contact toe vanuit het
+    // dashboard. Dat is geen klant die om aandacht vraagt, dus de status blijft staan.
     const contactId = await upsertContact(client, user.tenant_id, { name, company, phone, email }, new Date());
     const dedupeKey = `dashboard:${crypto.randomUUID()}:contact.manual`;
     await client.query(`

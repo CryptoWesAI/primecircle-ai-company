@@ -265,6 +265,60 @@ const SMTP = {
 const LEAD_TO = process.env.LEAD_TO || "";
 const LEAD_ENABLED = !!(SMTP.host && SMTP.user && SMTP.pass && LEAD_TO);
 
+// --- Lead-aanvraag → klantdashboard (env-gated, net als de e-mail hierboven) ---
+// Zonder dit blok mailt een websiteaanvraag wél naar de ondernemer maar komt hij
+// NIET in zijn dashboard en krijgt hij geen pushmelding op zijn telefoon. Dat is
+// precies wat de site en de promotiefilm beloven ("elke aanvraag komt direct binnen
+// in uw dashboard, met een melding op uw telefoon"), dus zonder deze brug klopt die
+// belofte niet.
+//
+// De portaalkant was al compleet: POST /api/ingest met eventType "website.lead"
+// schrijft het event, mailt de gebruikers van de tenant én stuurt een webpush. Er
+// ontbrak alleen een aanroep.
+//
+// De sleutel is de kanaalsleutel van het kanaal "website" van die ene klant, aan te
+// maken in het dashboard onder Klantinstallaties. Hij hoort per klant in zijn eigen
+// .env; staat hij er niet, dan gebeurt er niets en blijft alles werken zoals eerst.
+const PORTAL_INGEST_URL = process.env.PORTAL_INGEST_URL || "";
+const PORTAL_INGEST_KEY = process.env.PORTAL_INGEST_KEY || "";
+const PORTAL_ENABLED = !!(PORTAL_INGEST_URL && PORTAL_INGEST_KEY);
+
+/**
+ * Meldt een websiteaanvraag aan het klantdashboard. Best-effort: de aanvraag is via
+ * de e-mail al binnen, dus een storing aan de portaalkant mag de bezoeker nooit een
+ * foutmelding opleveren.
+ */
+async function meldAanDashboard({ naam, bedrijf, tel, email, vraag, pagina }) {
+  if (!PORTAL_ENABLED) return { overgeslagen: true };
+  // Dedupe-sleutel per minuut: een dubbelklik op "verstuur" levert zo één lead in
+  // plaats van twee, terwijl een echte tweede aanvraag later gewoon binnenkomt.
+  // Het portaal weigert duplicaten op (tenant, dedupe_key) en antwoordt dan met 200
+  // in plaats van 201.
+  const minuut = new Date().toISOString().slice(0, 16);
+  const externalId = createHash("sha256")
+    .update([naam, tel, email, vraag, minuut].join("|")).digest("hex").slice(0, 40);
+  const res = await fetch(PORTAL_INGEST_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "x-ingest-key": PORTAL_INGEST_KEY },
+    body: JSON.stringify({
+      source: "website",
+      eventType: "website.lead",
+      direction: "inbound",
+      externalId,
+      occurredAt: new Date().toISOString(),
+      subject: "Aanvraag via het contactformulier",
+      // De preview is wat er in de tijdlijn van het dashboard komt te staan, dus
+      // liever de vraag zelf dan een vaste zin.
+      preview: (vraag || "").trim() || "Aanvraag via het contactformulier",
+      contact: { name: naam, company: bedrijf || null, phone: tel || null, email: email || null },
+      metadata: { pagina: pagina || null },
+    }),
+    signal: AbortSignal.timeout(8000),
+  });
+  if (!res.ok) throw new Error(`portaal antwoordde ${res.status}`);
+  return await res.json().catch(() => ({}));
+}
+
 // Base64-inhoud opdelen in regels van 76 tekens, zoals RFC 2045 voorschrijft voor
 // MIME-bijlagen (Content-Transfer-Encoding: base64).
 function wrapBase64(b64) {
@@ -464,6 +518,17 @@ function handleLead(req, res) {
         `Tijd:      ${new Date().toISOString()}`,
       ].join("\n");
       await smtpSend({ ...SMTP, to: LEAD_TO, subject, text });
+      // Dezelfde aanvraag naar het klantdashboard, zodat hij daar in de tijdlijn komt
+      // en er een pushmelding uitgaat. Best-effort en met een eigen try/catch: de mail
+      // hierboven is al weg, dus de lead is binnen. Een storing aan de portaalkant mag
+      // de bezoeker nooit een foutmelding geven, maar moet wél in de logs staan, anders
+      // valt deze koppeling stil zonder dat iemand het merkt.
+      try {
+        const uitkomst = await meldAanDashboard({ naam, bedrijf, tel, email, vraag, pagina: oneLine(d.pagina) });
+        if (uitkomst?.duplicate) console.log("lead: al bekend in het dashboard (dubbele inzending)");
+      } catch (e) {
+        console.error("lead naar dashboard mislukt:", e?.message || e);
+      }
       // Autoreply naar de aanvrager (best-effort: faalt dit, dan is de lead nog steeds binnen).
       if (email && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
         const ar = leadAutoreply(oneLine(d.taal) === "en" ? "en" : "nl", naam);

@@ -52,7 +52,11 @@ const env = {
   ...process.env,
   AB_SITE_DIR: SITE,
   AB_SITE_EXCLUDE_DIRS: "voorbeelden,dashboard-demo",
-  AB_SITE_EXCLUDE_FILES: "film-opnamepodium.html,film-tekstkaarten.html",
+  // Elke film-*.html hoort hierin. Het zijn opnamepodia, geen publieke pagina's, en
+  // een chatbubbel in de hoek belandt regelrecht in de opname. Deze lijst is bij het
+  // toevoegen van de showcase-film twee keer vergeten; wie een nieuwe filmpagina
+  // maakt, zet hem hier meteen bij.
+  AB_SITE_EXCLUDE_FILES: "film-opnamepodium.html,film-tekstkaarten.html,film-showcase-kaarten.html,film-melding.html",
 };
 execFileSync("node", [APPLY, "remove"], { env, stdio: "inherit" });
 execFileSync("node", [APPLY, "add", "auto"], { env, stdio: "inherit" });

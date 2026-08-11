@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- PUSHMELDINGEN OP HET VERGRENDELSCHERM, voor de showcase-film. Geen publieke pagina.
+       Waarom nagebouwd en niet gefilmd: een echte pushmelding komt op een fysiek toestel
+       binnen en is niet headless op te nemen. De TEKSTEN zijn daarom niet verzonnen maar
+       letterlijk overgenomen uit de code die ze verstuurt:
+         sites/belvanger-portal/src/server.js  → "Nieuwe aanvraag via je website"
+                                               → "Je hebt een oproep gemist"
+       Verandert die tekst daar, verander hem hier ook, anders belooft de film iets
+       anders dan het product doet.
+       Scrubbaar via window.setTijd(seconden), net als film-showcase-kaarten.html. -->
+  <meta name="robots" content="noindex,nofollow,noarchive" />
+  <title>Pushmelding (intern)</title>
+  <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/styles.css?v=2a9b2761" />
+  <style>
+    html, body { margin: 0; height: 100%; background: #060B0F; overflow: hidden; }
+    body { display: grid; place-items: center; }
+
+    .podium {
+      width: 1080px; height: 1920px; position: relative;
+      display: grid; place-items: center;
+      background: radial-gradient(120% 80% at 50% 22%, #16232E 0%, #0B1218 55%, #060B0F 100%);
+      transform: scale(var(--fit, 1)); transform-origin: center center;
+    }
+
+    /* Toestel. Bewust groot: de meldingtekst IS de inhoud van deze shot, en op 700px
+       breed was hij op een telefoonscherm net niet te lezen. Het toestel loopt nu iets
+       in de zones die Facebook en Instagram bedekken, maar dat raakt alleen de rand
+       van de behuizing; de meldingen zelf blijven ruim binnen het veilige midden. */
+    .toestel {
+      width: 828px; height: 1508px; border-radius: 68px; position: relative; overflow: hidden;
+      background: linear-gradient(168deg, #16222C 0%, #0C141B 46%, #0A1016 100%);
+      box-shadow: 0 0 0 12px #05090C, 0 0 0 14px #223140, 0 60px 120px rgba(0,0,0,.6);
+      font-family: Archivo, system-ui, sans-serif; color: #F2F5F8;
+    }
+    .streep { position: absolute; left: 50%; top: 22px; transform: translateX(-50%);
+      width: 132px; height: 26px; background: #05090C; border-radius: 0 0 16px 16px; }
+
+    .klok { position: absolute; left: 0; right: 0; top: 132px; text-align: center; }
+    .klok b { display: block; font-weight: 300; font-size: 146px; line-height: 1; letter-spacing: -.03em; }
+    .klok span { display: block; margin-top: 12px; font-size: 27px; color: #9FAEBB; letter-spacing: .01em; }
+
+    .meldingen { position: absolute; left: 28px; right: 28px; top: 430px; display: grid; gap: 20px; }
+    .melding {
+      background: rgba(233,238,243,.93); color: #10191F;
+      border-radius: 34px; padding: 26px 27px; display: grid;
+      grid-template-columns: 74px 1fr auto; gap: 18px; align-items: start;
+      box-shadow: 0 18px 40px rgba(0,0,0,.34);
+    }
+    .melding img { width: 74px; height: 74px; border-radius: 19px; background: #16232E; padding: 9px; }
+    .melding b { display: block; font-size: 35px; line-height: 1.24; font-weight: 700; }
+    .melding p { margin: 6px 0 0; font-size: 31px; line-height: 1.32; color: #45535E; }
+    .melding i { font-style: normal; font-size: 27px; color: #7A8792; white-space: nowrap; padding-top: 4px; }
+
+    /* De scrub-machine: gepauzeerd, stand teruggerekend uit de filmtijd --t. */
+    [data-anim] {
+      animation-duration: .62s; animation-fill-mode: both;
+      animation-timing-function: cubic-bezier(.18,.9,.3,1.06);
+      animation-play-state: paused;
+      animation-delay: calc(var(--in, 0s) - var(--t, 0s));
+      animation-name: binnen;
+    }
+    @keyframes binnen {
+      from { opacity: 0; transform: translateY(-46px) scale(.94); }
+      to   { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="podium" id="podium">
+    <div class="toestel">
+      <div class="streep"></div>
+      <div class="klok"><b>14:33</b><span>dinsdag 28 juli</span></div>
+      <div class="meldingen">
+        <!-- Volgorde is niet willekeurig: de websiteaanvraag komt eerst, want dat is
+             waar deze film over gaat. De gemiste oproep bevestigt daarna dat het
+             tweede kanaal op dezelfde plek uitkomt. -->
+        <div class="melding" data-anim style="--in:.35s">
+          <img src="favicon.svg" alt="" />
+          <div><b>Nieuwe aanvraag via je website</b><p>Tik om de aanvraag te bekijken.</p></div>
+          <i>nu</i>
+        </div>
+        <div class="melding" data-anim style="--in:1.15s">
+          <img src="favicon.svg" alt="" />
+          <div><b>Je hebt een oproep gemist</b><p>Tik om te zien wie er belde en terug te bellen.</p></div>
+          <i>nu</i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.setTijd = function (sec) {
+      document.documentElement.style.setProperty("--t", sec + "s");
+    };
+    window.setTijd(0);
+    const pas = () => document.getElementById("podium").style.setProperty("--fit",
+      Math.min(innerWidth / 1080, innerHeight / 1920));
+    addEventListener("resize", pas); pas();
+  </script>
+</body>
+</html>
