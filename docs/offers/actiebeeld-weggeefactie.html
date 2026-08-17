@@ -61,6 +61,11 @@
     gap:18px;flex-wrap:wrap}
   .balk b{font-family:var(--display);font-weight:600;font-size:46px;letter-spacing:-.01em}
   .balk span{font-weight:800;font-size:30px;letter-spacing:.01em}
+  /* De einddatum staat in de posttekst, maar een beeld wordt losgeknipt en doorgestuurd
+     zonder die tekst. Dan moet de termijn meereizen, anders reageert er over een maand nog
+     iemand op een actie die niet meer loopt. */
+  .termijn{position:relative;z-index:2;margin-top:22px;font-weight:700;font-size:27px;
+    color:rgba(250,249,246,.58)}
 
   .voet{position:relative;z-index:2;margin-top:56px;display:flex;align-items:center;
     justify-content:space-between;gap:24px}
@@ -99,6 +104,7 @@
       <b>Eerste maand gratis</b>
       <span>daarna &euro;99 per maand</span>
     </div>
+    <p class="termijn">Tag iemand v&oacute;&oacute;r 24 augustus &middot; ik kies op het verhaal</p>
 
     <div class="voet">
       <div class="merk">

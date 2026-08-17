@@ -115,6 +115,38 @@ Daarom hoort er bij deze post één ding op de agenda, en het is geen bouwwerk:
       gesteld, en ze heeft al bewezen dat ze namen kent. Dit is de goedkoopste openstaande
       actie in dit hele bestand.
 
+### Weggeefactie, loopt tot 24 augustus 2026
+
+Bij de videopromotie geplaatst. **Het aanbod:** gratis opzetten, eerste maand gratis, daarna
+€99 per maand *blijvend*. **De mechaniek:** tag iemand met de reden waarom hij het verdient,
+of stuur een privébericht, of meld jezelf; wie getagd wordt hoeft alleen een duimpje te
+geven. De founder kiest zelf, **op het verhaal, niet op de meeste likes**.
+
+Beeld: `docs/offers/actiebeeld-weggeefactie.html` → `.png`, te herbouwen met
+`node tools/actiebeeld-maken.mjs`.
+
+**Twee dingen die de founder zelf goed heeft opgelost** en die dus niet meer gecontroleerd
+hoeven te worden: door zelf te kiezen in plaats van te loten is dit geen promotioneel
+kansspel, en door om taggen te vragen in plaats van om delen botst het niet met Facebooks
+promotieregels.
+
+**Twee dingen die aan de tekst schuren:**
+
+1. **"Niet tevreden? Dan heeft het je niks gekost!"** is waar voor de gratis maand, maar
+   leest breder. Dat is precies het register waar
+   `docs/research/concurrentie-vakmarketing-adhd-2026-08-07.md` The A-Team op afrekent:
+   *"Geen resultaat? Dan betaal je niet!"* zonder aantal, definitie of voorwaarde. Het
+   onderscheid van Belvanger is dat zijn beloftes wél na te kijken zijn; deze regel geeft
+   dat weg. Volgende keer: noem de termijn waarbinnen het geldt.
+2. **De waarde van "gratis opzetten" wordt niet genoemd.** Op de eigen aanbodpagina staat
+   €625 (normaal €1.250). "Gratis" zonder bedrag is abstract; mét bedrag is het concreet, en
+   concreetheid is nu juist de edge.
+
+**"Blijvend" is hier een publieke toezegging aan één winnaar.** Dat is te overzien — bij één
+klant scheelt het ongeveer €100 marge per maand. Het zegt **niets** over de openstaande
+vraag op `aanbod.html`, waar €99 "levenslang" aan de **eerste tien** wordt beloofd. Die staat
+nog open.
+
 ### Post 4 ligt klaar, maar mag nog niet
 
 `docs/offers/belvanger-facebook-post-4.md`. Twee voorwaarden, allebei thuis te doen:
