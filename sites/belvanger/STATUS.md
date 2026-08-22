@@ -4,6 +4,278 @@ PrimeCircle's eigen trades-demo/verkoopsite. Live (noindex), gehost op de VPS in
 `/opt/belvanger` achter Traefik. **Deze map is sinds 2026-07-17 de bron-van-waarheid**
 — deploy alleen hiervandaan (`bash deploy-to-vps.sh`).
 
+## Homepage in industrieel brutalisme (2026-08-21), LIVE sinds 2026-08-22
+
+De founder vond de site naar AI-slop neigen. Bij nakijken lag dat niet aan het palet
+(werkblauw + hi-vis + eigen fonts was al eigen werk) maar aan de **grammatica**:
+gecentreerde eyebrow-plus-titel, elf secties met exact hetzelfde ritme, en vier
+identieke afgeronde kaarten met zachte schaduw. Richting gekozen uit Collect UI,
+categorie `brutal-design`.
+
+**Ongewijzigd, expliciet op verzoek:** alle merkkleuren en de logo-SVG. Ook de
+WCAG-regel voor de oranje knop (donkere merkinkt erop, 5,18:1, hover moet LICHTER)
+is een-op-een overgenomen.
+
+**Nieuw:** `site/css/brutal.css`, op die dag **alleen geladen door `index.html`**, zodat
+een proefstuk op de homepage de rest niet kon slopen. *(Achterhaald: sinds 2026-08-22
+draaien er zes pagina's op; zie de tabel in de volgende sectie.)* Radii op 0, blur-schaduwen weg (er is er nog één: hard, zonder blur), 2px randen
+doen het werk, rasters delen hun randen zodat kaarten cellen worden. Fraunces eruit,
+**Anton** erin (18 kB latin-subset, self-hosted, geen externe call). Secties genummerd
+via `data-nr` op de `.section-head`.
+
+**Zeven dingen die pas op screenshots zichtbaar werden, niet in de code:**
+`.slot__inner` had `margin-inline: 0` terwijl dat element zélf de `.wrap` is, waardoor
+de hele slotsectie tegen de linkerschermrand schoof · de handmatige `<br>`'s in de koppen
+waren op Fraunces afgestemd en lieten in Anton telkens één woord alleen achter
+(`text-wrap: balance`) · het oranje blok achter "klant" stak 40px boven en onder de
+letters uit omdat een top/bottom-inset de inline-box volgt en die bij Anton veel hoger is
+dan de kapitalen · het accent van de É in "EÉN" reikte 16,6px boven de tekstbox
+(regelhoogte .92 < fontgrootte) terwijl er 17,6px ruimte was, dus het raakte het oranje
+label · "GEBOUWD" werd middenin afgekapt door een `max-width` in `ch` · op 390px viel
+"ZIE HET VOOR JOUW BEDRIJF" over vier regels · de chatbubbel was na de restyle het enige
+ronde ding op de pagina.
+
+**Valkuil in het verificatieharnas zelf, hoort in `web-verify/verify.mjs`:** de site zet
+`scroll-behavior: smooth`, dus `scrollIntoView` is een **animatie**. Over een lange pagina
+duurt die langer dan de wachttijd en fotografeer je een sectie die je niet vroeg. Met
+`behavior: "instant"` klopte het. Zet daarnaast de cookie-toestemming vooraf in
+`localStorage` (`bv_cookie_consent`), anders dekt de melding de onderste 110px van elke
+opname af.
+
+**Geverifieerd** op localhost, 24 opnames op 1440px en 390px: geen horizontale overflow op
+geen enkele opname, geen consolefouten behalve de 404 op `/api/config` (wordt door
+`app/server.js` geserveerd, draaide lokaal niet, staat op zes pagina's, geen regressie).
+`tests/taalpariteit.mjs` blijft groen; de structuur is niet veranderd.
+
+**Uitgerold en live gezet op 2026-08-22, zie de volgende sectie.**
+
+## Uitrol van de brutalistische stijl (2026-08-22), LIVE en geverifieerd
+
+### Wat er nu op welke stylesheet draait
+
+| Stylesheet | Pagina's |
+| --- | --- |
+| `css/brutal.css` | `index.html`, `en/index.html`, `aanbod.html`, `klantintake.html`, `404.html`, `en/404.html` |
+| `css/juridisch.css` (nieuw) | `privacy.html`, `voorwaarden.html`, `en/privacy.html`, `en/terms.html` |
+| `css/styles.css` (ongewijzigd) | de vier `film-*.html` |
+| eigen inline stijl (ongewijzigd) | de acht `voorbeelden/*-premium.html`, `dashboard-demo/` |
+
+### Twee dingen die met opzet NIET zijn omgezet
+
+**De filmpagina's.** Die worden opgenomen. Een nieuwe stijl laat toekomstige opnames
+afwijken van het materiaal dat er al ligt.
+
+**De acht voorbeeldsites.** Elk vak heeft daar een eigen ontwerp. Ze allemaal in dezelfde
+stijl zetten sloopt precies de belofte die de sectie erboven doet: *"een website per vak,
+niet een sjabloon."*
+
+### Waarom juridisch.css apart staat en niet gewoon brutal.css is
+
+`brutal.css` zet `ul { list-style: none }` en een `body`-padding voor de mobiele belbalk.
+Allebei fout in een juridische tekst met opsommingen en zonder belbalk. De vier pagina's
+hadden elk hun eigen `<style>`-blok met net andere waarden; dat is nu één bestand.
+
+### Drie fouten die er al zaten, gevonden tijdens het omzetten
+
+- De gekozen keuze-pil op `klantintake.html` had wit op `#FF5C1A`: **3,09:1**, onder de
+  AA-grens. Nu donkere merkinkt, 5,18:1, dezelfde regel als de primaire knop.
+- `.offer-hero__badge` op `aanbod.html` was `#FF9152` op een doorschijnend oranje vlak op
+  marine. Dun en slecht leesbaar. Nu massief.
+- `user-select: none` zonder `-webkit-`-prefix, terwijl dit publiek op iPhones zit.
+
+### De oranje markering: derde poging, en nu gemeten in plaats van geschat
+
+Canvas `measureText` op Anton bij 112px: kapitaal-inkt **96px** boven de basislijn
+(`.857em`, ik gokte `.73em`), inkt onder de basislijn **0**, font-descent **37px**
+(`.3304em`). Daaruit volgt de CSS rechtstreeks: `bottom: .295em; height: .93em`. De twee
+eerdere gokken zaten er 40px en 26px naast.
+
+**Les:** bij een typografie-artefact eerst `measureText`, niet drie keer de CSS aanpassen
+en opnieuw kijken.
+
+### Valkuil bij elke pagina die je nog omzet
+
+Anton heeft **één gewicht en geen breedte-as**. Elke `font-weight: 800/900` of
+`font-stretch` op `var(--display)` die nog uit het Fraunces-tijdperk stamt, laat de browser
+**nep-vet synthetiseren** en dat smeert een smalle letter dicht. Weggehaald op
+`aanbod.html` en beide 404-pagina's; controleer het als je `film-*.html` ooit omzet.
+
+Twee rasterfouten die alleen op een screenshot zichtbaar waren: zowel `.offer-why` als de
+formulierkolom op `klantintake.html` stond gecentreerd op een smallere `.wrap` (780 resp.
+760px), terwijl de kop erboven op de paginagoot van 100px begint. De leesbreedte hoort op
+de **inhoud**, niet op de `.wrap`.
+
+**Geverifieerd** per pagina op 1440px en 390px: geen horizontale overflow, geen
+consolefouten behalve de bekende `/api/config`. `tests/taalpariteit.mjs` en
+`tests/filmpaginas.mjs` allebei groen.
+
+### Live sinds 2026-08-22
+
+Gedeployed met `bash deploy-to-vps.sh` (backup vooraf op de VPS, `docker compose up -d
+--build`). Cachebusters staan nu op de **inhoudshash** in plaats van een handmatig nummer:
+`brutal.css?v=6f5ae7f5`, `juridisch.css?v=4f1b5e1e`. Zo hoef je er bij een volgende wijziging
+niet meer aan te denken; herbereken 'm met `md5sum` en vervang overal.
+
+**Geverifieerd op de echte site, niet op localhost:** alle tien de pagina's geven 200,
+`css/brutal.css` (63,5 kB), `css/juridisch.css` (4,5 kB) en `fonts/anton.woff2` (18,6 kB)
+worden geserveerd met het juiste content-type, en `/api/config` geeft 200 (op localhost was
+dat de enige 404, die is dus inderdaad geen regressie). Screenshots van `/`, `/en/`,
+`/aanbod.html`, `/klantintake.html`, `/privacy.html` en `/en/terms.html` op 1440px en 390px:
+**geen horizontale overflow, geen consolefouten.**
+
+De deploycheck gaf bij poging 1 nog een 404 en bij poging 2 een 200. Dat is het bekende
+gedrag: Traefik geeft 404 zolang de container herstart en er geen backend is. Daarvoor zit
+de herhaallus in het script.
+
+**Blijft staan:** de site staat nog op `noindex`. Dat gaat er pas af als de echte KvK- en
+telefoongegevens erin staan (zie de TODO-lijst verderop).
+
+### Regelhoogte van de kop-font: `--lh-kop` (2026-08-22, LIVE)
+
+De founder meldde dat de hero te dicht op elkaar plakte. Exact te onderbouwen: de
+witruimte tussen twee regels **hoofdletters** is `line-height` min de **kapitaalhoogte**,
+niet line-height min 1. Anton's kapitalen zijn gemeten `.857em`. De hero stond op `.86`,
+dus `.003em` wit: een derde pixel. De regels raakten elkaar letterlijk. Sectiekoppen
+(`.92`) hadden 3,9px, de slotkop (`.9`) 2,7px. Die waarden kwamen uit het
+Fraunces-tijdperk, waar de kapitaalhoogte lager ligt en `.86` wél werkte.
+
+Nu **één token** in plaats van tien losse getallen:
+
+```css
+--lh-kop: .99;   /* .99 − .857 = .133em wit */
+```
+
+Gebruik dit voor elke kop die over **meer dan één regel** kan lopen. Losse getallen (prijs,
+percentages, "404") mogen strak blijven: die hebben geen buurregel om tegenaan te botsen.
+
+**Val hier niet in:** `juridisch.css` gebruikte het token eerst zonder het te definiëren, en
+die vier pagina's laden `brutal.css` níet. Een ongedefinieerde custom property maakt de hele
+declaratie ongeldig, waarna `line-height` terugvalt op `normal` (bij Anton ruim 1,5). Het
+token staat nu in **beide** bestanden; houd ze gelijk.
+
+**Herzien op 2026-08-22 na een tweede meting, zie hieronder. De waarde is nu 1.12.**
+
+### `--lh-kop` moest naar 1.12: een É is geen kapitaal (2026-08-22, LIVE)
+
+`.99` klaarde de kapitaalhoogte maar niet het **accent**. Gemeten met canvas
+`measureText` op Anton, inkt boven de basislijn in em:
+
+| glyph | inkt boven basislijn |
+| --- | --- |
+| gewone kapitalen (`KLANT`) | 0.86 |
+| `É` en `Í` | **1.11** |
+| `Ë` | 1.06 |
+| staart van `j` / `g` | 0.12 *onder* de basislijn |
+
+Bij `.99` werd de witruimte onder een regel die met É begint dus **negatief** en dook
+het accent de regel erboven in. Zichtbaar op de inlogpagina van het portaal:
+"OP ÉÉN PLEK" onder "…NODIG HEEFT,".
+
+`1.12` klaart de hoogste letter die het Nederlands hier gebruikt. Voor een kop zonder
+accenten is dat iets ruimer dan strikt nodig, en dat is de goede kant om op te falen:
+te veel lucht leest als een keuze, een accent dat door de regel erboven snijdt leest als
+een fout. En **"één" staat overal in deze teksten**, dus krapper is geen optimalisatie
+maar een tijdbom.
+
+## Chatbot en dashboard in dezelfde stijl (2026-08-22), LIVE
+
+### Chatbot: een `skin.css` per klant, niet het gedeelde product
+
+`product/chatbot/public/widget.css` wordt gedeeld door **zes** klanten. Daar de
+rondingen weghalen zou a-sisters, ab-uitvaartzorg, demo-bakkerij, virtualcreator en het
+`_template` meesleuren. Het product heeft daar zijn eigen uitweg voor, en die was al in
+gebruik door twee klanten: leg een `skin.css` in de klantmap, dan zet de server hem op
+`/api/widget-skin.css` en laadt de widget hem zelf.
+
+Nieuw: `product/chatbot/customers/belvanger/skin.css`. Vierkant, 2px randen, harde
+schaduw, Anton in de kop, oranje knoppen met donkere merkinkt (5,18:1).
+`config.json` wees bij `fontDisplay` nog naar Fraunces; dat is nu Anton.
+
+De `!important`-noodgreep die hiervoor even in `brutal.css` en `juridisch.css` stond is
+**verwijderd**. Die hoorde daar niet: hij werkte alleen op pagina's die dat stylesheet
+laden, en de skin werkt overal.
+
+### Dashboard: een laag achter `style.css`, geen herschrijving
+
+`sites/belvanger-portal/public/style.css` is dichtbeschreven en stuurt veel toestanden
+aan. In plaats van 216 regels herschrijven staat er nu een **brutalisme-laag** onderaan
+die de tokens overschrijft (`--radius: 0`, harde schaduw, merkkleuren exact gelijk aan de
+site) en daarna alleen de plekken waar een ronding of randdikte hardcoded stond. Wat daar
+niet genoemd wordt is bewust ongemoeid.
+
+Het portaal zat qua kleur net naast de site (`#0e1a24` vs `#16232E`, `#ff5a1f` vs
+`#FF5C1A`): net genoeg om als twee producten te lezen. Nu gelijk.
+
+`build-dashboard-demo.mjs` bouwt `/dashboard-demo` uit diezelfde bron, dus de demo
+volgt automatisch.
+
+### Twee echte fouten die hierbij boven kwamen
+
+**1. De demo-fonts waren al maanden kapot.** `copyPatched` in
+`build-dashboard-demo.mjs` las élk bestand als `utf8` en schreef het zo terug, ook de
+`.woff2`-fonts. Een binair bestand door een utf8-ronde halen vervangt elke ongeldige
+bytereeks door U+FFFD: `anton.woff2` ging van 18.612 naar 33.820 bytes, `archivo` van
+90.104 naar 163.873. De woff2-kop bleef leesbaar (ASCII), dus **geen 404 en geen
+consolefout** — de browser liet het font gewoon vallen en viel terug op een
+systeemletter. Daarom is het nooit opgevallen. Gevonden doordat de live bestandsgrootte
+niet klopte met de bron. Nu `fs.copyFileSync` als er geen patch is.
+
+**2. Het buildscript had een hardgecodeerde fontlijst.** Drie bestanden bij naam, dus
+`anton.woff2` werd stilzwijgend niet meegekopieerd. Precies de fout waar dat script
+verderop zelf een poort tegen heeft voor asset-paden. Kopieert nu de hele `fonts/`-map.
+
+### Opgeruimd
+
+Fraunces is uit het portaal verdwenen: de twee `@font-face`-regels zijn weg en
+`--display` wijst naar Anton. De canvas-labels in `app.js` stonden op
+`700 12px "Fraunces"`; dat is nu Archivo, want Anton heeft één gewicht en zou op 12px
+nep-vet worden en dichtsmeren. **De twee `fraunces*.woff2`-bestanden staan er nog** (82
+kB, nergens meer naar verwezen); die mogen weg, ik mocht ze niet zelf verwijderen.
+
+### Nep-vet: de fout die twee keer door de controle glipte (2026-08-22, LIVE)
+
+Anton heeft **één gewicht** (400). Vraagt een regel om 600/800/900, dan tekent de browser
+zelf een vette variant door de letter uit te smeren. Dat ziet er niet uit als een fout maar
+als een lelijk font, en daarom is het twee keer blijven staan.
+
+De tweede keer was in het dashboard. De brutalisme-laag had een **lijstje** van koppen die
+Archivo kregen, terwijl Anton de default bleef uit het originele
+`h2,h3{font-family:var(--display);font-weight:600}`. Alles wat niet in dat lijstje stond
+kreeg dus Anton met gewicht 600. Zichtbaar op de Zichtbaarheid-pagina, waar de paneelkoppen
+("Bezoekersverkeer", "Scrolldiepte", …) door `app.js` worden gemaakt en dus **per definitie
+nooit in zo'n lijstje konden staan**.
+
+Twee dingen veranderd, allebei nodig:
+
+1. **De default is omgekeerd.** `h2, h3` staat nu op Archivo 800 uppercase; Anton moet je
+   expliciet aanvragen. Wie een kop toevoegt krijgt iets leesbaars in plaats van iets kapots.
+   `h4` blijft met rust: dat zijn de titels in het activiteitenlog en die zijn te lang voor
+   hoofdletters.
+2. **Een vangnet in alle drie de stylesheets:** `* { font-synthesis-weight: none; }`. De
+   browser tekent dan het echte gewicht in plaats van een uitgesmeerde variant. Archivo is
+   variabel (100–900) en verliest er niets bij. Bewust alleen `-weight`: `font-synthesis:
+   none` zou ook de schuine variant van `<em>` uitzetten en die staat in de lopende tekst.
+
+Er stonden nog twee plekken op gewicht 600 met Anton die niemand ooit ziet tenzij hij er
+komt: `.reset-card h1` (wachtwoord-resetpagina) en `.push-card__text strong`. Gevonden door
+álle `var(--display)`-regels na te lopen op hun `font-weight`. Doe dat opnieuw als je een
+kop toevoegt:
+
+```bash
+grep -oE '[^{}]+\{[^}]*var\(--display\)[^}]*\}' style.css
+```
+
+**Geverifieerd** door alle negen dashboardweergaven langs te klikken en per kop het
+*berekende* font en gewicht uit te lezen, niet door ernaar te kijken. Live en lokaal
+identiek: paginatitels Anton 400, alle paneelkoppen Archivo 800, nergens nog Anton met een
+gevraagd gewicht boven 400.
+
+### Wat NIET is omgezet, en waarom
+
+De vier `film-*.html` (opnamepodia) en de acht `voorbeelden/*-premium.html` (elk vak een
+eigen ontwerp). Ook `product/chatbot/public/dashboard.html`: dat is de statistiekpagina
+van het gedeelde chatbot-product, niet van Belvanger.
+
 ## Aanvraagformulier op alle zeven voorbeeldpagina's (2026-07-28)
 De pagina's beloofden "automatische leadvangst" en lieten alleen een telefoonnummer zien.
 Een bezoeker die niet wilde bellen kon dus niets. Nu staat er onderaan de contactsectie een
@@ -100,6 +372,35 @@ nummer een live gaat.
 De voorbeeldpagina's blijven bewust een dood formulier: dat zijn fictieve bedrijven, daar
 hoort niets vandaan te komen. Op een echte klantsite is het hetzelfde formulier met de
 sleutel van die klant.
+
+## Vakfilm "Mooi" (2026-08-21), af
+Derde film, en de eerste die zich op EEN vak richt en die gegenereerd beeld gebruikt.
+Een verdelger met een wespennest in twee handen schrikt van zijn telefoon, het nest
+schiet los, de wespen komen eraf en kruipen over zijn gezicht, hij kan ze niet
+wegslaan want zijn handen zitten vol, en dan kijkt hij in de camera en zegt "Mooi".
+Daarna de echte simulatie met een spoedklus, en de slotkaart. 25,28s, 9:16, 6,9 MB,
+gemeten op -15,9 LUFS / -1,2 dBFS true peak. Act 1 kostte 6.405 credits, inclusief
+1.600 aan een take die door een koerswijziging is vervallen.
+
+Draaiboek, beide prompts, de kostenuitsplitsing en de gotchas:
+`docs/offers/belvanger-film-verdelger-2026-08-21.md`.
+
+- **De filmpagina's zijn vak-VARIABEL, niet gekopieerd.** `film-opnamepodium.html?vak=verdelger`
+  en `film-tekstkaarten.html?set=verdelger` wisselen alleen de woorden die per vak anders
+  horen te zijn. **Zonder parameter tonen ze exact wat ze altijd toonden**, want de eerste
+  twee films zijn daarop gemonteerd. Dat is vastgelegd in `tests/filmpaginas.mjs`; draai die
+  na elke wijziging aan een van beide pagina's.
+- **De producttekst wisselt niet mee.** "Sorry, we misten je belletje!" is de echte tekst die
+  het product verstuurt en hoort in elke film hetzelfde te zijn. Alleen de klantvraag, het
+  antwoord, de meldingsregel en de hint op het belscherm zijn vakspecifiek.
+- **Kaart 1 staat niet in deze montage.** Act 1 draagt de grap zelf; twee grappen achter
+  elkaar verzwakken elkaar. Terug met `MET_KAART1=ja bash monteer-verdelger.sh`.
+- **Meet, neem niet aan.** De opname haalt de 25 fps niet (225 tot 239 van de 258 frames),
+  act 1 duurt niet altijd 7 seconden, en loudnorm in één doorgang zat er 1,2 LU naast met
+  een true peak van -0,8 dBFS. Alle drie worden nu gemeten: `opname.env`, `ffprobe` en een
+  tweetraps loudnorm.
+- Er is bewust **geen negende voorbeeldpagina** voor ongediertebestrijding. Die hoort er pas
+  als er een verdelger in beeld is die hem moet zien.
 
 ## Showcasefilm "Elk vak zijn eigen website" (2026-07-28), af en geverifieerd
 Tweede promotiefilm naast `belvanger-opgevangen-1080x1920.mp4`, en met een andere taak:

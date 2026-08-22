@@ -5,14 +5,20 @@
 // niet bij mij. Je geeft het hier bij het draaien mee via een omgevingsvariabele; het komt
 // dus niet in een bestand, niet in git en niet in een gespreksgeschiedenis terecht.
 //
-// Gebruik (PowerShell):
-//   $env:BV_EMAIL="jouw@email.nl"; $env:BV_PASS="..."; node tools/activiteitenlog-vullen.mjs
+// LET OP: 'tools/...' is relatief aan de PROJECTMAP. Draai je dit vanuit je
+// thuismap, dan krijg je MODULE_NOT_FOUND. Of eerst cd'en, of het volledige pad
+// gebruiken; het script zoekt activiteitenlog.json naast zichzelf, dus vanuit
+// welke map je 'm start maakt verder niet uit.
 //
-// Gebruik (Git Bash):
+// Gebruik (PowerShell), volledig pad zodat het overal werkt:
+//   $env:BV_EMAIL="jouw@email.nl"; $env:BV_PASS="..."
+//   node "C:\Users\wfvis\Desktop\Desktop Folders\AI\Claude\Agent nr1\primecircle-ai-company\tools\activiteitenlog-vullen.mjs"
+//
+// Gebruik (Git Bash), vanuit de projectmap:
 //   BV_EMAIL="jouw@email.nl" BV_PASS="..." node tools/activiteitenlog-vullen.mjs
 //
-// Eerst kijken zonder iets te schrijven:
-//   ... node tools/activiteitenlog-vullen.mjs --dry-run
+// Eerst kijken zonder iets te schrijven (vraagt geen wachtwoord):
+//   node tools/activiteitenlog-vullen.mjs --dry-run
 //
 // Het script is IDEMPOTENT: het haalt eerst de bestaande regels op en slaat alles over wat
 // al dezelfde datum en titel heeft. Twee keer draaien verdubbelt je log dus niet, en dat is

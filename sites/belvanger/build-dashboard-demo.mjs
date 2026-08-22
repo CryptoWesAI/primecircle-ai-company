@@ -29,10 +29,21 @@ const DEMO_BANNER = `
 function copyPatched(name, patch) {
   const from = path.join(SRC, name);
   if (!fs.existsSync(from)) { console.warn("overgeslagen (bestaat niet):", name); return; }
-  let content = fs.readFileSync(from, "utf8");
-  if (patch) content = patch(content);
   fs.mkdirSync(path.dirname(path.join(DEST, name)), { recursive: true });
-  fs.writeFileSync(path.join(DEST, name), content);
+  // ZONDER patch: BINAIR kopieren. Dit stond hier als readFileSync(..,"utf8") gevolgd
+  // door writeFileSync, ook voor de woff2-fonts. Een binair bestand door een
+  // utf8-ronde halen vervangt elke ongeldige bytereeks door U+FFFD, en dat maakt het
+  // bestand kapot EN groter: anton.woff2 ging van 18.612 naar 33.820 bytes, archivo
+  // van 90.104 naar 163.873. De woff2-kop bleef leesbaar (ASCII), dus de browser gaf
+  // geen 404 en geen consolefout; hij liet het font gewoon vallen en viel terug op een
+  // systeemletter. Daardoor is dit maandenlang niet opgevallen.
+  // Gevonden op 2026-08-22 doordat de live bestandsgrootte niet klopte met de bron.
+  if (!patch) {
+    fs.copyFileSync(from, path.join(DEST, name));
+    console.log("+ " + name + " (binair)");
+    return;
+  }
+  fs.writeFileSync(path.join(DEST, name), patch(fs.readFileSync(from, "utf8")));
   console.log("+ " + name);
 }
 
@@ -74,8 +85,15 @@ copyPatched("app.js", (js) =>
 
 copyPatched("style.css");
 copyPatched("favicon.svg");
-copyPatched(path.join("fonts", "fraunces.woff2"));
-copyPatched(path.join("fonts", "fraunces-italic.woff2"));
-copyPatched(path.join("fonts", "archivo-standard.woff2"));
+
+// Fonts: de HELE map, niet een vaste lijst. Die lijst noemde drie bestanden bij
+// naam en miste dus stilzwijgend elk font dat het portaal erbij zette. Precies de
+// fout waar dit script hierboven zelf voor waarschuwt bij de asset-paden, alleen
+// dan zonder poort eromheen. Gebeurd op 2026-08-22 met anton.woff2: de demo laadde
+// de kop-font niet en viel terug op Arial Narrow.
+const FONTDIR = path.join(SRC, "fonts");
+if (fs.existsSync(FONTDIR)) {
+  for (const f of fs.readdirSync(FONTDIR)) copyPatched(path.join("fonts", f));
+}
 
 console.log(`Dashboard-demo gebouwd in ${DEST}`);

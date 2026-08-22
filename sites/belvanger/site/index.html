@@ -41,10 +41,16 @@
   <meta name="twitter:description" content="De belletjes die jij mist, vangen wij op. Automatisch, met een bericht." />
   <meta name="twitter:image" content="https://belvanger.nl/assets/og-image.png" />
 
-  <!-- Font: self-hosted, geen externe call -->
+  <!-- Font: self-hosted, geen externe call.
+       Anton (18 kB, latin-subset) verving Fraunces als kop-font op 2026-08-21:
+       de serif was het zachtste onderdeel van het ontwerp en droeg de
+       brutalistische richting niet. Archivo blijft voor body en dichte UI. -->
   <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="css/styles.css?v=2a9b2761" />
+  <link rel="preload" href="fonts/anton.woff2" as="font" type="font/woff2" crossorigin />
+  <!-- Sinds 2026-08-22 draaien index, en/index, aanbod, klantintake en beide
+       404's op brutal.css. Alleen de vier film-*.html staan nog op styles.css,
+       met opzet: die worden opgenomen. Zie STATUS.md voor de tabel. -->
+  <link rel="stylesheet" href="css/brutal.css?v=213637ab" />
 
   <!-- Gestructureerde data. Placeholder-telefoonnummer en de harde €99-prijs zijn
        hier VERWIJDERD (2026-07-17): het nummer bestond niet, en de prijs sprak de
@@ -123,7 +129,7 @@
           {
             "@type": "Question",
             "name": "Wat kost het?",
-            "acceptedAnswer": { "@type": "Answer", "text": "Twee delen: een eenmalige setup vanaf €625 als founding-partner (normaal €1.250), waarin we je website, AI-chatbot en de automatisering bouwen, en daarna €99 per maand voor het draaien, het onderhoud en je dashboard met dagelijkse cijfers. Het exacte bedrag hangt af van je wensen; dat bespreken we in een vrijblijvend gesprek. Maandelijks opzegbaar. Eén extra klus per maand betaalt het ruim terug." }
+            "acceptedAnswer": { "@type": "Answer", "text": "Twee delen: een eenmalige setup en daarna een vast maandbedrag voor het draaien, het onderhoud en je dashboard met dagelijkse cijfers. Als één van de eerste 10 founding-partners betaal je €625 eenmalig (normaal €1.250) en €99 per maand, blijvend: ook na die eerste 10 verandert jouw prijs niet. Daarna is het €1.250 eenmalig en €199 per maand. Het exacte bedrag hangt af van je wensen; dat bespreken we in een vrijblijvend gesprek. Maandelijks opzegbaar. Eén extra klus per maand betaalt het ruim terug." }
           },
           {
             "@type": "Question",
@@ -310,7 +316,7 @@
     <!-- ══════════════════════════ TRUST STRIP ══════════════════════════ -->
     <section class="trades" aria-label="Voor welke vakmensen">
       <div class="wrap trades__inner">
-        <span class="trades__label">Gebouwd voor</span>
+        <span class="trades__label">Gebouwd voor vakmensen als</span>
         <ul class="trades__list">
           <li>
             <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Loodgieters
@@ -333,6 +339,9 @@
           <li>
             <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h12.5v4.5H3z"/><path d="M15.5 6.25h3.5v3.5h-8v4"/><path d="M9.25 13.75h3.5v7h-3.5z"/></svg>Schilders
           </li>
+          <li>
+            <svg class="trade-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="1.5"/><path d="M3.5 12h17"/><path d="M12 3.5v17"/></svg>Glaszetters
+          </li>
         </ul>
       </div>
     </section>
@@ -340,7 +349,7 @@
     <!-- ══════════════════════════ DE PIJN + REKENMACHINE ══════════════════════════ -->
     <section class="pijn" id="pijn">
       <div class="wrap">
-        <header class="section-head reveal">
+        <header class="section-head reveal" data-nr="01">
           <p class="eyebrow eyebrow--dark">Even eerlijk</p>
           <h2 class="section-title">Herken je dit?</h2>
         </header>
@@ -420,7 +429,7 @@
     <!-- ══════════════════════════ HOE HET WERKT ══════════════════════════ -->
     <section class="route" id="hoe">
       <div class="wrap">
-        <header class="section-head reveal">
+        <header class="section-head reveal" data-nr="02">
           <p class="eyebrow">De route</p>
           <h2 class="section-title">Van gemiste klant<br>naar vaste klus.</h2>
         </header>
@@ -444,14 +453,18 @@
             <span class="route__marker">3</span>
             <div class="route__card">
               <h3 class="route__title">Jij houdt de regie</h3>
-              <p class="route__text">Jij belt terug wanneer het uitkomt, met naam en klus al bekend. Wij draaien alles op de achtergrond.</p>
+              <p class="route__text">Wij draaien alles op de achtergrond. Jij kiest wat bij de klus past:</p>
+              <ul class="route__chips">
+                <li>Zelf terugbellen, met naam en klus al bekend</li>
+                <li>Of doorzetten naar een vertrouwde vakgenoot uit je netwerk</li>
+              </ul>
             </div>
           </li>
           <li class="route__step reveal" style="--accent:#1FA855">
             <span class="route__marker">4</span>
             <div class="route__card">
               <h3 class="route__title">Het resultaat</h3>
-              <p class="route__text">Jij belt terug wanneer het uitkomt. Nooit meer een klus kwijt, wél meer klussen op de planning.</p>
+              <p class="route__text">Een tevreden klant staat voorop. Jij raakt nooit meer een klus kwijt, en dankzij je netwerk bedienen jullie samen meer klanten.</p>
             </div>
           </li>
         </ol>
@@ -461,7 +474,7 @@
     <!-- ══════════════════════════ WAT JE KRIJGT ══════════════════════════ -->
     <section class="krijgt">
       <div class="wrap">
-        <header class="section-head reveal">
+        <header class="section-head reveal" data-nr="03">
           <p class="eyebrow eyebrow--dark">Alles-in, wij bouwen en draaien het</p>
           <h2 class="section-title">Wat je krijgt</h2>
         </header>
@@ -492,7 +505,7 @@
     <!-- ══════════════════════════ VOORBEELDEN ══════════════════════════ -->
     <section class="voorbeelden" id="voorbeelden">
       <div class="wrap">
-        <header class="section-head reveal">
+        <header class="section-head reveal" data-nr="04">
           <p class="eyebrow eyebrow--dark">Zo ziet het eruit</p>
           <h2 class="section-title">Een website per vak, niet een sjabloon.</h2>
           <p class="section-lead">Fictieve voorbeelden, gemaakt om te laten zien wat je kunt verwachten. Je eigen website wordt net zo op maat gebouwd voor jouw vak en jouw manier van werken.</p>
@@ -583,7 +596,7 @@
           </p>
           <ul class="check">
             <li>Eenmalige setup vanaf €625 (normaal €1.250): website, AI-chatbot en automatisering</li>
-            <li>€99/mnd: draaien, onderhoud en dagelijkse cijfers in je dashboard</li>
+            <li>€99/mnd (normaal €199), blijvend voor de eerste 10 klanten: draaien, onderhoud en dagelijkse cijfers in je dashboard</li>
             <li>Maandbedrag pas vanaf je eerste opgevangen klant</li>
             <li>Maandelijks opzegbaar, geen kleine lettertjes</li>
           </ul>
@@ -693,7 +706,7 @@
     <!-- ══════════════════════════ FAQ ══════════════════════════ -->
     <section class="faq" id="faq">
       <div class="wrap faq__inner">
-        <header class="section-head section-head--left reveal">
+        <header class="section-head section-head--left reveal" data-nr="05">
           <p class="eyebrow eyebrow--dark">Nog even dit</p>
           <h2 class="section-title">Veelgestelde vragen</h2>
         </header>
@@ -721,7 +734,7 @@
           </details>
           <details class="qa">
             <summary>Wat kost het?</summary>
-            <div class="qa__a"><p>Twee delen: een eenmalige setup vanaf €625 als founding-partner (normaal €1.250), waarin we je website, AI-chatbot en de automatisering bouwen, en daarna €99 per maand voor het draaien, het onderhoud en je dashboard met dagelijkse cijfers. Het exacte bedrag hangt af van je wensen; dat bespreken we in een vrijblijvend gesprek. Maandelijks opzegbaar. Eén extra klus per maand betaalt het ruim terug.</p></div>
+            <div class="qa__a"><p>Twee delen: een eenmalige setup en daarna een vast maandbedrag voor het draaien, het onderhoud en je dashboard met dagelijkse cijfers. Als één van de eerste 10 founding-partners betaal je €625 eenmalig (normaal €1.250) en €99 per maand, blijvend: ook na die eerste 10 verandert jouw prijs niet. Daarna is het €1.250 eenmalig en €199 per maand. Het exacte bedrag hangt af van je wensen; dat bespreken we in een vrijblijvend gesprek. Maandelijks opzegbaar. Eén extra klus per maand betaalt het ruim terug.</p></div>
           </details>
           <details class="qa">
             <summary>Wat doen jullie met de gegevens?</summary>
@@ -782,5 +795,5 @@
     <a class="btn btn--primary btn--callbar" href="#gesprek">Plan een gesprek</a>
   </div>
 
-  <script src="js/cookies.js?v=1" defer></script><script src="js/app.js?v=ab2f48c8" defer></script><script src="assets/ab-chat.js?v=9296c5aa" data-ab-chat data-lang="nl" defer></script></body>
+  <script src="js/cookies.js?v=1" defer></script><script src="js/app.js?v=ab2f48c8" defer></script><script src="assets/ab-chat.js?v=7d70e413" data-ab-chat data-lang="nl" defer></script></body>
 </html>

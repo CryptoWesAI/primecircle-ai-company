@@ -1,7 +1,5 @@
-@font-face{font-family:"Fraunces";src:url("fonts/fraunces.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
-@font-face{font-family:"Fraunces";src:url("fonts/fraunces-italic.woff2") format("woff2");font-weight:100 900;font-style:italic;font-display:swap}
 @font-face{font-family:"Archivo";src:url("fonts/archivo-standard.woff2") format("woff2");font-weight:100 900;font-stretch:62% 125%;font-style:normal;font-display:swap}
-:root{--ink:#0e1a24;--steel:#1b2d3d;--paper:#f4f2ed;--card:#fff;--line:#dcdedb;--muted:#64717c;--orange:#ff5a1f;--green:#20a765;--amber:#e6a52f;--red:#d95a55;--radius:18px;--shadow:0 12px 34px rgba(14,26,36,.08);--display:"Fraunces",Georgia,"Times New Roman",serif;--body:"Archivo",Arial,"Helvetica Neue",sans-serif;--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+:root{--ink:#0e1a24;--steel:#1b2d3d;--paper:#f4f2ed;--card:#fff;--line:#dcdedb;--muted:#64717c;--orange:#ff5a1f;--green:#20a765;--amber:#e6a52f;--red:#d95a55;--radius:18px;--shadow:0 12px 34px rgba(14,26,36,.08);--display:"Anton","Arial Narrow",Impact,system-ui,sans-serif;--body:"Archivo",Arial,"Helvetica Neue",sans-serif;--grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 *{box-sizing:border-box}html{font-family:var(--body);color:var(--ink);background:var(--paper)}body{margin:0;min-height:100vh}button,input,select{font:inherit}button,a{transition:transform .16s ease,background .16s ease,border-color .16s ease}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid rgba(255,90,31,.35);outline-offset:2px}.is-hidden{display:none!important}.muted{color:var(--muted);line-height:1.55}.eyebrow{margin:0 0 7px;font-size:.72rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#496072}.eyebrow--light{color:#b7c4ce}h1,h2,h3,p{margin-top:0}h1,h2,h3{letter-spacing:-.03em}h2,h3{font-family:var(--display);font-weight:600}h2{font-size:1.55rem;margin-bottom:0}.button{min-height:44px;border:0;border-radius:999px;padding:0 18px;display:inline-flex;align-items:center;justify-content:center;font-weight:800;text-decoration:none;cursor:pointer}.button:hover{transform:translateY(-1px)}.button--primary{background:var(--orange);color:#111}.button--secondary{background:#edf0f1;color:var(--ink)}.button--light{background:#fff;color:var(--ink)}.text-button{border:0;background:none;color:#34566f;font-weight:800;cursor:pointer;padding:4px}.icon-button{width:42px;height:42px;border:1px solid var(--line);background:#fff;border-radius:50%;font-size:1.7rem;cursor:pointer}
 .login{min-height:100vh;display:grid;grid-template-columns:minmax(280px,1fr) minmax(380px,540px);gap:8vw;align-items:center;padding:8vw;background:var(--ink);background-image:linear-gradient(rgba(14,26,36,.92),rgba(14,26,36,.92)),var(--grain);background-size:auto,160px;color:#fff}.login:before{content:"";position:fixed;inset:0 45% 0 0;background:radial-gradient(circle at 30% 45%,rgba(255,90,31,.18),transparent 46%),linear-gradient(135deg,transparent 48%,rgba(255,255,255,.03) 48% 49%,transparent 49%)}.login__brand{position:relative;font-family:var(--display);font-size:2.2rem;font-weight:900;display:flex;align-items:center;gap:18px}.brand-mark{width:34px;height:34px;overflow:visible;flex:none}.brand-mark__arc{stroke:#f4f2ed}.brand-mark__dot{fill:var(--orange)}.login__card{position:relative;background:#fff;color:var(--ink);padding:42px;border-radius:24px;box-shadow:0 28px 80px rgba(0,0,0,.24)}.login__card h1{font-family:var(--display);font-weight:600;font-size:2.15rem;line-height:1.05;margin-bottom:14px}.login label,.password-dialog label{display:grid;gap:7px;font-size:.82rem;font-weight:800;margin-top:18px}.login input,.password-dialog input,.filters input,.filters select,.detail select,.range select{width:100%;border:1px solid var(--line);border-radius:11px;background:#fff;padding:12px 13px;color:var(--ink)}.login .button{width:100%;margin-top:20px}.form-error{color:#b93832;min-height:20px;font-size:.84rem;margin:12px 0 0}
 .shell{display:grid;grid-template-columns:238px 1fr;min-height:100vh}.sidebar{position:sticky;top:0;height:100vh;background:var(--ink);background-image:linear-gradient(rgba(14,26,36,.92),rgba(14,26,36,.92)),var(--grain);background-size:auto,160px;color:#fff;padding:28px 20px 22px;display:flex;flex-direction:column}.sidebar__brand{color:#fff;text-decoration:none;font-family:var(--display);font-size:1.32rem;font-weight:900;display:flex;align-items:center;gap:10px;padding:4px 10px 30px}.sidebar__brand .brand-mark{width:25px;height:25px}.nav{display:grid;gap:7px}.nav__group-label{margin:14px 10px 0;padding-top:14px;border-top:1px solid rgba(255,255,255,.1);font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#5c7080}.nav__item{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:12px;background:transparent;color:#b9c6cf;padding:13px 14px;text-align:left;font-weight:700;cursor:pointer}.nav__item span{font-size:1.15rem;width:20px;text-align:center}.nav__item:hover,.nav__item.is-active{background:var(--steel);color:#fff}.sidebar__foot{margin-top:auto;border-top:1px solid rgba(255,255,255,.12);padding:20px 8px 0}.account{display:flex;gap:10px;align-items:center;margin-bottom:14px}.account__avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--orange);color:#111;font-weight:900}.account span:last-child{display:grid}.account small{color:#8fa0ac;margin-top:3px;max-width:135px;overflow:hidden;text-overflow:ellipsis}.sidebar__foot .text-button{color:#b9c6cf}
@@ -214,3 +212,186 @@ details[open]>.proof-log__toggle::before{transform:rotate(90deg)}
 /* Knoppenrij onder een dialoog: annuleren naast opslaan, niet eronder. */
 .dialog-actions{display:flex;align-items:center;justify-content:flex-end;gap:16px;margin-top:22px}
 .dialog-actions .button{margin-top:0}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BRUTALISME-LAAG (2026-08-22)
+   Trekt het dashboard in dezelfde taal als de site: sites/belvanger/site/css/brutal.css.
+
+   WAAROM EEN LAAG ERACHTER EN NIET 216 REGELS HERSCHREVEN
+   Het stylesheet erboven is dicht opeengepakt en stuurt een dashboard met veel
+   toestanden aan. Elke regel aanpassen is een grote kans op stille breuk voor
+   weinig winst: het meeste zit al in tokens (--radius, --shadow, --display,
+   kleuren). Die worden hieronder overschreven, en daarna alleen de plekken waar
+   een ronding of randdikte HARDCODED stond. Wat hier niet genoemd wordt, is
+   bewust ongemoeid gelaten.
+
+   DRIE REGELS UIT HET SITE-SYSTEEM DIE HIER OOK GELDEN
+   1. Anton heeft EEN gewicht en geen breedte-as. font-weight 700/800/900 erop
+      laat de browser nep-vet synthetiseren en smeert de letter dicht.
+   2. Anton's kapitalen zijn .857em hoog. Een regelhoogte onder ~.99 laat regels
+      elkaar raken. Vandaar --lh-kop.
+   3. Wit op #FF5C1A is 3,09:1 en zakt onder AA. Donkere merkinkt erop is 5,18:1.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Anton";
+  src: url("fonts/anton.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Exact de merkkleuren van de site. Het portaal zat er net naast
+     (#0e1a24 i.p.v. #16232E, #ff5a1f i.p.v. #FF5C1A): net genoeg verschil om
+     naast elkaar als twee producten te lezen. */
+  --ink: #16232E;
+  --steel: #1E3140;
+  --paper: #ECEAE4;
+  --card: #FAF9F6;
+  --line: #16232E;
+  --muted: #6B7078;
+  --orange: #FF5C1A;
+  --green: #1FA855;
+
+  --radius: 0;
+  --shadow: 6px 6px 0 var(--ink);
+  /* --display staat bovenaan dit bestand en wijst daar al naar Anton;
+     een token hoort op een plek te staan, dus hier niet nog eens. */
+  --display-ui: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --lh-kop: 1.12;
+}
+
+/* ---- vorm: alles vierkant ------------------------------------------------ */
+/* Bewust opgesomd in plaats van een `* { border-radius: 0 }`: zo blijft
+   zichtbaar WAT er vierkant is gemaakt, en breekt er niets dat later bijkomt. */
+.button, .icon-button, .login__card, .password-dialog, .detail, .tenant-dialog,
+.login input, .password-dialog input, .filters input, .filters select,
+.detail select, .range select, .tenant-dialog input, .tenant-dialog textarea,
+.tenant-dialog select, .tenant-dialog fieldset, .twilio-config input,
+.metric__icon, .connection__mark, .account__avatar, .channel-dot,
+.nav__item, .status, .integration-pill, .connection__status,
+.tenant-stats span, .health-row, .health-row__status, .activity-entry,
+.activity-entry__badge, .provision-line b, .credential-result pre,
+.savings-card, .attention-card, .metric, .panel, .connection, .explainer,
+.provision-line, .tenant-card {
+  border-radius: 0;
+}
+/* De ronde stip in de tijdlijn wordt een blokje: hij markeert een moment, en
+   een vierkant markeert dat net zo goed. */
+.timeline-item:after { border-radius: 0; box-shadow: 0 0 0 3px var(--paper); background: var(--orange); }
+
+/* ---- randen: 2px, en inkt in plaats van beige ---------------------------- */
+.metric, .panel, .connection, .tenant-card, .health-card,
+.login input, .password-dialog input, .filters input, .filters select,
+.detail select, .range select, .tenant-dialog input, .tenant-dialog textarea,
+.tenant-dialog select, .twilio-config input {
+  border: 2px solid var(--line);
+}
+.metric, .panel, .connection, .tenant-card { box-shadow: none; }
+.topbar { border-bottom: 2px solid var(--line); }
+.timeline--detail { border-top: 2px solid var(--line); }
+.tenant-dialog fieldset { border: 2px solid var(--line); }
+
+/* ---- typografie ---------------------------------------------------------- */
+/* Anton alleen voor de grote getallen en paginakoppen. Paneelkoppen krijgen
+   Archivo in hoofdletters: op 1,25rem is een condensed display-letter niet
+   leesbaarder, alleen luider. */
+/* STANDAARD is Archivo; Anton is de UITZONDERING, niet andersom.
+   De eerste opzet had het omgekeerd: Anton bleef de default uit het originele
+   `h2,h3{font-family:var(--display);font-weight:600}` en er stond een LIJSTJE
+   van koppen die Archivo kregen. Elke kop die niet in dat lijstje stond kreeg
+   dus Anton MET gewicht 600, en Anton heeft er maar een (400): de browser
+   synthetiseert dan nep-vet en smeert de letter dicht.
+   Zichtbaar geworden op de Zichtbaarheid-pagina, waar de paneelkoppen
+   ("Bezoekersverkeer", "Scrolldiepte", ...) door app.js worden gemaakt en dus
+   per definitie nooit in zo'n lijstje konden staan.
+   Nu kan het niet meer stilletjes fout gaan: wie een kop toevoegt krijgt
+   Archivo, en dat is altijd leesbaar. Anton moet je expliciet aanvragen.
+   h4 blijft met rust: dat zijn de titels in het activiteitenlog en die zijn
+   te lang voor hoofdletters. */
+h1, h2, h3 { letter-spacing: 0; }
+h2, h3 {
+  font-family: var(--display-ui);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.topbar h1, .section-heading h2, .login__card h1, .detail__head h2,
+.password-dialog h2, .tenant-dialog h2 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase;
+  line-height: var(--lh-kop); letter-spacing: .002em; padding-top: .1em;
+}
+.panel__head h2, .connection h3, .tenant-card h3, .explainer h3 {
+  font-family: var(--display-ui); font-weight: 800; text-transform: uppercase;
+  letter-spacing: .04em; font-size: 1rem; line-height: 1.2;
+}
+.savings-card__amount, .attention-card strong, .metric strong {
+  font-family: var(--display); font-weight: 400; letter-spacing: .002em;
+}
+.login__brand, .sidebar__brand {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase; letter-spacing: .01em;
+}
+/* Deze twee stonden nog op gewicht 600 met Anton, gevonden door alle
+   var(--display)-regels na te lopen op hun font-weight. Doe dat opnieuw als je
+   een kop toevoegt:  grep -oE '[^{}]+\{[^}]*var\(--display\)[^}]*\}' style.css */
+.reset-card h1, .push-card__text strong {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase;
+  line-height: var(--lh-kop); letter-spacing: .002em;
+}
+
+/* ── VANGNET TEGEN NEP-VET ─────────────────────────────────────────────────
+   Anton heeft EEN gewicht (400). Vraagt een regel om 600/800/900, dan tekent de
+   browser zelf een vette variant door de letter uit te smeren. Dat ziet er niet
+   uit als een fout maar als een lelijk font, en het is daardoor twee keer door
+   de controle geglipt: eerst op aanbod.html en de 404's, daarna op de
+   paneelkoppen van het dashboard die door JS worden gemaakt.
+   font-synthesis-weight: none zegt: doe dat niet, teken gewoon het echte
+   gewicht. Archivo is variabel (100-900), dus die verliest er niets bij.
+   Alleen -weight, niet -style: `font-synthesis: none` zou ook de schuine
+   variant van <em> uitzetten en die wordt in de lopende tekst wel gebruikt. */
+* { font-synthesis-weight: none; }
+
+.eyebrow { color: var(--muted); }
+.eyebrow--light { color: #93A0AB; }
+
+/* ---- knoppen: rechthoekig, hover keert om -------------------------------- */
+.button {
+  border: 2px solid var(--ink);
+  font-family: var(--display-ui); text-transform: uppercase; letter-spacing: .05em;
+  font-size: .8rem;
+}
+.button:hover { transform: none; }
+/* Donkere merkinkt op oranje: 5,18:1. Het portaal had hier #111, dat haalt het
+   ook, maar de merkinkt houdt het één systeem. */
+.button--primary { background: var(--orange); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+.button--primary:hover { background: #FF7A3D; box-shadow: 1px 1px 0 var(--ink); }
+.button--secondary { background: transparent; color: var(--ink); }
+.button--secondary:hover { background: var(--ink); color: var(--card); }
+.button--light { background: var(--card); color: var(--ink); }
+.icon-button { border: 2px solid var(--line); }
+
+/* ---- zijbalk ------------------------------------------------------------- */
+.nav__item { font-family: var(--display-ui); text-transform: uppercase; letter-spacing: .04em; font-size: .78rem; }
+.nav__item:hover, .nav__item.is-active { background: var(--orange); color: var(--ink); }
+.account__avatar { color: var(--ink); font-weight: 800; }
+
+/* ---- statuslabels: vierkant, met rand i.p.v. alleen een pastelvlak ------- */
+.status, .integration-pill, .connection__status, .health-row__status, .activity-entry__badge {
+  font-family: var(--display-ui); letter-spacing: .06em; text-transform: uppercase;
+  border: 1.5px solid currentColor;
+}
+
+/* ---- tabellen ------------------------------------------------------------ */
+th { border-bottom: 2px solid var(--line); font-family: var(--display-ui); font-weight: 800; }
+tbody tr:hover { background: var(--paper); }
+
+/* ---- de hi-vis band, zoals op de site ------------------------------------ */
+.savings-card { border: 3px solid var(--ink); }
+.attention-card { border: 3px solid var(--ink); }
+.attention-card strong { color: var(--orange); }
+
+/* ---- focus: zelfde ring als de site -------------------------------------- */
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 3px solid var(--orange); outline-offset: 2px;
+}

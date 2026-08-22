@@ -61,8 +61,20 @@ fs.mkdirSync(OUT, { recursive: true });
     page.on("pageerror", (e) => errors.push("pageerror: " + e.message));
     await page.setViewport({ width: s.w, height: s.h, deviceScaleFactor: 1 });
     await page.goto(URL, { waitUntil: "networkidle2", timeout: 60000 });
-    if (s.sel) await page.evaluate((x) => { const el = document.querySelector(x); if (el) el.scrollIntoView({ block: "center" }); }, s.sel);
-    else if (s.y) await page.evaluate((y) => scrollTo(0, y), s.y);
+    // Optioneel: localStorage vooraf vullen, bijv. om een cookiemelding weg te
+    // krijgen die anders de onderste ~110px van ELKE opname afdekt.
+    // Config per shot of globaal:  "storage": { "bv_cookie_consent": "necessary" }
+    if (s.storage) {
+      await page.evaluate((kv) => { try { for (const k in kv) localStorage.setItem(k, kv[k]); } catch (e) {} }, s.storage);
+      await page.goto(URL, { waitUntil: "networkidle2", timeout: 60000 });
+    }
+    // behavior: "instant" is GEEN detail. Zet de pagina scroll-behavior: smooth
+    // (Belvanger doet dat), dan is scrollIntoView een ANIMATIE die over een lange
+    // pagina langer duurt dan de wachttijd. Je fotografeert dan een sectie die je
+    // niet gevraagd hebt, en dat ziet er net geloofwaardig genoeg uit om het niet
+    // te merken. Gebeurd op 2026-08-21, twee opnames lang.
+    if (s.sel) await page.evaluate((x) => { const el = document.querySelector(x); if (el) el.scrollIntoView({ block: "center", behavior: "instant" }); }, s.sel);
+    else if (s.y) await page.evaluate((y) => scrollTo({ top: y, behavior: "instant" }), s.y);
     await new Promise((r) => setTimeout(r, s.wait || 2000));
     // check: horizontale overflow (body mag nooit horizontaal scrollen)
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

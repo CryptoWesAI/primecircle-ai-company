@@ -10,64 +10,106 @@
   <meta name="robots" content="noindex, nofollow" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="preload" href="fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="css/styles.css?v=2a9b2761" />
+  <link rel="preload" href="fonts/anton.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="css/brutal.css?v=213637ab" />
   <style>
-    .offer-head { border-bottom: 1px solid var(--line); background: var(--surface); }
-    .offer-head__inner { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; }
+    /* Aanbodpagina in dezelfde taal als de homepage: geen radii, geen blur-
+       schaduwen, randen doen het werk.
+       LET OP bij het vergelijken met de oude versie in git: die zette
+       font-weight 800/900 en font-stretch op var(--display). Dat werkte met
+       Fraunces (variabel), maar Anton heeft EEN gewicht en geen breedte-as.
+       Vet vragen laat de browser NEP-vet synthetiseren en dat smeert een smalle
+       letter dicht. Daarom overal font-weight: 400. */
+    .offer-head { border-bottom: var(--bd); background: var(--surface); }
+    .offer-head__inner { display: flex; align-items: center; justify-content: space-between; padding: 13px 0; }
 
-    .offer-hero { background: var(--werkblauw); color: var(--krijt); text-align: center; overflow: hidden; position: relative;
-      padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(5rem, 10vw, 8rem); }
-    .offer-hero::after { content: ""; position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(circle at 82% -5%, rgba(255,92,26,.20), transparent 46%); }
+    .offer-hero { background: var(--werkblauw); color: var(--krijt); text-align: left; position: relative;
+      padding: clamp(2.6rem, 6vw, 4.5rem) 0 clamp(5rem, 10vw, 8rem); }
+    .offer-hero::before { content: ""; position: absolute; top: 0; left: 0; right: 0;
+      height: 14px; background: var(--hazard); }
     .offer-hero .wrap { position: relative; z-index: 1; }
-    .offer-hero__badge { display: inline-block; background: color-mix(in srgb, var(--signaal) 22%, transparent);
-      color: #FF9152; border: 1px solid color-mix(in srgb, var(--signaal) 50%, transparent); font-weight: 800;
-      font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; padding: .45rem 1.05rem; border-radius: 999px; margin-bottom: 1.4rem; }
-    .offer-hero h1 { font-family: var(--display); font-weight: 900; font-stretch: 118%; letter-spacing: -.02em;
-      font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; margin: 0 0 1.1rem; }
-    .offer-hero__sub { max-width: 660px; margin: 0 auto; font-size: clamp(1.05rem, 2.4vw, 1.25rem); line-height: 1.6; color: rgba(250,249,246,.82); }
+    /* Was #FF9152 op een doorschijnend oranje vlak: dun en slecht leesbaar op
+       marine. Massief oranje met donkere merkinkt haalt 5,18:1, dezelfde regel
+       als de primaire knop. */
+    .offer-hero__badge { display: inline-block; background: var(--signaal); color: var(--werkblauw);
+      font-family: var(--display-ui); font-weight: 800; font-size: .74rem; letter-spacing: .16em;
+      text-transform: uppercase; padding: .34rem .6rem; border-radius: 0; margin-bottom: 1.3rem; }
+    .offer-hero h1 { font-family: var(--display); font-weight: 400; text-transform: uppercase;
+      letter-spacing: .002em; font-size: clamp(2.4rem, 6.6vw, 4.6rem); line-height: var(--lh-kop);
+      margin: 0 0 1.1rem; padding-top: .1em; text-wrap: balance; }
+    .offer-hero__sub { max-width: 52ch; margin: 0; font-size: clamp(1.02rem, 2.2vw, 1.18rem);
+      line-height: 1.55; color: rgba(250,249,246,.82); border-left: 4px solid var(--signaal); padding-left: 1.1rem; }
 
+    /* De kaart die over de rand van de hero heen valt blijft staan: dat is de
+       enige plek op de site waar twee vlakken elkaar overlappen, en hier mag dat. */
     .offer-deal { margin-top: clamp(-6rem, -8vw, -4.5rem); position: relative; z-index: 2; }
-    .deal-card { max-width: 720px; margin: 0 auto; background: var(--surface); border: 1px solid var(--line);
-      border-top: 5px solid var(--signaal); border-radius: var(--r-xl); box-shadow: var(--shadow-lg);
-      padding: clamp(1.8rem, 4vw, 2.8rem); text-align: center; }
-    .deal-card__tag { display: inline-block; background: color-mix(in srgb, var(--signaal) 15%, transparent);
-      color: var(--signaal-diep); font-weight: 800; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase;
-      padding: .4rem .9rem; border-radius: 999px; margin: 0 0 1.5rem; }
-    .deal-price { display: flex; align-items: center; justify-content: center; gap: clamp(1rem, 3vw, 2.4rem); flex-wrap: wrap; }
-    .deal-price__block { display: flex; flex-direction: column; align-items: center; }
-    .deal-price__label { font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; margin-bottom: .35rem; }
-    .deal-price__old { text-decoration: line-through; color: var(--muted); font-size: 1.3rem; font-weight: 600; line-height: 1; }
-    .deal-price__new { font-family: var(--display); font-weight: 900; font-stretch: 112%; line-height: 1; color: var(--ink);
-      font-size: clamp(2.7rem, 7vw, 3.7rem); }
-    .deal-price__new small { font-size: 1.05rem; font-weight: 700; color: var(--muted); }
-    .deal-price__note { font-size: .8rem; color: var(--vangst); font-weight: 800; margin-top: .35rem; }
-    .deal-price__plus { font-family: var(--display); font-weight: 800; font-size: 2rem; color: var(--muted); align-self: center; }
-    .deal-card__promise { background: color-mix(in srgb, var(--vangst) 12%, var(--surface));
-      border: 1px solid color-mix(in srgb, var(--vangst) 38%, var(--line)); color: var(--ink); border-radius: var(--r);
-      padding: .95rem 1.1rem; font-size: .92rem; line-height: 1.5; margin: clamp(1.6rem, 4vw, 2rem) 0 1.4rem; text-align: left; }
-    .deal-card__promise strong { color: var(--vangst); }
-    .deal-card__fine { font-size: .82rem; color: var(--muted); margin: 1rem 0 0; line-height: 1.5; }
+    .deal-card { max-width: 760px; margin: 0 auto; background: var(--surface);
+      border: var(--bd-hd); box-shadow: var(--shadow-hard); border-radius: 0;
+      padding: clamp(1.6rem, 3.5vw, 2.4rem); text-align: left; }
+    .deal-card__tag { display: block; background: var(--signaal); color: var(--werkblauw);
+      font-family: var(--display-ui); font-weight: 800; font-size: .74rem; letter-spacing: .14em;
+      text-transform: uppercase; padding: .45rem .7rem; border-radius: 0;
+      margin: calc(-1 * clamp(1.6rem, 3.5vw, 2.4rem)) calc(-1 * clamp(1.6rem, 3.5vw, 2.4rem)) 1.4rem; }
+    .deal-price { display: grid; grid-template-columns: 1fr max-content 1fr; align-items: stretch;
+      gap: var(--bd-w); background: var(--ink); border: var(--bd); }
+    .deal-price__block { display: flex; flex-direction: column; align-items: flex-start;
+      background: var(--surface); padding: 1.1rem 1.2rem; }
+    .deal-price__label { font-family: var(--display-ui); font-size: .7rem; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--muted); font-weight: 800; margin-bottom: .4rem; }
+    .deal-price__old { text-decoration: line-through; color: var(--muted); font-size: 1.15rem; font-weight: 700; line-height: 1; }
+    .deal-price__new { font-family: var(--display); font-weight: 400; line-height: .85; color: var(--ink);
+      font-size: clamp(2.6rem, 6.5vw, 3.8rem); letter-spacing: .002em;
+      font-variant-numeric: tabular-nums lining-nums; }
+    .deal-price__new small { font-family: var(--display-ui); font-size: .28em; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    .deal-price__note { font-family: var(--display-ui); font-size: .72rem; text-transform: uppercase;
+      letter-spacing: .06em; color: var(--vangst); font-weight: 800; margin-top: .45rem; }
+    .deal-price__plus { display: grid; place-items: center; background: var(--surface);
+      font-family: var(--display); font-weight: 400; font-size: 2.2rem; color: var(--signaal); padding: 0 .9rem; }
+    .deal-card__promise { background: var(--surface-2); border: 2px solid var(--vangst); border-left-width: 6px;
+      color: var(--ink); border-radius: 0; padding: .9rem 1.05rem; font-size: .9rem; line-height: 1.5;
+      margin: clamp(1.4rem, 3vw, 1.8rem) 0 1.3rem; text-align: left; }
+    .deal-card__promise strong { color: var(--vangst); text-transform: uppercase; letter-spacing: .04em; }
+    .deal-card__fine { font-size: .8rem; color: var(--muted); margin: 1rem 0 0; line-height: 1.5; }
 
     .offer-gets { padding: var(--sp-section) 0; }
-    .offer-gets__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--gap); margin-top: clamp(1.6rem, 4vw, 2.4rem); }
+    /* Zelfde rastergrammatica als "Wat je krijgt" op de homepage: cellen die hun
+       randen delen, met een EIGEN teller. Zonder counter-reset telt .card door
+       op de impliciete documentteller. */
+    .offer-gets__grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--bd-w);
+      background: var(--ink); border: var(--bd); margin-top: clamp(1.4rem, 3vw, 2rem);
+      counter-reset: krijgt; }
 
-    .offer-why { background: var(--surface-2); border-block: 1px solid var(--line); padding: var(--sp-section) 0; text-align: center; }
-    .offer-why .wrap { max-width: 720px; }
-    .offer-why__lead { font-size: clamp(1.05rem, 2.4vw, 1.2rem); color: var(--ink-soft); line-height: 1.6; margin: 1rem auto 0; }
-    .offer-why__spots { display: inline-block; margin-top: 1.6rem; background: var(--surface); border: 1px solid var(--line);
-      border-radius: 999px; padding: .55rem 1.1rem; font-weight: 700; color: var(--ink); font-size: .92rem; }
+    .offer-why { background: var(--surface-2); border-block: var(--bd); padding: var(--sp-section) 0; text-align: left; }
+    /* GEEN smallere .wrap hier. Dat centreerde deze sectie op 780px terwijl de
+       rest van de pagina op de gutter van 100px begint: in een ontwerp dat op
+       een hard raster leunt is een verspringende linkerrand het eerste wat
+       opvalt. De leesbreedte wordt nu op de tekst zelf begrensd. */
+    .offer-why__lead { max-width: 62ch; }
+    .offer-why__lead { font-size: clamp(1.02rem, 2.2vw, 1.16rem); color: var(--ink-soft); line-height: 1.55;
+      margin: 1rem 0 0; border-left: 4px solid var(--ink); padding-left: 1.1rem; }
+    .offer-why__spots { display: inline-block; margin-top: 1.6rem; background: var(--surface);
+      border: var(--bd); border-radius: 0; padding: .6rem 1rem; font-family: var(--display-ui);
+      font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); font-size: .8rem; }
     .offer-why__spots b { color: var(--signaal-diep); }
 
-    .offer-cta { background: var(--werkblauw); color: var(--krijt); text-align: center; padding: var(--sp-section) 0; }
-    .offer-cta__sub { color: rgba(250,249,246,.75); margin: 1rem 0 1.8rem; font-size: 1.05rem; }
+    .offer-cta { background: var(--signaal); color: var(--werkblauw); text-align: left; padding: 0; }
+    .offer-cta::before { content: ""; display: block; height: 14px; background: var(--hazard); }
+    .offer-cta .wrap { padding-block: var(--sp-section); }
+    .offer-cta .section-title--light { color: var(--werkblauw); }
+    .offer-cta__sub { color: var(--werkblauw); margin: 1rem 0 1.8rem; font-size: 1.02rem; max-width: 52ch; }
+    .offer-cta .btn--primary { --btn-bg: var(--werkblauw); --btn-fg: var(--krijt); --btn-bd: var(--werkblauw);
+      box-shadow: 5px 5px 0 var(--krijt); }
+    .offer-cta .btn--primary:hover { --btn-bg: var(--werkblauw-2); box-shadow: 2px 2px 0 var(--krijt); }
 
-    .offer-foot { text-align: center; padding: 2rem 0; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); }
-    .offer-foot a { color: var(--muted); }
+    .offer-foot { text-align: left; padding: 1.8rem 0; color: var(--muted); font-size: .82rem; border-top: var(--bd); }
+    .offer-foot a { color: var(--muted); text-decoration: underline; }
 
-    @media (max-width: 560px) {
+    @media (max-width: 620px) {
       .offer-gets__grid { grid-template-columns: 1fr; }
-      .deal-price__plus { transform: rotate(90deg); }
+      /* Onder elkaar hoort de plus ook onder elkaar te wijzen. */
+      .deal-price { grid-template-columns: 1fr; }
+      .deal-price__plus { padding: .5rem 0; }
     }
   </style>
 </head>
@@ -172,5 +214,5 @@
 
   <footer class="offer-foot">
     <div class="wrap">© <span data-year>2026</span> Belvanger · <a href="https://belvanger.nl">belvanger.nl</a></div>
-  </footer><script src="assets/ab-chat.js?v=9296c5aa" data-ab-chat data-lang="nl" defer></script></body>
+  </footer><script src="assets/ab-chat.js?v=7d70e413" data-ab-chat data-lang="nl" defer></script></body>
 </html>

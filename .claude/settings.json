@@ -12,6 +12,18 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .claude/hooks/check-belvanger-log.mjs",
+            "timeout": 10,
+            "statusMessage": "Activiteitenlog controleren..."
+          }
+        ]
+      }
     ]
   }
 }

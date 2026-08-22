@@ -88,3 +88,29 @@ which is universally useful. Don't build scroll-films for PrimeCircle clients.
 Use this to make the trades-blueprint pre-launch checklist (§13.5) real: *screenshot the
 page on desktop + mobile and actually look, before sending traffic.* Reusable for every
 web deliverable — Belvanger, client sites, the chatbot dashboard.
+
+## Gotchas
+
+Elke keer dat een opname loog of een fout pas laat opviel, komt hier een regel bij.
+
+- **`scroll-behavior: smooth` maakt `scrollIntoView` een animatie.** Over een lange
+  pagina duurt die langer dan de wachttijd, en dan fotografeer je een sectie die je
+  niet gevraagd hebt. Het resultaat ziet er geloofwaardig uit, dus je merkt het niet.
+  `verify.mjs` geeft nu `behavior: "instant"` mee. (2026-08-21, Belvanger-homepage,
+  twee opnames lang de verkeerde sectie.)
+- **Een cookiemelding dekt de onderste ~110px van élke opname af.** Daar zit precies
+  je primaire CTA. Zet de toestemming vooraf met `"storage": {"bv_cookie_consent":
+  "necessary"}` in de shot-config. (Belvanger gebruikt die sleutel; kijk in
+  `js/cookies.js` voor andere sites.)
+- **Een console-404 is niet automatisch een regressie.** Op een statische lokale
+  server (`python -m http.server`) mist alles wat de echte app-server levert. Bij
+  Belvanger is dat `/api/config` voor het chatwidget: 404 op localhost, prima in
+  productie. Zoek uit wélke URL het is voordat je het een fout noemt.
+- **Meet in plaats van te gokken bij typografie-artefacten.** Een wit hoekje van 10px
+  onder een label bleek het accent van de É in "EÉN": bij `line-height` kleiner dan
+  de fontgrootte steekt de inkt buiten de tekstbox. Een `getBoundingClientRect`-meting
+  van beide elementen wees dat in één keer aan; drie keer CSS aanpassen en opnieuw
+  kijken had het niet uitgewezen.
+- **De reveal-animatie maakt vroege opnames vaag.** Wacht ná het scrollen minstens
+  1200ms, anders fotografeer je elementen halverwege hun fade-in en denk je dat het
+  contrast niet klopt.

@@ -11,12 +11,17 @@
        pad zou vanaf /en/iets/typefout naar de verkeerde map wijzen. -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="preload" href="/fonts/archivo-standard.woff2" as="font" type="font/woff2" crossorigin />
-  <link rel="stylesheet" href="/css/styles.css?v=2a9b2761" />
+  <link rel="preload" href="/fonts/anton.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/css/brutal.css?v=213637ab" />
   <style>
     .nf { min-height: 100svh; display: grid; place-items: center; text-align: center; padding: 2rem 1.2rem; }
-    .nf__code { font-family: var(--display); font-stretch: 122%; font-weight: 800; font-size: clamp(4rem, 3rem + 8vw, 8rem); line-height: 1; color: var(--signaal); letter-spacing: -.03em; }
-    .nf__title { font-family: var(--display); font-stretch: 118%; font-weight: 800; font-size: clamp(1.6rem, 1.2rem + 2vw, 2.4rem); line-height: 1.05; margin: .8rem 0 .8rem; color: var(--ink); }
-    .nf__text { color: var(--ink-soft); max-width: 38ch; margin: 0 auto 2rem; }
+    /* Anton heeft ÉÉN gewicht. font-weight: 800 laat de browser nep-vet
+       synthetiseren en dat smeert een smalle letter dicht. font-stretch doet
+       niets (geen variabele as) en negatieve letter-spacing hoort bij een brede
+       serif, niet bij een condensed grotesk. */
+    .nf__code { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: clamp(4.5rem, 3rem + 9vw, 9rem); line-height: .85; color: var(--signaal); letter-spacing: .002em; }
+    .nf__title { font-family: var(--display); font-weight: 400; text-transform: uppercase; font-size: clamp(1.7rem, 1.2rem + 2.2vw, 2.6rem); line-height: var(--lh-kop); margin: .6rem 0 .8rem; color: var(--ink); letter-spacing: .002em; }
+    .nf__text { color: var(--ink-soft); max-width: 38ch; margin: 0 auto 2rem; border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink); padding: .9rem 0; }
     .nf__cta { display: flex; gap: .7rem; justify-content: center; flex-wrap: wrap; }
   </style>
 </head>
@@ -31,5 +36,5 @@
         <a class="btn btn--ghost btn--lg" href="/en/#gesprek">Book a call</a>
       </div>
     </div>
-  </main><script src="/assets/ab-chat.js?v=9296c5aa" data-ab-chat data-lang="en" defer></script></body>
+  </main><script src="/assets/ab-chat.js?v=7d70e413" data-ab-chat data-lang="en" defer></script></body>
 </html>

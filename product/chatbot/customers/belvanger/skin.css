@@ -1,0 +1,124 @@
+/* Belvanger — huisstijl-laag over widget.css heen.
+   Zie product/chatbot/customers/README.md §"Optioneel: skin.css".
+
+   WAAROM DEZE LAAG BESTAAT EN NIET widget.css IS AANGEPAST
+   config.json regelt de KLEUR maar niet de VORM, en widget.css wordt gedeeld
+   door zes klanten (a-sisters, ab-uitvaartzorg, belvanger, demo-bakkerij,
+   virtualcreator, _template). De rondingen daar veranderen zou alle zes raken.
+   a-sisters en virtualcreator gebruiken dezelfde uitweg.
+
+   HET SYSTEEM WAAR DIT BIJ HOORT
+   sites/belvanger/site/css/brutal.css: industrieel brutalisme. Rechte hoeken,
+   harde randen van 2px, geen blur-schaduwen, hoofdletters met letterafstand
+   voor labels, Anton voor de kop en Archivo voor de rest.
+
+   TWEE DINGEN OM TE WETEN VOOR JE HIERAAN WERKT
+   1. Het paneel is #ab-chat-panel en GEEN kind van #ab-chat. Selectoren die
+      #ab-chat .ab-... schrijven pakken het paneel dus niet.
+   2. Knoppen, textarea's en inputs erven de letter niet van de pagina. Wie ze
+      niet expliciet noemt, krijgt het invoerveld in monospace en de knoppen in
+      Arial. (Zelfde valkuil staat in de skin van a-sisters.)
+
+   3. De fonts Anton en Archivo worden door de PAGINA geladen (@font-face in
+      brutal.css). De widget draait same-origin in diezelfde pagina, dus ze
+      resolven. Draait het widget ooit op een vreemd domein, dan valt hij terug
+      op de stack die hieronder achter de komma staat. */
+
+/* ---- letter ------------------------------------------------------------- */
+/* Alles wat de letter niet erft, expliciet noemen. */
+#ab-chat-panel, #ab-chat-panel button, #ab-chat-panel textarea, #ab-chat-panel input,
+#ab-chat-toggle {
+  font-family: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+}
+
+/* ---- vorm: alles vierkant, randen doen het werk ------------------------- */
+#ab-chat-toggle {
+  border-radius: 0;
+  border: 2px solid #16232E;
+  background: #FF5C1A;
+  /* Donkere merkinkt op hi-vis oranje = 5,18:1. Wit zou 3,09:1 zijn en dat
+     zakt onder de AA-grens. Zelfde regel als .btn--primary op de site. */
+  color: #16232E;
+  font-family: "Archivo", system-ui, sans-serif;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 13px;
+  padding: 12px 16px;
+  box-shadow: 4px 4px 0 #16232E;
+}
+#ab-chat-toggle:hover { background: #FF7A3D; box-shadow: 2px 2px 0 #16232E; }
+
+#ab-chat-panel {
+  border-radius: 0;
+  border: 2px solid #16232E;
+  box-shadow: 7px 7px 0 #16232E;
+}
+
+/* ---- kop ---------------------------------------------------------------- */
+#ab-chat-panel .ab-header { border-bottom: 2px solid #16232E; }
+#ab-chat-panel .ab-header strong {
+  font-family: "Anton", "Arial Narrow", Impact, sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+  font-size: 19px;
+  /* Anton's kapitalen zijn .857em hoog; op een regelhoogte onder .99 gaan
+     regels plakken. Zie --lh-kop in brutal.css. */
+  line-height: .99;
+}
+#ab-chat-panel .ab-header small { text-transform: uppercase; letter-spacing: .07em; font-size: 11px; }
+#ab-chat-panel .ab-badge {
+  border-radius: 0;
+  background: #FF5C1A;
+  color: #16232E;
+  font-weight: 800;
+  letter-spacing: .12em;
+}
+
+/* ---- berichten ---------------------------------------------------------- */
+#ab-chat-panel .ab-msg { border-radius: 0; }
+#ab-chat-panel .ab-msg.ab-bot { border: 1.5px solid #16232E; }
+#ab-chat-panel .ab-msg.ab-user { border: 1.5px solid #16232E; }
+#ab-chat-panel .ab-msg.ab-note {
+  border-radius: 0;
+  background: #F2F0EB;
+  border: 1.5px solid #16232E;
+  color: #3A4753;
+  text-align: left;
+}
+
+/* ---- suggestieknoppen --------------------------------------------------- */
+#ab-chat-panel .ab-chip {
+  border-radius: 0;
+  border: 2px solid #16232E;
+  font-weight: 700;
+  transition: background .12s linear, color .12s linear;
+}
+#ab-chat-panel .ab-chip:hover { background: #16232E; color: #FAF9F6; border-color: #16232E; }
+
+/* ---- bel-actie en invoer ------------------------------------------------ */
+#ab-chat-panel .ab-call {
+  border-radius: 0;
+  background: #FF5C1A;
+  color: #16232E;
+  border: 2px solid #16232E;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-size: 13px;
+}
+#ab-chat-panel .ab-input { border-top: 2px solid #16232E; }
+#ab-chat-panel .ab-input textarea { border-radius: 0; border: 2px solid #16232E; }
+#ab-chat-panel .ab-input textarea:focus { outline: none; box-shadow: inset 0 0 0 2px #FF5C1A; }
+#ab-chat-panel .ab-input button {
+  border-radius: 0;
+  background: #16232E;
+  color: #FAF9F6;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  font-size: 13px;
+}
+#ab-chat-panel .ab-input button:hover:not(:disabled) { background: #FF5C1A; color: #16232E; }

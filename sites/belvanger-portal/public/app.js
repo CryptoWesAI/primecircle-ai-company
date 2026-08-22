@@ -879,7 +879,10 @@ function kgDraw(t) {
     const n = KG.nodes.find((k) => k.id === id), sc = screen[id];
     if (!n || !sc || sc.z < -0.75) continue;
     const strong = id === KG.hoverId || id === KG.activeId || n.type === "core";
-    ctx.font = `${strong ? "700" : "600"} ${n.type === "core" ? 13 : 12}px "Fraunces", system-ui, sans-serif`;
+    // Archivo, niet Anton: dit zijn labels van 12-13px en Anton is een condensed
+    // display-letter met EEN gewicht. Om 700 vragen laat de browser nep-vet
+    // synthetiseren, en dat smeert op deze grootte helemaal dicht.
+    ctx.font = `${strong ? "800" : "600"} ${n.type === "core" ? 13 : 12}px "Archivo", system-ui, sans-serif`;
     const tw = ctx.measureText(n.label).width, padX = 9, bh = 22, bw = tw + padX * 2;
     let lx = sc.sx + sc.r + 9, ly = sc.sy;
     if (lx + bw > w - 8) lx = sc.sx - sc.r - 9 - bw;

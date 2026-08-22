@@ -1,0 +1,131 @@
+/* ═══════════════════════════════════════════════════════════════
+   Belvanger, juridische pagina's: privacy, voorwaarden, en/privacy, en/terms.
+
+   WAAROM EEN APART BESTAND EN NIET brutal.css
+   Dit zijn leespagina's. brutal.css zet onder andere `ul { list-style: none }`
+   en een body-padding voor de mobiele belbalk: allebei fout in een juridische
+   tekst met opsommingen en zonder belbalk. De vier pagina's hadden elk hun
+   eigen <style>-blok met net andere waarden; dat is nu één bestand.
+
+   WAT ERVAN OVERGENOMEN IS
+   De merkkleuren en de fonts, zodat het dezelfde firma blijft. Verder: rechte
+   hoeken en harde randen zoals de rest van de site. De lees-layout zelf (één
+   smalle kolom, ruime regelafstand) blijft ongemoeid, want leesbaarheid gaat
+   hier voor stijl.
+   ═══════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Archivo";
+  src: url("../fonts/archivo-standard.woff2") format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Anton";
+  src: url("../fonts/anton.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --werkblauw: #16232E;
+  --signaal: #FF5C1A;
+  --signaal-diep: #E6480C;
+  --beton: #ECEAE4;
+  --krijt: #FAF9F6;
+  --staal: #6B7078;
+
+  --ink: var(--werkblauw);
+  --muted: var(--staal);
+  --bg: var(--beton);
+  --surface: var(--krijt);
+  --line: var(--werkblauw);
+  --line-soft: #C9C4BA;
+  /* Moet hier ECHT opnieuw staan: deze pagina's laden brutal.css niet, en een
+     ongedefinieerde custom property maakt de hele declaratie ongeldig. De
+     regelhoogte valt dan terug op `normal`, wat bij Anton ruim 1,5 is.
+     Waarde en onderbouwing: zie de kop van brutal.css. Houd ze gelijk. */
+  --lh-kop: 1.12;
+  --display: "Anton", "Arial Narrow", Impact, system-ui, sans-serif;
+  --display-ui: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #10191F; --surface: #16232E;
+    --ink: #F3F1EC; --muted: #93A0AB;
+    --line: #F3F1EC; --line-soft: #2C3E4B;
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--body); line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 760px; margin: 0 auto; padding: 40px 22px 72px; }
+
+a { color: var(--signaal-diep); text-underline-offset: 2px; }
+@media (prefers-color-scheme: dark) { a { color: var(--signaal); } }
+
+h1 {
+  font-family: var(--display); font-weight: 400; text-transform: uppercase;
+  font-size: clamp(2rem, 1.4rem + 2.4vw, 3rem); line-height: var(--lh-kop); letter-spacing: .002em;
+  margin: 0 0 .5rem; padding-top: .1em; text-wrap: balance;
+}
+h2 {
+  font-family: var(--display-ui); font-weight: 800; text-transform: uppercase;
+  letter-spacing: .05em; font-size: .95rem;
+  margin: 2.2rem 0 .5rem; padding-bottom: .35rem; border-bottom: 2px solid var(--line);
+}
+ul { padding-left: 1.15rem; margin: .6rem 0; }
+li { margin: .25rem 0; }
+
+/* ── VANGNET TEGEN NEP-VET ─────────────────────────────────────────────────
+   Anton heeft EEN gewicht (400). Vraagt een regel om 600/800/900, dan tekent de
+   browser zelf een vette variant door de letter uit te smeren. Dat ziet er niet
+   uit als een fout maar als een lelijk font, en het is daardoor twee keer door
+   de controle geglipt: eerst op aanbod.html en de 404's, daarna op de
+   paneelkoppen van het dashboard die door JS worden gemaakt.
+   font-synthesis-weight: none zegt: doe dat niet, teken gewoon het echte
+   gewicht. Archivo is variabel (100-900), dus die verliest er niets bij.
+   Alleen -weight, niet -style: `font-synthesis: none` zou ook de schuine
+   variant van <em> uitzetten en die wordt in de lopende tekst wel gebruikt. */
+* { font-synthesis-weight: none; }
+
+
+.lead { color: var(--muted); margin: 0 0 1.6rem; padding-bottom: 1.2rem; border-bottom: 4px solid var(--ink); }
+
+.note {
+  background: var(--surface); border: 2px solid var(--line); border-radius: 0;
+  padding: 14px 18px; font-size: .92rem; color: var(--muted);
+}
+/* De TODO-strook is bewust een waarschuwing: hij markeert tekst die nog niet
+   definitief is. Oranje randlinks, niet een zacht geel vlak dat wegvalt. */
+.todo {
+  background: var(--surface); border: 2px solid var(--signaal); border-left-width: 6px;
+  border-radius: 0; padding: 12px 16px; font-size: .9rem;
+}
+
+.back {
+  display: inline-block; margin-bottom: 22px;
+  font-family: var(--display-ui); font-weight: 800; font-size: .74rem;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--ink); border: 2px solid var(--line); padding: .4rem .7rem;
+  text-decoration: none;
+}
+.back:hover { background: var(--ink); color: var(--bg); }
+
+footer {
+  margin-top: 44px; padding-top: 18px; border-top: 2px solid var(--line);
+  font-size: .84rem; color: var(--muted);
+}
+
+/* Geen chatwidget-overrides hier: dat doet
+   product/chatbot/customers/belvanger/skin.css, via /api/widget-skin.css. */
