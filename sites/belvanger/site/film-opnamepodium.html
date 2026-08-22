@@ -190,6 +190,47 @@
        interne maten, dus een preview op een laptop kadreert identiek aan de
        echte opname op een telefoon. */
     (function () {
+      /* ── Vakvariant (?vak=verdelger) ─────────────────────────────────
+         Eén podium voor alle vakfilms in plaats van een kopie per vak. De opbouw,
+         de tijden en js/app.js blijven exact hetzelfde: alleen de woorden in het
+         voorbeeldgesprek wisselen, want de casus moet passen bij het vak dat je in
+         act 1 ziet. Een film die een verdelger toont en dan een installateursklus
+         in beeld brengt, spreekt zichzelf tegen.
+         Zonder ?vak= verandert er niets. Dat is bewust: de opnamescripts van de
+         eerste twee films wijzen naar deze pagina en moeten reproduceerbaar blijven. */
+      var VAKKEN = {
+        verdelger: {
+          hint: "Jij staat op de ladder…",
+          vraag: "Goedemiddag! Er zit een groot wespennest onder onze dakrand, vlak bij de voordeur. Zaterdag hebben we visite. Kunnen jullie er deze week nog langs?",
+          antwoord: "Vervelend, daar helpen we u snel vanaf. Deze week kunnen we langskomen. U wordt vandaag nog teruggebeld om een tijd af te spreken. Is dit nummer goed bereikbaar?",
+          lead: "wespennest onder de dakrand, deze week nog"
+        }
+      };
+      var vak = VAKKEN[new URLSearchParams(location.search).get("vak")];
+      if (vak) {
+        /* Het tijdstempel staat als los element IN de bubbel. textContent zetten
+           gooit hem eruit, dus hij gaat er daarna weer in. */
+        var zetBubbel = function (sel, tekst) {
+          var el = document.querySelector(sel);
+          if (!el) return;
+          var meta = el.querySelector(".bubble__meta");
+          el.textContent = tekst;
+          if (meta) el.appendChild(meta);
+        };
+        var hint = document.querySelector(".callscreen__hint");
+        if (hint) hint.textContent = vak.hint;
+        zetBubbel('[data-step="4"]', vak.vraag);
+        zetBubbel('[data-step="6"]', vak.antwoord);
+        var lead = document.querySelector('[data-step="7"] span:last-child');
+        if (lead) {
+          var vet = document.createElement("b");
+          vet.textContent = "Nieuwe lead binnen";
+          lead.textContent = "";
+          lead.appendChild(vet);
+          lead.appendChild(document.createTextNode(": " + vak.lead));
+        }
+      }
+
       var stage = document.querySelector(".stage");
       var fit = function () {
         var s = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);

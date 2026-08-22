@@ -53,6 +53,15 @@
       letter-spacing: -0.01em;
     }
     .mark svg { width: 62px; height: 62px; }
+    /* Alleen in een vakset (?set=...): de eerlijkheidsregel op de slotkaart.
+       In de eerste film draagt de gefilmde simulatie die regel al onderin beeld;
+       in een vakfilm staat de slotkaart los, dus hij hoort hier ook te staan. */
+    .fine {
+      font-family: Archivo, Arial, sans-serif; font-weight: 500;
+      font-size: 30px; line-height: 1.4; margin: 34px 0 0; color: #8D97A0;
+      display: none;
+    }
+    body[data-set] .fine { display: block; }
     [data-kaart] { display: none; }
     body[data-show="1"] [data-kaart="1"],
     body[data-show="2"] [data-kaart="2"] { display: flex; }
@@ -71,6 +80,7 @@
       <p class="lead">Opgevangen.</p>
       <h1 style="font-size:64px;line-height:1.15;font-weight:600;">Zonder dat je<br>iets deed.</h1>
       <p class="cta">Ken je iemand die dit kan gebruiken?<br>Stuur me een appje.</p>
+      <p class="fine">Voorbeeld ter illustratie, geen echte klant.</p>
     </div>
     <div class="mark">
       <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M6 22a13 13 0 0 1 20-11" fill="none" stroke="#F4F2ED" stroke-width="3.4" stroke-linecap="round"/><circle cx="26.5" cy="9.5" r="4" fill="#FF5A1F"/></svg>
@@ -79,6 +89,25 @@
   </section>
 
   <script>
-    document.body.dataset.show = new URLSearchParams(location.search).get("kaart") || "1";
+    /* ── Vaksets (?set=verdelger) ───────────────────────────────────
+       Eén kaartenpagina voor alle vakfilms. Kaart 2 is voor elke film hetzelfde
+       (de belofte en de vraag veranderen niet per vak), kaart 1 niet: die verwijst
+       naar wat je in act 1 hebt gezien, en dat is per vak een ander beeld.
+       Zonder ?set= staat er exact wat er stond, zodat de eerste film reproduceerbaar
+       blijft. innerHTML is hier veilig: vaste tekst uit dit bestand, geen invoer. */
+    var SETS = {
+      verdelger: {
+        kop: "Je had je<br>handen vol.",
+        sub: "Letterlijk. En je telefoon<br>bleef maar gaan."
+      }
+    };
+    var params = new URLSearchParams(location.search);
+    document.body.dataset.show = params.get("kaart") || "1";
+    var set = SETS[params.get("set")];
+    if (set) {
+      document.body.dataset.set = params.get("set");
+      document.querySelector('[data-kaart="1"] h1').innerHTML = set.kop;
+      document.querySelector('[data-kaart="1"] .sub').innerHTML = set.sub;
+    }
   </script></body>
 </html>
