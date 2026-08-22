@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<title>Belvanger actiebeeld — weggeefactie</title>
+<!--
+  ACTIEBEELD, GEEN WEBPAGINA.
+  Dit bestand bestaat om als PNG te worden afgeschoten door tools/actiebeeld-maken.mjs.
+
+  Waarom niet met een beeldmodel: die kan jouw logo niet reproduceren en spelt Nederlandse
+  tekst regelmatig verkeerd. Een verkeerd logo of een typefout op een publieke actiepost is
+  erger dan geen beeld. Hier komt het logo uit favicon.svg en de tekst uit je eigen
+  lettertypen, dus het klopt per definitie.
+
+  Tekst aanpassen? Wijzig hieronder en draai het script opnieuw. Duurt seconden.
+-->
+<style>
+  @font-face { font-family:"Fraunces"; src:url("../../sites/belvanger/site/fonts/fraunces.woff2") format("woff2");
+    font-weight:100 900; font-style:normal; font-display:block; }
+  @font-face { font-family:"Archivo"; src:url("../../sites/belvanger/site/fonts/archivo-standard.woff2") format("woff2");
+    font-weight:100 900; font-stretch:62% 125%; font-style:normal; font-display:block; }
+
+  :root{
+    --werkblauw:#16232E; --werkblauw-2:#1E3140; --signaal:#FF5C1A; --krijt:#FAF9F6;
+    --display:"Fraunces",Georgia,serif; --body:"Archivo",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1080px;height:1350px;overflow:hidden}
+  body{background:var(--werkblauw);font-family:var(--body);color:var(--krijt);
+    -webkit-font-smoothing:antialiased}
+
+  .doek{position:relative;width:1080px;height:1350px;display:flex;flex-direction:column;
+    padding:86px 84px 74px;overflow:hidden}
+
+  /* Hi-vis schuine strepen rechtsonder. Laag in dekking: ze mogen het oog niet van de kop
+     wegtrekken, ze geven alleen textuur en kleurherkenning. */
+  /* Op .14 over dit donkerblauw worden de strepen bruinig en lezen ze als krassen over de
+     tekst. Lager, dunner en verder in de hoek: textuur in plaats van ruis. */
+  .strepen{position:absolute;right:-200px;bottom:-240px;width:720px;height:720px;
+    transform:rotate(-22deg);opacity:.085;pointer-events:none;
+    background:repeating-linear-gradient(90deg,
+      var(--signaal) 0 18px, transparent 18px 82px)}
+  /* Zachte gloed linksboven, zodat het vlak niet dood is. */
+  .gloed{position:absolute;left:-180px;top:-200px;width:900px;height:900px;pointer-events:none;
+    background:radial-gradient(circle at center, rgba(255,92,26,.16), transparent 62%)}
+
+  .top{position:relative;z-index:2}
+  .eyebrow{font-weight:800;font-size:26px;letter-spacing:.30em;text-transform:uppercase;
+    color:var(--signaal)}
+
+  .midden{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;
+    justify-content:center;margin-top:0;gap:0}
+  h1{font-family:var(--display);font-weight:600;font-size:142px;line-height:.94;
+    letter-spacing:-.025em}
+  h1 em{font-style:italic;font-weight:500;color:var(--signaal)}
+  .sub{font-size:36px;line-height:1.35;margin-top:26px;color:rgba(250,249,246,.74);max-width:20ch}
+
+  /* De waardevermelding. Bewust GEEN doorgestreepte "normaal"-prijs die niemand ooit heeft
+     betaald: dat is een misleidende referentieprijs en het is precies de claim die de
+     "alles is na te kijken"-positionering onderuithaalt. Dit zegt wat de opstart kost, en
+     dat is waar zodra dat bedrag na de founding-fase echt gevraagd wordt.
+     Zie de openstaande punten in CURRENT_STATE.md. */
+  .waarde{display:inline-flex;align-items:center;gap:16px;margin-top:28px;
+    border:2px solid rgba(255,92,26,.42);border-radius:999px;padding:14px 26px;
+    font-weight:800;font-size:29px;color:rgba(250,249,246,.9);align-self:flex-start}
+  .waarde s{color:rgba(250,249,246,.45);text-decoration-thickness:2px}
+  .waarde b{color:var(--signaal);font-weight:800}
+
+  /* De prijsbalk. Donkere tekst op signaaloranje haalt AA, andersom niet. */
+  .balk{position:relative;z-index:2;background:var(--signaal);color:var(--werkblauw);
+    border-radius:22px;padding:30px 40px;margin-top:52px;display:flex;align-items:baseline;
+    gap:18px;flex-wrap:wrap}
+  .balk b{font-family:var(--display);font-weight:600;font-size:46px;letter-spacing:-.01em}
+  .balk span{font-weight:800;font-size:30px;letter-spacing:.01em}
+  /* De einddatum staat in de posttekst, maar een beeld wordt losgeknipt en doorgestuurd
+     zonder die tekst. Dan moet de termijn meereizen, anders reageert er over een maand nog
+     iemand op een actie die niet meer loopt. */
+  .termijn{position:relative;z-index:2;margin-top:22px;font-weight:700;font-size:27px;
+    color:rgba(250,249,246,.58)}
+
+  .voet{position:relative;z-index:2;margin-top:56px;display:flex;align-items:center;
+    justify-content:space-between;gap:24px}
+  .merk{display:flex;align-items:center;gap:18px}
+  .merk svg{width:64px;height:64px;overflow:visible;flex:none}
+  .merk__arc{stroke:var(--krijt);stroke-width:3.4;fill:none;stroke-linecap:round}
+  .merk__dot{fill:var(--signaal)}
+  .merk__naam{font-weight:800;font-size:46px;letter-spacing:-.01em}
+  .url{font-weight:700;font-size:30px;color:rgba(250,249,246,.6)}
+
+  /* Slot voor je eigen character. Laat hem WEG als je hem niet hebt: het beeld is zonder
+     hem compleet. Zet je hem erin, dan hoort hij hier — klein, rechtsonder, achter de
+     tekst langs. De kop is de ster, niet het figuur. */
+  .character{position:absolute;right:-30px;bottom:120px;width:430px;z-index:1;opacity:0;
+    pointer-events:none}
+</style>
+</head>
+<body>
+  <div class="doek">
+    <div class="gloed"></div>
+    <div class="strepen"></div>
+
+    <!-- Zet src en opacity:1 zodra het characterbestand er is -->
+    <img class="character" alt="" src="" />
+
+    <header class="top">
+      <p class="eyebrow">Weggeefactie</p>
+    </header>
+
+    <div class="midden">
+      <h1>Gratis<br>website voor<br>één <em>vakman</em>.</h1>
+      <p class="sub">Ik bouw hem, jij hoeft alleen terug te bellen.</p>
+      <p class="waarde">Opstart <s>&euro;1.250</s> <b>&euro;0</b></p>
+    </div>
+
+    <div class="balk">
+      <b>Eerste maand gratis</b>
+      <span>daarna &euro;99 per maand</span>
+    </div>
+    <p class="termijn">Tag iemand v&oacute;&oacute;r 24 augustus &middot; ik kies op het verhaal</p>
+
+    <div class="voet">
+      <div class="merk">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <path class="merk__arc" d="M6 22a13 13 0 0 1 20-11" />
+          <circle class="merk__dot" cx="26.5" cy="9.5" r="4" />
+        </svg>
+        <span class="merk__naam">Belvanger</span>
+      </div>
+      <span class="url">belvanger.nl</span>
+    </div>
+  </div>
+</body>
+</html>
