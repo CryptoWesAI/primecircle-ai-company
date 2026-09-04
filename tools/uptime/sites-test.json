@@ -1,0 +1,22 @@
+{
+  "_leesmij": [
+    "Met opzet kapotte adressen, om te toetsen dat de bewaker echt alarm slaat.",
+    "Drie manieren waarop een site stuk kan zijn, en de derde is degene die een",
+    "gewone pingcontrole mist.",
+    "",
+    "  node tools/uptime/controleer.mjs --sites=sites-test.json",
+    "",
+    "Verwacht: drie keer STUK en afsluitcode 1. Krijg je iets anders, dan is de",
+    "bewaker stuk en niet de site."
+  ],
+  "tls_waarschuwing_dagen": 12,
+  "pogingen": 2,
+  "wacht_ms": 300,
+  "time_out_ms": 8000,
+  "sites": [
+    { "url": "https://bestaat-echt-niet.belvanger.nl/", "bevat": "wat dan ook", "klant": true,  "wat": "TOETS onbereikbaar" },
+    { "url": "https://belvanger.nl/bestaat-niet-404",   "bevat": "wat dan ook", "klant": false, "wat": "TOETS verkeerde status" },
+    { "url": "https://belvanger.nl/",                   "bevat": "ZINDIENIETOPDEPAGINASTAAT", "klant": true, "wat": "TOETS 200 maar lege inhoud" },
+    { "url": "https://belvanger.nl/",                   "bevat": "Mis nooit meer een klant", "klant": false, "wat": "TOETS gezond, hoort ok te zijn" }
+  ]
+}
