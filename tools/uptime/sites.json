@@ -30,7 +30,7 @@
     { "url": "https://a-sisters.belvanger.nl/",     "bevat": "The A-Sisters",          "klant": false, "wat": "The A-Sisters, voorbeeld" },
     { "url": "https://virtualcreator.belvanger.nl/","bevat": "Virtual Creator",        "klant": false, "wat": "Virtual Creator, voorbeeld" },
     { "url": "https://n8n.primecircle.cloud/",      "bevat": "n8n",                    "klant": false, "wat": "n8n, intern" },
-    { "url": "https://sable.primecircle.cloud/",    "bevat": "Sable Among Peers",      "klant": false, "wat": "Sable-uitleg en vergelijking, contestinzending" },
+    { "url": "https://sable.primecircle.cloud/",    "bevat": "Sable Observatory",      "klant": false, "wat": "Sable Observatory, uitleg, verificatie en vergelijking" },
     { "url": "https://sable.primecircle.cloud/sable-api/receipts/pubkey", "bevat": "signer_address", "klant": false, "wat": "Sable-pagina: proxy naar Sable-API (cache, mag verouderd zijn)" }
   ]
 }
