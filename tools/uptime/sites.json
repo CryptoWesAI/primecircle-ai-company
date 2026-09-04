@@ -1,0 +1,36 @@
+{
+  "_leesmij": [
+    "De lijst met adressen die bewaakt worden. Dit bestand is de enige plek waar",
+    "je iets toevoegt of weghaalt; de workflow en de checker lezen het.",
+    "",
+    "  url      het adres dat opgevraagd wordt (redirects worden gevolgd)",
+    "  bevat    een stuk tekst dat op de pagina MOET staan. Zonder dit zou een",
+    "           lege pagina met status 200 als gezond doorgaan, en dat is",
+    "           precies de storing die je niet ziet aankomen.",
+    "  klant    true = hier zit een echte klant achter. Die wegen zwaarder in",
+    "           de melding.",
+    "",
+    "Vastgesteld op 2026-08-28 uit de Traefik-routers op de VPS, dus dit is de",
+    "lijst die er werkelijk wordt geserveerd en niet een lijst uit het hoofd."
+  ],
+
+  "tls_waarschuwing_dagen": 12,
+  "pogingen": 3,
+  "wacht_ms": 4000,
+  "time_out_ms": 20000,
+
+  "sites": [
+    { "url": "https://dashboard.belvanger.nl/",     "bevat": "Belvanger dashboard",    "klant": true,  "wat": "Klantportaal Belvanger" },
+    { "url": "https://ab.primecircle.cloud/",       "bevat": "AB Uitvaartzorg",        "klant": true,  "wat": "AB Uitvaartzorg" },
+    { "url": "https://siedsma.primecircle.cloud/",  "bevat": "Glasservice",            "klant": true,  "wat": "Glasservice Siedsma" },
+    { "url": "https://knifensharp.com/",            "bevat": "KnifeNsharp",            "klant": true,  "wat": "KnifeNsharp" },
+    { "url": "https://ouderschooldriehoek.com/",    "bevat": "ouder-school-driehoek",  "klant": true,  "wat": "De ouder-school-driehoek" },
+    { "url": "https://belvanger.nl/",               "bevat": "Mis nooit meer een klant", "klant": false, "wat": "Belvanger, eigen site" },
+    { "url": "https://platform.primecircle.cloud/", "bevat": "PrimeCircle",            "klant": false, "wat": "PrimeCircle platform" },
+    { "url": "https://a-sisters.belvanger.nl/",     "bevat": "The A-Sisters",          "klant": false, "wat": "The A-Sisters, voorbeeld" },
+    { "url": "https://virtualcreator.belvanger.nl/","bevat": "Virtual Creator",        "klant": false, "wat": "Virtual Creator, voorbeeld" },
+    { "url": "https://n8n.primecircle.cloud/",      "bevat": "n8n",                    "klant": false, "wat": "n8n, intern" },
+    { "url": "https://sable.primecircle.cloud/",    "bevat": "Sable Observatory",      "klant": false, "wat": "Sable Observatory, uitleg, verificatie en vergelijking" },
+    { "url": "https://sable.primecircle.cloud/sable-api/receipts/pubkey", "bevat": "signer_address", "klant": false, "wat": "Sable-pagina: proxy naar Sable-API (cache, mag verouderd zijn)" }
+  ]
+}
