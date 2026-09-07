@@ -138,8 +138,6 @@
   .rail-toggle{display:none}
   @media (max-width:900px){
     body{padding-bottom:96px}
-    .ring-wrap{grid-template-columns:1fr;gap:16px}
-    .ring-stage{max-width:340px}
     .ticks span:nth-child(2),.ticks span:nth-child(3){display:none}
     .eyebrow{font-size:10px;letter-spacing:.14em;gap:10px;white-space:nowrap}
     .eyebrow::before,.eyebrow::after{width:18px;flex:none}
@@ -552,12 +550,14 @@
   .ring-center b{font-family:var(--mono);font-weight:600;font-size:clamp(20px,2.4vw,28px);color:var(--cyan-soft);letter-spacing:-.01em;margin:4px 0 3px;overflow-wrap:anywhere}
   .ring-center .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.4}
   .ring-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .ring-facts .rfact.days{grid-column:1/-1}
+  .ring-facts .rfact.span2{grid-column:1/-1}
   .rfact .v.moon{color:var(--moon)}
   .days{display:flex;gap:4px;align-items:flex-end;height:56px;margin:8px 0 4px}
   .days span{flex:1;min-width:0;border-radius:2px 2px 0 0;background:var(--dim2);min-height:2px}
   .days span.up{background:var(--ok)} .days span.down{background:var(--moon)}
   .days.empty{height:auto}
+  @media (max-width:900px){.ring-wrap{grid-template-columns:1fr;gap:16px}.ring-stage{max-width:340px}}
+  @media (max-width:520px){.ring-facts{grid-template-columns:1fr}}
   .ladder{position:relative;margin-top:26px;font-family:var(--mono)}
   .ticks{position:relative;height:18px;margin-left:236px;margin-right:96px;border-bottom:1px solid var(--edge2)}
   .ticks span{position:absolute;bottom:2px;transform:translateX(-50%);font-size:10.5px;color:var(--dim);letter-spacing:.06em}
@@ -928,7 +928,7 @@
         <div class="rfact"><span class="k">burned</span><span class="v moon" id="ring-burned">…</span><span class="s" id="ring-burned-s">of the 1,000,000,000 minted.</span></div>
         <div class="rfact"><span class="k">can be made</span><span class="v ok" id="ring-mint">…</span><span class="s" id="ring-mint-s">read from the mint account.</span></div>
         <div class="rfact"><span class="k">market cap</span><span class="v" id="ring-mcap">…</span><span class="s" id="ring-mcap-s">…</span></div>
-        <div class="rfact days"><span class="k">day by day</span><div class="days" id="ring-days"></div><span class="s" id="ring-days-s">…</span></div>
+        <div class="rfact span2"><span class="k">day by day</span><div class="days" id="ring-days"></div><span class="s" id="ring-days-s">…</span></div>
       </div>
     </div>
     <div class="ladder" translate="no">
