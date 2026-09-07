@@ -23,7 +23,14 @@ is handled. Your job is to refuse what must not pass before it gets there.
   are harder to tell from intact ones. Wave one already moves at 17 units a
   second with a request every 750 ms, a fifth of them broken and a tenth loops:
   the founder asked for difficulty from the first second. A run ends when the budget reaches
-  zero or after 150 seconds. The player can end a run early; it still counts.
+  zero; there is no clock, only a ten-minute hard cap (the full shift). Waves keep
+  escalating: 45 units a second by wave 15, a request every 220 ms from wave 8, up to
+  42% broken and 28% loops, loops up to ten links, seals fading to 22% visibility.
+  A wave defended without a leak gives 10 budget back (max 100), so the patient
+  player earns the length of the run. Changed on 7 September 2026 from a fixed
+  150-second run, because the founder wanted it harder and longer for hardcore
+  players; the board's plausibility caps moved with it (500 points a second, 601 s; a perfect ten-minute run is 262,925).
+  The player can end a run early; it still counts. The demo stops after a minute.
 - Multiplier: 1 + floor(streak / 5), capped at 5. Only refusals build the streak; a wave defended without a leak pays 50 times its number.
 
 Same arena for everyone on a given day: the seed is the UTC date plus the

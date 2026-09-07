@@ -875,7 +875,7 @@
   <section class="band" id="play">
     <div class="eyebrow left">Play</div>
     <h2>Gatekeeper</h2>
-    <p class="sub">You are Sable's door. <b>Sealed requests pass and become receipts. Broken seals and runaway loops must be refused before they reach the door.</b> The refusal is the feature: only refusals build your streak. Two and a half minutes, the same arena for everyone today, a leaderboard without accounts.</p>
+    <p class="sub">You are Sable's door. <b>Sealed requests pass and become receipts. Broken seals and runaway loops must be refused before they reach the door.</b> The refusal is the feature: only refusals build your streak. No clock: the shift lasts as long as your budget, every wave is harder than the last, and a clean wave gives budget back. The same arena for everyone today, a leaderboard without accounts.</p>
     <div class="game" id="game">
       <div class="game-stage" id="game-stage">
         <div class="game-size" aria-hidden="true"></div>
@@ -884,7 +884,7 @@
         <div class="game-msg" id="game-msg" aria-live="polite"></div>
         <div class="game-hud" id="game-hud" hidden>
           <div class="g-left"><div class="g-score" id="g-score">0</div><div class="g-sub"><span class="g-mult" id="g-mult">×1</span> <span id="g-streak"></span></div><div class="g-who" id="g-who"></div></div>
-          <div class="g-mid"><div class="g-budget" id="g-budget"><div id="g-budget-fill"></div></div><div class="g-sub"><span id="g-wave">wave 1</span> · <span id="g-time">150s</span></div></div>
+          <div class="g-mid"><div class="g-budget" id="g-budget"><div id="g-budget-fill"></div></div><div class="g-sub"><span id="g-wave">wave 1</span> · <span id="g-time">0s</span></div></div>
           <button type="button" class="g-attest" id="g-attest">Attest · ● ● ●</button>
         </div>
         <div class="game-over game-start" id="game-start">
@@ -937,6 +937,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">7 Sep 2026</span><span><b>Endless shift.</b> The clock is gone from Gatekeeper: a run lasts as long as your budget, every wave is harder than the last, and a wave defended without a leak gives ten budget back. The board now measures how long you can hold the door, not how well you fill two and a half minutes. Ten minutes is the hard cap.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Reliability record.</b> The hourly ledger in the Log became a record: how long the confidential backend has been failing closed, in how many checks it was verified, whether the gateway answered, and a day-by-hour grid of every check since 4 September. Sable's own uptime figure sits next to it, because that number counts the gateway and not the backend.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Lisa, in the guide.</b> The voice agent from lisaonsable.com now answers inside the guide panel: press Talk to Lisa, she opens topics and sections of the whitepaper while she speaks, and her words appear as captions. Nothing from ElevenLabs loads until that button is pressed. Hear the tour calls her and she gives it one page at a time, moving on when you ask or press Next page; if she cannot start, your browser’s voice reads it instead. The topic buttons work without her.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Share your run.</b> The end of a Gatekeeper run now draws a card in the site's style: score, wave, what you refused and what leaked, the day's arena, your name. Share it from a phone, save it anywhere, or post it on X with the text prefilled. Drawn on a canvas on your device; nothing is uploaded.</span></li>
@@ -1149,7 +1150,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     field:'The field. Eight projects on one checklist, read from their own documentation. The last column shows when each project’s public page last changed, checked daily. Scroll the table sideways on a phone.',
     token:'Where the token sits. A log-scale ladder of market caps, read live when the page opens. SABL’s only role is an optional pay-in that burns the token, and it is not live yet.',
     scenarios:'Scenarios, not predictions. Three bands for what the token could be worth, and what would have to be true first. No multiples, no targets.',
-    play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. Two and a half minutes, the same arena for everyone today, and a leaderboard without accounts.',
+    play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. There is no clock: the shift lasts as long as your budget and every wave is harder than the last. The same arena for everyone today, and a leaderboard without accounts.',
     log:'The log. What changed on this page, the hourly reliability record from the watcher, how long Sable has been failing closed, the whitepaper watched hourly with every diff, and what this page got wrong, with dates.',
     community:'The community. Sable’s Telegram and X. Bring a question, not a price.'
   };

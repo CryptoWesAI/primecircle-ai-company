@@ -114,7 +114,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     field:'The field. Eight projects on one checklist, read from their own documentation. The last column shows when each project’s public page last changed, checked daily. Scroll the table sideways on a phone.',
     token:'Where the token sits. A log-scale ladder of market caps, read live when the page opens. SABL’s only role is an optional pay-in that burns the token, and it is not live yet.',
     scenarios:'Scenarios, not predictions. Three bands for what the token could be worth, and what would have to be true first. No multiples, no targets.',
-    play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. Two and a half minutes, the same arena for everyone today, and a leaderboard without accounts.',
+    play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. There is no clock: the shift lasts as long as your budget and every wave is harder than the last. The same arena for everyone today, and a leaderboard without accounts.',
     log:'The log. What changed on this page, the hourly reliability record from the watcher, how long Sable has been failing closed, the whitepaper watched hourly with every diff, and what this page got wrong, with dates.',
     community:'The community. Sable’s Telegram and X. Bring a question, not a price.'
   };

@@ -16,8 +16,9 @@ while (!perf.state.over) { autopilot(perf); perf.step(TICK); }
 const sp = perf.summary();
 ok(sp.reason === "time" && sp.leaked === 0, "perfect run reaches the clock with nothing leaked: " + JSON.stringify(sp));
 ok(sp.score > si.score * 3, "judgement beats idling: " + sp.score + " vs " + si.score);
-ok(sp.wave === 8, "150 s spans eight waves: " + sp.wave);
-ok(sp.cleanWaves === 7, "a perfect run defends every completed wave cleanly: " + sp.cleanWaves);
+ok(sp.wave === 31, "the ten-minute cap spans 31 waves: " + sp.wave);
+ok(sp.cleanWaves === 30, "a perfect run defends every completed wave cleanly: " + sp.cleanWaves);
+ok(sp.budget === 100, "a perfect run keeps its budget: " + sp.budget);
 
 // determinism: replaying the perfect run's log reproduces its summary
 const rp = replay("2026-09-06:test", perf.state.log);

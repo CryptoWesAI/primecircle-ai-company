@@ -147,7 +147,7 @@ function build(opts) {
     el.streak.textContent = s.streak ? s.streak + " in a row" : "";
     el.fill.style.width = s.budget + "%"; el.budget.classList.toggle("low", s.budget <= 30);
     el.wave.textContent = "wave " + s.wave;
-    el.time.textContent = Math.max(0, Math.ceil((RUN_MS - s.t) / 1000)) + "s";
+    const sec = Math.floor(s.t / 1000); el.time.textContent = sec >= 60 ? Math.floor(sec / 60) + ":" + String(sec % 60).padStart(2, "0") : sec + "s";
     el.attest.textContent = "Attest ·" + " ●".repeat(s.attest) + " ○".repeat(3 - s.attest);
     el.attest.disabled = s.attest === 0;
   }
@@ -158,6 +158,7 @@ function build(opts) {
     const dt = Math.min(100, now - (last || now)); last = now;
     if (!document.hidden) {
       if (autoplayOn) autopilot(game);
+      if (demo && !game.state.over && game.state.t >= 60000) game.input("end");
       game.step(dt);
       handle(game.drain());
       // sync meshes
@@ -227,7 +228,7 @@ function build(opts) {
     setTimeout(() => {
       stage.classList.remove("live"); hud.hidden = true; endO.hidden = false;
       $("ge-score").textContent = s.score.toLocaleString("en-US");
-      $("ge-why").textContent = s.reason === "budget" ? "Budget exhausted in wave " + s.wave + "." : s.reason === "time" ? "Full shift. Wave " + s.wave + " reached." : "You left the door in wave " + s.wave + ".";
+      $("ge-why").textContent = s.reason === "budget" ? "Budget exhausted in wave " + s.wave + "." : s.reason === "time" ? "Full shift: ten minutes at the door. Wave " + s.wave + " reached." : "You left the door in wave " + s.wave + ".";
       $("ge-refused").textContent = s.refusedBad + " broken seal" + (s.refusedBad === 1 ? "" : "s") + ", " + s.refusedLoops + " loop" + (s.refusedLoops === 1 ? "" : "s") + " cut";
       $("ge-clean").textContent = s.cleanWaves + " clean wave" + (s.cleanWaves === 1 ? "" : "s");
       $("ge-leaked").textContent = s.leaked + " leaked, " + s.refusedGood + " sealed request" + (s.refusedGood === 1 ? "" : "s") + " wrongly refused";

@@ -128,7 +128,7 @@ const server = createServer(async (req, res) => {
       const d = cleanDevice(body.device); if (!d) return json(res, 400, { error: "device" });
       if (limited("start:" + devHash(d), 120) || limited("startip:" + ipOf(req), 400)) return json(res, 429, { error: "slow down" });
       const seed = seedFor(today());
-      return json(res, 200, { seed, token: makeToken(seed, d), run_ms: 150000, min_ms: MIN_MS });
+      return json(res, 200, { seed, token: makeToken(seed, d), run_ms: 600000, min_ms: MIN_MS });
     }
     if (req.method === "POST" && path === "/score") {
       const body = await readBody(req);
@@ -144,8 +144,8 @@ const server = createServer(async (req, res) => {
       if (!ints) return json(res, 400, { error: "numbers" });
       const secs = dur / 1000;
       if (dur < MIN_MS) return json(res, 400, { error: "too short", min_ms: MIN_MS });
-      if (dur > age + 2000 || dur > 150000 + 1000) return json(res, 400, { error: "duration" });
-      if (score > 250 * secs + 500 || receipts > 4 * secs + 10 || wave > 1 + Math.floor(dur / 20000) + 1) return json(res, 400, { error: "implausible" });
+      if (dur > age + 2000 || dur > 600000 + 1000) return json(res, 400, { error: "duration" });
+      if (score > 500 * secs + 500 || receipts > 4 * secs + 10 || wave > 1 + Math.floor(dur / 20000) + 1) return json(res, 400, { error: "implausible" });
       const logHash = typeof body.log_hash === "string" && /^[0-9a-f]{8}$/.test(body.log_hash) ? body.log_hash : null;
       const dh = devHash(d);
       if (limited("score:" + dh, 30) || limited("scoreip:" + ipOf(req), 120)) return json(res, 429, { error: "slow down" });

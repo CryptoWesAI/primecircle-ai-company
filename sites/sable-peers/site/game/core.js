@@ -3,7 +3,7 @@
 // No rendering, no clock, no DOM in this file.
 
 export const TICK = 1000 / 60;
-export const RUN_MS = 150000;
+export const RUN_MS = 600000;                               // the hard cap: a full shift
 export const WAVE_MS = 20000;
 export const SPAWN_Z = -70;
 
@@ -39,23 +39,23 @@ export function createGame(seed) {
     receipts: 0, refusedBad: 0, refusedLoops: 0, refusedGood: 0, leaked: 0, waveLeaks: 0, cleanWaves: 0, attest: 3, slow: 0,
     nextSpawn: 900, nextId: 1, caps: [], events: [], log: [], over: false, reason: null,
   };
-  const speed = () => 15 + s.wave * 2;                        // units per second toward the door
-  const spawnInterval = () => Math.max(300, 820 - s.wave * 70);
+  const speed = () => Math.min(45, 15 + s.wave * 2);          // units per second toward the door, capped at wave 15
+  const spawnInterval = () => Math.max(220, 800 - s.wave * 75); // a request every 220 ms from wave 8 on
   const setMult = () => { s.mult = Math.min(5, 1 + Math.floor(s.streak / 5)); };
 
   function spawn() {
     const r = rnd(), w = s.wave;
-    const loopShare = Math.min(0.22, 0.08 + w * 0.015);
-    const badShare = Math.min(0.36, 0.2 + w * 0.02);
+    const loopShare = Math.min(0.28, 0.08 + w * 0.015);
+    const badShare = Math.min(0.42, 0.2 + w * 0.02);
     const x = (rnd() * 2 - 1) * 3.2, y = (rnd() * 2 - 1) * 2.0;
     if (r < loopShare) {
-      const len = Math.min(8, 3 + Math.floor(w / 2) + Math.floor(rnd() * 2)), chain = s.nextId++;
+      const len = Math.min(10, 3 + Math.floor(w / 2) + Math.floor(rnd() * 2)), chain = s.nextId++;
       for (let k = 0; k < len; k++) {
         s.caps.push({ id: s.nextId++, kind: "loop", chain, len, k, x: x + (rnd() - 0.5) * 0.25, y: y + (rnd() - 0.5) * 0.25, z: SPAWN_Z - k * 1.7, seal: 1, born: s.t });
       }
     } else if (r < loopShare + badShare) {
       // seal = how visible the break is; it fades with the waves
-      s.caps.push({ id: s.nextId++, kind: "bad", x, y, z: SPAWN_Z, seal: Math.max(0.3, 0.9 - w * 0.08), born: s.t });
+      s.caps.push({ id: s.nextId++, kind: "bad", x, y, z: SPAWN_Z, seal: Math.max(0.22, 0.9 - w * 0.08), born: s.t });
     } else {
       s.caps.push({ id: s.nextId++, kind: "ok", x, y, z: SPAWN_Z, seal: 1, hue: rnd(), born: s.t });
     }
@@ -70,7 +70,8 @@ export function createGame(seed) {
     const w = 1 + Math.floor(s.t / WAVE_MS);
     if (w !== s.wave) {
       // a wave defended without a single leak is worth more than any receipt
-      if (s.waveLeaks === 0) { const g = 50 * s.wave; s.score += g; s.cleanWaves++; s.events.push({ t: s.t, type: "clean", wave: s.wave, gain: g }); }
+      // and it gives budget back: the patient player earns the length of the run
+      if (s.waveLeaks === 0) { const g = 50 * s.wave; s.score += g; s.cleanWaves++; s.budget = Math.min(100, s.budget + 10); s.events.push({ t: s.t, type: "clean", wave: s.wave, gain: g }); }
       s.wave = w; s.waveLeaks = 0; s.events.push({ t: s.t, type: "wave", wave: w });
     }
     s.nextSpawn -= dt;
@@ -139,7 +140,7 @@ export function createGame(seed) {
 export function replay(seed, log) {
   const g = createGame(seed);
   let k = 0;
-  while (!g.state.over && g.state.tick < 20000) {
+  while (!g.state.over && g.state.tick < 40000) {
     while (k < log.length && log[k][0] === g.state.tick) { g.input(log[k][1], log[k][2]); k++; }
     g.step(TICK);
   }
