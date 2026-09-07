@@ -1,0 +1,85 @@
+# sable.primecircle.cloud: one static page, "Sable Observatory". An independent
+# explainer, simulator and verifier for Sable Network, by PrimeCircle (not
+# affiliated). nginx serves the page and a read-only cached proxy to a few
+# fixed public endpoints (see nginx.conf).
+#
+# Hardened: no root inside the container, read-only root filesystem with a
+# small tmpfs for cache and pid, every capability dropped, no privilege
+# escalation, a process limit, a memory limit and log rotation.
+#
+# Vaste projectnaam, anders leidt compose de naam af van de map.
+name: sable-peers
+
+services:
+  sable-peers:
+    image: nginxinc/nginx-unprivileged:1.27-alpine
+    container_name: sable-peers
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    volumes:
+      - ./site:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./security-headers.conf:/etc/nginx/snippets/security-headers.conf:ro
+      - ./proxy-common.conf:/etc/nginx/snippets/proxy-common.conf:ro
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sable-peers.rule=Host(`sable.primecircle.cloud`)"
+      - "traefik.http.routers.sable-peers.entrypoints=websecure"
+      - "traefik.http.routers.sable-peers.tls=true"
+      - "traefik.http.routers.sable-peers.tls.certresolver=letsencrypt"
+      - "traefik.http.services.sable-peers.loadbalancer.server.port=8080"
+    networks:
+      - sable-peers
+    # Runaway-grens, geen krappe toewijzing. nginx met een statische map heeft
+    # aan een fractie hiervan genoeg. Zie infra/LIMIETEN.md.
+    mem_limit: 64m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # Gatekeeper's leaderboard: Node 24 + node:sqlite, no dependencies, never
+  # exposed to the host; nginx proxies /api/game/ to it. The HMAC secret comes
+  # from .env next to this file (created on the VPS, never in git).
+  sable-board:
+    build: ./leaderboard
+    image: sable-board:local
+    container_name: sable-board
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    environment:
+      - BOARD_SECRET=${BOARD_SECRET:?set BOARD_SECRET in .env}
+      - BOARD_DB=/data/board.sqlite
+    volumes:
+      - board-data:/data
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    networks:
+      - sable-peers
+    mem_limit: 128m
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+networks:
+  sable-peers:
+    name: sable-peers
+
+volumes:
+  board-data:
+    name: sable-board-data

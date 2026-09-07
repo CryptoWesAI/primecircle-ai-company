@@ -1,0 +1,6 @@
+{
+  "name": "sable-board",
+  "private": true,
+  "type": "module",
+  "description": "Gatekeeper leaderboard for sable.primecircle.cloud: Node 24, node:sqlite, no dependencies."
+}

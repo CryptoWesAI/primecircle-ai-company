@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lisa on the Sable Observatory · setup sheet</title>
+<style>
+  @page{size:A4;margin:16mm 16mm 18mm}
+  :root{--ink:#0A1118;--dim:#5B6B77;--cyan:#0E8FC2;--cyan-bg:#EAF6FC;--moon:#D9532E;--edge:#D6E2EA;--mono:"IBM Plex Mono","SF Mono","Consolas",ui-monospace,monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:#fff;color:var(--ink);font-family:var(--sans);font-size:10.5pt;line-height:1.5}
+  h1,h2,h3{margin:0;line-height:1.2;letter-spacing:-.01em}
+  h1{font-size:24pt;font-weight:700;margin:6px 0 4px}
+  h2{font-size:13.5pt;font-weight:700;margin:26px 0 8px;padding-top:12px;border-top:1px solid var(--edge)}
+  h2 .n{font-family:var(--mono);font-size:9pt;color:var(--cyan);letter-spacing:.14em;margin-right:10px;font-weight:500}
+  h3{font-size:11pt;font-weight:700;margin:14px 0 4px}
+  p{margin:0 0 8px}
+  .eyebrow{font-family:var(--mono);font-size:8.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .sub{color:var(--dim);font-size:11pt;margin:0 0 14px}
+  .note{border:1px solid var(--edge);border-left:3px solid var(--cyan);background:var(--cyan-bg);border-radius:6px;padding:12px 14px;margin:12px 0 4px;page-break-inside:avoid}
+  .note .lang{font-family:var(--mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:4px}
+  .need{border:1px solid var(--moon);border-radius:6px;padding:12px 14px;margin:10px 0;page-break-inside:avoid}
+  .need b{color:var(--moon)}
+  ol,ul{margin:0 0 8px;padding-left:20px}
+  li{margin:0 0 5px}
+  li b{font-weight:700}
+  .why{color:var(--dim);font-size:9.5pt}
+  .paste{border:1px solid var(--edge);border-radius:6px;padding:10px 12px;margin:6px 0 10px;background:#FAFCFD;font-size:10pt;white-space:pre-wrap;page-break-inside:avoid}
+  .paste .lbl{display:block;font-family:var(--mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+  table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:6px 0 10px;page-break-inside:avoid}
+  th,td{text-align:left;vertical-align:top;padding:6px 8px;border-bottom:1px solid var(--edge)}
+  th{font-family:var(--mono);font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-weight:500}
+  code,.mono{font-family:var(--mono);font-size:9.2pt}
+  code{background:#F1F5F8;border-radius:3px;padding:1px 4px}
+  .tools{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 10px}
+  .tool{border:1px solid var(--edge);border-radius:6px;padding:8px 10px;font-family:var(--mono);font-size:8.6pt;line-height:1.45;white-space:pre-wrap;page-break-inside:avoid;background:#FAFCFD}
+  .tool b{color:var(--cyan);font-weight:600}
+  .say{border-left:2px solid var(--edge);padding-left:10px;margin:4px 0 8px;color:var(--ink)}
+  .say i{color:var(--cyan)}
+  .foot{margin-top:26px;padding-top:10px;border-top:1px solid var(--edge);font-family:var(--mono);font-size:8.5pt;color:var(--dim);display:flex;justify-content:space-between;gap:20px}
+  .brand{font-weight:700;letter-spacing:.18em;color:var(--ink);white-space:nowrap;flex:none}
+  .brand span{color:var(--cyan)}
+  .pb{page-break-before:always}
+</style>
+</head>
+<body>
+
+<div class="eyebrow">PrimeCircle · Sable Observatory · 6 September 2026</div>
+<h1>Lisa on the Sable Observatory</h1>
+<p class="sub">Setup sheet for the agent owner. Ten minutes in ElevenLabs, one ID back.</p>
+
+<div class="note">
+  <div class="lang">Français · en deux mots</div>
+  <p>Salut AG,</p>
+  <p>Ce document explique comment brancher Lisa sur <b>sable.primecircle.cloud</b>, la page indépendante que j'ai construite autour de Sable. Tout se passe de ton côté, dans ElevenLabs : rendre l'agent public, autoriser le domaine, coller le message d'accueil et le prompt, ajouter six outils « client » et fixer une limite de minutes. Ensuite tu m'envoies <b>uniquement l'Agent ID</b>. Je fais le reste sur le site et on teste ensemble.</p>
+  <p style="margin:0">Les réglages sont en anglais parce que l'interface ElevenLabs et le prompt le sont. Merci !</p>
+</div>
+
+<h2><span class="n">01</span>What Lisa will do on the page</h2>
+<p>The page has a <b>Guide</b> button in the corner. Today it speaks with the browser's own voice and opens topics on request. The moment your Agent ID is set, the same panel hands over to Lisa: the ElevenLabs widget loads and the page gives her six tools, so she can <b>move the page while she talks</b>: open a topic, switch the view, open a section of Sable's whitepaper on the map, search the whitepaper for a word, read today's sentence.</p>
+<p>Context for the prompt: the Overview of the page is the <b>Orrery</b>, Sable's whitepaper drawn as a solar system. Thirteen sections turn around one sentence, every dot is a sentence of the paper, orange means it changed. Squares on the outer ring and a row of buttons under the map are the pages of the site: Explained, Try it (a simulation of the door), Verify (live status and a receipt checker), The field (eight peers compared), Token, Scenarios, Play (Gatekeeper, a game with a leaderboard), Log, Community.</p>
+<p class="why">Nothing from ElevenLabs loads until the ID is set. The panel tells visitors that their voice goes to ElevenLabs and that nothing goes to Sable.</p>
+
+<div class="need">
+  <p><b>What I need from you:</b> the <b>Agent ID</b> of Lisa (it looks like <code>agent_01…</code>; ElevenLabs → Conversational AI → Agents → Lisa, shown on the agent page and under Widget) and a yes on the checklist below. Send it to me on Telegram or X (@0PTIMUS_ONE).</p>
+</div>
+
+<h2><span class="n">02</span>Checklist in ElevenLabs</h2>
+<ol>
+  <li><b>Public agent, authentication off.</b> Security tab: leave "Enable authentication" off. Under <b>Allowlist</b>, add <code>sable.primecircle.cloud</code>. <span class="why">The site is static and cannot sign sessions; the allowlist is what keeps the agent from being embedded elsewhere.</span></li>
+  <li><b>First message</b>: paste the text in section 03.</li>
+  <li><b>System prompt</b>: paste the text in section 03. It replaces the current one for this agent only. If Lisa also serves lisaonsable.com, make a copy of the agent for the Observatory first, so both keep their own prompt.</li>
+  <li><b>Six client tools</b>: add them under Tools, type <b>Client</b>, exactly as in section 04, with <b>"Wait for response" on</b> for all six. The page implements them; ElevenLabs only needs the names and parameters.</li>
+  <li><b>Voice and language</b>: Lisa's own voice, English.</li>
+  <li><b>A limit on minutes.</b> Every conversation on the site spends this account's minutes. Set a daily cap (the wording in the dashboard varies by plan; a maximum conversation duration and a daily limit both help) so a busy day stays cheap.</li>
+</ol>
+
+<h2><span class="n">03</span>Text to paste</h2>
+<div class="paste"><span class="lbl">First message</span>Hi, I'm Lisa. I can walk you through this page, open any section of Sable's whitepaper on the map, or search it for a word. Where would you like to start?</div>
+
+<div class="paste"><span class="lbl">System prompt</span>You are Lisa, the voice guide on sable.primecircle.cloud, an independent page about Sable Network written by a community member who holds SABL. You are not run by Sable Network and you say so if asked.
+
+The page has two views. Compact opens one topic at a time; Full shows everything as one long page. The Overview shows the Orrery: Sable's whitepaper drawn as a solar system. Thirteen sections turn around one sentence, every dot is a sentence of the paper, orange means it changed. Squares on the outer ring and the row of buttons under the map are the pages of this site: Explained, Try it (a simulation of the door), Verify (live status and a receipt checker), The field (eight peers compared), Token, Scenarios, Play (Gatekeeper, a game with a leaderboard), Log, Community.
+
+Use the tools. To show a page, call navigate and then describe in one or two sentences what is on screen. To open a section of the whitepaper, call open_section with its number and read back its first sentence. To search, call search_whitepaper and say how many sentences matched. For today's sentence, call todays_sentence. Call where_am_i if unsure what is on screen.
+
+Rules. Two sentences unless asked for more. No price predictions and no investment advice; if asked, say the page deliberately has none and offer Scenarios. Do not claim anything about Sable that is not on the page; if you do not know, say so and point to buildsable.com. Do not say the page is official. Be calm, not loud.</div>
+
+<h2 class="pb"><span class="n">04</span>The six client tools</h2>
+<p>Type: <b>Client</b>. "Wait for response": <b>on</b>. Every parameter is a string. Names must match exactly; the page listens for these names.</p>
+<table>
+  <thead><tr><th>Name</th><th>Description for the model</th><th>Parameter</th></tr></thead>
+  <tbody>
+    <tr><td><code>navigate</code></td><td>Open a page of the site. Returns what is now on screen.</td><td><code>topic</code>, required: one of home, explained, door, check, field, token, scenarios, play, log, community</td></tr>
+    <tr><td><code>set_view</code></td><td>Switch between one topic at a time and the whole page.</td><td><code>mode</code>, required: compact or full</td></tr>
+    <tr><td><code>where_am_i</code></td><td>Ask the page which topic and view are on screen.</td><td>none</td></tr>
+    <tr><td><code>open_section</code></td><td>Open one section of the whitepaper on the map and return its first sentence.</td><td><code>section</code>, required: 1 to 13, or A for the appendix</td></tr>
+    <tr><td><code>search_whitepaper</code></td><td>Light up every sentence of the whitepaper containing a word; returns the count.</td><td><code>word</code>, required</td></tr>
+    <tr><td><code>todays_sentence</code></td><td>Open the section of today's sentence and return the sentence.</td><td>none</td></tr>
+  </tbody>
+</table>
+
+<p class="why">The same six, written the way the dashboard asks for them (name, then each parameter with its type, whether it is required, and the description the model sees):</p>
+<div class="tools">
+  <div class="tool"><b>navigate</b>
+topic · string · required
+"One of: home, explained, door, check, field, token, scenarios, play, log, community"</div>
+  <div class="tool"><b>set_view</b>
+mode · string · required
+"compact or full"</div>
+  <div class="tool"><b>where_am_i</b>
+no parameters</div>
+  <div class="tool"><b>open_section</b>
+section · string · required
+"1 to 13, or A for the appendix"</div>
+  <div class="tool"><b>search_whitepaper</b>
+word · string · required
+"The word to look for in the whitepaper"</div>
+  <div class="tool"><b>todays_sentence</b>
+no parameters</div>
+</div>
+
+<h2><span class="n">05</span>How we test it</h2>
+<ol>
+  <li>You send me the Agent ID. I set it on the page, open the site's content policy to ElevenLabs, deploy, and check the browser console. About an hour.</li>
+  <li>You open <b>sable.primecircle.cloud</b>, press <b>Guide</b>, press Lisa's call button and allow the microphone.</li>
+  <li>Say the four lines below and watch the page move.</li>
+</ol>
+<p class="say"><i>"Show me the token."</i> The Token page opens and Lisa describes the ladder.</p>
+<p class="say"><i>"Open section five."</i> The map opens section 05 and Lisa reads its first sentence.</p>
+<p class="say"><i>"Search receipt."</i> Matching sentences light up on the map and Lisa says how many.</p>
+<p class="say"><i>"Read me everything."</i> The page switches to Full.</p>
+<p class="why">If the browser console shows a line starting with "Refused to connect", that is my side of the fence. Tell me and I fix the policy.</p>
+
+<h2><span class="n">06</span>Control and cost</h2>
+<ul>
+  <li>You can switch Lisa off at any time: remove the domain from the allowlist, or tell me to clear the ID. The Guide falls back to the browser voice and keeps working.</li>
+  <li>Minutes are billed to the account that owns the agent. The cap in step 6 is the brake.</li>
+  <li>The page never sends anything to Sable, with or without Lisa. Lisa's audio goes to ElevenLabs under their terms.</li>
+</ul>
+
+<div class="foot">
+  <div>Independent page by a community member. Not run by Sable Network. · sable.primecircle.cloud · @0PTIMUS_ONE</div>
+  <div class="brand">PRIME <span>CIRCLE</span></div>
+</div>
+
+</body>
+</html>

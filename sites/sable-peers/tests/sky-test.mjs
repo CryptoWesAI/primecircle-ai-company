@@ -1,0 +1,30 @@
+import puppeteer from "puppeteer-core";
+import { existsSync } from "node:fs";
+const exe=["C:/Program Files/Google/Chrome/Application/chrome.exe","C:/Program Files (x86)/Google/Chrome/Application/chrome.exe","C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"].find(p=>existsSync(p));
+const base=process.argv[2]; const tag=process.argv[3]||"local";
+const b=await puppeteer.launch({executablePath:exe,headless:true});
+const errs=[],fails=[]; const ok=(c,m)=>{if(!c)fails.push(m)};
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+const p=await b.newPage(); await p.setViewport({width:1366,height:768});
+p.on("pageerror",e=>errs.push(e.message)); p.on("console",m=>{if(m.type()==="error"&&!(base.startsWith("file:")&&/sable-api|ERR_FAILED|ERR_FILE_NOT_FOUND|origin 'null'/.test(m.text())))errs.push(m.text())});
+await p.goto(base,{waitUntil:"load"}); await wait(2500);
+ok(await p.evaluate(()=>!!window.SABLE_SKY),"sky api present");
+const src=await p.evaluate(()=>document.getElementById("drifter").getAttribute("src")||"");
+console.log("drifter source:",src||"(none yet)");
+ok(/robot\.png|sable-mark\.svg/.test(src),"drifter picked an image");
+// force a shooting star and a drift, then look
+await p.evaluate(()=>{window.SABLE_SKY.shoot();window.SABLE_SKY.drift();}); await wait(1200);
+const st=await p.evaluate(()=>{const d=document.getElementById("drifter");const a=d.getAnimations?d.getAnimations():[];const r=d.getBoundingClientRect();return {hidden:d.hidden,anims:a.length,opacity:getComputedStyle(d).opacity,x:Math.round(r.left),y:Math.round(r.top),w:Math.round(r.width)};});
+console.log("drifter:",JSON.stringify(st));
+ok(!st.hidden&&st.anims===1,"drifter is animating");
+ok(parseFloat(st.opacity)>0.2,"drifter visible mid-flight");
+await wait(4000);
+await p.screenshot({path:`shots/${tag}-sky.png`});
+ok(!(await p.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth)),"no overflow");
+// reduced motion: nothing should animate
+const p2=await b.newPage(); await p2.emulateMediaFeatures([{name:"prefers-reduced-motion",value:"reduce"}]); await p2.setViewport({width:1366,height:768});
+await p2.goto(base,{waitUntil:"load"}); await wait(1500);
+ok(await p2.evaluate(()=>getComputedStyle(document.getElementById("drifter")).display==="none"),"reduced motion hides the drifter");
+await p2.close(); await p.close(); await b.close();
+console.log(tag,"fails:",fails.length?fails:"none","| errors:",errs.length?errs:"none");
+if(fails.length||errs.length)process.exit(1);
