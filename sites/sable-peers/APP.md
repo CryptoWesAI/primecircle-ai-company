@@ -6,9 +6,11 @@ web app manifest, a service worker, and the board's push endpoints.
 
 ## Install
 
-- Android, Chrome: open the site, tap the "Install" button in the top bar (it
-  appears once Chrome offers the install prompt), or use the browser menu,
-  "Add to Home screen". The app opens full screen, dark, with the site's mark
+- Android, Chrome: open the site; once Chrome offers the install, a small card
+  floats at the bottom left, "Install the Observatory", next to the guide.
+  Install puts the app on the home screen; "Not now" hides the card for a
+  week; inside the installed app it never shows. The browser menu's "Add to
+  Home screen" always works too, and the Community page has an Install button. The app opens full screen, dark, with the site's mark
   as its icon. Shortcuts on the icon: Play Gatekeeper, Verify Sable, The Log.
 - iPhone, Safari: Share, "Add to Home Screen". Notifications on iOS need the
   page to be installed first (iOS 16.4 and later) and there is no vibration.

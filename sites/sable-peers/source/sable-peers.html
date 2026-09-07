@@ -59,10 +59,8 @@
   .snd:hover{border-color:var(--cyan)}
   .snd:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
   .snd svg{width:15px;height:15px;display:block}
-  .snd,.pill.install{flex-shrink:0}
+  .snd{flex-shrink:0}
   .snd.on{color:var(--cyan);border-color:var(--cyan-soft)}
-  .pill.install{min-height:32px;padding:6px 12px;font-size:10px}
-  .pill.install svg{width:15px;height:15px;display:none}
   .shell{display:grid;grid-template-columns:200px minmax(0,1fr)}
   .rail{border-right:1px solid var(--edge);padding:18px 12px;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto}
   .rail ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
@@ -119,9 +117,6 @@
     .rail-mode{display:none;align-items:center;gap:12px;padding:10px 14px 12px;border-top:1px solid var(--edge)}
     .rail.open .rail-mode{display:flex}
     .rail-mode .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-    .top .pill.install{width:32px;height:32px;min-height:0;padding:0;justify-content:center;border-radius:999px}
-    .top .pill.install span{display:none}
-    .top .pill.install svg{display:block}
     .ticks span:nth-child(2),.ticks span:nth-child(3){display:none}
     .eyebrow{font-size:10px;letter-spacing:.14em;gap:10px;white-space:nowrap}
     .eyebrow::before,.eyebrow::after{width:18px;flex:none}
@@ -160,6 +155,18 @@
 
   /* the guide */
   .guide{position:fixed;right:18px;bottom:18px;z-index:40;font-family:var(--sans)}
+  /* the install offer: floats bottom-left until installed or waved away, never inside the installed app */
+  .install-offer{position:fixed;left:14px;bottom:14px;z-index:39;display:flex;align-items:center;gap:10px;padding:10px 12px;max-width:calc(100vw - 96px);border:1px solid var(--edge2);border-radius:14px;background:rgba(8,14,20,.97);box-shadow:0 24px 50px -24px rgba(0,0,0,.9);font-family:var(--sans)}
+  .install-offer img{width:36px;height:36px;border-radius:9px;flex-shrink:0}
+  .install-offer .t{min-width:0;flex:1}
+  .install-offer b{display:block;font-size:13px;line-height:1.25}
+  .install-offer span{display:block;font-size:11.5px;color:var(--dim);line-height:1.35}
+  .install-offer .pill{min-height:34px;padding:7px 12px;flex-shrink:0}
+  .install-offer .x{appearance:none;-webkit-appearance:none;border:0;background:transparent;color:var(--dim);font-size:20px;line-height:1;padding:4px 6px;cursor:pointer;flex-shrink:0}
+  .install-offer .x:focus-visible,.install-offer .pill:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  @media (max-width:520px){.install-offer{left:10px;bottom:10px;max-width:calc(100vw - 84px);gap:8px;padding:9px 10px}.install-offer span{display:none}}
+  /* on desktop the offer sits in the rail, in flow, under the live tile: it covers nothing */
+  @media (min-width:901px){.rail .install-offer{position:static;margin:14px 0 0;max-width:none;flex-wrap:wrap;box-shadow:none;background:rgba(5,7,10,.45)}.rail .install-offer .t{flex-basis:100%}.rail .install-offer .pill{flex:1}}
   /* on desktops where the page reaches the right edge, a gutter stays free for the guide */
   @media (min-width:901px) and (max-width:1500px){body{padding-right:118px}}
   .lisa{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
@@ -612,7 +619,6 @@
       </div>
       <button type="button" class="snd" id="sound-btn" aria-pressed="true" aria-label="Button sounds on" title="Button sounds: on"><span aria-hidden="true">♪</span></button>
       <button type="button" class="snd" id="bell" aria-pressed="false" aria-label="Notifications off" title="Notifications: off. Tap to hear about changes." hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-1.6 1.6A1 1 0 0 0 4.1 19.3h15.8a1 1 0 0 0 .7-1.7L19 16Z"/></svg></button>
-      <button type="button" class="pill fill install" data-install hidden aria-label="Install the app" title="Install the app"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1Zm-7 14a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"/></svg><span>Install</span></button>
     </div>
   </header>
 
@@ -1122,6 +1128,12 @@
 
 </div>
 
+<div class="install-offer" id="install-offer" hidden role="dialog" aria-label="Install the Observatory">
+  <img src="icons/icon-192.png" alt="" width="36" height="36">
+  <div class="t"><b>Install the Observatory</b><span>On your home screen, with notifications.</span></div>
+  <button type="button" class="pill fill" data-install>Install</button>
+  <button type="button" class="x" id="install-later" aria-label="Not now">×</button>
+</div>
 <div class="guide" id="guide">
   <button type="button" class="guide-btn" id="guide-btn" aria-expanded="false" aria-controls="guide-panel" aria-label="Open the site guide"><span class="orb" aria-hidden="true"></span><span class="t">Guide</span></button>
   <div class="guide-panel" id="guide-panel" hidden role="dialog" aria-label="Site guide">
@@ -1242,10 +1254,17 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     var bell=document.getElementById('bell'),inst=[].slice.call(document.querySelectorAll('[data-install]')),BOARD=(window.SABLE_EXT||{}).board||'/api/game';
     var canSW='serviceWorker' in navigator&&location.protocol==='https:';
     if(canSW)navigator.serviceWorker.register('/sw.js').catch(function(){});
-    var deferred=null;
-    window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;inst.forEach(function(b){b.hidden=false;});});
-    inst.forEach(function(b){b.addEventListener('click',function(){if(!deferred)return;deferred.prompt();deferred.userChoice.then(function(){deferred=null;inst.forEach(function(x){x.hidden=true;});}).catch(function(){});});});
-    window.addEventListener('appinstalled',function(){inst.forEach(function(x){x.hidden=true;});});
+    var deferred=null,offer=document.getElementById('install-offer'),later=document.getElementById('install-later');
+    /* desktop: the offer lives in the rail; phones: it floats bottom-left */
+    (function(){var rail=document.getElementById('railnav');if(!offer||!rail)return;var home=offer.parentNode,next=offer.nextSibling,mq=window.matchMedia('(min-width:901px)');function place(){if(mq.matches){if(offer.parentNode!==rail)rail.appendChild(offer);}else if(offer.parentNode===rail){home.insertBefore(offer,next);}}place();if(mq.addEventListener)mq.addEventListener('change',place);else mq.addListener(place);})();
+    var installed=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+    function snoozed(){try{var t=Number(localStorage.getItem('sable-install-later')||0);return t&&Date.now()-t<7*86400000;}catch(e){return false;}}
+    function show(){inst.forEach(function(b){b.hidden=false;});if(offer&&!installed&&!snoozed())offer.hidden=false;}
+    function hide(){inst.forEach(function(x){x.hidden=true;});if(offer)offer.hidden=true;}
+    window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;show();});
+    inst.forEach(function(b){b.addEventListener('click',function(){if(!deferred)return;var d=deferred;d.prompt();d.userChoice.then(function(c){if(c&&c.outcome==='accepted'){deferred=null;hide();}else if(offer){offer.hidden=true;}}).catch(function(){});});});
+    if(later)later.addEventListener('click',function(){try{localStorage.setItem('sable-install-later',String(Date.now()));}catch(e){}if(offer)offer.hidden=true;});
+    window.addEventListener('appinstalled',function(){deferred=null;hide();});
     if(!bell)return;
     var canPush=canSW&&'PushManager' in window&&'Notification' in window;
     if(!canPush){bell.hidden=true;return;}

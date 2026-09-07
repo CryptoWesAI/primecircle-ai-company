@@ -103,10 +103,17 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     var bell=document.getElementById('bell'),inst=[].slice.call(document.querySelectorAll('[data-install]')),BOARD=(window.SABLE_EXT||{}).board||'/api/game';
     var canSW='serviceWorker' in navigator&&location.protocol==='https:';
     if(canSW)navigator.serviceWorker.register('/sw.js').catch(function(){});
-    var deferred=null;
-    window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;inst.forEach(function(b){b.hidden=false;});});
-    inst.forEach(function(b){b.addEventListener('click',function(){if(!deferred)return;deferred.prompt();deferred.userChoice.then(function(){deferred=null;inst.forEach(function(x){x.hidden=true;});}).catch(function(){});});});
-    window.addEventListener('appinstalled',function(){inst.forEach(function(x){x.hidden=true;});});
+    var deferred=null,offer=document.getElementById('install-offer'),later=document.getElementById('install-later');
+    /* desktop: the offer lives in the rail; phones: it floats bottom-left */
+    (function(){var rail=document.getElementById('railnav');if(!offer||!rail)return;var home=offer.parentNode,next=offer.nextSibling,mq=window.matchMedia('(min-width:901px)');function place(){if(mq.matches){if(offer.parentNode!==rail)rail.appendChild(offer);}else if(offer.parentNode===rail){home.insertBefore(offer,next);}}place();if(mq.addEventListener)mq.addEventListener('change',place);else mq.addListener(place);})();
+    var installed=(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
+    function snoozed(){try{var t=Number(localStorage.getItem('sable-install-later')||0);return t&&Date.now()-t<7*86400000;}catch(e){return false;}}
+    function show(){inst.forEach(function(b){b.hidden=false;});if(offer&&!installed&&!snoozed())offer.hidden=false;}
+    function hide(){inst.forEach(function(x){x.hidden=true;});if(offer)offer.hidden=true;}
+    window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;show();});
+    inst.forEach(function(b){b.addEventListener('click',function(){if(!deferred)return;var d=deferred;d.prompt();d.userChoice.then(function(c){if(c&&c.outcome==='accepted'){deferred=null;hide();}else if(offer){offer.hidden=true;}}).catch(function(){});});});
+    if(later)later.addEventListener('click',function(){try{localStorage.setItem('sable-install-later',String(Date.now()));}catch(e){}if(offer)offer.hidden=true;});
+    window.addEventListener('appinstalled',function(){deferred=null;hide();});
     if(!bell)return;
     var canPush=canSW&&'PushManager' in window&&'Notification' in window;
     if(!canPush){bell.hidden=true;return;}
