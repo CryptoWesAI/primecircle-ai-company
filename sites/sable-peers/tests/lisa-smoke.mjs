@@ -26,7 +26,7 @@ try{
   // Hear the tour outside a call: she is called, briefed, and asked for the tour after her greeting
   await p.click("#guide-start");
   await p.waitForFunction(() => /listening|speaking|could not|ended|browser voice/.test(document.getElementById("lisa-status").textContent), { timeout: 25000 }).catch(() => {});
-  await wait(2000);
+  await wait(2000); await p.evaluate(() => window.SABLE_LISA.mute(true));
   console.log("status:", await p.$eval("#lisa-status", e => e.textContent), "| caption:", (await p.$eval("#guide-cap", e => e.textContent)).slice(0, 160));
   await p.waitForFunction(() => (window.__lisaCalls || []).filter(c => c[0] === "navigate").length >= 1, { timeout: 40000 }).catch(() => {});
   await wait(14000);

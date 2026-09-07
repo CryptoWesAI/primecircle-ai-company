@@ -29,6 +29,8 @@ export async function stop() {
 }
 
 export function active() { return !!conv; }
+// the microphone, muted or not: the tests mute it so a fake device's tone is not heard as speech
+export function mute(on) { if (conv && typeof conv.setMicMuted === "function") { conv.setMicMuted(!!on); return true; } return false; }
 export function conversation() { return conv; }
 // text into the conversation as if spoken; and background context the agent sees but does not answer
 export function send(text) { if (conv && typeof conv.sendUserMessage === "function") { conv.sendUserMessage(String(text)); return true; } return false; }

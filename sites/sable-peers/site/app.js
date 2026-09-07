@@ -201,7 +201,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     var TOOLS={
       navigate:function(p){var t=(p&&(p.topic||p.section)||'home').toString().toLowerCase();var opened=S.open(t);return 'Opened '+NAMES[opened]+'. '+(SAY[opened]||'');},
       set_view:function(p){var m=(p&&p.mode||'compact').toString().toLowerCase();return 'View is now '+S.setMode(m)+'.';},
-      where_am_i:function(){return 'The visitor is on '+NAMES[S.current()]+' in '+S.mode()+' view. Topics: '+Object.keys(NAMES).map(function(k){return NAMES[k]}).join(', ')+'.';},
+      where_am_i:function(){var c=S.current();return 'The visitor is on '+NAMES[c]+' in '+S.mode()+' view. '+(SAY[c]||'')+'\n'+liveNow();},
       open_section:function(p){var O=window.SABLE_ORRERY;if(!O)return 'The map is not available.';var n=String(p&&(p.section||p.number)||'').trim().replace(/^0/,'').toUpperCase();var secs=O.sections(),idx=-1;for(var k=0;k<secs.length;k++)if(String(parseInt(secs[k].n,10))===n||secs[k].n===n)idx=k;if(idx<0)return 'No section '+n+'. Sections run 01 to 13, plus A for the appendix.';S.open('home');O.select(idx);var sx=secs[idx],q=document.querySelector('#orr-panel .orr-their');return 'Opened section '+sx.n+', '+sx.title+': '+sx.count+' sentences'+(sx.changed?', changed on '+sx.changed:'')+'. Its first sentence: '+(q?q.textContent:'');},
       search_whitepaper:function(p){var O=window.SABLE_ORRERY;if(!O)return 'The map is not available.';var w=String(p&&(p.word||p.query)||'').trim();S.open('home');O.search(w);var sp=document.querySelector('#orr-qres span');return w?('Searched the whitepaper for "'+w+'": '+(sp?sp.textContent:'nothing found')+'. The matching sentences are lit on the map.'):'Search cleared.';},
       todays_sentence:function(){var O=window.SABLE_ORRERY,td=O&&O.today();if(!td)return 'The map has not loaded yet.';var sx=O.sections()[td.i];S.open('home');O.select(td.i);var q=document.getElementById('orr-today-q');return 'Today\'s sentence is from section '+sx.n+', '+sx.title+': '+(q?q.textContent:'');}
@@ -216,13 +216,14 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
       var rows=[].slice.call(document.querySelectorAll('#gb-table tbody tr')).slice(0,3).map(function(r){var td=r.querySelectorAll('td');return td.length>2?td[1].textContent.trim().split('@')[0].trim()+' '+td[2].textContent.trim():''}).filter(Boolean);if(rows.length)out.push('Leaderboard, top three on the tab shown: '+rows.join(', ')+'.');
       var tq=g('orr-today-q');if(tq)out.push('Today\'s sentence: "'+tq.slice(0,220)+'".');
       return out.length?'LIVE FIGURES ON THE PAGE AT THIS MOMENT, read from the page itself; quote them as read now, with their source when the line names one:\n- '+out.join('\n- ')+'\n':'';}
-    function briefing(){var lines=Object.keys(NAMES).map(function(k){return '- '+NAMES[k]+' (topic id "'+k+'"): '+(SAY[k]||'');});
+    function first(t){var m=String(t||'').match(/^.*?[.!?](\s|$)/);return m?m[0].trim():String(t||'');}
+    function briefing(){var lines=Object.keys(NAMES).map(function(k){return '- '+NAMES[k]+' (id '+k+'): '+first(SAY[k]);});
       return 'PAGE CONTEXT FOR THE GUIDE. You are speaking inside sable.primecircle.cloud, an independent page about Sable Network by a community member who holds SABL; you are not run by Sable. '+
         'The page has two views: compact (one topic at a time) and full (everything as one long page). The visitor is currently on "'+NAMES[S.current()]+'" in '+S.mode()+' view. '+
-        'The page has exactly these '+Object.keys(NAMES).length+' topics right now. This list is current and replaces any list of pages in your instructions; every one of them opens with navigate, including Play:\n'+lines.join('\n')+'\n'+
-        liveNow()+
+        'The page has exactly these '+Object.keys(NAMES).length+' topics; this list replaces any list in your instructions, and every one opens with navigate:\n'+lines.join('\n')+'\n'+
+        'navigate and where_am_i return the full description of a topic and the live figures on the page (supply, burn, market cap, Sable status, the contest and its leaders, the reliability record, today\'s sentence). For any question about those, call where_am_i first and answer from what it returns. '+
         'You can move the page yourself with tools: navigate(topic) opens a topic by its id, one of '+Object.keys(NAMES).join(', ')+'; set_view(mode) switches compact or full; where_am_i tells you what is on screen; open_section(section) opens one section of the whitepaper on the map (1 to 13, or A) and returns its first sentence; search_whitepaper(word) lights up every sentence with that word and returns the count; todays_sentence opens the sentence of the day. '+
-        'When the visitor asks for the tour, give it one page at a time in this order, calling navigate for each topic before you describe it in one or two sentences, then stop and wait until the visitor asks for the next page: '+TOUR.join(' ')+' '+
+        'For the tour: one page at a time, navigate first, one or two sentences, then wait until asked for the next page. Order: home, explained, door, check, field, token, scenarios, play, log, community. '+
         'When asked to show, open or go to something, call navigate or open_section first, then describe what is now on screen. Keep answers to two sentences unless asked for more. No price predictions, no investment advice. If you do not know something about Sable, say so and point to buildsable.com.';}
     var host=document.createElement('div');host.id='lisa-host';host.className='lisa';
     host.innerHTML='<button type="button" class="pill fill" id="lisa-call">Talk to '+esc(NAME)+'</button><button type="button" class="pill" id="lisa-end" hidden>End the call</button><span class="lisa-status" id="lisa-status" aria-live="polite">voice, microphone needed</span>';
@@ -237,7 +238,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     /* one call, started from Talk to Lisa or from Hear the tour; `then` runs once she is connected and briefed */
     function connect(then,forTour){
       if(inCall){if(then)then();return;}
-      var connected=false;stopSpeech();busy(true);status('connecting…');caption('Connecting to '+NAME+(forTour?' for the tour':'')+'…',true);
+      var connected=false;stopSpeech();busy(true);status('connecting…');try{if(window.SABLE_GAME&&window.SABLE_GAME.load)window.SABLE_GAME.load('today');}catch(e){}caption('Connecting to '+NAME+(forTour?' for the tour':'')+'…',true);
       function fail(e){busy(false);setCall(false);pendingTour=false;var why=e&&e.message?e.message:'connection failed';
         if(forTour&&!connected&&synth&&window.SpeechSynthesisUtterance){lisaMode=false;status(NAME+' could not start, so this is the browser voice');tour(0);return;}
         status('could not connect');caption(NAME+' could not start ('+why+'). Allow the microphone and try again, or tap a topic.',true);}
@@ -256,7 +257,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
       connect(function(){pendingTour=true;tourWait=setTimeout(function(){if(pendingTour)askTour();},15000);},true);},true);
     window.addEventListener('hashchange',function(){if(inCall&&mod)mod.context('The visitor is now on "'+NAMES[S.current()]+'" in '+S.mode()+' view.');});
     close.addEventListener('click',function(){if(mod&&inCall){mod.stop();setCall(false);status('call ended');}});
-    window.SABLE_LISA={call:function(){callBtn.click();},end:function(){endBtn.click();},tour:function(){start.click();},active:function(){return inCall;},send:function(t){return !!(mod&&inCall&&mod.send(t));},calls:function(){return window.__lisaCalls||[];}};
+    window.SABLE_LISA={call:function(){callBtn.click();},end:function(){endBtn.click();},tour:function(){start.click();},briefing:function(){return briefing();},mute:function(on){return !!(mod&&inCall&&mod.mute(on));},active:function(){return inCall;},send:function(t){return !!(mod&&inCall&&mod.send(t));},calls:function(){return window.__lisaCalls||[];}};
   }
 })();
 
