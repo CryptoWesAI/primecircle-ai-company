@@ -72,6 +72,11 @@ ok(await p.evaluate(()=>document.querySelectorAll("#rfacts .rfact").length===3),
 ok(await p.evaluate(()=>document.querySelectorAll("#rgrid .rc").length>=24&&document.querySelectorAll("#rgrid .rc.ok,#rgrid .rc.warn,#rgrid .rc.off").length>=1),"reliability grid has checks");
 console.log("reliability:",await p.evaluate(()=>[...document.querySelectorAll("#rfacts .v")].map(e=>e.textContent).join(" | ")));
 if(!base.startsWith("file:")){
+  await p.waitForFunction(()=>/\d/.test(document.getElementById("ring-n").textContent)&&/\d/.test(document.getElementById("ring-burned").textContent),{timeout:15000}).catch(()=>{});
+  ok(/^\d{1,3}(,\d{3})+$/.test(await p.$eval("#ring-n",e=>e.textContent)),"the ring reads the supply from the chain: "+await p.$eval("#ring-n",e=>e.textContent));
+  ok(/none|yes/.test(await p.$eval("#ring-mint",e=>e.textContent)),"the ring reads the mint authority: "+await p.$eval("#ring-mint",e=>e.textContent));
+  ok(/\$/.test(await p.$eval("#ring-mcap",e=>e.textContent)),"the ring reads the market cap: "+await p.$eval("#ring-mcap",e=>e.textContent));
+  console.log("ring:",await p.$eval("#ring-n",e=>e.textContent),"|",await p.$eval("#ring-burned",e=>e.textContent),"burned |",await p.$eval("#ring-mcap-s",e=>e.textContent.slice(0,80)));
   await p.waitForFunction(()=>!/reading the listing/.test(document.querySelector("#supply-table tbody").textContent),{timeout:15000}).catch(()=>{});
   ok(await p.evaluate(()=>document.querySelectorAll("#supply-table tbody tr").length>=2),"supply listing shows Sable's machines: "+(await p.$eval("#supply-table tbody",e=>e.textContent.replace(/\s+/g," ").slice(0,120))));
   ok(/traffic: \d+/.test(await p.$eval("#supply-third",e=>e.textContent)),"third-party count is a number: "+await p.$eval("#supply-third",e=>e.textContent));

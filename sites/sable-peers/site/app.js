@@ -258,7 +258,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
 window.SABLE_EXT=(function(){
   var live=location.hostname==='sable.primecircle.cloud';
   var GH='https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/';
-  return live?{markets:'/ext/markets',sabl:'/ext/sabl',record:'/ext/record',peers:'/ext/peers',ledger:'/ext/ledger',whitepaper:'/ext/whitepaper',board:'/api/game',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes'}
+  return live?{markets:'/ext/markets',sabl:'/ext/sabl',record:'/ext/record',peers:'/ext/peers',ledger:'/ext/ledger',whitepaper:'/ext/whitepaper',board:'/api/game',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes',supply:'/ext/supply',mint:'/ext/mint'}
   :{markets:'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=automata,marlin,secret,pha,opengradient,nillion,iexec-rlc,oasis-network,akash-network,virtual-protocol,bittensor,near&per_page=50&page=1&sparkline=false&price_change_percentage=30d',
     sabl:'https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump',record:GH+'record.json',peers:GH+'peers-record.json',ledger:GH+'status/log.jsonl',whitepaper:GH+'whitepaper.json',board:'http://127.0.0.1:8791',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes'};
 })();
@@ -769,6 +769,59 @@ window.SABLE_EXT=(function(){
       third.textContent='third-party machines serving traffic: '+others.length;
       why.textContent=others.length?'The listing shows '+others.length+' machine'+(others.length===1?'':'s')+' this page cannot identify as Sable\'s own: '+others.map(function(x){return x.name||x.id}).join(', ')+'. Whether Sable rents it or an operator runs it is not something the listing says.':'By Sable\'s own statement: compute is rented, first on machines Sable enrols itself, then vetted operators, open supply last if ever, and supply follows demand. This line changes the day a machine Sable does not run appears on the list.';
     }).catch(function(){tbl.querySelector('tbody').innerHTML='<tr><td colspan="6">the listing could not be read right now</td></tr>';third.textContent='third-party machines serving traffic: unknown right now';});
+  })();
+  /* the ring of a thousand lights */
+  (function(){
+    var cv=document.getElementById('ring');if(!cv||!cv.getContext)return;
+    var EXT=window.SABLE_EXT||{},N=1000,MINTED=1e9;
+    var nEl=document.getElementById('ring-n'),subEl=document.getElementById('ring-sub'),bEl=document.getElementById('ring-burned'),bS=document.getElementById('ring-burned-s'),mEl=document.getElementById('ring-mint'),mS=document.getElementById('ring-mint-s'),cEl=document.getElementById('ring-mcap'),cS=document.getElementById('ring-mcap-s'),dEl=document.getElementById('ring-days'),dS=document.getElementById('ring-days-s');
+    function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+    function num(v){return Math.floor(v).toLocaleString('en-US');}
+    function usd(v){return v>=1e9?'$'+(v/1e9).toFixed(2)+'B':v>=1e6?'$'+(v/1e6).toFixed(1)+'M':v>=1e3?'$'+(v/1e3).toFixed(1)+'K':'$'+Math.round(v);}
+    function hm(ms){var d=new Date(ms);return ('0'+d.getUTCHours()).slice(-2)+':'+('0'+d.getUTCMinutes()).slice(-2)+' UTC';}
+    function when(iso){return String(iso).replace('T',' ').replace('Z','').slice(0,16)+' UTC';}
+    /* the lights: phyllotaxis in an annulus, the last ones at the rim; burned lights are the rim */
+    var dots=[],GA=2.399963229728653;for(var i=0;i<N;i++){var f=Math.sqrt((i+0.5)/N);dots.push({a:i*GA,r:0.62+0.36*f,p:(i*0.618)%6.283});}
+    var existing=N,fresh=0,rot=0,last=0,running=false,visible=true,ctx=cv.getContext('2d'),reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches,born=Date.now();
+    function size(){var w=cv.clientWidth||300,d=Math.min(2,window.devicePixelRatio||1);if(cv.width!==Math.round(w*d)){cv.width=Math.round(w*d);cv.height=Math.round(w*d);}}
+    function draw(t){size();var W=cv.width,c=W/2,R=W/2-2*(W/300);ctx.clearRect(0,0,W,W);
+      ctx.beginPath();ctx.arc(c,c,R*0.995,0,6.283);ctx.strokeStyle='rgba(24,191,255,.10)';ctx.lineWidth=1;ctx.stroke();
+      var age=(Date.now()-born)/1000;
+      for(var i=0;i<N;i++){var d=dots[i],x=c+Math.cos(d.a+rot)*d.r*R,y=c+Math.sin(d.a+rot)*d.r*R,lit=i<existing,tw=reduce?1:0.75+0.25*Math.sin(t*0.0011+d.p);
+        if(lit){ctx.fillStyle='rgba(114,220,255,'+(0.55*tw+0.2).toFixed(2)+')';ctx.beginPath();ctx.arc(x,y,W/300*1.5,0,6.283);ctx.fill();}
+        else{var isFresh=i>=existing&&i<existing+fresh,pulse=isFresh&&age<6?0.5+0.5*Math.sin(age*4):0;ctx.fillStyle=pulse?'rgba(255,122,89,'+(0.35+0.6*pulse).toFixed(2)+')':'rgba(255,122,89,.22)';ctx.beginPath();ctx.arc(x,y,W/300*(pulse?2.2:1.3),0,6.283);ctx.fill();
+          if(pulse){ctx.strokeStyle='rgba(255,122,89,'+(0.4*pulse).toFixed(2)+')';ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y,W/300*5*pulse,0,6.283);ctx.stroke();}}}
+    }
+    function frame(t){if(!running)return;if(t-last>=33){last=t;rot=(Date.now()/1000)*(6.283/1200);draw(t);}requestAnimationFrame(frame);}
+    function start(){if(reduce){draw(0);return;}if(!running&&visible&&!document.hidden){running=true;requestAnimationFrame(frame);}}
+    function stop(){running=false;}
+    if('IntersectionObserver' in window)new IntersectionObserver(function(es){visible=es[0].isIntersecting;visible?start():stop();},{threshold:0.05}).observe(cv);
+    document.addEventListener('visibilitychange',function(){document.hidden?stop():start();});
+    window.addEventListener('resize',function(){if(reduce)draw(0);});
+    draw(0);start();
+    /* the numbers */
+    function setSupply(supply,src){existing=Math.max(0,Math.min(N,Math.round(supply/1e6)));var prev=null;try{prev=Number(localStorage.getItem('sable-ring-supply'))||null;}catch(e){}
+      if(prev&&prev>supply)fresh=Math.max(0,Math.round(prev/1e6)-existing);try{localStorage.setItem('sable-ring-supply',String(supply));}catch(e){}
+      nEl.textContent=num(supply);subEl.textContent='SABL · '+src;
+      var burned=MINTED-supply;bEl.textContent=num(burned);bS.textContent=(burned/MINTED*100).toFixed(2)+'% of the 1,000,000,000 minted. Who burned them is not established; the pay-in rail is not live, by Sable\'s statement.';}
+    function setMint(info){var ma=info&&info.mintAuthority,fa=info&&info.freezeAuthority;if(!info){mEl.textContent='?';mS.textContent='the mint account could not be read';return;}
+      if(ma){mEl.className='v warn';mEl.textContent='yes';mS.textContent='a mint authority still exists: '+ma;}else{mEl.textContent='none';mS.textContent='mint authority revoked'+(fa?', freeze authority '+fa:', no freeze authority')+'. The supply can only fall.';}}
+    function setMarket(pair,at){if(!pair||!pair.marketCap){cEl.textContent='?';cS.textContent='DexScreener did not answer';return;}var ch=pair.priceChange&&typeof pair.priceChange.h24==='number'?pair.priceChange.h24:null;
+      cEl.textContent=usd(pair.marketCap);cEl.className='v '+(ch==null?'':ch>=0?'ok':'moon');cS.textContent=(ch==null?'':(ch>=0?'+':'')+ch.toFixed(1)+'% over 24 h · ')+'liquidity '+usd((pair.liquidity&&pair.liquidity.usd)||0)+' · read '+hm(at)+' from DexScreener, PumpSwap pair.';}
+    function setDays(rows){var byDay={};rows.forEach(function(r){var tk=r.token;if(!tk||typeof tk.mcap!=='number')return;byDay[r.t.slice(0,10)]=tk.mcap;});var days=Object.keys(byDay).sort();
+      if(days.length<2){dEl.className='days empty';dEl.innerHTML='';dS.textContent=days.length?'One day recorded so far ('+days[0]+'). A bar appears for every day after it: our own record, the last hourly check of each UTC day.':'The record starts 8 September 2026: the hourly watcher writes cap, supply and liquidity, and one bar appears per day. Our own record, not an API\'s change field.';return;}
+      var last14=days.slice(-15),html='',maxAbs=1;var ch=[];for(var i=1;i<last14.length;i++){var pct=(byDay[last14[i]]/byDay[last14[i-1]]-1)*100;ch.push([last14[i],pct]);maxAbs=Math.max(maxAbs,Math.abs(pct));}
+      ch.forEach(function(x){var h=Math.max(4,Math.round(Math.abs(x[1])/maxAbs*52));html+='<span class="'+(x[1]>=0?'up':'down')+'" style="height:'+h+'px" title="'+esc(x[0]+': '+(x[1]>=0?'+':'')+x[1].toFixed(1)+'%')+'"></span>';});
+      dEl.className='days';dEl.innerHTML=html;var l=ch[ch.length-1];dS.textContent='Market cap, day over day, last '+ch.length+' day'+(ch.length===1?'':'s')+': latest '+(l[1]>=0?'+':'')+l[1].toFixed(1)+'% on '+l[0]+'. Our own record, the last hourly check of each UTC day.';}
+    /* reads: the chain through the proxy, the ledger for the days and as the fallback, the market */
+    var pL=fetch(EXT.ledger||'/ext/ledger',{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){return t.split('\n').filter(Boolean).map(function(l){try{return JSON.parse(l)}catch(e){return null}}).filter(function(r){return r&&r.t})}).catch(function(){return []});
+    if(location.protocol==='file:'||!EXT.supply){nEl.textContent='?';subEl.textContent='this copy of the page has no proxy to Solana';bEl.textContent='?';mEl.textContent='?';cEl.textContent='?';cS.textContent='';pL.then(setDays);return;}
+    var at=Date.now();
+    fetch(EXT.supply,{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(r.status)}).then(function(j){var v=j.result&&j.result.value;if(!v)throw 0;setSupply(Number(v.amount)/Math.pow(10,Number(v.decimals)),'read '+hm(at)+' from Solana');})
+      .catch(function(){pL.then(function(rows){var r=rows.slice().reverse().filter(function(x){return x.token&&typeof x.token.supply==='number'})[0];if(r)setSupply(r.token.supply,'as of the ledger\'s check at '+when(r.t));else{nEl.textContent='?';subEl.textContent='the chain could not be read right now';}});});
+    fetch(EXT.mint,{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(r.status)}).then(function(j){var info=j.result&&j.result.value&&j.result.value.data&&j.result.value.data.parsed&&j.result.value.data.parsed.info;setMint(info||null);}).catch(function(){setMint(null);});
+    fetch(EXT.sabl,{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(r.status)}).then(function(d){var ps=(d&&d.pairs)||[];setMarket(ps.filter(function(p){return p.dexId==='pumpswap'})[0]||ps[0],at);}).catch(function(){setMarket(null);});
+    pL.then(setDays);
   })();
   var viemP=null;function viem(){if(!viemP)viemP=import('https://cdn.jsdelivr.net/npm/viem@2.56.3/+esm');return viemP;}
   function b64url(s){s=s.trim().replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var bin=atob(s);var bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new TextDecoder().decode(bytes);}

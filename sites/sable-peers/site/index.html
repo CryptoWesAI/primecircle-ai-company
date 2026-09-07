@@ -138,6 +138,8 @@
   .rail-toggle{display:none}
   @media (max-width:900px){
     body{padding-bottom:96px}
+    .ring-wrap{grid-template-columns:1fr;gap:16px}
+    .ring-stage{max-width:340px}
     .ticks span:nth-child(2),.ticks span:nth-child(3){display:none}
     .eyebrow{font-size:10px;letter-spacing:.14em;gap:10px;white-space:nowrap}
     .eyebrow::before,.eyebrow::after{width:18px;flex:none}
@@ -541,6 +543,21 @@
   .legend .on{color:var(--ok)} .legend .half{color:var(--warn)} .legend .off{color:var(--dim2)} .legend .q{color:var(--dim)}
 
   /* ladder */
+  /* the ring of a thousand lights: one per million SABL ever minted, dark ones burned */
+  .ring-wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:26px;align-items:center;margin:26px 0 10px}
+  .ring-stage{position:relative;aspect-ratio:1;width:100%;max-width:440px;margin:0 auto}
+  .ring-stage canvas{width:100%;height:100%;display:block}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:0 22%}
+  .ring-center .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+  .ring-center b{font-family:var(--mono);font-weight:600;font-size:clamp(20px,2.4vw,28px);color:var(--cyan-soft);letter-spacing:-.01em;margin:4px 0 3px;overflow-wrap:anywhere}
+  .ring-center .s{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:1.4}
+  .ring-facts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ring-facts .rfact.days{grid-column:1/-1}
+  .rfact .v.moon{color:var(--moon)}
+  .days{display:flex;gap:4px;align-items:flex-end;height:56px;margin:8px 0 4px}
+  .days span{flex:1;min-width:0;border-radius:2px 2px 0 0;background:var(--dim2);min-height:2px}
+  .days span.up{background:var(--ok)} .days span.down{background:var(--moon)}
+  .days.empty{height:auto}
   .ladder{position:relative;margin-top:26px;font-family:var(--mono)}
   .ticks{position:relative;height:18px;margin-left:236px;margin-right:96px;border-bottom:1px solid var(--edge2)}
   .ticks span{position:absolute;bottom:2px;transform:translateX(-50%);font-size:10.5px;color:var(--dim);letter-spacing:.06em}
@@ -905,6 +922,15 @@
     <div class="eyebrow left">06 / 07 · The token</div>
     <h2>Where the token sits</h2>
     <p class="sub">Market cap, log scale. <b>SABL's only role is an optional pay-in that burns the token for a discount, announced 2 Sep and not yet live. No yield, no governance, no claim.</b> Every other bar is a gas, staking or payment token. Read the distance, not the ranking.</p>
+    <div class="ring-wrap" id="ring-wrap" translate="no">
+      <div class="ring-stage"><canvas id="ring" aria-label="A thousand lights, one for every million SABL ever minted. The dark ones are burned."></canvas><div class="ring-center"><span class="k">in existence</span><b id="ring-n">…</b><span class="s" id="ring-sub">reading the chain…</span></div></div>
+      <div class="ring-facts">
+        <div class="rfact"><span class="k">burned</span><span class="v moon" id="ring-burned">…</span><span class="s" id="ring-burned-s">of the 1,000,000,000 minted.</span></div>
+        <div class="rfact"><span class="k">can be made</span><span class="v ok" id="ring-mint">…</span><span class="s" id="ring-mint-s">read from the mint account.</span></div>
+        <div class="rfact"><span class="k">market cap</span><span class="v" id="ring-mcap">…</span><span class="s" id="ring-mcap-s">…</span></div>
+        <div class="rfact days"><span class="k">day by day</span><div class="days" id="ring-days"></div><span class="s" id="ring-days-s">…</span></div>
+      </div>
+    </div>
     <div class="ladder" translate="no">
       <div class="ticks"><span style="left:22.2%">$1M</span><span style="left:44.4%">$10M</span><span style="left:66.7%">$100M</span><span style="left:88.9%">$1B</span></div>
       <div class="row sable"><div class="lab" data-sym="SABL">SABL<small>Sable Network</small></div><div class="track"><div class="bar" style="width:5.9%"></div></div><div class="val">$184K<small>liq $41K</small></div></div>
@@ -1018,6 +1044,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">7 Sep 2026</span><span><b>A thousand lights.</b> The Token topic opens with a ring of a thousand lights, one for every million SABL ever minted, read from Solana through this site's proxy: the lit ones exist, the dark ones are burned, and none can be made, since the mint authority is gone. Beside it the burn, the market cap with its 24-hour move, and a day-by-day strip that the hourly watcher fills from 8 September, one bar a day, from its own record rather than an API's change field.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Supply, as Sable lists it.</b> Verify now shows Sable's node listing live, with the ledger's memory of each machine, and one line that says how many third-party machines serve traffic: zero, by Sable's own statement in the whitepaper. That line changes the day the listing does. The reliability record's "third-party node" was the same machine, Sable's own runner; corrected.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Proven runs, and a contest.</b> Every run is now replayed by the board from its input log before it counts: the same seed and the same taps at the same ticks must give the same score, or the run is refused. The Play topic shows the contest window with a countdown, the board has a Contest tab that counts every run with an X handle inside the window (the runs from earlier today passed the plausibility checks only), and the standings freeze by themselves when the window closes. A link on the strip draws today's card: the standings, the countdown, today's sentence and the gateway's state as one image to post.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Endless shift.</b> The clock is gone from Gatekeeper: a run lasts as long as your budget, every wave is harder than the last, and a wave defended without a leak gives ten budget back. The board now measures how long you can hold the door, not how well you fill two and a half minutes. Ten minutes is the hard cap.</span></li>
