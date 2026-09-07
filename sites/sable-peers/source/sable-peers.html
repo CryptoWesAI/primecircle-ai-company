@@ -1262,6 +1262,8 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     function show(){inst.forEach(function(b){b.hidden=false;});if(offer&&!installed&&!snoozed())offer.hidden=false;}
     function hide(){inst.forEach(function(x){x.hidden=true;});if(offer)offer.hidden=true;}
     window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;show();});
+    if(window.__bip){deferred=window.__bip;show();}
+    if(window.__installed)hide();
     inst.forEach(function(b){b.addEventListener('click',function(){if(!deferred)return;var d=deferred;d.prompt();d.userChoice.then(function(c){if(c&&c.outcome==='accepted'){deferred=null;hide();}else if(offer){offer.hidden=true;}}).catch(function(){});});});
     if(later)later.addEventListener('click',function(){try{localStorage.setItem('sable-install-later',String(Date.now()));}catch(e){}if(offer)offer.hidden=true;});
     window.addEventListener('appinstalled',function(){deferred=null;hide();});
