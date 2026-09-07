@@ -95,6 +95,7 @@
   .snd,.pill.install{flex-shrink:0}
   .snd.on{color:var(--cyan);border-color:var(--cyan-soft)}
   .pill.install{min-height:32px;padding:6px 12px;font-size:10px}
+  .pill.install svg{width:15px;height:15px;display:none}
   .shell{display:grid;grid-template-columns:200px minmax(0,1fr)}
   .rail{border-right:1px solid var(--edge);padding:18px 12px;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto}
   .rail ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
@@ -151,7 +152,9 @@
     .rail-mode{display:none;align-items:center;gap:12px;padding:10px 14px 12px;border-top:1px solid var(--edge)}
     .rail.open .rail-mode{display:flex}
     .rail-mode .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
-    .top .pill.install{display:none!important}
+    .top .pill.install{width:32px;height:32px;min-height:0;padding:0;justify-content:center;border-radius:999px}
+    .top .pill.install span{display:none}
+    .top .pill.install svg{display:block}
     .ticks span:nth-child(2),.ticks span:nth-child(3){display:none}
     .eyebrow{font-size:10px;letter-spacing:.14em;gap:10px;white-space:nowrap}
     .eyebrow::before,.eyebrow::after{width:18px;flex:none}
@@ -645,7 +648,7 @@
       </div>
       <button type="button" class="snd" id="sound-btn" aria-pressed="true" aria-label="Button sounds on" title="Button sounds: on"><span aria-hidden="true">♪</span></button>
       <button type="button" class="snd" id="bell" aria-pressed="false" aria-label="Notifications off" title="Notifications: off. Tap to hear about changes." hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-1.6 1.6A1 1 0 0 0 4.1 19.3h15.8a1 1 0 0 0 .7-1.7L19 16Z"/></svg></button>
-      <button type="button" class="pill fill install" data-install hidden>Install</button>
+      <button type="button" class="pill fill install" data-install hidden aria-label="Install the app" title="Install the app"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3a1 1 0 0 1 1 1v9.6l2.3-2.3a1 1 0 1 1 1.4 1.4l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L11 13.6V4a1 1 0 0 1 1-1Zm-7 14a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1Z"/></svg><span>Install</span></button>
     </div>
   </header>
 
