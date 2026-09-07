@@ -321,6 +321,32 @@
   .gb-table td.s{font-family:var(--mono);font-weight:600;color:var(--text)}
   .gb-table tr.me td{color:var(--cyan-soft)}
   .gb-table a{color:var(--cyan-soft)}
+  /* the podium: the first three rows carry their own light. Cyan, white and ember, in the site's own colours. */
+  .gb-table tr.p1 td,.gb-table tr.p2 td,.gb-table tr.p3 td{position:relative}
+  .gb-table tr.p1 td{background:linear-gradient(90deg,rgba(24,191,255,.13),rgba(24,191,255,0) 70%)}
+  .gb-table tr.p2 td{background:linear-gradient(90deg,rgba(232,242,248,.09),rgba(232,242,248,0) 70%)}
+  .gb-table tr.p3 td{background:linear-gradient(90deg,rgba(255,122,89,.12),rgba(255,122,89,0) 70%)}
+  .gb-table tr.p1 td:first-child{box-shadow:inset 3px 0 0 var(--cyan)}
+  .gb-table tr.p2 td:first-child{box-shadow:inset 3px 0 0 rgba(232,242,248,.75)}
+  .gb-table tr.p3 td:first-child{box-shadow:inset 3px 0 0 var(--moon)}
+  .gb-table .rk{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-weight:600;font-size:11px;color:#04121A}
+  .gb-table tr.p1 .rk{background:var(--cyan);animation:gb-halo 2.6s ease-in-out infinite}
+  .gb-table tr.p2 .rk{background:#E8F2F8;box-shadow:0 0 10px rgba(232,242,248,.55)}
+  .gb-table tr.p3 .rk{background:var(--moon);color:#1A0A05;box-shadow:0 0 10px rgba(255,122,89,.6)}
+  .gb-table tr.p1 td.s{color:var(--cyan-soft);text-shadow:0 0 12px rgba(24,191,255,.6)}
+  .gb-table tr.p2 td.s{color:#fff;text-shadow:0 0 10px rgba(232,242,248,.45)}
+  .gb-table tr.p3 td.s{color:#FFB39F;text-shadow:0 0 10px rgba(255,122,89,.5)}
+  .gb-table tr.p1 td.nm{color:var(--text);font-weight:600;overflow:hidden}
+  /* a slow light passing over the first row, and three motes rising beside the name */
+  .gb-table tr.p1 td.nm::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(100deg,transparent 35%,rgba(114,220,255,.20) 50%,transparent 65%);background-size:240% 100%;animation:gb-sheen 4.6s linear infinite}
+  .gb-table .mote{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--cyan-soft);box-shadow:0 0 6px var(--cyan);opacity:0;pointer-events:none;animation:gb-mote 3.4s ease-out infinite}
+  .gb-table .mote:nth-of-type(1){left:6%;bottom:18%;animation-delay:0s}
+  .gb-table .mote:nth-of-type(2){left:48%;bottom:8%;animation-delay:1.2s}
+  .gb-table .mote:nth-of-type(3){left:80%;bottom:28%;animation-delay:2.3s}
+  @keyframes gb-halo{0%,100%{box-shadow:0 0 10px rgba(24,191,255,.7),0 0 24px rgba(24,191,255,.3)}50%{box-shadow:0 0 16px rgba(24,191,255,1),0 0 40px rgba(24,191,255,.55)}}
+  @keyframes gb-sheen{0%{background-position:130% 0}100%{background-position:-130% 0}}
+  @keyframes gb-mote{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translateY(-24px) scale(1.1);opacity:0}}
+  @media (prefers-reduced-motion:reduce){.gb-table tr.p1 .rk,.gb-table .mote{animation:none}.gb-table tr.p1 td.nm::after{display:none}.gb-table .mote{display:none}}
   @media (min-width:901px){.game{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);align-items:start}}
   @media (max-width:900px){.game{grid-template-columns:minmax(0,1fr)}.game-size{aspect-ratio:3/4;max-height:78vh}.game-msg{top:26%}.gb-table .gb-day{display:none}.gb-table td.nm a{display:block;font-size:11px}.gb-table td,.gb-table th{padding:8px 6px}.g-card{padding:14px 12px}.g-how{font-size:13px}.game-hud{grid-template-columns:1fr 1fr;gap:8px;padding:10px}.game-hud .g-attest{grid-column:1/-1;justify-self:start}.g-score{font-size:22px}.ge-form,.g-name{grid-template-columns:1fr}.g-card{padding:14px 14px}}
   @media (min-width:901px){
@@ -1505,7 +1531,7 @@ window.SABLE_EXT=(function(){
   var myName='';try{myName=(localStorage.getItem('sable-game-name')||'').toLowerCase();}catch(e){}
   function load(period){period=period||'today';tabs.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-period')===period)});
     return fetch(BOARD+'/top?period='+period,{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(r.status)}).then(function(j){var rows=j.rows||[];
-      tbl.querySelector('tbody').innerHTML=rows.length?rows.map(function(r,i){return '<tr'+(myName&&String(r.name).toLowerCase()===myName?' class="me"':'')+'><td class="n">'+(i+1)+'</td><td class="nm" translate="no">'+esc(r.name)+(r.handle?' <a href="https://x.com/'+esc(r.handle)+'">@'+esc(r.handle)+'</a>':'')+'</td><td class="s">'+Number(r.score).toLocaleString('en-US')+'</td><td class="n">'+esc(r.wave)+'</td><td class="n gb-day">'+esc(r.day)+'</td></tr>'}).join(''):'<tr><td colspan="5">'+(period==='today'?'nobody has played today yet':period==='contest'?'no contest runs yet. A run needs an X handle to count here.':'no scores yet')+'</td></tr>';
+      tbl.querySelector('tbody').innerHTML=rows.length?rows.map(function(r,i){var cls=[myName&&String(r.name).toLowerCase()===myName?'me':'',i<3?'p'+(i+1):''].join(' ').trim();return '<tr'+(cls?' class="'+cls+'"':'')+'><td class="n">'+(i<3?'<span class="rk">'+(i+1)+'</span>':(i+1))+'</td><td class="nm" translate="no">'+esc(r.name)+(r.handle?' <a href="https://x.com/'+esc(r.handle)+'">@'+esc(r.handle)+'</a>':'')+(i===0?'<span class="mote"></span><span class="mote"></span><span class="mote"></span>':'')+'</td><td class="s">'+Number(r.score).toLocaleString('en-US')+'</td><td class="n">'+esc(r.wave)+'</td><td class="n gb-day">'+esc(r.day)+'</td></tr>'}).join(''):'<tr><td colspan="5">'+(period==='today'?'nobody has played today yet':period==='contest'?'no contest runs yet. A run needs an X handle to count here.':'no scores yet')+'</td></tr>';
     }).catch(function(){tbl.querySelector('tbody').innerHTML='<tr><td colspan="5">the board did not answer</td></tr>';});}
   tabs.forEach(function(b){b.addEventListener('click',function(){load(b.getAttribute('data-period'))})});
   var loaded=false;function ensureBoard(){if(loaded)return;loaded=true;load('today');loadContest();}
