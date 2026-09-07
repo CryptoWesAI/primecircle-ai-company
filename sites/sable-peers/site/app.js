@@ -110,7 +110,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     home:'This is the overview. The map is the whitepaper as a solar system: thirteen sections turn around one sentence, every dot is a sentence of the paper, orange where it changed. Tap a planet, or use the arrows under the map. The squares on the outer ring, and the row of buttons under the map, are the pages of this site: tap one to open it. You can also say: section five, today\'s sentence, or search receipt.',
     explained:'Sable, explained in plain words. Three promises: it forgets what you told it, it cannot overspend your budget, and it hands you a receipt you can check yourself. Then who it is for, what it costs, and what it is not yet.',
     door:'This is the door, a simulation that runs entirely in your browser. Type a prompt and press Send to watch it sealed, held against a five-cent budget, opened once, and receipted. Press Let it loop to watch a runaway agent get refused at the cap.',
-    check:'Verify, do not trust. This reads Sable’s live status and published signer address, and lets you check a real receipt in your browser. No key? Load the test receipt and watch it pass, then change one character and watch it fail.',
+    check:'Verify, do not trust. This reads Sable’s live status and published signer address, and lets you check a real receipt in your browser, and shows the machines Sable lists as its supply. No key? Load the test receipt and watch it pass, then change one character and watch it fail.',
     field:'The field. Eight projects on one checklist, read from their own documentation. The last column shows when each project’s public page last changed, checked daily. Scroll the table sideways on a phone.',
     token:'Where the token sits. A log-scale ladder of market caps, read live when the page opens. SABL’s only role is an optional pay-in that burns the token, and it is not live yet.',
     scenarios:'Scenarios, not predictions. Three bands for what the token could be worth, and what would have to be true first. No multiples, no targets.',
@@ -250,9 +250,9 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
 window.SABLE_EXT=(function(){
   var live=location.hostname==='sable.primecircle.cloud';
   var GH='https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/';
-  return live?{markets:'/ext/markets',sabl:'/ext/sabl',record:'/ext/record',peers:'/ext/peers',ledger:'/ext/ledger',whitepaper:'/ext/whitepaper',board:'/api/game',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models'}
+  return live?{markets:'/ext/markets',sabl:'/ext/sabl',record:'/ext/record',peers:'/ext/peers',ledger:'/ext/ledger',whitepaper:'/ext/whitepaper',board:'/api/game',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes'}
   :{markets:'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=automata,marlin,secret,pha,opengradient,nillion,iexec-rlc,oasis-network,akash-network,virtual-protocol,bittensor,near&per_page=50&page=1&sparkline=false&price_change_percentage=30d',
-    sabl:'https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump',record:GH+'record.json',peers:GH+'peers-record.json',ledger:GH+'status/log.jsonl',whitepaper:GH+'whitepaper.json',board:'http://127.0.0.1:8791',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models'};
+    sabl:'https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump',record:GH+'record.json',peers:GH+'peers-record.json',ledger:GH+'status/log.jsonl',whitepaper:GH+'whitepaper.json',board:'http://127.0.0.1:8791',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes'};
 })();
 
 /* block 6 */
@@ -738,6 +738,29 @@ window.SABLE_EXT=(function(){
         return '<tr><td>'+esc((r.t||'').replace('T',' ').replace('Z',''))+'</td><td>'+esc(String(r.status||''))+'</td><td class="'+c+'">'+esc(conf)+'</td><td>'+esc(r.conf_failures==null?'':String(r.conf_failures))+'</td><td>'+esc(sg)+(r.signer_changed_from?' <b>changed</b>':'')+'</td></tr>';}).join('');
       tbl.querySelector('tbody').innerHTML=body||'<tr><td colspan="5">no rows yet</td></tr>';
     }).catch(function(){facts.innerHTML='<div class="rfact"><span class="k">record</span><span class="v">not readable from here</span><span class="s">Open the raw ledger link above.</span></div>';tbl.querySelector('tbody').innerHTML='<tr><td colspan="5">record not readable from here; open the raw ledger link above.</td></tr>';});
+  })();
+  /* supply, as Sable lists it: the live node listing, with the ledger's memory of each machine */
+  (function(){
+    var tbl=document.getElementById('supply-table'),third=document.getElementById('supply-third'),why=document.getElementById('supply-why');if(!tbl||!third)return;
+    var EXT=window.SABLE_EXT||{};
+    /* the one runner listed on 7 September 2026; the whitepaper (section 10) calls it Sable's own house machine, one machine today */
+    var HOUSE={'node-4c9141b63c8d':1};
+    function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+    function when(iso){return String(iso).replace('T',' ').replace('Z','').slice(0,16)+' UTC';}
+    if(location.protocol==='file:'){tbl.querySelector('tbody').innerHTML='<tr><td colspan="6">this copy of the page has no proxy to Sable</td></tr>';third.textContent='third-party machines serving traffic: unknown from here';return;}
+    var pN=fetch(EXT.nodes||'/sable-api/nodes',{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(r.status)});
+    var pL=fetch(EXT.ledger||'/ext/ledger',{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){return t.split('\n').filter(Boolean).map(function(l){try{return JSON.parse(l)}catch(e){return null}}).filter(function(r){return r&&r.t})}).catch(function(){return []});
+    Promise.all([pN,pL]).then(function(res){var nodes=Array.isArray(res[0])?res[0]:[],rows=res[1];
+      var mem={};rows.forEach(function(r){if(!Array.isArray(r.nodes))return;r.nodes.forEach(function(x){var v=String(x),i=v.lastIndexOf(':'),id=v.slice(0,i),st=v.slice(i+1);var m=mem[id]||(mem[id]={first:r.t,n:0,by:{}});m.n++;m.by[st]=(m.by[st]||0)+1;});});
+      tbl.querySelector('tbody').innerHTML=nodes.length?nodes.map(function(x){var m=mem[x.id],st=String(x.status||'?'),cls=st==='online'?'ok':st==='degraded'?'warn':'';
+        var att=x.attestation_verified===true?' · attestation verified':x.attestation_verified===false?' · attestation not verified':'';
+        var tag=x.synthetic?'control plane':HOUSE[x.id]?'house machine':'not identified';
+        var since=m?('since '+when(m.first)+' · '+st+' at '+(m.by[st]||0)+' of '+m.n+' checks'):'not in the ledger yet';
+        return '<tr><td>'+esc(String(x.name||x.id).replace(/Â·/g,'·'))+' <span class="quiet">'+tag+'</span></td><td>'+esc(x.region||'?')+'</td><td>'+esc(x.privacy_tier||'?')+'</td><td>'+esc(x.tee_kind||'none')+'</td><td class="'+cls+'">'+esc(st+att)+'</td><td>'+esc(since)+'</td></tr>';}).join(''):'<tr><td colspan="6">the listing is empty</td></tr>';
+      var others=nodes.filter(function(x){return !x.synthetic&&!HOUSE[x.id]});
+      third.textContent='third-party machines serving traffic: '+others.length;
+      why.textContent=others.length?'The listing shows '+others.length+' machine'+(others.length===1?'':'s')+' this page cannot identify as Sable\'s own: '+others.map(function(x){return x.name||x.id}).join(', ')+'. Whether Sable rents it or an operator runs it is not something the listing says.':'By Sable\'s own statement: compute is rented, first on machines Sable enrols itself, then vetted operators, open supply last if ever, and supply follows demand. This line changes the day a machine Sable does not run appears on the list.';
+    }).catch(function(){tbl.querySelector('tbody').innerHTML='<tr><td colspan="6">the listing could not be read right now</td></tr>';third.textContent='third-party machines serving traffic: unknown right now';});
   })();
   var viemP=null;function viem(){if(!viemP)viemP=import('https://cdn.jsdelivr.net/npm/viem@2.56.3/+esm');return viemP;}
   function b64url(s){s=s.trim().replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var bin=atob(s);var bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new TextDecoder().decode(bytes);}

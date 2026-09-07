@@ -71,6 +71,11 @@ await p.waitForFunction(()=>document.querySelectorAll("#rfacts .rfact").length==
 ok(await p.evaluate(()=>document.querySelectorAll("#rfacts .rfact").length===3),"reliability facts rendered");
 ok(await p.evaluate(()=>document.querySelectorAll("#rgrid .rc").length>=24&&document.querySelectorAll("#rgrid .rc.ok,#rgrid .rc.warn,#rgrid .rc.off").length>=1),"reliability grid has checks");
 console.log("reliability:",await p.evaluate(()=>[...document.querySelectorAll("#rfacts .v")].map(e=>e.textContent).join(" | ")));
+if(!base.startsWith("file:")){
+  await p.waitForFunction(()=>!/reading the listing/.test(document.querySelector("#supply-table tbody").textContent),{timeout:15000}).catch(()=>{});
+  ok(await p.evaluate(()=>document.querySelectorAll("#supply-table tbody tr").length>=2),"supply listing shows Sable's machines: "+(await p.$eval("#supply-table tbody",e=>e.textContent.replace(/\s+/g," ").slice(0,120))));
+  ok(/traffic: \d+/.test(await p.$eval("#supply-third",e=>e.textContent)),"third-party count is a number: "+await p.$eval("#supply-third",e=>e.textContent));
+}
 ok(await p.evaluate(()=>getComputedStyle(document.getElementById("guide-btn")).display!=="none"),"guide button visible");
 ok(await p.evaluate(()=>document.getElementById("guide-panel").hidden),"guide panel hidden by default");
 await p.click("#guide-btn"); await wait(300);

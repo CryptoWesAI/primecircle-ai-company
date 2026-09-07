@@ -772,6 +772,12 @@
         <div class="addr" id="signer" translate="no">reading…</div>
         <p class="note"><span id="signer-when">…</span><br>Every real receipt is signed by this address, secp256k1 over an EIP-191 digest. Pin it, and no receipt can be faked without the key. Source: <a href="https://api.buildsable.com/v1/receipts/pubkey">api.buildsable.com/v1/receipts/pubkey</a>.</p>
       </div>
+      <div class="panel" id="supply">
+        <h3>Supply, as Sable lists it</h3>
+        <p class="note">Sable's own rule is to list only machines whose existence can be checked. This reads that listing live from <a href="https://api.buildsable.com/v1/nodes">api.buildsable.com/v1/nodes</a> through this site's read-only proxy, and the hourly ledger says how long each machine has been on it.</p>
+        <div class="tablewrap"><table class="ledger-table" id="supply-table"><thead><tr><th>machine</th><th>region</th><th>tier</th><th>hardware</th><th>status</th><th>on the list</th></tr></thead><tbody translate="no"><tr><td colspan="6">reading the listing…</td></tr></tbody></table></div>
+        <p class="note" id="supply-note"><b id="supply-third">third-party machines serving traffic: …</b> <span id="supply-why"></span></p>
+      </div>
       <div class="panel verifier">
         <h3>Verify a receipt in your browser</h3>
         <label for="rcpt" class="lbl">Receipt (the x-sable-receipt header, base64url)</label>
@@ -1004,6 +1010,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">7 Sep 2026</span><span><b>Supply, as Sable lists it.</b> Verify now shows Sable's node listing live, with the ledger's memory of each machine, and one line that says how many third-party machines serve traffic: zero, by Sable's own statement in the whitepaper. That line changes the day the listing does. The reliability record's "third-party node" was the same machine, Sable's own runner; corrected.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Proven runs, and a contest.</b> Every run is now replayed by the board from its input log before it counts: the same seed and the same taps at the same ticks must give the same score, or the run is refused. The Play topic shows the contest window with a countdown, the board has a Contest tab that counts every run with an X handle inside the window (the runs from earlier today passed the plausibility checks only), and the standings freeze by themselves when the window closes. A link on the strip draws today's card: the standings, the countdown, today's sentence and the gateway's state as one image to post.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Endless shift.</b> The clock is gone from Gatekeeper: a run lasts as long as your budget, every wave is harder than the last, and a wave defended without a leak gives ten budget back. The board now measures how long you can hold the door, not how well you fill two and a half minutes. Ten minutes is the hard cap.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Reliability record.</b> The hourly ledger in the Log became a record: how long the confidential backend has been failing closed, in how many checks it was verified, whether the gateway answered, and a day-by-hour grid of every check since 4 September. Sable's own uptime figure sits next to it, because that number counts the gateway and not the backend.</span></li>
