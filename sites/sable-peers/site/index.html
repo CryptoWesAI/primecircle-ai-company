@@ -148,6 +148,10 @@
   .rail-toggle{display:none}
   @media (max-width:900px){
     body{padding-bottom:96px}
+    .rail-mode{display:none;align-items:center;gap:12px;padding:10px 14px 12px;border-top:1px solid var(--edge)}
+    .rail.open .rail-mode{display:flex}
+    .rail-mode .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+    .top .pill.install{display:none!important}
     .ticks span:nth-child(2),.ticks span:nth-child(3){display:none}
     .eyebrow{font-size:10px;letter-spacing:.14em;gap:10px;white-space:nowrap}
     .eyebrow::before,.eyebrow::after{width:18px;flex:none}

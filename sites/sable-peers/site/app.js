@@ -54,6 +54,9 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
   var current='home';
   /* phone menu */
   var railnav=document.getElementById('railnav'),toggle=document.getElementById('rail-toggle');
+  /* on phones the view switch moves into the Topics drawer, so the header's buttons stay on screen */
+  (function(){var mode=document.querySelector('.top .mode');if(!mode||!railnav)return;var home=mode.parentNode,next=mode.nextSibling,slot=document.createElement('div');slot.className='rail-mode';slot.innerHTML='<span class="lbl">View</span>';railnav.insertBefore(slot,document.getElementById('rail-live')||null);
+    var mq=window.matchMedia('(max-width:900px)');function place(){if(mq.matches){if(mode.parentNode!==slot)slot.appendChild(mode);}else if(mode.parentNode===slot){home.insertBefore(mode,next);}}place();if(mq.addEventListener)mq.addEventListener('change',place);else mq.addListener(place);})();
   function closeMenu(){if(!railnav)return;railnav.classList.remove('open');if(toggle)toggle.setAttribute('aria-expanded','false');}
   function openMenu(){railnav.classList.add('open');toggle.setAttribute('aria-expanded','true');var first=railnav.querySelector('a[aria-current="page"]')||railnav.querySelector('a');if(first)first.focus();}
   if(toggle){toggle.addEventListener('click',function(){railnav.classList.contains('open')?closeMenu():openMenu();});
