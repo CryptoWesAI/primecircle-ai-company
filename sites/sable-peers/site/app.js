@@ -472,7 +472,7 @@ window.SABLE_EXT=(function(){
   function left(ms){var m=Math.max(0,Math.round(ms/60000)),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+' d '+h+' h':h?h+' h '+mm+' min':mm+' min';}
   function drawContest(){if(!contest||!contestEl)return;var now=Date.now(),start=Date.parse(contest.start+'T00:00:00Z'),end=Date.parse(contest.end+'T23:59:59Z');
     var st=now<start?'starts in '+left(start-now):now>end?'over':'ends in '+left(end-now);
-    contestEl.innerHTML='<b>Contest</b><span>'+esc(fmtDay(contest.start)+' to '+fmtDay(contest.end))+' UTC</span><span class="cd">'+esc(st)+'</span><span class="rule">highest single run wins · your X handle on the run · post your card and tag @Sablenetwork</span><a href="#play" data-tab="contest">'+(now>end?'final standings':'standings')+'</a><a href="#play" data-daily>today\'s card</a>';
+    contestEl.innerHTML='<b>Contest</b><span>'+esc(fmtDay(contest.start)+' to '+fmtDay(contest.end))+' UTC</span><span class="cd">'+esc(st)+'</span><span class="rule">highest single run wins · your X handle on the run · post your card and tag @Sablenetwork</span>'+(now>end?'<a href="winner.html">the winner</a>':'<a href="#play" data-tab="contest">standings</a>')+'<a href="#play" data-daily>today\'s card</a>';
     contestEl.hidden=false;if(contestTab)contestTab.hidden=false;
     var hf=document.getElementById('gs-handle'),lab=hf&&hf.parentNode?hf.parentNode.querySelector('span'):null;if(lab)lab.textContent=now>=start&&now<=end?'X handle, needed for the contest':'X handle, optional';}
   var contestAsked=false;

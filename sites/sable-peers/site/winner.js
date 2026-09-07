@@ -53,8 +53,9 @@ $("window").textContent = "Gatekeeper · contest week · " + span(C.start, C.end
 $("name").textContent = W.name;
 $("score").textContent = num(W.score);
 $("under").textContent = "points · wave " + W.wave + " · " + clock(W.duration_ms) + " at the door · arena " + dayLabel(W.day, true);
-$("refused").textContent = plural(W.refused, "broken seal") + " refused · " + plural(W.loops, "loop") + " cut";
-$("leaked").textContent = plural(W.leaked, "request") + " leaked · " + plural(W.cleanWaves, "clean wave") + " · " + plural(W.receipts, "receipt");
+const has = (v) => typeof v === "number";
+$("refused").textContent = plural(W.refused, "broken seal") + " refused" + (has(W.loops) ? " · " + plural(W.loops, "loop") + " cut" : "");
+$("leaked").textContent = [has(W.leaked) ? plural(W.leaked, "request") + " leaked" : "", has(W.cleanWaves) ? plural(W.cleanWaves, "clean wave") : "", plural(W.receipts, "receipt")].filter(Boolean).join(" · ");
 const who = $("who");
 if (W.handle) { const a = document.createElement("a"); a.className = "pill"; a.href = "https://x.com/" + encodeURIComponent(handleOf(W.handle)); a.target = "_blank"; a.rel = "noopener"; a.textContent = "@" + handleOf(W.handle); who.appendChild(a); }
 const back = document.createElement("a"); back.className = "pill"; back.href = "./#play"; back.textContent = "Play the arena"; who.appendChild(back);
@@ -65,13 +66,13 @@ const runnerUp = DATA.standings[1];
 const margin = runnerUp ? W.score - runnerUp.score : 0;
 $("facts").innerHTML = [
   ["margin", num(margin), "cyan", runnerUp ? "points ahead of " + esc(runnerUp.name) + " in second place." : "no second place recorded."],
-  ["refused", num(W.refused + W.loops), "moon", "broken seals and loops turned away before the door. Only refusals build the streak."],
+  ["refused", num(W.refused + (W.loops || 0)), "moon", (has(W.loops) ? "broken seals and loops" : "broken seals") + " turned away before the door. Only refusals build the streak."],
   ["held for", clock(W.duration_ms), "ok", "the length of the winning run, wave " + W.wave + " reached. A run ends when the budget is gone."],
 ].map(([k, v, cls, s]) => '<div class="fact"><span class="k">' + k + '</span><span class="v ' + cls + '">' + v + '</span><span class="s">' + s + "</span></div>").join("");
 
 /* why */
 $("why").innerHTML = "Gatekeeper rewards the same thing Sable's door does. A sealed request passes and becomes a receipt, but a receipt scores once and builds nothing. A <b>refusal</b> builds the streak, the streak raises the multiplier, and a wave held without a single leak pays more than any receipt. " +
-  esc(W.name) + " won by turning away " + num(W.refused + W.loops) + " requests and letting " + num(W.receipts) + " through, with " + plural(W.leaked, "leak") + " in " + clock(W.duration_ms) + ". <b>That is the whole lesson:</b> a door that only measures throughput teaches the opposite of what a budget is for.";
+  esc(W.name) + " won by turning away " + num(W.refused + (W.loops || 0)) + " requests and letting " + num(W.receipts) + " through" + (has(W.leaked) ? ", with " + plural(W.leaked, "leak") : "") + " in " + clock(W.duration_ms) + ". <b>That is the whole lesson:</b> a door that only measures throughput teaches the opposite of what a budget is for.";
 
 /* podium */
 $("podium").innerHTML = [0, 1, 2].map((i) => {
@@ -118,13 +119,13 @@ async function drawCard(canvas) {
   ctx.fillStyle = "#72DCFF"; ctx.font = "600 40px " + SANS; ctx.fillText(fit(ctx, W.name, 640), 70, 200);
   ctx.fillStyle = "#E8F2F8"; ctx.font = "600 150px " + MONO; ctx.fillText(num(W.score), 62, 340);
   ctx.fillStyle = "#8FA3B0"; ctx.font = "500 30px " + MONO; ctx.fillText("points · wave " + W.wave + " · " + clock(W.duration_ms) + " at the door", 74, 392);
-  ctx.fillStyle = "#FF7A59"; ctx.font = "600 34px " + MONO; ctx.fillText(fit(ctx, (W.refused + W.loops) + " refused · " + plural(W.leaked, "leak"), 620), 74, 460);
+  ctx.fillStyle = "#FF7A59"; ctx.font = "600 34px " + MONO; ctx.fillText(fit(ctx, (W.refused + (W.loops || 0)) + " refused" + (has(W.leaked) ? " · " + plural(W.leaked, "leak") : ""), 620), 74, 460);
   ctx.fillStyle = "#E8F2F8"; ctx.font = "700 56px " + SANS; ctx.fillText("Held the door.", 70, 545);
   ctx.fillStyle = "#8FA3B0"; ctx.font = "500 24px " + SANS; ctx.fillText("sable.primecircle.cloud · the refusal is the feature", 74, 600);
 }
 
 const canvas = $("card");
-const text = W.name + " held the door: " + num(W.score) + " points in wave " + W.wave + ", " + (W.refused + W.loops) + " refused, " + plural(W.leaked, "leak") + ". Winner of the Gatekeeper contest on the Sable Observatory.";
+const text = W.name + " held the door: " + num(W.score) + " points in wave " + W.wave + ", " + (W.refused + (W.loops || 0)) + " refused" + (has(W.leaked) ? ", " + plural(W.leaked, "leak") : "") + ". Winner of the Gatekeeper contest on the Sable Observatory.";
 $("x-btn").href = "https://x.com/intent/post?text=" + encodeURIComponent(text + " https://sable.primecircle.cloud/winner.html");
 drawCard(canvas).then(() => {
   const toBlob = () => new Promise((res) => canvas.toBlob(res, "image/png"));
