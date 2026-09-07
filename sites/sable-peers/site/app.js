@@ -95,6 +95,37 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
   ['check','field','token','updates'].forEach(function(id){var s=document.getElementById(id);if(s)obs.observe(s,{childList:true,subtree:true,characterData:true});});
   refresh();setTimeout(refresh,3000);setTimeout(refresh,8000);
   /* a small public surface for the guide and for Lisa's tools */
+  /* the app: the install prompt when the browser offers one, and notifications through the bell */
+  (function(){
+    var bell=document.getElementById('bell'),inst=[].slice.call(document.querySelectorAll('[data-install]')),BOARD=(window.SABLE_EXT||{}).board||'/api/game';
+    var canSW='serviceWorker' in navigator&&location.protocol==='https:';
+    if(canSW)navigator.serviceWorker.register('/sw.js').catch(function(){});
+    var deferred=null;
+    window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;inst.forEach(function(b){b.hidden=false;});});
+    inst.forEach(function(b){b.addEventListener('click',function(){if(!deferred)return;deferred.prompt();deferred.userChoice.then(function(){deferred=null;inst.forEach(function(x){x.hidden=true;});}).catch(function(){});});});
+    window.addEventListener('appinstalled',function(){inst.forEach(function(x){x.hidden=true;});});
+    if(!bell)return;
+    var canPush=canSW&&'PushManager' in window&&'Notification' in window;
+    if(!canPush){bell.hidden=true;return;}
+    bell.hidden=false;
+    function b64(s){var pad='='.repeat((4-s.length%4)%4),b=(s+pad).replace(/-/g,'+').replace(/_/g,'/'),raw=atob(b),out=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)out[i]=raw.charCodeAt(i);return out;}
+    function paint(on,why){bell.setAttribute('aria-pressed',on?'true':'false');bell.setAttribute('aria-label',on?'Notifications on':'Notifications off');bell.classList.toggle('on',on);bell.title=why||('Notifications: '+(on?'on. Tap to turn off.':'off. Tap to hear about changes.'));}
+    function current(){return navigator.serviceWorker.ready.then(function(r){return r.pushManager.getSubscription();});}
+    current().then(function(sub){paint(!!sub&&Notification.permission==='granted');}).catch(function(){});
+    bell.addEventListener('click',function(){
+      bell.disabled=true;
+      current().then(function(sub){
+        if(sub){return fetch(BOARD+'/push/unsubscribe',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({endpoint:sub.endpoint})}).catch(function(){}).then(function(){return sub.unsubscribe();}).then(function(){paint(false);});}
+        return Notification.requestPermission().then(function(perm){
+          if(perm!=='granted'){paint(false,'Notifications: blocked by the browser. Allow them for this site to hear about changes.');return;}
+          return fetch(BOARD+'/push/key',{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(new Error('the board has no push key'))})
+            .then(function(j){return navigator.serviceWorker.ready.then(function(r){return r.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64(j.key)});});})
+            .then(function(sub){return fetch(BOARD+'/push/subscribe',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({subscription:sub.toJSON()})}).then(function(r){if(!r.ok)throw new Error('subscribe '+r.status);paint(true);
+              return navigator.serviceWorker.ready.then(function(reg){return reg.showNotification('Sable Observatory',{body:'You will hear from this page when something changes: a new log entry, a change in the whitepaper, news about the contest.',icon:'/icons/icon-192.png',badge:'/icons/badge-96.png',tag:'sable-welcome',vibrate:[200,100,200]});});});});});
+      }).catch(function(e){paint(false,'Notifications could not be turned on ('+(e&&e.message?e.message:'error')+').');}).then(function(){bell.disabled=false;});
+    });
+    window.SABLE_APP={installable:function(){return !!deferred;},subscribed:function(){return current().then(function(s){return !!s;});}};
+  })();
   /* a tile that opens the guide */
   document.addEventListener('click',function(e){var a=e.target.closest('a[data-guide]');if(!a)return;e.preventDefault();var b=document.getElementById('guide-btn'),p=document.getElementById('guide-panel');if(b&&p&&p.hidden)b.click();});
   /* tables wider than their box get a fade and a hint until scrolled to the end */
@@ -124,7 +155,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     scenarios:'Scenarios, not predictions. Three bands for what the token could be worth, and what would have to be true first. No multiples, no targets.',
     play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. There is no clock: the shift lasts as long as your budget, every wave is harder than the last, and a wave held without a leak gives budget back. The same arena for everyone today, and a leaderboard without accounts: the top three rows are lit. A contest runs from 7 to 14 September: the highest single run wins, one place per X handle, and to claim a prize the player posts their card on X tagging Sablenetwork. Every run is replayed by the board from its taps before it counts, and a referee flags runs that look scripted. The strip above the board has the countdown, the standings and today’s card to post.',
     log:'The log. What changed on this page, with dates. The reliability record: how long Sable’s confidential backend has been failing closed, in how many hourly checks it was verified, whether the gateway answered, and a grid of every check by day and hour, with Sable’s own uptime figure next to it. Then the whitepaper watched hourly with every diff, and what this page got wrong.',
-    community:'The community. Sable’s Telegram and X, and four doors into the rest of this page: Play, Verify, the guide, the Log. Bring a question, not a price.'
+    community:'The community. Sable’s Telegram and X, and four doors into the rest of this page: Play, Verify, the guide, the Log. On a phone the page installs on the home screen like an app, and the bell in the top bar turns on notifications for changes. Bring a question, not a price.'
   };
   var TOUR=[
     'Welcome to the Sable Observatory, an independent page that explains Sable Network and lets you check it yourself. It has two views: Compact opens one topic at a time, Full reads as one long page. The switch is at the top.',

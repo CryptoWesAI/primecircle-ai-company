@@ -19,7 +19,13 @@
 <meta name="twitter:title" content="Sable Observatory">
 <meta name="twitter:description" content="An independent observatory of Sable Network: explained in plain words, a working model of the door you can try, a receipt verifier that runs in your browser, live status, the whitepaper watched hourly, and a sourced comparison against eight peers. By PrimeCircle, not run by Sable.">
 <meta name="twitter:image" content="https://sable.primecircle.cloud/og.png">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%99%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Observatory">
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#05070A">
 <style>
@@ -85,6 +91,10 @@
   .snd[aria-pressed="false"]{color:var(--dim2);border-color:var(--edge);text-decoration:line-through}
   .snd:hover{border-color:var(--cyan)}
   .snd:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+  .snd svg{width:15px;height:15px;display:block}
+  .snd,.pill.install{flex-shrink:0}
+  .snd.on{color:var(--cyan);border-color:var(--cyan-soft)}
+  .pill.install{min-height:32px;padding:6px 12px;font-size:10px}
   .shell{display:grid;grid-template-columns:200px minmax(0,1fr)}
   .rail{border-right:1px solid var(--edge);padding:18px 12px;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto}
   .rail ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
@@ -169,7 +179,7 @@
     .mode button{padding:7px 11px;letter-spacing:.08em}
     body.compact #hero,body.full #hero,#hero{padding-left:14px;padding-right:14px}
   }
-  @media (max-width:360px){.top .brand small{display:none}.mode button{padding:7px 9px}.snd{width:32px;height:32px}}
+  @media (max-width:360px){.top .brand small{display:none}.ctl{gap:6px}.mode button{padding:7px 7px}.snd{width:30px;height:30px}}
   @media (max-width:330px){.top{flex-wrap:wrap}.ctl{width:100%;justify-content:flex-end}}
   @media (min-width:901px) and (max-width:1180px){.tiles{grid-template-columns:repeat(2,1fr)}}
   @media (prefers-reduced-motion:reduce){.tile{transition:none}}
@@ -630,6 +640,8 @@
         <button type="button" id="mode-full" aria-pressed="false">Full</button>
       </div>
       <button type="button" class="snd" id="sound-btn" aria-pressed="true" aria-label="Button sounds on" title="Button sounds: on"><span aria-hidden="true">♪</span></button>
+      <button type="button" class="snd" id="bell" aria-pressed="false" aria-label="Notifications off" title="Notifications: off. Tap to hear about changes." hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3.5a1.5 1.5 0 0 0-3 0v.66A7 7 0 0 0 5 11v5l-1.6 1.6A1 1 0 0 0 4.1 19.3h15.8a1 1 0 0 0 .7-1.7L19 16Z"/></svg></button>
+      <button type="button" class="pill fill install" data-install hidden>Install</button>
     </div>
   </header>
 
@@ -1045,6 +1057,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">8 Sep 2026</span><span><b>An app on your phone.</b> The page installs on a home screen (Chrome offers Install, Safari has Add to Home Screen), opens full screen with the site's mark as its icon, and works without a network for what it has already shown. The bell in the top bar turns on notifications: a new entry in this log, a change in Sable's whitepaper caught by the hourly watcher, or news about the contest, with the phone's own sound. A subscription is an address at the phone's push service and two keys, nothing else, and it can be turned off with the same bell.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>A thousand lights.</b> The Token topic opens with a ring of a thousand lights, one for every million SABL ever minted, read from Solana through this site's proxy: the lit ones exist, the dark ones are burned, and none can be made, since the mint authority is gone. Beside it the burn, the market cap with its 24-hour move, and a day-by-day strip that the hourly watcher fills from 8 September, one bar a day, from its own record rather than an API's change field.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Supply, as Sable lists it.</b> Verify now shows Sable's node listing live, with the ledger's memory of each machine, and one line that says how many third-party machines serve traffic: zero, by Sable's own statement in the whitepaper. That line changes the day the listing does. The reliability record's "third-party node" was the same machine, Sable's own runner; corrected.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Proven runs, and a contest.</b> Every run is now replayed by the board from its input log before it counts: the same seed and the same taps at the same ticks must give the same score, or the run is refused. The Play topic shows the contest window with a countdown, the board has a Contest tab that counts every run with an X handle inside the window (the runs from earlier today passed the plausibility checks only), and the standings freeze by themselves when the window closes. A link on the strip draws today's card: the standings, the countdown, today's sentence and the gateway's state as one image to post.</span></li>
@@ -1114,7 +1127,9 @@
     <div class="pills">
       <a class="pill fill" href="https://t.me/SableNetworkPortal">Join the Telegram</a>
       <a class="pill" href="https://x.com/Sablenetwork">Follow @Sablenetwork</a>
+      <button type="button" class="pill" data-install hidden>Install the app</button>
     </div>
+    <p class="quiet center" id="app-note">On a phone this page installs on the home screen like an app: Chrome offers Install, Safari has Add to Home Screen. The bell in the top bar turns on notifications, with the phone's own sound, for a new entry in the log, a change in Sable's whitepaper, or news about the contest.</p>
     <div class="tiles" style="margin-top:26px;text-align:left">
       <a class="tile" href="#play"><span class="n">Play</span><h3>Hold the door</h3><p>Gatekeeper, the game where refusing is the point. A contest runs on the board.</p><span class="go">Play →</span></a>
       <a class="tile" href="#check"><span class="n">Verify</span><h3>Check Sable yourself</h3><p>Live status, the published signer, the machines Sable lists, a receipt checker.</p><span class="go">Verify →</span></a>

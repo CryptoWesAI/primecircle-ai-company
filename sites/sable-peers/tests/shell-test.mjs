@@ -80,6 +80,13 @@ if(!base.startsWith("file:")){
   await p.waitForFunction(()=>!/reading the listing/.test(document.querySelector("#supply-table tbody").textContent),{timeout:15000}).catch(()=>{});
   ok(await p.evaluate(()=>document.querySelectorAll("#supply-table tbody tr").length>=2),"supply listing shows Sable's machines: "+(await p.$eval("#supply-table tbody",e=>e.textContent.replace(/\s+/g," ").slice(0,120))));
   ok(/traffic: \d+/.test(await p.$eval("#supply-third",e=>e.textContent)),"third-party count is a number: "+await p.$eval("#supply-third",e=>e.textContent));
+  // the app: a service worker, a manifest with icons, the bell, a push key from the board
+  await p.waitForFunction(()=>navigator.serviceWorker.getRegistration().then(r=>!!r),{timeout:15000}).catch(()=>{});
+  ok(await p.evaluate(()=>navigator.serviceWorker.getRegistration().then(r=>!!r&&r.scope.endsWith("/"))),"service worker registered at the root");
+  const man=await p.evaluate(()=>fetch("/manifest.webmanifest").then(r=>r.ok?r.json():null).catch(()=>null)); ok(!!man&&man.name==="Sable Observatory"&&man.icons.length>=3&&man.display==="standalone","manifest answers with icons: "+JSON.stringify(man&&{name:man.name,icons:man.icons.length}));
+  ok(await p.evaluate(async()=>{for(const u of ["/icons/icon-192.png","/icons/icon-512.png","/icons/maskable-512.png","/icons/badge-96.png"]){const r=await fetch(u);if(!r.ok||!/image\/png/.test(r.headers.get("content-type")||""))return false;}return true;}),"icons served as png");
+  ok(await vis(p,"bell"),"the bell shows where push is supported");
+  const pk=await p.evaluate(()=>fetch("/api/game/push/key").then(r=>r.json()).catch(()=>null)); ok(!!pk&&typeof pk.key==="string"&&pk.key.length>40,"the board hands out a push key");
 }
 ok(await p.evaluate(()=>getComputedStyle(document.getElementById("guide-btn")).display!=="none"),"guide button visible");
 ok(await p.evaluate(()=>document.getElementById("guide-panel").hidden),"guide panel hidden by default");

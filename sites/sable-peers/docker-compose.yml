@@ -63,6 +63,10 @@ services:
       - BOARD_SECRET=${BOARD_SECRET:?set BOARD_SECRET in .env}
       - BOARD_DB=/data/board.sqlite
       - BOARD_CONTEST=${BOARD_CONTEST:-}
+      - VAPID_PUBLIC=${VAPID_PUBLIC:-}
+      - VAPID_PRIVATE=${VAPID_PRIVATE:-}
+      - VAPID_SUBJECT=https://sable.primecircle.cloud
+      - PUSH_SECRET=${PUSH_SECRET:-}
     volumes:
       - board-data:/data
     cap_drop:

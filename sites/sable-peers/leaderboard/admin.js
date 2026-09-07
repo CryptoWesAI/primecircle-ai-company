@@ -6,6 +6,8 @@
 //   docker exec sable-board node admin.js run "some name"            (a player's best row with its input log)
 //   docker exec sable-board node admin.js flagged                    (runs the referee flagged: out of the contest until reviewed)
 //   docker exec sable-board node admin.js unflag "some name"         (a reviewed run counts again)
+//   docker exec sable-board node admin.js subs                       (how many phones subscribed to notifications)
+//   docker exec sable-board node admin.js push "Title" "Body" [url]  (send a notification to every subscriber)
 import { DatabaseSync } from "node:sqlite";
 const db = new DatabaseSync(process.env.BOARD_DB || "/data/board.sqlite");
 const [cmd, ...args] = process.argv.slice(2);
@@ -19,6 +21,12 @@ else if (cmd === "contest") {
   console.log(JSON.stringify({ start: m[1], end: m[2], standings: rows }, null, 2));
 }
 else if (cmd === "run") console.log(JSON.stringify(db.prepare("SELECT day, seed, name, handle, score, receipts, refused, wave, duration_ms, verified, log FROM scores WHERE lower(name) = lower(?) ORDER BY score DESC LIMIT 1").get(String(args[0] || "")) || null));
+else if (cmd === "subs") console.log(db.prepare("SELECT COUNT(*) AS n FROM push_subs").get().n);
+else if (cmd === "push") {
+  const body = JSON.stringify({ title: String(args[0] || "Sable Observatory"), body: String(args[1] || ""), url: String(args[2] || "/") });
+  const r = await fetch("http://127.0.0.1:" + (process.env.PORT || 8787) + "/push/notify", { method: "POST", headers: { "content-type": "application/json", "x-push-secret": process.env.PUSH_SECRET || "" }, body });
+  console.log(r.status, await r.text());
+}
 else if (cmd === "flagged") console.table(db.prepare("SELECT id, day, name, handle, score, refused, wave, duration_ms FROM scores WHERE flagged = 1 ORDER BY score DESC LIMIT 50").all());
 else if (cmd === "unflag") { const r = db.prepare("UPDATE scores SET flagged = 0 WHERE lower(name) = lower(?)").run(String(args[0] || "")); console.log("unflagged", r.changes); }
 else { console.log("commands: count | top [n] | delete-name <name> | contest [start/end] | run <name> | flagged | unflag <name>"); process.exit(1); }

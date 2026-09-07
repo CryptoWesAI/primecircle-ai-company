@@ -1,8 +1,9 @@
-// Gatekeeper leaderboard. Node 24, node:sqlite, no dependencies.
+// Gatekeeper leaderboard and the app's push notifications. Node 24, node:sqlite, web-push.
 // Same-origin behind nginx at /api/game/. Never exposed to the host.
 import { createServer } from "node:http";
 import { DatabaseSync } from "node:sqlite";
 import { createHmac, createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import webpush from "web-push";
 // the deterministic core: copied next to this file in the image, read from the site tree when run from the repo
 const core = await import("./core.js").catch(() => import("../site/game/core.js"));
 const { replay } = core;
@@ -17,6 +18,10 @@ const ALLOW_ORIGIN = process.env.BOARD_ALLOW_ORIGIN || "";      // local testing
 const CONTEST = (() => { const m = String(process.env.BOARD_CONTEST || "").match(/^(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2})$/); return m ? { start: m[1], end: m[2] } : null; })();
 const MAX_LOG = 20000;                                          // inputs per run the board will replay
 const MAX_TICKS = 120000;
+// push notifications for the installed app: VAPID keys and a secret for the sender, from the environment
+const VAPID_PUBLIC = process.env.VAPID_PUBLIC || "", VAPID_PRIVATE = process.env.VAPID_PRIVATE || "", VAPID_SUBJECT = process.env.VAPID_SUBJECT || "https://sable.primecircle.cloud", PUSH_SECRET = process.env.PUSH_SECRET || "";
+const PUSH_ON = !!(VAPID_PUBLIC && VAPID_PRIVATE);
+if (PUSH_ON) webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
 const RECORD_URL = "https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/record.json";
 const DENY = ["fuck", "shit", "cunt", "nigg", "fag", "hitler", "nazi", "rape", "porn", "cock", "dick", "pussy", "whore", "slut"];
 
@@ -30,6 +35,7 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS scores_day ON scores(day, score DESC);
   CREATE INDEX IF NOT EXISTS scores_score ON scores(score DESC);
   CREATE TABLE IF NOT EXISTS used_tokens (sig TEXT PRIMARY KEY, created_at TEXT NOT NULL);
+  CREATE TABLE IF NOT EXISTS push_subs (id INTEGER PRIMARY KEY, endpoint TEXT UNIQUE NOT NULL, sub TEXT NOT NULL, created_at TEXT NOT NULL);
 `);
 // rows from before 8 September 2026 carry no log and stay unverified
 for (const col of ["verified INTEGER NOT NULL DEFAULT 0", "log TEXT", "flagged INTEGER NOT NULL DEFAULT 0"]) { try { db.exec(`ALTER TABLE scores ADD COLUMN ${col}`); } catch { /* already there */ } }
@@ -42,6 +48,10 @@ const rankQ = db.prepare(`SELECT COUNT(*) AS n FROM (SELECT lower(name) AS k, MA
 const meQ = db.prepare("SELECT name, handle, score, receipts, wave, day FROM scores WHERE device = ? ORDER BY score DESC LIMIT 1");
 const countQ = db.prepare("SELECT COUNT(*) AS n FROM scores");
 const delName = db.prepare("DELETE FROM scores WHERE lower(name) = lower(?)");
+const insSub = db.prepare("INSERT OR IGNORE INTO push_subs (endpoint, sub, created_at) VALUES (?, ?, ?)");
+const delSub = db.prepare("DELETE FROM push_subs WHERE endpoint = ?");
+const allSubs = db.prepare("SELECT endpoint, sub FROM push_subs");
+const countSubs = db.prepare("SELECT COUNT(*) AS n FROM push_subs");
 
 // The day's seed: UTC date plus the whitepaper record's latest snapshot hash,
 // refreshed every hour, so the arena changes when the paper does.
@@ -122,7 +132,35 @@ const server = createServer(async (req, res) => {
   const path = url.pathname.replace(/\/+$/, "") || "/";
   try {
     if (req.method === "OPTIONS" && ALLOW_ORIGIN) return json(res, 204, {});
-    if (req.method === "GET" && path === "/health") return json(res, 200, { ok: true, rows: countQ.get().n, seed: seedFor(today()) });
+    if (req.method === "GET" && path === "/health") return json(res, 200, { ok: true, rows: countQ.get().n, seed: seedFor(today()), push: PUSH_ON, subscribers: countSubs.get().n });
+    /* the app's notifications: a subscription is an endpoint at the phone's push service plus two keys; nothing else about the visitor */
+    if (req.method === "GET" && path === "/push/key") return PUSH_ON ? json(res, 200, { key: VAPID_PUBLIC }) : json(res, 404, { error: "push off" });
+    if (req.method === "POST" && path === "/push/subscribe") {
+      if (!PUSH_ON) return json(res, 404, { error: "push off" });
+      const body = await readBody(req); const sub = body.subscription;
+      if (!sub || typeof sub.endpoint !== "string" || !/^https?:\/\/\S{10,500}$/.test(sub.endpoint) || !sub.keys || typeof sub.keys.p256dh !== "string" || typeof sub.keys.auth !== "string") return json(res, 400, { error: "subscription" });
+      if (limited("sub:" + ipOf(req), 30)) return json(res, 429, { error: "slow down" });
+      insSub.run(sub.endpoint, JSON.stringify({ endpoint: sub.endpoint, keys: { p256dh: sub.keys.p256dh, auth: sub.keys.auth } }), new Date().toISOString());
+      return json(res, 200, { ok: true });
+    }
+    if (req.method === "POST" && path === "/push/unsubscribe") {
+      const body = await readBody(req); if (typeof body.endpoint !== "string") return json(res, 400, { error: "endpoint" });
+      delSub.run(body.endpoint); return json(res, 200, { ok: true });
+    }
+    if (req.method === "POST" && path === "/push/notify") {
+      if (!PUSH_ON || !PUSH_SECRET) return json(res, 404, { error: "push off" });
+      const given = String(req.headers["x-push-secret"] || "");
+      if (given.length !== PUSH_SECRET.length || !timingSafeEqual(Buffer.from(given), Buffer.from(PUSH_SECRET))) return json(res, 401, { error: "secret" });
+      const body = await readBody(req);
+      const url = String(body.url || "/"); const safeUrl = /^\/[^\s]*$|^https:\/\/sable\.primecircle\.cloud(\/\S*)?$/.test(url) ? url : "/";
+      const payload = JSON.stringify({ title: String(body.title || "Sable Observatory").slice(0, 80), body: String(body.body || "").slice(0, 200), url: safeUrl, tag: String(body.tag || "sable-observatory").slice(0, 40) });
+      const subs = allSubs.all(); let sent = 0, failed = 0, removed = 0;
+      await Promise.all(subs.map(async (row) => {
+        try { await webpush.sendNotification(JSON.parse(row.sub), payload, { TTL: 86400 }); sent++; }
+        catch (e) { const code = e && e.statusCode; if (code === 404 || code === 410) { delSub.run(row.endpoint); removed++; } else failed++; }
+      }));
+      return json(res, 200, { ok: true, sent, failed, removed, subscribers: countSubs.get().n });
+    }
     if (req.method === "GET" && path === "/top") {
       const period = url.searchParams.get("period") || "today";
       const limit = Math.min(100, Math.max(1, Number(url.searchParams.get("limit") || 25)));

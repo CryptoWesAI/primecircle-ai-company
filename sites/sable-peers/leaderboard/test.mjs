@@ -5,10 +5,17 @@ import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createGame, autopilot, TICK } from "../site/game/core.js";
+import { createServer } from "node:https";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { generateKeyPairSync, randomBytes } from "node:crypto";
+import webpush from "web-push";
+const VAPID = webpush.generateVAPIDKeys();
 const here = dirname(fileURLToPath(import.meta.url));
 const PORT = 8790, BASE = `http://127.0.0.1:${PORT}`;
 const TODAY = new Date().toISOString().slice(0, 10);
-const child = spawn(process.execPath, [join(here, "server.js")], { env: { ...process.env, PORT: String(PORT), BOARD_SECRET: "test-secret-test-secret-test-secret-1234", BOARD_DB: ":memory:", BOARD_MIN_MS: "300", BOARD_CONTEST: TODAY + "/" + TODAY }, stdio: ["ignore", "pipe", "pipe"] });
+const child = spawn(process.execPath, [join(here, "server.js")], { env: { ...process.env, PORT: String(PORT), BOARD_SECRET: "test-secret-test-secret-test-secret-1234", BOARD_DB: ":memory:", BOARD_MIN_MS: "300", BOARD_CONTEST: TODAY + "/" + TODAY, VAPID_PUBLIC: VAPID.publicKey, VAPID_PRIVATE: VAPID.privateKey, PUSH_SECRET: "push-secret-for-the-test", NODE_TLS_REJECT_UNAUTHORIZED: "0" }, stdio: ["ignore", "pipe", "pipe"] });
 child.stderr.on("data", (d) => process.stderr.write(d));
 await new Promise((r) => child.stdout.once("data", r));
 const fails = []; const ok = (c, m) => { if (!c) fails.push(m); };
@@ -67,6 +74,22 @@ try {
   ok(bot.status === 200 && bot.body.ok && bot.body.flagged === true, "patient script's run accepted but flagged: " + JSON.stringify(bot.body) + " refusals " + runb.refused);
   ok(good.body.flagged === false, "a short human-length run is not flagged");
   const ct2 = await get("/top?period=contest"); ok(ct2.body.rows.every((r) => r.name !== "Patient Script") && (await get("/top?period=today")).body.rows.some((r) => r.name === "Patient Script"), "flagged run is on the board but out of the contest");
+  // notifications: a phone subscribes (here a fake push service on this machine), a notification is sent, the wrong secret is refused
+  // push services only speak https, so the fake one here has a throwaway certificate (the board is told to accept it, in this test only)
+  const dir = mkdtempSync(join(tmpdir(), "sable-push-")); execFileSync("openssl", ["req", "-x509", "-newkey", "ec", "-pkeyopt", "ec_paramgen_curve:prime256v1", "-nodes", "-keyout", join(dir, "key.pem"), "-out", join(dir, "cert.pem"), "-subj", "/CN=127.0.0.1", "-days", "2"], { stdio: "ignore" });
+  const hits = []; const fake = createServer({ key: readFileSync(join(dir, "key.pem")), cert: readFileSync(join(dir, "cert.pem")) }, (rq, rs) => { let n = 0; rq.on("data", (c) => { n += c.length; }); rq.on("end", () => { hits.push({ path: rq.url, bytes: n, enc: rq.headers["content-encoding"] }); rs.writeHead(201); rs.end(); }); });
+  await new Promise((r) => fake.listen(8793, "127.0.0.1", r));
+  const kp = generateKeyPairSync("ec", { namedCurve: "prime256v1" }); const spki = kp.publicKey.export({ type: "spki", format: "der" });
+  const p256dh = spki.subarray(spki.length - 65).toString("base64url"), auth = randomBytes(16).toString("base64url");
+  const key = await get("/push/key"); ok(key.status === 200 && key.body.key === VAPID.publicKey, "the app can read the VAPID public key");
+  ok((await post("/push/subscribe", { subscription: { endpoint: "nope", keys: {} } })).status === 400, "a malformed subscription is refused");
+  const subr = await post("/push/subscribe", { subscription: { endpoint: "https://127.0.0.1:8793/push/abc", keys: { p256dh, auth } } }); ok(subr.status === 200, "a subscription is stored: " + JSON.stringify(subr.body));
+  ok((await get("/health")).body.subscribers === 1, "health counts the subscriber");
+  const bad = await fetch(BASE + "/push/notify", { method: "POST", headers: { "content-type": "application/json", "x-push-secret": "wrong" }, body: JSON.stringify({ title: "x" }) }); ok(bad.status === 401, "notify with the wrong secret is refused");
+  const sent = await fetch(BASE + "/push/notify", { method: "POST", headers: { "content-type": "application/json", "x-push-secret": "push-secret-for-the-test" }, body: JSON.stringify({ title: "Test", body: "hello", url: "/#log" }) }).then(async (r) => ({ status: r.status, body: await r.json() }));
+  ok(sent.status === 200 && sent.body.sent === 1 && hits.length === 1 && hits[0].enc === "aes128gcm" && hits[0].bytes > 50, "a notification reached the push service, encrypted: " + JSON.stringify({ sent: sent.body, hit: hits[0] }));
+  ok((await post("/push/unsubscribe", { endpoint: "https://127.0.0.1:8793/push/abc" })).status === 200 && (await get("/health")).body.subscribers === 0, "unsubscribe removes it");
+  fake.close();
   ok((await get("/nope")).status === 404, "unknown route is 404");
   // rate limit: 30 scores per device per hour
   let limitedAt = -1;
