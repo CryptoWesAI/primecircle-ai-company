@@ -262,7 +262,7 @@ function build(opts) {
   async function submit(name, handle) {
     if (!game || running || !token || submitted) return { ok: false, error: "nothing to submit" };
     const s = game.summary();
-    const body = { token, device, name, handle: handle || "", score: s.score, receipts: s.receipts, refused: s.refused, wave: s.wave, duration_ms: s.duration_ms, log_hash: s.log_hash };
+    const body = { token, device, name, handle: handle || "", score: s.score, receipts: s.receipts, refused: s.refused, wave: s.wave, duration_ms: s.duration_ms, log_hash: s.log_hash, log: game.state.log };
     try {
       const r = await fetch(BOARD + "/score", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const j = await r.json().catch(() => ({}));

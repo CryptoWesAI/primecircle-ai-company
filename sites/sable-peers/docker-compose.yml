@@ -50,7 +50,9 @@ services:
   # exposed to the host; nginx proxies /api/game/ to it. The HMAC secret comes
   # from .env next to this file (created on the VPS, never in git).
   sable-board:
-    build: ./leaderboard
+    build:
+      context: .
+      dockerfile: leaderboard/Dockerfile
     image: sable-board:local
     container_name: sable-board
     restart: unless-stopped
@@ -60,6 +62,7 @@ services:
     environment:
       - BOARD_SECRET=${BOARD_SECRET:?set BOARD_SECRET in .env}
       - BOARD_DB=/data/board.sqlite
+      - BOARD_CONTEST=${BOARD_CONTEST:-}
     volumes:
       - board-data:/data
     cap_drop:

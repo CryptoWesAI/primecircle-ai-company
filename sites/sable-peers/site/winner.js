@@ -9,7 +9,7 @@ const DATA = {
     start: "2026-09-09",            // first UTC day that counted
     end: "2026-09-15",              // last UTC day that counted
     frozenAt: "2026-09-15T23:59:59Z",
-    verified: "hash",               // "replay" once the board replays input logs; "hash" while it stores only the log hash
+    verified: "replay",             // the board replays input logs since 8 September 2026; "hash" for older rows
   },
   winner: {
     name: "0PTIMUS_ONE",            // sample: the board's top row while the contest is still to come

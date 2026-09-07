@@ -462,10 +462,23 @@ window.SABLE_EXT=(function(){
   var myName='';try{myName=(localStorage.getItem('sable-game-name')||'').toLowerCase();}catch(e){}
   function load(period){period=period||'today';tabs.forEach(function(b){b.classList.toggle('on',b.getAttribute('data-period')===period)});
     return fetch(BOARD+'/top?period='+period,{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(r.status)}).then(function(j){var rows=j.rows||[];
-      tbl.querySelector('tbody').innerHTML=rows.length?rows.map(function(r,i){return '<tr'+(myName&&String(r.name).toLowerCase()===myName?' class="me"':'')+'><td class="n">'+(i+1)+'</td><td class="nm" translate="no">'+esc(r.name)+(r.handle?' <a href="https://x.com/'+esc(r.handle)+'">@'+esc(r.handle)+'</a>':'')+'</td><td class="s">'+Number(r.score).toLocaleString('en-US')+'</td><td class="n">'+esc(r.wave)+'</td><td class="n gb-day">'+esc(r.day)+'</td></tr>'}).join(''):'<tr><td colspan="5">'+(period==='today'?'nobody has played today yet':'no scores yet')+'</td></tr>';
+      tbl.querySelector('tbody').innerHTML=rows.length?rows.map(function(r,i){return '<tr'+(myName&&String(r.name).toLowerCase()===myName?' class="me"':'')+'><td class="n">'+(i+1)+'</td><td class="nm" translate="no">'+esc(r.name)+(r.handle?' <a href="https://x.com/'+esc(r.handle)+'">@'+esc(r.handle)+'</a>':'')+'</td><td class="s">'+Number(r.score).toLocaleString('en-US')+'</td><td class="n">'+esc(r.wave)+'</td><td class="n gb-day">'+esc(r.day)+'</td></tr>'}).join(''):'<tr><td colspan="5">'+(period==='today'?'nobody has played today yet':period==='contest'?'no contest runs yet. A run needs an X handle to count here.':'no scores yet')+'</td></tr>';
     }).catch(function(){tbl.querySelector('tbody').innerHTML='<tr><td colspan="5">the board did not answer</td></tr>';});}
   tabs.forEach(function(b){b.addEventListener('click',function(){load(b.getAttribute('data-period'))})});
-  var loaded=false;function ensureBoard(){if(loaded)return;loaded=true;load('today');}
+  var loaded=false;function ensureBoard(){if(loaded)return;loaded=true;load('today');loadContest();}
+  /* the contest, when the board has a window: a strip with the countdown, a tab, and the handle field marked as needed */
+  var contestEl=document.getElementById('contest'),contestTab=tabs.filter(function(b){return b.getAttribute('data-period')==='contest'})[0],contest=null,contestTimer=null;
+  function fmtDay(iso){var d=new Date(iso+'T00:00:00Z');return d.getUTCDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getUTCMonth()];}
+  function left(ms){var m=Math.max(0,Math.round(ms/60000)),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+' d '+h+' h':h?h+' h '+mm+' min':mm+' min';}
+  function drawContest(){if(!contest||!contestEl)return;var now=Date.now(),start=Date.parse(contest.start+'T00:00:00Z'),end=Date.parse(contest.end+'T23:59:59Z');
+    var st=now<start?'starts in '+left(start-now):now>end?'over':'ends in '+left(end-now);
+    contestEl.innerHTML='<b>Contest</b><span>'+esc(fmtDay(contest.start)+' to '+fmtDay(contest.end))+' UTC</span><span class="cd">'+esc(st)+'</span><span class="rule">highest single run wins · your X handle on the run · post your card and tag @Sablenetwork</span><a href="#play" data-tab="contest">'+(now>end?'final standings':'standings')+'</a>';
+    contestEl.hidden=false;if(contestTab)contestTab.hidden=false;
+    var hf=document.getElementById('gs-handle'),lab=hf&&hf.parentNode?hf.parentNode.querySelector('span'):null;if(lab)lab.textContent=now>=start&&now<=end?'X handle, needed for the contest':'X handle, optional';}
+  var contestAsked=false;
+  function loadContest(){if(contestAsked)return;contestAsked=true;fetch(BOARD+'/contest',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){contest=j&&j.contest;if(contest){drawContest();if(!contestTimer)contestTimer=setInterval(drawContest,60000);}}).catch(function(){});}
+  if(contestEl)contestEl.addEventListener('click',function(e){var a=e.target.closest('a[data-tab]');if(a){e.preventDefault();ensureBoard();load('contest');tbl.scrollIntoView({behavior:'smooth',block:'nearest'});}});
+  if(location.protocol!=='file:')loadContest();
   if('IntersectionObserver' in window)new IntersectionObserver(function(es){if(es[0].isIntersecting)ensureBoard();},{threshold:0.05}).observe(tbl);else ensureBoard();
   function run(opts){play.disabled=true;demo.disabled=true;document.getElementById('game-fine').textContent='loading the 3D library…';
     return import('./game/game.js').then(function(m){return m.start(Object.assign({board:BOARD},opts||{}))}).then(function(){play.disabled=false;demo.disabled=false;document.getElementById('game-fine').textContent='Loads a 3D library from jsdelivr when you press Play. Nothing you do here is sent to Sable.';})
@@ -478,9 +491,9 @@ window.SABLE_EXT=(function(){
   form.addEventListener('submit',function(e){e.preventDefault();var R=window.SABLE_GAME_RUN;if(!R)return;var name=document.getElementById('ge-name').value.trim(),handle=document.getElementById('ge-handle').value.trim(),out=document.getElementById('ge-result'),btn=document.getElementById('ge-submit');
     btn.disabled=true;out.className='ge-result';out.textContent='sending…';
     R.submit(name,handle).then(function(j){if(j&&j.ok){out.textContent='On the board: #'+j.rank_today+' today, #'+j.rank_all+' all time.';myName=name.toLowerCase();load('today');}
-      else{out.className='ge-result err';out.textContent=j&&j.error==='name'?'That name is not allowed: 3 to 20 letters, digits, spaces, _ . -':j&&j.error==='handle'?'That handle does not look like an X handle.':j&&j.error==='already submitted'?'This run is already on the board.':'Not accepted: '+(j&&j.error||'unknown');btn.disabled=false;}});});
+      else{out.className='ge-result err';out.textContent=j&&j.error==='name'?'That name is not allowed: 3 to 20 letters, digits, spaces, _ . -':j&&j.error==='handle'?'That handle does not look like an X handle.':j&&j.error==='already submitted'?'This run is already on the board.':j&&j.error==='replay'?'The board could not replay this run, so it was not accepted.':'Not accepted: '+(j&&j.error||'unknown');btn.disabled=false;}});});
   document.addEventListener('sable-game-submitted',function(e){var j=e.detail||{};var out=document.getElementById('ge-result');if(j.ok){out.className='ge-result';out.textContent='On the board as '+j.name+': #'+j.rank_today+' today, #'+j.rank_all+' all time.';myName=String(j.name||'').toLowerCase();load('today');}
-    else{out.className='ge-result err';out.textContent=j.error==='name'?'That name is not allowed: 3 to 20 letters, digits, spaces, _ . -':j.error==='handle'?'That handle does not look like an X handle.':'Not accepted: '+(j.error||'unknown');}});
+    else{out.className='ge-result err';out.textContent=j.error==='name'?'That name is not allowed: 3 to 20 letters, digits, spaces, _ . -':j.error==='handle'?'That handle does not look like an X handle.':j.error==='replay'?'The board could not replay this run, so it was not accepted.':'Not accepted: '+(j.error||'unknown');}});
   window.SABLE_GAME={run:run,load:load,board:BOARD};
 })();
 

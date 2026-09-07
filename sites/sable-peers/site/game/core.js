@@ -140,7 +140,7 @@ export function createGame(seed) {
 export function replay(seed, log) {
   const g = createGame(seed);
   let k = 0;
-  while (!g.state.over && g.state.tick < 40000) {
+  while (!g.state.over && g.state.tick < 120000) {
     while (k < log.length && log[k][0] === g.state.tick) { g.input(log[k][1], log[k][2]); k++; }
     g.step(TICK);
   }

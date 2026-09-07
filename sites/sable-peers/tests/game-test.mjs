@@ -14,7 +14,7 @@ const NAME="Test Bot "+tag;
 let child=null,srv=null;
 if(!live){
   // ES modules cannot load from file:// pages, so the built site is served over local HTTP
-  child=spawn(process.execPath,[join(here,"..","leaderboard","server.js")],{env:{...process.env,PORT:"8791",BOARD_SECRET:"test-secret-test-secret-test-secret-1234",BOARD_DB:":memory:",BOARD_ALLOW_ORIGIN:"*"},stdio:["ignore","pipe","inherit"]});
+  child=spawn(process.execPath,[join(here,"..","leaderboard","server.js")],{env:{...process.env,PORT:"8791",BOARD_SECRET:"test-secret-test-secret-test-secret-1234",BOARD_DB:":memory:",BOARD_ALLOW_ORIGIN:"*",BOARD_CONTEST:new Date().toISOString().slice(0,10)+"/"+new Date().toISOString().slice(0,10)},stdio:["ignore","pipe","inherit"]});
   await new Promise(r=>child.stdout.once("data",r));
   srv=spawn(process.execPath,[join(here,"static-server.mjs"),"8792"],{stdio:["ignore","pipe","inherit"]});
   await new Promise(r=>srv.stdout.once("data",r));
@@ -57,6 +57,15 @@ try{
   await p.waitForFunction(()=>/On the board|Not accepted|not allowed|already/.test(document.getElementById("ge-result").textContent),{timeout:10000});
   const res=await text(p,"#ge-result"); ok(/On the board as .*: #\d+ today/.test(res),"score went up by itself with a rank: "+res);
   ok(!(await vis(p,"#ge-form")),"no form to fill after a named run");
+  console.log("contest strip:",(await vis(p,"#contest"))?(await text(p,"#contest")).slice(0,120):"hidden");
+  if(!live){
+    // the local board runs a contest that covers today: strip, countdown, tab, and the replayed run with a handle counts
+    ok(await vis(p,"#contest")&&/ends in/.test(await text(p,"#contest")),"contest strip with countdown: "+(await text(p,"#contest")).slice(0,90));
+    ok(await vis(p,'.gb-tabs button[data-period="contest"]'),"contest tab shown");
+    await p.click('.gb-tabs button[data-period="contest"]'); await wait(800);
+    ok((await text(p,"#gb-table tbody")).includes(NAME),"contest tab lists the replayed run: "+(await text(p,"#gb-table tbody")).slice(0,80));
+    await p.click('.gb-tabs button[data-period="today"]'); await wait(500);
+  }
   // the share card
   await wait(600);
   ok(await vis(p,"#ge-share"),"share card shown after a real run");

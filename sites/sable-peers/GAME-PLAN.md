@@ -103,3 +103,25 @@ and the board are DOM.
 - English only, like the rest of the page.
 - The game is a topic of its own, "Play", ninth in the rail, the Topics menu,
   the guide and the row under the map.
+
+## Replay verification (8 September 2026)
+
+The client sends its input log with the score: every tap as `[tick, action,
+id]`. The board replays it with the same deterministic core (`core.js`, copied
+into the image from `site/game/`) and refuses the score unless score, receipts,
+refusals, wave and duration reproduce. The log is stored with the row
+(`log`, `verified = 1`); rows from before this date have no log and stay
+unverified. Limits: 20,000 inputs, 300 KB body, ticks up to 120,000 (attest
+slows time, so a ten-minute run can take more than 36,000 ticks). The rate
+limit is checked before the replay so a flood cannot burn CPU.
+
+## Contest
+
+`BOARD_CONTEST=YYYY-MM-DD/YYYY-MM-DD` (UTC days, inclusive) in the board's
+environment. `GET /contest` returns the window and whether it is before, live
+or over; `GET /top?period=contest` returns the highest verified run per player
+inside the window, handle required. The page shows a strip with a countdown
+and a Contest tab, and marks the handle field as needed while the window is
+live. Standings freeze by themselves: `day` is stamped by the board at
+submission, so no later run can land inside a closed window.
+`admin.js contest` prints the standings as JSON for the winner's page.

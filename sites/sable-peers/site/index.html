@@ -338,6 +338,10 @@
   .gb-tabs{display:inline-flex;border:1px solid var(--edge2);border-radius:999px;padding:3px;background:rgba(5,7,10,.6)}
   .gb-tabs button{appearance:none;-webkit-appearance:none;border:0;background:transparent;color:var(--dim);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer}
   .gb-tabs button.on{background:var(--cyan);color:#04121A;font-weight:600}
+  .contest{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:14px 0 18px;padding:10px 14px;border:1px solid var(--warn);border-radius:12px;font-family:var(--mono);font-size:11.5px;letter-spacing:.03em;color:var(--text);background:rgba(224,190,114,.06);line-height:1.5}
+  .contest b{color:var(--warn);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+  .contest .cd{color:var(--warn)}
+  .contest .rule{color:var(--dim)}
   .gb-table{min-width:0;font-size:13px}
   .gb-table td,.gb-table th{padding:8px 10px;white-space:nowrap}
   .gb-table td.n{font-family:var(--mono);color:var(--dim)}
@@ -906,6 +910,7 @@
     <div class="eyebrow left">Play</div>
     <h2>Gatekeeper</h2>
     <p class="sub">You are Sable's door. <b>Sealed requests pass and become receipts. Broken seals and runaway loops must be refused before they reach the door.</b> The refusal is the feature: only refusals build your streak. No clock: the shift lasts as long as your budget, every wave is harder than the last, and a clean wave gives budget back. The same arena for everyone today, a leaderboard without accounts.</p>
+    <div class="contest" id="contest" hidden translate="no"></div>
     <div class="game" id="game">
       <div class="game-stage" id="game-stage">
         <div class="game-size" aria-hidden="true"></div>
@@ -952,9 +957,9 @@
         </div>
       </div>
       <div class="game-board" id="game-board">
-        <div class="gb-head"><h3>Leaderboard</h3><div class="gb-tabs" role="tablist"><button type="button" class="on" data-period="today">Today</button><button type="button" data-period="week">This week</button><button type="button" data-period="all">All time</button></div></div>
+        <div class="gb-head"><h3>Leaderboard</h3><div class="gb-tabs" role="tablist"><button type="button" class="on" data-period="today">Today</button><button type="button" data-period="week">This week</button><button type="button" data-period="all">All time</button><button type="button" data-period="contest" hidden>Contest</button></div></div>
         <div class="tablewrap"><table class="gb-table" id="gb-table"><thead><tr><th>#</th><th>Name</th><th>Score</th><th>Wave</th><th class="gb-day">Day</th></tr></thead><tbody><tr><td colspan="5">reading the board…</td></tr></tbody></table></div>
-        <p class="quiet">Names are chosen by players, no accounts. Stored per score: the name, an optional X handle, the score, the wave, the run's length and time, and a hash of a random token your browser keeps so this device keeps its name. No IP address is stored. Ask on Telegram or X and a name is removed. Same arena for everyone today: the seed is the date plus the whitepaper record's latest hash.</p>
+        <p class="quiet">Names are chosen by players, no accounts. Stored per score: the name, an optional X handle, the score, the wave, the run's length and time, and a hash of a random token your browser keeps so this device keeps its name. No IP address is stored. Ask on Telegram or X and a name is removed. Same arena for everyone today: the seed is the date plus the whitepaper record's latest hash. Since 8 September 2026 every run is replayed by the board from its input log before it counts: the same seed and the same taps at the same ticks must give the same score, or the run is refused.</p>
       </div>
     </div>
   </section>
@@ -967,6 +972,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">8 Sep 2026</span><span><b>Proven runs, and a contest.</b> Every run is now replayed by the board from its input log before it counts: the same seed and the same taps at the same ticks must give the same score, or the run is refused. The Play topic shows the contest window with a countdown, the board has a Contest tab that counts only replayed runs with an X handle, and the standings freeze by themselves when the window closes.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Endless shift.</b> The clock is gone from Gatekeeper: a run lasts as long as your budget, every wave is harder than the last, and a wave defended without a leak gives ten budget back. The board now measures how long you can hold the door, not how well you fill two and a half minutes. Ten minutes is the hard cap.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Reliability record.</b> The hourly ledger in the Log became a record: how long the confidential backend has been failing closed, in how many checks it was verified, whether the gateway answered, and a day-by-hour grid of every check since 4 September. Sable's own uptime figure sits next to it, because that number counts the gateway and not the backend.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Lisa, in the guide.</b> The voice agent from lisaonsable.com now answers inside the guide panel: press Talk to Lisa, she opens topics and sections of the whitepaper while she speaks, and her words appear as captions. Nothing from ElevenLabs loads until that button is pressed. Hear the tour calls her and she gives it one page at a time, moving on when you ask or press Next page; if she cannot start, your browser’s voice reads it instead. The topic buttons work without her.</span></li>

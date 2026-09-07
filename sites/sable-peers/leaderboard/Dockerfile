@@ -1,6 +1,8 @@
 FROM node:24-alpine
 WORKDIR /app
-COPY package.json server.js admin.js ./
+# built from the site root so the deterministic core is the same file the game plays with
+COPY leaderboard/package.json leaderboard/server.js leaderboard/admin.js ./
+COPY site/game/core.js ./core.js
 ENV NODE_ENV=production
 RUN mkdir -p /data && chown node:node /data
 USER node
