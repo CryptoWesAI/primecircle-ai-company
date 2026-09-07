@@ -20,6 +20,11 @@ const DATA = {
     refused: 48, loops: 9, leaked: 3, cleanWaves: 4, receipts: 102,
     day: "2026-09-07",              // the arena (UTC day) the winning run was played in
   },
+  prizes: [                          // as announced; keep the wording of the announcement
+    "Name on this page for good, the winner's card, and a post from PrimeCircle. [amount] SABL.",
+    "Name on this page, and a post. [amount] SABL.",
+    "Name on this page, and a post. [amount] SABL.",
+  ],
   standings: [
     { name: "0PTIMUS_ONE", handle: "0PTIMUS_ONE", score: 9830, wave: 6, duration_ms: 113533, day: "2026-09-07" },
     { name: "AG ULTRA MAGNUS", handle: "_ULTRA__MAGNUS", score: 4480, wave: 4, duration_ms: 77800, day: "2026-09-07" },
@@ -67,6 +72,14 @@ $("facts").innerHTML = [
 /* why */
 $("why").innerHTML = "Gatekeeper rewards the same thing Sable's door does. A sealed request passes and becomes a receipt, but a receipt scores once and builds nothing. A <b>refusal</b> builds the streak, the streak raises the multiplier, and a wave held without a single leak pays more than any receipt. " +
   esc(W.name) + " won by turning away " + num(W.refused + W.loops) + " requests and letting " + num(W.receipts) + " through, with " + plural(W.leaked, "leak") + " in " + clock(W.duration_ms) + ". <b>That is the whole lesson:</b> a door that only measures throughput teaches the opposite of what a budget is for.";
+
+/* podium */
+$("podium").innerHTML = [0, 1, 2].map((i) => {
+  const r = DATA.standings[i], place = ["1st · held the door", "2nd", "3rd"][i];
+  return '<div class="fact' + (i === 0 ? " p1" : "") + '"><span class="k">' + place + "</span>" +
+    (r ? '<span class="nm">' + esc(r.name) + (r.handle ? '<a href="https://x.com/' + encodeURIComponent(handleOf(r.handle)) + '" target="_blank" rel="noopener">@' + esc(handleOf(r.handle)) + "</a>" : "") + "</span><span class=\"s\">" + num(r.score) + " points · wave " + r.wave + " · " + clock(r.duration_ms) + "</span>" : '<span class="nm">no run recorded</span>') +
+    (DATA.prizes[i] ? '<span class="pz">' + esc(DATA.prizes[i]) + "</span>" : "") + "</div>";
+}).join("");
 
 /* standings */
 $("frozen").textContent = "Highest single run per player between " + dayLabel(C.start, true) + " and " + dayLabel(C.end, true) + " UTC, frozen at " + C.frozenAt.replace("T", " ").replace("Z", " UTC") + ". Later runs do not move this table.";
