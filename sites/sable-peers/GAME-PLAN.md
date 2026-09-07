@@ -126,3 +126,20 @@ and a Contest tab, and marks the handle field as needed while the window is
 live. Standings freeze by themselves: `day` is stamped by the board at
 submission, so no later run can land inside a closed window.
 `admin.js contest` prints the standings as JSON for the winner's page.
+
+
+## The referee (7 September 2026, evening)
+
+The replay proves a log produces a score, not that a person made the log. Two
+holes closed the same evening: the page no longer exposes the autoplay switch
+or the game object on a real run (they exist for the tests on a local build and
+inside the demo), and the board reads every replay like a referee. The core
+records the z of every refused request at the tap; the patient player taps at
+one distance (std about 0.1), a person spreads over the whole approach (std
+about 15). A run with 8 or more refusals and std under 2, or a shift of 150 s
+or more with no wrong tap and no leak, is flagged: it stays on the board, out
+of the contest, until `admin.js unflag` after someone has read the log
+(`admin.js run <name>`). The limit is known: a bot with human jitter passes,
+and the stored logs are the last line, read by a person before a prize is paid.
+The live game test plays without the autopilot; `tests/board-live.mjs` checks
+the live board's replay and referee through the API with the core.

@@ -276,7 +276,10 @@ function build(opts) {
     stage.removeEventListener("pointerdown", onDown); stage.removeEventListener("pointermove", onMove); el.attest.removeEventListener("click", attest); window.removeEventListener("keydown", onKey);
     if (ro) ro.disconnect(); for (const g of nodes.values()) scene.remove(g); nodes.clear(); renderer.dispose();
   }
-  const api = { begin, end, submit, dispose, summary: () => game && game.summary(), core: () => game, autoplay: (on) => { autoplayOn = !!on; }, running: () => running, token: () => token, seed: () => seed, debug: () => ({ W, H, camDist, aspect: camera.aspect, pos: [camera.position.x, camera.position.y, camera.position.z], dpr: renderer.getPixelRatio() }) };
+  const api = { begin, end, submit, dispose, summary: () => game && game.summary(), running: () => running, token: () => token, seed: () => seed };
+  // the hooks that can drive a run (the patient player, the game object) exist for the tests on a local
+  // build and for the demo, never for a real run on the live page: one console line must not win a contest
+  if (demo || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) Object.assign(api, { core: () => game, autoplay: (on) => { autoplayOn = !!on; }, debug: () => ({ W, H, camDist, aspect: camera.aspect, pos: [camera.position.x, camera.position.y, camera.position.z], dpr: renderer.getPixelRatio() }) });
   window.SABLE_GAME_RUN = api;
   return api;
 }

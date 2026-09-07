@@ -44,26 +44,41 @@ try{
   await wait(1200);
   const t1=await p.evaluate(()=>window.SABLE_GAME_RUN.summary().ticks); ok(t1>40,"game advances in real time: "+t1+" ticks");
   ok(await p.evaluate(()=>{const c=document.getElementById("game-cv");return c.width>0&&c.height>0&&!!c.getContext("webgl2")||!!document.getElementById("game-cv").getContext("webgl");}),"WebGL canvas alive");
-  // autopilot for the rest of a short run, then leave the door
-  await p.evaluate(()=>window.SABLE_GAME_RUN.autoplay(true));
-  await wait(21000);
-  const mid=await p.evaluate(()=>window.SABLE_GAME_RUN.summary());
-  ok(mid.refused>0&&mid.leaked===0&&mid.score>0,"the patient player refuses and never leaks: "+JSON.stringify({refused:mid.refused,leaked:mid.leaked,score:mid.score,wave:mid.wave}));
-  ok(mid.refused<5||/×[2-5]/.test(await text(p,"#g-mult")),"refusals built the multiplier: "+await text(p,"#g-mult")+" after "+mid.refused+" refusals");
-  await p.evaluate(()=>window.SABLE_GAME_RUN.end()); await wait(1000);
-  ok(await vis(p,"#game-end")&&!(await vis(p,"#game-hud")),"end card after leaving the door");
-  ok(/left the door/.test(await text(p,"#ge-why")),"end card says why: "+await text(p,"#ge-why"));
+  if(!live){
+    // local build: the test hooks exist and the patient player plays the rest of a short run, then leaves the door
+    ok(await p.evaluate(()=>typeof window.SABLE_GAME_RUN.autoplay==="function"),"test hooks present on a local build");
+    await p.evaluate(()=>window.SABLE_GAME_RUN.autoplay(true));
+    await wait(21000);
+    const mid=await p.evaluate(()=>window.SABLE_GAME_RUN.summary());
+    ok(mid.refused>0&&mid.leaked===0&&mid.score>0,"the patient player refuses and never leaks: "+JSON.stringify({refused:mid.refused,leaked:mid.leaked,score:mid.score,wave:mid.wave}));
+    ok(mid.refused<5||/×[2-5]/.test(await text(p,"#g-mult")),"refusals built the multiplier: "+await text(p,"#g-mult")+" after "+mid.refused+" refusals");
+    await p.evaluate(()=>window.SABLE_GAME_RUN.end()); await wait(1000);
+    ok(await vis(p,"#game-end")&&!(await vis(p,"#game-hud")),"end card after leaving the door");
+    ok(/left the door/.test(await text(p,"#ge-why")),"end card says why: "+await text(p,"#ge-why"));
+  }else{
+    // live: a real run exposes no hook that could drive it; the door is left alone until the budget runs out
+    ok(await p.evaluate(()=>!window.SABLE_GAME_RUN.autoplay&&!window.SABLE_GAME_RUN.core),"no autoplay or core hook on the live page");
+    await p.waitForFunction(()=>!window.SABLE_GAME_RUN.running(),{timeout:26000}).catch(()=>{});
+    if(await p.evaluate(()=>window.SABLE_GAME_RUN.running()))await p.evaluate(()=>window.SABLE_GAME_RUN.end());
+    await wait(1000);
+    ok(await vis(p,"#game-end")&&!(await vis(p,"#game-hud")),"end card after the run");
+    ok(/Budget exhausted|left the door/.test(await text(p,"#ge-why")),"end card says why: "+await text(p,"#ge-why"));
+  }
   ok(/broken seal/.test(await text(p,"#ge-refused"))&&/leaked/.test(await text(p,"#ge-leaked")),"end card leads with refusals");
-  await p.waitForFunction(()=>/On the board|Not accepted|not allowed|already/.test(document.getElementById("ge-result").textContent),{timeout:10000});
-  const res=await text(p,"#ge-result"); ok(/On the board as .*: #\d+ today/.test(res),"score went up by itself with a rank: "+res);
-  ok(!(await vis(p,"#ge-form")),"no form to fill after a named run");
+  if(!live){
+    await p.waitForFunction(()=>/On the board|Not accepted|not allowed|already/.test(document.getElementById("ge-result").textContent),{timeout:10000});
+    const res=await text(p,"#ge-result"); ok(/On the board as .*: #\d+ today/.test(res),"score went up by itself with a rank: "+res);
+    ok(!(await vis(p,"#ge-form")),"no form to fill after a named run");
+  }else{ await wait(1500); console.log("live end note:",(await text(p,"#ge-note")).slice(0,100),"|",(await text(p,"#ge-result")).slice(0,100)); }
   console.log("contest strip:",(await vis(p,"#contest"))?(await text(p,"#contest")).slice(0,120):"hidden");
   if(!live){
     // the local board runs a contest that covers today: strip, countdown, tab, and the replayed run with a handle counts
     ok(await vis(p,"#contest")&&/ends in/.test(await text(p,"#contest")),"contest strip with countdown: "+(await text(p,"#contest")).slice(0,90));
     ok(await vis(p,'.gb-tabs button[data-period="contest"]'),"contest tab shown");
     await p.click('.gb-tabs button[data-period="contest"]'); await wait(800);
-    ok((await text(p,"#gb-table tbody")).includes(NAME),"contest tab lists the replayed run: "+(await text(p,"#gb-table tbody")).slice(0,80));
+    // the patient player taps at one distance, so the referee flags this run: on the board, out of the contest
+    ok(/Flagged/.test(await text(p,"#ge-result")),"end card says the referee flagged the patient run: "+(await text(p,"#ge-result")).slice(0,120));
+    ok(!(await text(p,"#gb-table tbody")).includes(NAME),"flagged run stays out of the contest tab: "+(await text(p,"#gb-table tbody")).slice(0,80));
     await p.click('.gb-tabs button[data-period="today"]'); await wait(500);
   }
   // the share card
@@ -74,9 +89,11 @@ try{
   ok(await p.$eval("#ge-x",a=>decodeURIComponent(a.href).includes(String(window.SABLE_GAME_RUN.summary().score))),"post text carries the score");
   const dl=await p.evaluate(()=>new Promise(r=>{const c=document.getElementById("ge-card");c.toBlob(b=>r(b?b.size:0),"image/png");})); ok(dl>20000,"card exports as a PNG of "+dl+" bytes");
   await wait(800);
-  ok((await text(p,"#gb-table tbody")).includes(NAME)&&(await text(p,"#gb-table tbody")).includes("@0PTIMUS_ONE"),"board shows the new row with the handle");
-  ok(await p.$eval("#gb-table tbody tr.me",e=>!!e),"the player's row is highlighted");
-  ok((await p.evaluate(()=>window.SABLE_GAME_RUN.submit("Someone Else","").then(j=>j.error)))==="nothing to submit","a run cannot be submitted twice");
+  if(!live){
+    ok((await text(p,"#gb-table tbody")).includes(NAME)&&(await text(p,"#gb-table tbody")).includes("@0PTIMUS_ONE"),"board shows the new row with the handle");
+    ok(await p.$eval("#gb-table tbody tr.me",e=>!!e),"the player's row is highlighted");
+    ok((await p.evaluate(()=>window.SABLE_GAME_RUN.submit("Someone Else","").then(j=>j.error)))==="nothing to submit","a run cannot be submitted twice");
+  }
   // play again -> start card; demo mode runs without a token
   ok(await p.evaluate(()=>{const s=document.getElementById("game-stage").getBoundingClientRect();const d=document.getElementById("game-again").getBoundingClientRect();return d.width>0&&d.top>=s.top-1&&d.bottom<=s.bottom+1;}),"Play again sits inside the stage under the share card");
   await p.$eval("#game-again",b=>b.click()); await wait(300); ok(await vis(p,"#game-start"),"Play again returns to the start card");
@@ -91,7 +108,7 @@ try{
   await p.screenshot({path:`shots/${tag}-game-end.png`});
   // week and all tabs
   await p.click('.gb-tabs button[data-period="all"]'); await wait(800);
-  ok((await text(p,"#gb-table tbody")).includes(NAME),"all-time tab lists the row");
+  if(!live)ok((await text(p,"#gb-table tbody")).includes(NAME),"all-time tab lists the row");
   await p.close();
   // phone
   p=await page(390,844);

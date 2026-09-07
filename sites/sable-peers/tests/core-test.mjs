@@ -19,6 +19,7 @@ ok(sp.score > si.score * 3, "judgement beats idling: " + sp.score + " vs " + si.
 ok(sp.wave === 31, "the ten-minute cap spans 31 waves: " + sp.wave);
 ok(sp.cleanWaves === 30, "a perfect run defends every completed wave cleanly: " + sp.cleanWaves);
 ok(sp.budget === 100, "a perfect run keeps its budget: " + sp.budget);
+ok(sp.refuse_z_n > 100 && sp.refuse_z_std < 1, "the patient player taps at one distance, which a referee can see: n " + sp.refuse_z_n + ", std " + sp.refuse_z_std);
 
 // determinism: replaying the perfect run's log reproduces its summary
 const rp = replay("2026-09-06:test", perf.state.log);

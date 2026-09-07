@@ -60,6 +60,13 @@ try {
   // the contest: window, status, and only verified runs with a handle
   const cw = await get("/contest"); ok(cw.status === 200 && cw.body.contest && cw.body.contest.status === "live" && cw.body.contest.start === TODAY, "contest window is live today: " + JSON.stringify(cw.body));
   const ct = await get("/top?period=contest"); ok(ct.body.rows.length === 1 && ct.body.rows[0].name === "Optimus" && ct.body.window.end === TODAY, "contest tab counts the run with a handle only: " + JSON.stringify(ct.body.rows.map((r) => r.name)));
+  // the referee: a patient script's run is accepted, flagged, and kept out of the contest
+  const devb = "device-bot-0123456789abcdefghij";
+  const stb = await post("/start", { device: devb }); const runb = play(stb.body.seed, 1500); await settle(runb);
+  const bot = await post("/score", { token: stb.body.token, device: devb, name: "Patient Script", handle: "@script", ...runb });
+  ok(bot.status === 200 && bot.body.ok && bot.body.flagged === true, "patient script's run accepted but flagged: " + JSON.stringify(bot.body) + " refusals " + runb.refused);
+  ok(good.body.flagged === false, "a short human-length run is not flagged");
+  const ct2 = await get("/top?period=contest"); ok(ct2.body.rows.every((r) => r.name !== "Patient Script") && (await get("/top?period=today")).body.rows.some((r) => r.name === "Patient Script"), "flagged run is on the board but out of the contest");
   ok((await get("/nope")).status === 404, "unknown route is 404");
   // rate limit: 30 scores per device per hour
   let limitedAt = -1;

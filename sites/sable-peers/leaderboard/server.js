@@ -32,12 +32,12 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS used_tokens (sig TEXT PRIMARY KEY, created_at TEXT NOT NULL);
 `);
 // rows from before 8 September 2026 carry no log and stay unverified
-for (const col of ["verified INTEGER NOT NULL DEFAULT 0", "log TEXT"]) { try { db.exec(`ALTER TABLE scores ADD COLUMN ${col}`); } catch { /* already there */ } }
-const ins = db.prepare("INSERT INTO scores (day, seed, name, handle, score, receipts, refused, wave, duration_ms, device, log_hash, created_at, verified, log) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)");
+for (const col of ["verified INTEGER NOT NULL DEFAULT 0", "log TEXT", "flagged INTEGER NOT NULL DEFAULT 0"]) { try { db.exec(`ALTER TABLE scores ADD COLUMN ${col}`); } catch { /* already there */ } }
+const ins = db.prepare("INSERT INTO scores (day, seed, name, handle, score, receipts, refused, wave, duration_ms, device, log_hash, created_at, verified, log, flagged) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)");
 const markToken = db.prepare("INSERT INTO used_tokens (sig, created_at) VALUES (?, ?)");
 const seenToken = db.prepare("SELECT 1 FROM used_tokens WHERE sig = ?");
 const topQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? GROUP BY lower(name) ORDER BY score DESC, id ASC LIMIT ?`);
-const contestQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? AND day <= ? AND handle IS NOT NULL AND handle != '' GROUP BY lower(handle) ORDER BY score DESC, id ASC LIMIT ?`);
+const contestQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? AND day <= ? AND flagged = 0 AND handle IS NOT NULL AND handle != '' GROUP BY lower(handle) ORDER BY score DESC, id ASC LIMIT ?`);
 const rankQ = db.prepare(`SELECT COUNT(*) AS n FROM (SELECT lower(name) AS k, MAX(score) AS s FROM scores WHERE day >= ? GROUP BY k) WHERE s > ?`);
 const meQ = db.prepare("SELECT name, handle, score, receipts, wave, day FROM scores WHERE device = ? ORDER BY score DESC LIMIT 1");
 const countQ = db.prepare("SELECT COUNT(*) AS n FROM scores");
@@ -175,11 +175,17 @@ const server = createServer(async (req, res) => {
       // the proof: the same seed and the same inputs at the same ticks must give the same run
       const rp = replay(String(tok.seed), log);
       if (rp.score !== score || rp.receipts !== receipts || rp.refused !== refused || rp.wave !== wave || Math.abs(rp.duration_ms - dur) > 100) return json(res, 400, { error: "replay" });
+      // the referee: a script taps every request at the same distance, a person never does; and a long
+      // shift without one wrong tap or one leak is worth a look. Flagged runs stay on the board and out
+      // of the contest until someone reads the log (admin.js flagged / unflag).
+      const patient = rp.refuse_z_n >= 8 && rp.refuse_z_std < 2;
+      const spotless = rp.leaked === 0 && rp.refusedGood === 0 && dur >= 150000;
+      const flagged = patient || spotless ? 1 : 0;
       const now = new Date().toISOString(), day = now.slice(0, 10);
       markToken.run(tok.sig, now);
-      ins.run(day, String(tok.seed), name, handle, score, receipts, refused, wave, dur, dh, rp.log_hash, now, JSON.stringify(log));
+      ins.run(day, String(tok.seed), name, handle, score, receipts, refused, wave, dur, dh, rp.log_hash, now, JSON.stringify(log), flagged);
       const rankToday = rankQ.get(day, score).n + 1, rankAll = rankQ.get("0000-00-00", score).n + 1;
-      return json(res, 200, { ok: true, rank_today: rankToday, rank_all: rankAll, name, handle });
+      return json(res, 200, { ok: true, rank_today: rankToday, rank_all: rankAll, name, handle, flagged: !!flagged });
     }
     return json(res, 404, { error: "not found" });
   } catch (e) {

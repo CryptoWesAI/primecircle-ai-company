@@ -38,6 +38,7 @@ export function createGame(seed) {
     seed: String(seed), tick: 0, t: 0, acc: 0, wave: 1, budget: 100, score: 0, streak: 0, mult: 1,
     receipts: 0, refusedBad: 0, refusedLoops: 0, refusedGood: 0, leaked: 0, waveLeaks: 0, cleanWaves: 0, attest: 3, slow: 0,
     nextSpawn: 900, nextId: 1, caps: [], events: [], log: [], over: false, reason: null,
+    zs: [],                                                    // z of every refused request at the tap: a referee's statistic
   };
   const speed = () => Math.min(45, 15 + s.wave * 2);          // units per second toward the door, capped at wave 15
   const spawnInterval = () => Math.max(220, 800 - s.wave * 75); // a request every 220 ms from wave 8 on
@@ -109,19 +110,19 @@ export function createGame(seed) {
       const c = s.caps.find((x) => x.id === id);
       if (!c) return { ok: false };
       if (c.kind === "ok") {
-        s.caps = s.caps.filter((x) => x.id !== id); s.refusedGood++; s.streak = 0; setMult();
+        s.zs.push(c.z); s.caps = s.caps.filter((x) => x.id !== id); s.refusedGood++; s.streak = 0; setMult();
         s.events.push({ t: s.t, type: "wrong", id, x: c.x, y: c.y, z: c.z });
         return { ok: true, kind: "ok" };
       }
       if (c.kind === "bad") {
-        s.caps = s.caps.filter((x) => x.id !== id); s.refusedBad++; s.streak++; setMult();
+        s.zs.push(c.z); s.caps = s.caps.filter((x) => x.id !== id); s.refusedBad++; s.streak++; setMult();
         const g = 15 * s.mult; s.score += g;
         s.events.push({ t: s.t, type: "refused", id, x: c.x, y: c.y, z: c.z, gain: g });
         return { ok: true, kind: "bad", gain: g };
       }
       const chain = s.caps.filter((x) => x.kind === "loop" && x.chain === c.chain);
       s.caps = s.caps.filter((x) => !(x.kind === "loop" && x.chain === c.chain));
-      s.refusedLoops++; s.streak++; setMult();
+      s.zs.push(c.z); s.refusedLoops++; s.streak++; setMult();
       const g = 25 * chain.length; s.score += g;
       if (s.streak % 5 === 0 && s.attest < 3) s.attest++;
       s.events.push({ t: s.t, type: "loop", id, x: c.x, y: c.y, z: c.z, gain: g, len: chain.length, ids: chain.map((x) => x.id) });
@@ -129,7 +130,8 @@ export function createGame(seed) {
     },
     drain() { const e = s.events; s.events = []; return e; },
     summary() {
-      return { seed: s.seed, score: s.score, receipts: s.receipts, refused: s.refusedBad + s.refusedLoops, refusedBad: s.refusedBad, refusedLoops: s.refusedLoops, refusedGood: s.refusedGood, leaked: s.leaked, cleanWaves: s.cleanWaves, budget: s.budget, wave: s.wave, duration_ms: Math.round(s.t), reason: s.reason, ticks: s.tick, log_hash: hashLog(s.log) };
+      const n = s.zs.length, mean = n ? s.zs.reduce((a, b) => a + b, 0) / n : 0, sd = n ? Math.sqrt(s.zs.reduce((a, b) => a + (b - mean) * (b - mean), 0) / n) : 0;
+      return { refuse_z_n: n, refuse_z_std: Math.round(sd * 100) / 100, seed: s.seed, score: s.score, receipts: s.receipts, refused: s.refusedBad + s.refusedLoops, refusedBad: s.refusedBad, refusedLoops: s.refusedLoops, refusedGood: s.refusedGood, leaked: s.leaked, cleanWaves: s.cleanWaves, budget: s.budget, wave: s.wave, duration_ms: Math.round(s.t), reason: s.reason, ticks: s.tick, log_hash: hashLog(s.log) };
     },
   };
 }
