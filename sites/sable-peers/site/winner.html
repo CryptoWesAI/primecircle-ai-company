@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Held the door · Gatekeeper contest · Sable Observatory</title>
+<meta name="description" content="The winner of the Gatekeeper contest on the Sable Observatory: the run, the standings, and why the refusal is the feature.">
+<style>
+  @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ibm-plex-mono-400.woff2) format("woff2")}
+  @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(fonts/ibm-plex-mono-500.woff2) format("woff2")}
+  @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ibm-plex-mono-600.woff2) format("woff2")}
+  :root{--void:#05070A;--ink:#0A1118;--text:#E8F2F8;--dim:#8FA3B0;--dim2:#4C6070;--cyan:#18BFFF;--cyan-soft:#72DCFF;--moon:#FF7A59;--ok:#8FD0B8;--warn:#E0BE72;--edge:rgba(24,191,255,.14);--edge2:rgba(24,191,255,.28);--glass:rgba(10,17,24,.78);
+    --mono:"IBM Plex Mono","SF Mono","Roboto Mono",ui-monospace,monospace;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  *{box-sizing:border-box}
+  html{color-scheme:dark}
+  body{margin:0;background:var(--void);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden;min-height:100vh}
+  a{color:var(--cyan);text-decoration:none}a:hover{text-decoration:underline}
+  [hidden]{display:none!important}
+  #sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:22px 20px 60px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:14px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+  .top b{color:var(--text);font-weight:600}.top b i{color:var(--cyan);font-style:normal}
+  .ribbon{margin:18px 0 0;display:inline-flex;align-items:center;gap:10px;border:1px solid var(--warn);color:var(--warn);border-radius:999px;padding:6px 14px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+  .ribbon::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--warn)}
+  .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:34px;align-items:center;padding:54px 0 30px;border-bottom:1px solid var(--edge)}
+  .lbl{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  h1{font-weight:700;font-size:clamp(34px,5.2vw,58px);line-height:1.02;letter-spacing:-.02em;margin:14px 0 18px;text-wrap:balance}
+  h1 .nm{color:var(--cyan-soft)}
+  .score{font-family:var(--mono);font-weight:600;font-size:clamp(58px,9vw,112px);line-height:.95;letter-spacing:-.03em;margin:8px 0 6px}
+  .under{font-family:var(--mono);font-size:13px;color:var(--dim);letter-spacing:.04em}
+  .ref{font-family:var(--mono);font-size:15px;color:var(--moon);font-weight:600;margin:16px 0 4px}
+  .lk{font-family:var(--mono);font-size:13px;color:var(--dim)}
+  .who{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .pill{display:inline-flex;align-items:center;min-height:40px;padding:9px 16px;border-radius:999px;border:1px solid var(--edge2);font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text);background:transparent;cursor:pointer}
+  .pill:hover{border-color:var(--cyan-soft);text-decoration:none}
+  .pill.fill{background:var(--cyan);border-color:var(--cyan);color:#04131C;font-weight:600}
+  .card{position:relative;border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .card canvas{display:block;width:100%;height:auto}
+  .card .acts{display:flex;flex-wrap:wrap;gap:8px;padding:12px;border-top:1px solid var(--edge)}
+  .card .acts .pill{min-height:36px;padding:7px 13px}
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:30px 0}
+  .fact{border:1px solid var(--edge);border-radius:12px;padding:16px 18px;background:rgba(5,7,10,.45)}
+  .fact .k{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+  .fact .v{display:block;font-family:var(--mono);font-weight:600;font-size:26px;line-height:1.1}
+  .fact .v.moon{color:var(--moon)}.fact .v.ok{color:var(--ok)}.fact .v.cyan{color:var(--cyan-soft)}
+  .fact .s{display:block;font-size:12.5px;color:var(--dim);margin-top:6px;line-height:1.45}
+  section{padding:34px 0;border-top:1px solid var(--edge)}
+  h2{font-size:22px;margin:0 0 8px;letter-spacing:-.01em}
+  .note{color:var(--dim);font-size:14px;max-width:70ch;margin:0 0 16px}
+  .why{max-width:70ch;font-size:16px;line-height:1.7}
+  .why b{color:var(--cyan-soft)}
+  .tablewrap{overflow-x:auto;border:1px solid var(--edge);border-radius:12px;background:rgba(5,7,10,.45)}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-family:var(--mono);font-size:12.5px}
+  th{text-align:left;font-weight:500;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:12px 12px;border-bottom:1px solid var(--edge)}
+  td{padding:11px 12px;border-bottom:1px solid rgba(24,191,255,.08);white-space:nowrap}
+  tr:last-child td{border-bottom:0}
+  td.n{color:var(--dim2)}td.sc{font-weight:600}td.h a{color:var(--dim)}
+  tr.win td{background:rgba(24,191,255,.08)}tr.win td.n,tr.win td.nm{color:var(--cyan-soft)}
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--edge);font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.7}
+  .foot b{color:var(--text)}
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr;gap:24px;padding:34px 0 24px}
+    .grid{grid-template-columns:1fr 1fr}
+    .wrap{padding:16px 14px 44px}
+  }
+  @media (max-width:520px){.grid{grid-template-columns:1fr}.top span{display:none}}
+  @media (prefers-reduced-motion:reduce){#sky{display:none}}
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="wrap">
+  <div class="top"><b>PRIME <i>CIRCLE</i> · Sable Observatory</b><span>Gatekeeper · contest</span><a href="./">← the Observatory</a></div>
+  <div class="ribbon" id="ribbon" hidden>preview · the contest is still running</div>
+
+  <div class="hero">
+    <div>
+      <div class="lbl" id="window">Gatekeeper · contest week</div>
+      <h1><span class="nm" id="name">…</span> held the door.</h1>
+      <div class="score" id="score">…</div>
+      <div class="under" id="under">…</div>
+      <div class="ref" id="refused">…</div>
+      <div class="lk" id="leaked">…</div>
+      <div class="who" id="who"></div>
+    </div>
+    <div class="card">
+      <canvas id="card" width="1200" height="675" aria-label="the winning run as a card"></canvas>
+      <div class="acts"><button type="button" class="pill fill" id="share-btn" hidden>Share</button><button type="button" class="pill" id="save-btn">Save the card</button><a class="pill" id="x-btn" target="_blank" rel="noopener">Post on X</a></div>
+    </div>
+  </div>
+
+  <div class="grid" id="facts"></div>
+
+  <section>
+    <h2>The refusal is the feature</h2>
+    <p class="why" id="why">…</p>
+  </section>
+
+  <section>
+    <h2>Final standings</h2>
+    <p class="note" id="frozen">…</p>
+    <div class="tablewrap"><table id="board"><thead><tr><th>#</th><th>Name</th><th>Handle</th><th>Score</th><th>Wave</th><th>At the door</th><th>Day</th></tr></thead><tbody></tbody></table></div>
+    <p class="note" id="verified" style="margin-top:12px"></p>
+  </section>
+
+  <section>
+    <h2>Play the arena</h2>
+    <p class="note">The contest is over, the door is not. Every day has its own arena, the same one for everyone, and the board keeps running. <a href="./#play">Open Gatekeeper</a>.</p>
+  </section>
+
+  <div class="foot"><b>Independent page.</b> Not run by Sable Network. The author holds SABL. Names on this page were chosen by the players themselves; a player can ask for removal through the Observatory's Community section.</div>
+</div>
+<script type="module" src="winner.js"></script>
+</body>
+</html>
