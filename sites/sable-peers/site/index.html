@@ -461,6 +461,18 @@
   .ledger-table{min-width:0;font-size:11.5px}
   .ledger-table th,.ledger-table td{padding:7px 8px;white-space:nowrap}
   .ledger-table td.warn{color:var(--warn)} .ledger-table td.ok{color:var(--ok)}
+  .rfacts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 14px}
+  .rfact{border:1px solid var(--edge);border-radius:10px;padding:12px 14px;background:rgba(5,7,10,.35);min-width:0}
+  .rfact .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
+  .rfact .v{font-size:21px;font-weight:600;line-height:1.15;display:block;overflow-wrap:anywhere}
+  .rfact .v.warn{color:var(--warn)} .rfact .v.ok{color:var(--ok)}
+  .rfact .s{font-size:12px;color:var(--dim);line-height:1.45;display:block;margin-top:5px}
+  .rgrid{display:grid;grid-template-columns:auto repeat(24,minmax(0,1fr));gap:3px;align-items:center;margin-top:10px}
+  .rgrid .rl{font-family:var(--mono);font-size:10.5px;color:var(--dim);padding-right:8px;white-space:nowrap}
+  .rgrid .rh{font-family:var(--mono);font-size:9.5px;color:var(--dim2);white-space:nowrap;overflow:visible;line-height:1}
+  .rgrid .rc{aspect-ratio:1;min-width:0;border-radius:2px;background:rgba(143,163,176,.10)}
+  .rgrid .rc.ok{background:var(--ok)} .rgrid .rc.warn{background:var(--warn)} .rgrid .rc.off{background:var(--dim2)}
+  @media (max-width:900px){.rfacts{grid-template-columns:1fr}.rgrid{gap:2px}.rgrid .rl{font-size:9.5px;padding-right:5px}}
   .corr{list-style:none;margin:0;padding:0;display:grid;gap:8px}
   .corr li{display:grid;grid-template-columns:90px 1fr;gap:14px;font-size:13.5px;color:var(--dim);padding:10px 0;border-top:1px solid var(--edge)}
   .corr li:first-child{border-top:0}
@@ -955,6 +967,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">7 Sep 2026</span><span><b>Reliability record.</b> The hourly ledger in the Log became a record: how long the confidential backend has been failing closed, in how many checks it was verified, whether the gateway answered, and a day-by-hour grid of every check since 4 September. Sable's own uptime figure sits next to it, because that number counts the gateway and not the backend.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Lisa, in the guide.</b> The voice agent from lisaonsable.com now answers inside the guide panel: press Talk to Lisa, she opens topics and sections of the whitepaper while she speaks, and her words appear as captions. Nothing from ElevenLabs loads until that button is pressed. Hear the tour calls her and she gives it one page at a time, moving on when you ask or press Next page; if she cannot start, your browser’s voice reads it instead. The topic buttons work without her.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Share your run.</b> The end of a Gatekeeper run now draws a card in the site's style: score, wave, what you refused and what leaked, the day's arena, your name. Share it from a phone, save it anywhere, or post it on X with the text prefilled. Drawn on a canvas on your device; nothing is uploaded.</span></li>
           <li><span class="d">6 Sep 2026</span><span><b>Gatekeeper.</b> A game, in 3D: you are Sable's door, sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build the streak, a wave defended without a leak pays a bonus, and the same arena is dealt to everyone each day, seeded by the whitepaper record. A leaderboard without accounts: a name, an optional X handle, no IP addresses kept. The rules live in one deterministic file, so a run can be replayed and checked later.</span></li>
@@ -977,10 +990,12 @@
           <li><span class="d">4 Sep 2026</span><span><b>First version:</b> the peer comparison, the market-cap ladder and the three scenarios, published as a card.</span></li>
         </ul>
       </div>
-      <div class="panel" id="ledger">
-        <h3>Hourly ledger</h3>
-        <p class="note">One cell per hourly check of Sable's public status: <span class="cell-legend ok"></span> confidential backend verified · <span class="cell-legend warn"></span> failing closed · <span class="cell-legend off"></span> unreachable. Newest on the right. <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch/blob/main/status/log.jsonl">Raw ledger</a>.</p>
-        <div class="strip" id="strip" aria-label="hourly checks" translate="no"></div>
+      <div class="panel wide" id="ledger">
+        <h3>Reliability record</h3>
+        <p class="note">What Sable's public status said at every check since 4 September 2026, kept in a public repository by this site's watcher. Sable's own uptime figure counts the gateway; this record also counts whether the confidential backend was verified, which is what a confidential request depends on. <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch/blob/main/status/log.jsonl">Raw ledger</a>.</p>
+        <div class="rfacts" id="rfacts" translate="no"><div class="rfact"><span class="k">reading the record</span><span class="v">…</span></div></div>
+        <p class="note">One cell per hour, UTC, coloured by the worst check in that hour: <span class="cell-legend ok"></span> verified · <span class="cell-legend warn"></span> failing closed · <span class="cell-legend off"></span> unreachable. A blank cell had no check: the schedule is set hourly, but runs often land two to four hours apart.</p>
+        <div class="rgrid" id="rgrid" aria-label="checks by day and hour" translate="no"></div>
         <div class="tablewrap" style="margin-top:14px"><table class="ledger-table" id="ledger-table"><thead><tr><th>time (UTC)</th><th>gateway</th><th>confidential</th><th>refusals</th><th>signer</th></tr></thead><tbody translate="no"><tr><td colspan="5">reading the record…</td></tr></tbody></table></div>
       </div>
       <div class="panel wide" id="wp">

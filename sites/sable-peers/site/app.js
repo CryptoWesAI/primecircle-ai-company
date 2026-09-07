@@ -115,7 +115,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     token:'Where the token sits. A log-scale ladder of market caps, read live when the page opens. SABL’s only role is an optional pay-in that burns the token, and it is not live yet.',
     scenarios:'Scenarios, not predictions. Three bands for what the token could be worth, and what would have to be true first. No multiples, no targets.',
     play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. Two and a half minutes, the same arena for everyone today, and a leaderboard without accounts.',
-    log:'The log. What changed on this page, the hourly ledger from the watcher, the whitepaper watched hourly with every diff, and what this page got wrong, with dates.',
+    log:'The log. What changed on this page, the hourly reliability record from the watcher, how long Sable has been failing closed, the whitepaper watched hourly with every diff, and what this page got wrong, with dates.',
     community:'The community. Sable’s Telegram and X. Bring a question, not a price.'
   };
   var TOUR=[
@@ -607,7 +607,7 @@ window.SABLE_EXT=(function(){
     txt('st-conf',ok?'attested and serving':'failing closed'+(c.error_class?' · '+c.error_class:'')+(c.consecutive_failures?' · '+c.consecutive_failures+' consecutive refusals':''));
     txt('st-when','live, '+new Date().toUTCString().slice(17,25)+' UTC');
     $('status').classList.add(ok?'good':'warn');
-    var note=$('st-note');note.innerHTML=(ok?'Confidential requests are being served from a verified backend.':'Confidential requests are being <b>refused, not downgraded</b> to plaintext right now. That is the fail-closed behaviour the whitepaper promises in section 08, visible in public.')+' Read from <a href="https://api.buildsable.com/v1/status">api.buildsable.com/v1/status</a> through this site’s read-only proxy. Cross-check on <a href="https://www.buildsable.com/trust">buildsable.com/trust</a>.';
+    var note=$('st-note');note.innerHTML=(ok?'Confidential requests are being served from a verified backend.':'Confidential requests are being <b>refused, not downgraded</b> to plaintext right now. That is the fail-closed behaviour the whitepaper promises in section 08, visible in public.')+' Read from <a href="https://api.buildsable.com/v1/status">api.buildsable.com/v1/status</a> through this site’s read-only proxy. Cross-check on <a href="https://www.buildsable.com/trust">buildsable.com/trust</a>. How long it has been like this: <a href="#log">the reliability record in the Log</a>.';
   }).catch(function(){txt('st-gw','live read failed');txt('st-24','n/a');txt('st-30','n/a');txt('st-conf','unknown right now');txt('st-when',location.protocol==='file:'?'this copy of the page has no proxy to Sable':'Sable’s API did not answer this site within a few seconds. Read it directly at buildsable.com/trust.');});
   fetch('/sable-api/receipts/pubkey',{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject()}).then(function(p){$('signer').textContent=p.signer_address;txt('signer-when','live · scheme '+p.scheme);$('exp').value=p.signer_address;}).catch(function(){$('signer').textContent=EMB_SIGNER;txt('signer-when','as published on '+EMB_DATE+'. Live read failed just now; confirm at api.buildsable.com/v1/receipts/pubkey.');$('exp').value=EMB_SIGNER;});
   /* whitepaper record, read from the public repository */
@@ -671,22 +671,54 @@ window.SABLE_EXT=(function(){
       stamp.setAttribute('data-live',n?'1':'0');stamp.textContent=n?('Live: '+n+' of '+rows.length+' values read '+new Date().toUTCString().slice(17,25)+' UTC from '+(by?'CoinGecko':'')+(by&&dx?' and ':'')+(dx?'DexScreener':'')+'; bars rescaled.'):'Live read failed; values as read 4 Sep 2026 16:00 UTC.';
     });
   })();
-  /* hourly ledger, read from the public repository */
+  /* reliability record, read from the public repository */
   (function(){
-    var strip=$('strip'),tbl=$('ledger-table');if(!strip||!tbl)return;
+    var grid=$('rgrid'),facts=$('rfacts'),tbl=$('ledger-table');if(!grid||!facts||!tbl)return;
     var RAW=(window.SABLE_EXT||{}).ledger||'https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/status/log.jsonl';
+    var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    function st(r){return r.conf_verified===true?'ok':r.conf_verified===false?'warn':'off';}
+    function word(x){return x==='ok'?'verified':x==='warn'?'failing closed':'unreachable';}
+    function reach(r){return typeof r.status==='string'&&r.status.indexOf('unreachable')!==0;}
+    function dur(ms){var m=Math.max(0,Math.round(ms/60000)),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+' d '+h+' h':h?h+' h '+mm+' min':mm+' min';}
+    function day(ms){return new Date(ms).toISOString().slice(0,10);}
+    function label(iso){var d=new Date(iso+'T00:00:00Z');return d.getUTCDate()+' '+MON[d.getUTCMonth()];}
+    function pad(n){return (n<10?'0':'')+n;}
+    function when(iso){return iso.replace('T',' ').replace('Z','').slice(0,16)+' UTC';}
     fetch(RAW,{cache:'no-store'}).then(function(r){return r.ok?r.text():Promise.reject(r.status)}).then(function(t){
-      var rows=t.split('\n').filter(Boolean).map(function(l){try{return JSON.parse(l)}catch(e){return null}}).filter(Boolean);
-      var last=rows.slice(-168);
-      strip.innerHTML=last.map(function(r){var c=r.conf_verified===true?'ok':r.conf_verified===false?'warn':'off';var title=(r.t||'')+' · '+(r.status||'')+' · '+(c==='ok'?'verified':c==='warn'?'failing closed'+(r.conf_error?' ('+r.conf_error+')':''):'unreachable');return '<span class="'+c+'" title="'+esc(title)+'"></span>';}).join('');
+      var rows=t.split('\n').filter(Boolean).map(function(l){try{return JSON.parse(l)}catch(e){return null}}).filter(function(r){return r&&r.t&&!isNaN(Date.parse(r.t))});
+      rows.sort(function(a,b){return Date.parse(a.t)-Date.parse(b.t)});
+      var n=rows.length;if(!n){facts.innerHTML='<div class="rfact"><span class="k">record</span><span class="v">no checks yet</span></div>';return;}
+      var last=rows[n-1],now=Date.now(),first=rows[0];
+      /* the current run: how long the latest state has held, every check in a row */
+      var cur=st(last),i=n-1;while(i>0&&st(rows[i-1])===cur)i--;var since=Date.parse(rows[i].t);
+      var est='';
+      if(cur==='warn'&&typeof first.conf_failures==='number'&&typeof last.conf_failures==='number'&&last.conf_failures>first.conf_failures&&n>1){
+        var perMin=(last.conf_failures-first.conf_failures)/((Date.parse(last.t)-Date.parse(first.t))/60000);
+        if(perMin>0){var start=Date.parse(last.t)-last.conf_failures/perMin*60000;var cad=perMin>=0.8&&perMin<=1.25?'about one a minute':perMin>1.25?'about '+perMin.toFixed(1)+' a minute':'about one every '+Math.round(1/perMin)+' minutes';
+          est=' Sable\'s own counter stood at '+last.conf_failures.toLocaleString('en')+' consecutive failures at the last check, '+cad+', which puts the start near '+when(new Date(start).toISOString())+'.';}}
+      var okN=0,reachN=0,signers={};rows.forEach(function(r){if(st(r)==='ok')okN++;if(reach(r))reachN++;if(typeof r.signer==='string'&&r.signer.indexOf('0x')===0)signers[r.signer.toLowerCase()]=1;});
+      var sigN=Object.keys(signers).length;
+      var nodes=[];if(Array.isArray(last.nodes))last.nodes.forEach(function(x){var p=String(x).split(':');var id=p[0],stt=p[p.length-1];if(id==='gateway'||id==='tee')nodes.push(id==='tee'?'TEE '+stt:'gateway '+stt);});
+      if(typeof last.third_party_nodes==='number')nodes.push(last.third_party_nodes+' third-party node'+(last.third_party_nodes===1?'':'s'));
+      var f1='<div class="rfact"><span class="k">'+esc(word(cur))+' for</span><span class="v '+(cur==='ok'?'ok':'warn')+'">'+esc(dur(now-since))+'</span><span class="s">every check since '+esc(when(rows[i].t))+(i===0?', the first one in the record':'')+'.'+esc(est)+'</span></div>';
+      var f2='<div class="rfact"><span class="k">confidential backend verified</span><span class="v '+(okN?(okN===n?'ok':''):'warn')+'">'+okN+' of '+n+' checks</span><span class="s">'+Math.round(100*okN/n)+'% of the checks since '+esc(label(day(Date.parse(first.t))))+'. Sable reports '+esc(String(last.uptime_24h==null?'?':last.uptime_24h))+'% uptime over 24 h and '+esc(String(last.uptime_30d==null?'?':last.uptime_30d))+'% over 30 days; that figure is the gateway, not the backend.</span></div>';
+      var f3='<div class="rfact"><span class="k">gateway reachable</span><span class="v '+(reachN===n?'ok':'warn')+'">'+reachN+' of '+n+' checks</span><span class="s">'+(nodes.length?'Last check: '+esc(nodes.join(' · '))+'. ':'')+(sigN===1?'Signer unchanged across all '+n+' checks.':sigN>1?'Signer changed: '+sigN+' different addresses seen.':'')+'</span></div>';
+      facts.innerHTML=f1+f2+f3;
+      /* day by hour, worst check wins the cell */
+      var byHour={},rank={ok:1,warn:2,off:3};
+      rows.forEach(function(r){var ms=Date.parse(r.t),k=day(ms)+'T'+new Date(ms).getUTCHours(),x=st(r),c=byHour[k]||(byHour[k]={rank:0,s:'',list:[]});if(rank[x]>c.rank){c.rank=rank[x];c.s=x;}c.list.push(r.t.slice(11,16)+' '+word(x));});
+      var days=[];for(var ms=Date.parse(day(Date.parse(first.t))+'T00:00:00Z'),end=Date.parse(day(now)+'T00:00:00Z');ms<=end;ms+=86400000)days.push(day(ms));
+      if(days.length>60)days=days.slice(-60);
+      var html='<span class="rl"></span>';for(var h=0;h<24;h++)html+='<span class="rh">'+(h%6===0?pad(h):'')+'</span>';
+      days.forEach(function(dd){html+='<span class="rl">'+esc(label(dd))+'</span>';for(var h=0;h<24;h++){var c=byHour[dd+'T'+h];html+='<span class="rc'+(c?' '+c.s:'')+'" title="'+esc(label(dd)+' '+pad(h)+':00 UTC'+(c?' · '+c.list.join(', '):' · no check'))+'"></span>';}});
+      grid.innerHTML=html;
       var body=rows.slice(-12).reverse().map(function(r){
         var c=r.conf_verified===true?'ok':r.conf_verified===false?'warn':'';
         var conf=r.conf_verified===true?'verified':r.conf_verified===false?('failing closed'+(r.conf_error?' · '+r.conf_error:'')):String(r.conf_error||'unknown');
         var sg=(typeof r.signer==='string'&&r.signer.indexOf('0x')===0)?r.signer.slice(0,6)+'…'+r.signer.slice(-4):'?';
         return '<tr><td>'+esc((r.t||'').replace('T',' ').replace('Z',''))+'</td><td>'+esc(String(r.status||''))+'</td><td class="'+c+'">'+esc(conf)+'</td><td>'+esc(r.conf_failures==null?'':String(r.conf_failures))+'</td><td>'+esc(sg)+(r.signer_changed_from?' <b>changed</b>':'')+'</td></tr>';}).join('');
       tbl.querySelector('tbody').innerHTML=body||'<tr><td colspan="5">no rows yet</td></tr>';
-      var n=rows.length;var p=tbl.parentNode.parentNode.querySelector('.note');if(p&&n){p.insertAdjacentHTML('beforeend',' '+n+' check'+(n===1?'':'s')+' recorded so far.');}
-    }).catch(function(){tbl.querySelector('tbody').innerHTML='<tr><td colspan="5">record not readable from here; open the raw ledger link above.</td></tr>';});
+    }).catch(function(){facts.innerHTML='<div class="rfact"><span class="k">record</span><span class="v">not readable from here</span><span class="s">Open the raw ledger link above.</span></div>';tbl.querySelector('tbody').innerHTML='<tr><td colspan="5">record not readable from here; open the raw ledger link above.</td></tr>';});
   })();
   var viemP=null;function viem(){if(!viemP)viemP=import('https://cdn.jsdelivr.net/npm/viem@2.56.3/+esm');return viemP;}
   function b64url(s){s=s.trim().replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';var bin=atob(s);var bytes=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return new TextDecoder().decode(bytes);}
