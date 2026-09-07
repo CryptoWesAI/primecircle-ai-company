@@ -472,12 +472,17 @@ window.SABLE_EXT=(function(){
   function left(ms){var m=Math.max(0,Math.round(ms/60000)),d=Math.floor(m/1440),h=Math.floor(m%1440/60),mm=m%60;return d?d+' d '+h+' h':h?h+' h '+mm+' min':mm+' min';}
   function drawContest(){if(!contest||!contestEl)return;var now=Date.now(),start=Date.parse(contest.start+'T00:00:00Z'),end=Date.parse(contest.end+'T23:59:59Z');
     var st=now<start?'starts in '+left(start-now):now>end?'over':'ends in '+left(end-now);
-    contestEl.innerHTML='<b>Contest</b><span>'+esc(fmtDay(contest.start)+' to '+fmtDay(contest.end))+' UTC</span><span class="cd">'+esc(st)+'</span><span class="rule">highest single run wins · your X handle on the run · post your card and tag @Sablenetwork</span><a href="#play" data-tab="contest">'+(now>end?'final standings':'standings')+'</a>';
+    contestEl.innerHTML='<b>Contest</b><span>'+esc(fmtDay(contest.start)+' to '+fmtDay(contest.end))+' UTC</span><span class="cd">'+esc(st)+'</span><span class="rule">highest single run wins · your X handle on the run · post your card and tag @Sablenetwork</span><a href="#play" data-tab="contest">'+(now>end?'final standings':'standings')+'</a><a href="#play" data-daily>today\'s card</a>';
     contestEl.hidden=false;if(contestTab)contestTab.hidden=false;
     var hf=document.getElementById('gs-handle'),lab=hf&&hf.parentNode?hf.parentNode.querySelector('span'):null;if(lab)lab.textContent=now>=start&&now<=end?'X handle, needed for the contest':'X handle, optional';}
   var contestAsked=false;
   function loadContest(){if(contestAsked)return;contestAsked=true;fetch(BOARD+'/contest',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){contest=j&&j.contest;if(contest){drawContest();if(!contestTimer)contestTimer=setInterval(drawContest,60000);}}).catch(function(){});}
-  if(contestEl)contestEl.addEventListener('click',function(e){var a=e.target.closest('a[data-tab]');if(a){e.preventDefault();ensureBoard();load('contest');tbl.scrollIntoView({behavior:'smooth',block:'nearest'});}});
+  var daily=document.getElementById('daily');
+  function openDaily(){if(!contest||!daily)return;daily.hidden=false;var els={share:document.getElementById('daily-share'),save:document.getElementById('daily-save'),x:document.getElementById('daily-x')};
+    import('./game/daily.js').then(function(m){return m.open({board:BOARD,contest:contest,canvas:document.getElementById('daily-cv'),els:els});}).then(function(d){window.__daily=d;}).catch(function(e){daily.hidden=true;});}
+  if(contestEl)contestEl.addEventListener('click',function(e){var a=e.target.closest('a[data-tab]');if(a){e.preventDefault();ensureBoard();load('contest');tbl.scrollIntoView({behavior:'smooth',block:'nearest'});return;}
+    var b=e.target.closest('a[data-daily]');if(b){e.preventDefault();openDaily();}});
+  var dailyClose=document.getElementById('daily-close');if(dailyClose)dailyClose.addEventListener('click',function(){daily.hidden=true;});
   if(location.protocol!=='file:')loadContest();
   if('IntersectionObserver' in window)new IntersectionObserver(function(es){if(es[0].isIntersecting)ensureBoard();},{threshold:0.05}).observe(tbl);else ensureBoard();
   function run(opts){play.disabled=true;demo.disabled=true;document.getElementById('game-fine').textContent='loading the 3D library…';

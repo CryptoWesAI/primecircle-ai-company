@@ -80,6 +80,12 @@ try{
     ok(/Flagged/.test(await text(p,"#ge-result")),"end card says the referee flagged the patient run: "+(await text(p,"#ge-result")).slice(0,120));
     ok(!(await text(p,"#gb-table tbody")).includes(NAME),"flagged run stays out of the contest tab: "+(await text(p,"#gb-table tbody")).slice(0,80));
     await p.click('.gb-tabs button[data-period="today"]'); await wait(500);
+    // today's card: drawn from the board and the page, with a prefilled post
+    await p.click("#contest a[data-daily]"); await p.waitForFunction(()=>window.__daily,{timeout:15000}).catch(()=>{});
+    ok(await vis(p,"#daily")&&!!(await p.evaluate(()=>window.__daily)),"today's card panel opens: "+JSON.stringify(await p.evaluate(()=>window.__daily&&{day:window.__daily.dayN,total:window.__daily.total,rows:window.__daily.rows.length,ends:window.__daily.ends})));
+    ok(await p.evaluate(()=>{const c=document.getElementById("daily-cv");const d=c.getContext("2d").getImageData(0,0,c.width,c.height).data;let lit=0;for(let i=0;i<d.length;i+=4*97)if(d[i]+d[i+1]+d[i+2]>90)lit++;return lit>200;}),"today's card is drawn");
+    ok(await p.$eval("#daily-x",a=>/contest.*day 1 of 1/.test(decodeURIComponent(a.href))),"post on X is prefilled for the card: "+await p.$eval("#daily-x",a=>decodeURIComponent(a.href).slice(0,120)));
+    await p.click("#daily-close"); await wait(200); ok(!(await vis(p,"#daily")),"card panel closes");
   }
   // the share card
   await wait(600);

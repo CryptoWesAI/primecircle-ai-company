@@ -342,6 +342,11 @@
   .contest b{color:var(--warn);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
   .contest .cd{color:var(--warn)}
   .contest .rule{color:var(--dim)}
+  .daily{margin:0 0 18px;border:1px solid var(--edge);border-radius:12px;overflow:hidden;background:var(--ink);max-width:640px}
+  .daily canvas{display:block;width:100%;height:auto}
+  .daily .acts{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--edge);align-items:center}
+  .daily .acts .pill{min-height:36px;padding:7px 13px}
+  .daily .acts .quiet{margin:0 0 0 auto;font-size:11px}
   .gb-table{min-width:0;font-size:13px}
   .gb-table td,.gb-table th{padding:8px 10px;white-space:nowrap}
   .gb-table td.n{font-family:var(--mono);color:var(--dim)}
@@ -937,6 +942,7 @@
     <h2>Gatekeeper</h2>
     <p class="sub">You are Sable's door. <b>Sealed requests pass and become receipts. Broken seals and runaway loops must be refused before they reach the door.</b> The refusal is the feature: only refusals build your streak. No clock: the shift lasts as long as your budget, every wave is harder than the last, and a clean wave gives budget back. The same arena for everyone today, a leaderboard without accounts.</p>
     <div class="contest" id="contest" hidden translate="no"></div>
+    <div class="daily" id="daily" hidden><canvas id="daily-cv" width="1200" height="675" aria-label="today's contest card"></canvas><div class="acts"><button type="button" class="pill fill" id="daily-share" hidden>Share</button><button type="button" class="pill" id="daily-save">Save</button><a class="pill" id="daily-x" target="_blank" rel="noopener">Post on X</a><button type="button" class="pill" id="daily-close">Close</button><span class="quiet">standings, countdown, today's sentence, the gateway</span></div></div>
     <div class="game" id="game">
       <div class="game-stage" id="game-stage">
         <div class="game-size" aria-hidden="true"></div>
@@ -998,7 +1004,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
-          <li><span class="d">7 Sep 2026</span><span><b>Proven runs, and a contest.</b> Every run is now replayed by the board from its input log before it counts: the same seed and the same taps at the same ticks must give the same score, or the run is refused. The Play topic shows the contest window with a countdown, the board has a Contest tab that counts every run with an X handle inside the window (the runs from earlier today passed the plausibility checks only), and the standings freeze by themselves when the window closes.</span></li>
+          <li><span class="d">7 Sep 2026</span><span><b>Proven runs, and a contest.</b> Every run is now replayed by the board from its input log before it counts: the same seed and the same taps at the same ticks must give the same score, or the run is refused. The Play topic shows the contest window with a countdown, the board has a Contest tab that counts every run with an X handle inside the window (the runs from earlier today passed the plausibility checks only), and the standings freeze by themselves when the window closes. A link on the strip draws today's card: the standings, the countdown, today's sentence and the gateway's state as one image to post.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Endless shift.</b> The clock is gone from Gatekeeper: a run lasts as long as your budget, every wave is harder than the last, and a wave defended without a leak gives ten budget back. The board now measures how long you can hold the door, not how well you fill two and a half minutes. Ten minutes is the hard cap.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Reliability record.</b> The hourly ledger in the Log became a record: how long the confidential backend has been failing closed, in how many checks it was verified, whether the gateway answered, and a day-by-hour grid of every check since 4 September. Sable's own uptime figure sits next to it, because that number counts the gateway and not the backend.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Lisa, in the guide.</b> The voice agent from lisaonsable.com now answers inside the guide panel: press Talk to Lisa, she opens topics and sections of the whitepaper while she speaks, and her words appear as captions. Nothing from ElevenLabs loads until that button is pressed. Hear the tour calls her and she gives it one page at a time, moving on when you ask or press Next page; if she cannot start, your browser’s voice reads it instead. The topic buttons work without her.</span></li>
