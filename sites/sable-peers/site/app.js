@@ -95,6 +95,14 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
   ['check','field','token','updates'].forEach(function(id){var s=document.getElementById(id);if(s)obs.observe(s,{childList:true,subtree:true,characterData:true});});
   refresh();setTimeout(refresh,3000);setTimeout(refresh,8000);
   /* a small public surface for the guide and for Lisa's tools */
+  /* a tile that opens the guide */
+  document.addEventListener('click',function(e){var a=e.target.closest('a[data-guide]');if(!a)return;e.preventDefault();var b=document.getElementById('guide-btn'),p=document.getElementById('guide-panel');if(b&&p&&p.hidden)b.click();});
+  /* tables wider than their box get a fade and a hint until scrolled to the end */
+  (function(){var ws=[].slice.call(document.querySelectorAll('.tablewrap')),raf=0;
+    ws.forEach(function(w){var h=document.createElement('div');h.className='tw-hint';h.textContent='scroll sideways for the rest →';h.hidden=true;w.parentNode.insertBefore(h,w.nextSibling);w._hint=h;w.addEventListener('scroll',function(){upd(w)},{passive:true});});
+    function upd(w){var can=w.scrollWidth>w.clientWidth+2&&w.scrollLeft<w.scrollWidth-w.clientWidth-2;w.classList.toggle('can-scroll',can);if(w._hint)w._hint.hidden=!can;}
+    function all(){if(raf)return;raf=requestAnimationFrame(function(){raf=0;ws.forEach(upd);});}
+    window.addEventListener('resize',all);new MutationObserver(all).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['hidden','class']});all();})();
   window.SABLE_SHELL={open:function(topic){if(!TOPICS[topic])topic=ALIAS[topic]||'home';if(location.hash.replace('#','')===(topic==='home'?'home':TOPICS[topic][0])){show(topic,true);}else{location.hash=topic==='home'?'home':TOPICS[topic][0];}return topic;},setMode:function(m){if(m==='full'||m==='compact')setMode(m,true);return mode;},current:function(){return current;},mode:function(){return mode;},topics:Object.keys(TOPICS)};
 })();
 

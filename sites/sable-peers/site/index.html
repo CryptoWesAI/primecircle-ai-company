@@ -57,6 +57,7 @@
   .eyebrow.left::after{display:none}
   .meta{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
   h1{font-weight:700;font-size:clamp(34px,5vw,56px);line-height:1.05;margin:20px 0 14px;letter-spacing:-.02em;text-wrap:balance}
+  h2[tabindex="-1"]:focus,h1[tabindex="-1"]:focus{outline:none}
   h1 .soft{color:var(--dim)}
   h2{font-weight:700;font-size:clamp(22px,2.6vw,30px);line-height:1.15;margin:16px 0 8px;letter-spacing:-.015em;text-wrap:balance}
   h3{font-weight:600;font-size:16px;margin:0 0 6px}
@@ -136,6 +137,10 @@
   body.full .rail a[aria-current="page"]{box-shadow:none;background:transparent;color:var(--dim)}
   .rail-toggle{display:none}
   @media (max-width:900px){
+    body{padding-bottom:96px}
+    .ticks span:nth-child(2),.ticks span:nth-child(3){display:none}
+    .eyebrow{font-size:10px;letter-spacing:.14em;gap:10px;white-space:nowrap}
+    .eyebrow::before,.eyebrow::after{width:18px;flex:none}
     .shell{grid-template-columns:1fr}
     .rail{position:sticky;top:0;z-index:5;border-right:0;border-bottom:1px solid var(--edge);padding:0;max-height:none;overflow:visible;background:rgba(5,7,10,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
     /* The bar: where you are on the left, the menu button on the right.
@@ -171,6 +176,7 @@
 
   /* the guide */
   .guide{position:fixed;right:18px;bottom:18px;z-index:40;font-family:var(--sans)}
+  @media (min-width:901px){.guide{left:18px;right:auto}.guide-panel{left:0;right:auto}}
   .lisa{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
   .lisa .pill{min-height:40px;display:inline-flex;align-items:center}
   .lisa-status{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em}
@@ -516,6 +522,8 @@
 
   /* matrix */
   .tablewrap{overflow-x:auto;border:1px solid var(--edge);border-radius:10px;background:rgba(5,7,10,.35)}
+  .tablewrap.can-scroll{background:linear-gradient(270deg,rgba(24,191,255,.14),rgba(5,7,10,0) 70px) right/70px 100% no-repeat,rgba(5,7,10,.35)}
+  .tw-hint{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);text-align:right;margin:6px 2px 0}
   table{border-collapse:collapse;width:100%;min-width:940px;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums}
   th,td{padding:10px 9px;text-align:left;vertical-align:top;border-bottom:1px solid var(--edge)}
   th{font-weight:500;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);background:rgba(5,7,10,.6);white-space:nowrap}
@@ -611,7 +619,7 @@
     <nav class="rail" aria-label="Topics" id="railnav">
       <button type="button" class="rail-toggle" id="rail-toggle" aria-expanded="false" aria-controls="rail"><span class="cur" id="rail-cur">Overview</span><span class="lbl">Topics <span class="chev" aria-hidden="true">▾</span></span></button>
       <ul id="rail">
-        <li><a href="#home" data-topic="home"><span class="n">00</span><span>Overview</span></a></li>
+        <li><a href="#home" data-topic="home"><span class="n">01</span><span>Overview</span></a></li>
         <li><a href="#explained" data-topic="explained"><span class="n">02</span><span>Explained</span></a></li>
         <li><a href="#door" data-topic="door"><span class="n">03</span><span>Try it</span></a></li>
         <li><a href="#check" data-topic="check"><span class="n">04</span><span>Verify</span></a></li>
@@ -772,7 +780,7 @@
         <div class="addr" id="signer" translate="no">reading…</div>
         <p class="note"><span id="signer-when">…</span><br>Every real receipt is signed by this address, secp256k1 over an EIP-191 digest. Pin it, and no receipt can be faked without the key. Source: <a href="https://api.buildsable.com/v1/receipts/pubkey">api.buildsable.com/v1/receipts/pubkey</a>.</p>
       </div>
-      <div class="panel" id="supply">
+      <div class="panel wide" id="supply">
         <h3>Supply, as Sable lists it</h3>
         <p class="note">Sable's own rule is to list only machines whose existence can be checked. This reads that listing live from <a href="https://api.buildsable.com/v1/nodes">api.buildsable.com/v1/nodes</a> through this site's read-only proxy, and the hourly ledger says how long each machine has been on it.</p>
         <div class="tablewrap"><table class="ledger-table" id="supply-table"><thead><tr><th>machine</th><th>region</th><th>tier</th><th>hardware</th><th>status</th><th>on the list</th></tr></thead><tbody translate="no"><tr><td colspan="6">reading the listing…</td></tr></tbody></table></div>
@@ -1078,6 +1086,12 @@
     <div class="pills">
       <a class="pill fill" href="https://t.me/SableNetworkPortal">Join the Telegram</a>
       <a class="pill" href="https://x.com/Sablenetwork">Follow @Sablenetwork</a>
+    </div>
+    <div class="tiles" style="margin-top:26px;text-align:left">
+      <a class="tile" href="#play"><span class="n">Play</span><h3>Hold the door</h3><p>Gatekeeper, the game where refusing is the point. A contest runs on the board.</p><span class="go">Play →</span></a>
+      <a class="tile" href="#check"><span class="n">Verify</span><h3>Check Sable yourself</h3><p>Live status, the published signer, the machines Sable lists, a receipt checker.</p><span class="go">Verify →</span></a>
+      <a class="tile" href="#home" data-guide="1"><span class="n">Ask</span><h3>Talk to the guide</h3><p>Lisa opens any topic or section of the whitepaper as you speak, or reads the tour.</p><span class="go">Open the guide →</span></a>
+      <a class="tile" href="#log"><span class="n">Log</span><h3>What changed, and when</h3><p>The page log, the reliability record, and the whitepaper watched hourly.</p><span class="go">Read the Log →</span></a>
     </div>
     <p class="quiet center">Independent page by a community member. Not run by Sable Network.</p>
   </section>
