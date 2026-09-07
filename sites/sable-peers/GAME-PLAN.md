@@ -120,7 +120,8 @@ limit is checked before the replay so a flood cannot burn CPU.
 `BOARD_CONTEST=YYYY-MM-DD/YYYY-MM-DD` (UTC days, inclusive) in the board's
 environment. `GET /contest` returns the window and whether it is before, live
 or over; `GET /top?period=contest` returns the highest verified run per player
-inside the window, handle required. The page shows a strip with a countdown
+inside the window, one place per handle (a person, not a name), handle required (verified or not: the runs from 7 September
+before the replay check went live count too, at the founder's request). The page shows a strip with a countdown
 and a Contest tab, and marks the handle field as needed while the window is
 live. Standings freeze by themselves: `day` is stamped by the board at
 submission, so no later run can land inside a closed window.

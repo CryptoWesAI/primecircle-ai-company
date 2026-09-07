@@ -6,9 +6,9 @@
 const DATA = {
   final: false, // false shows the preview ribbon; true after the standings are frozen
   contest: {
-    start: "2026-09-09",            // first UTC day that counted
-    end: "2026-09-15",              // last UTC day that counted
-    frozenAt: "2026-09-15T23:59:59Z",
+    start: "2026-09-07",            // first UTC day that counted
+    end: "2026-09-14",              // last UTC day that counted
+    frozenAt: "2026-09-14T23:59:59Z",
     verified: "replay",             // the board replays input logs since 8 September 2026; "hash" for older rows
   },
   winner: {
@@ -86,7 +86,7 @@ $("frozen").textContent = "Highest single run per player between " + dayLabel(C.
 $("board").querySelector("tbody").innerHTML = DATA.standings.map((r, i) =>
   "<tr" + (i === 0 ? ' class="win"' : "") + '><td class="n">' + (i + 1) + '</td><td class="nm">' + esc(r.name) + '</td><td class="h">' + (r.handle ? '<a href="https://x.com/' + encodeURIComponent(handleOf(r.handle)) + '" target="_blank" rel="noopener">@' + esc(handleOf(r.handle)) + "</a>" : "") + '</td><td class="sc">' + num(r.score) + "</td><td>" + r.wave + "</td><td>" + clock(r.duration_ms) + "</td><td>" + dayLabel(r.day) + "</td></tr>").join("") || '<tr><td colspan="7">no runs recorded</td></tr>';
 $("verified").textContent = C.verified === "replay"
-  ? "Every run on this table was replayed by the board from its input log before it counted: the same seed and the same inputs at the same ticks give the same score, or the run is refused."
+  ? "Every run on this table submitted after the evening of 7 September 2026 was replayed by the board from its input log before it counted: the same seed and the same inputs at the same ticks give the same score, or the run is refused. Runs from earlier that day passed the board's plausibility checks only."
   : "Runs are checked for plausibility by the board and stored with a hash of their input log. The winning run was reviewed by hand before this page was published.";
 
 /* the card */

@@ -37,7 +37,7 @@ const ins = db.prepare("INSERT INTO scores (day, seed, name, handle, score, rece
 const markToken = db.prepare("INSERT INTO used_tokens (sig, created_at) VALUES (?, ?)");
 const seenToken = db.prepare("SELECT 1 FROM used_tokens WHERE sig = ?");
 const topQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? GROUP BY lower(name) ORDER BY score DESC, id ASC LIMIT ?`);
-const contestQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? AND day <= ? AND verified = 1 AND handle IS NOT NULL AND handle != '' GROUP BY lower(name) ORDER BY score DESC, id ASC LIMIT ?`);
+const contestQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? AND day <= ? AND handle IS NOT NULL AND handle != '' GROUP BY lower(handle) ORDER BY score DESC, id ASC LIMIT ?`);
 const rankQ = db.prepare(`SELECT COUNT(*) AS n FROM (SELECT lower(name) AS k, MAX(score) AS s FROM scores WHERE day >= ? GROUP BY k) WHERE s > ?`);
 const meQ = db.prepare("SELECT name, handle, score, receipts, wave, day FROM scores WHERE device = ? ORDER BY score DESC LIMIT 1");
 const countQ = db.prepare("SELECT COUNT(*) AS n FROM scores");

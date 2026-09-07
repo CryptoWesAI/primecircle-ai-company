@@ -13,7 +13,7 @@ else if (cmd === "delete-name") { const r = db.prepare("DELETE FROM scores WHERE
 else if (cmd === "contest") {
   const m = String(args[0] || process.env.BOARD_CONTEST || "").match(/^(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2})$/);
   if (!m) { console.log("usage: contest [YYYY-MM-DD/YYYY-MM-DD], or set BOARD_CONTEST"); process.exit(1); }
-  const rows = db.prepare("SELECT name, handle, MAX(score) AS score, wave, duration_ms, day FROM scores WHERE day >= ? AND day <= ? AND verified = 1 AND handle IS NOT NULL AND handle != '' GROUP BY lower(name) ORDER BY score DESC, id ASC LIMIT 25").all(m[1], m[2]);
+  const rows = db.prepare("SELECT name, handle, MAX(score) AS score, wave, duration_ms, day FROM scores WHERE day >= ? AND day <= ? AND handle IS NOT NULL AND handle != '' GROUP BY lower(handle) ORDER BY score DESC, id ASC LIMIT 25").all(m[1], m[2]);
   console.log(JSON.stringify({ start: m[1], end: m[2], standings: rows }, null, 2));
 }
 else if (cmd === "run") console.log(JSON.stringify(db.prepare("SELECT day, seed, name, handle, score, receipts, refused, wave, duration_ms, verified, log FROM scores WHERE lower(name) = lower(?) ORDER BY score DESC LIMIT 1").get(String(args[0] || "")) || null));
