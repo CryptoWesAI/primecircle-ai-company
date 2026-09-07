@@ -149,7 +149,8 @@
 
   /* the guide */
   .guide{position:fixed;right:18px;bottom:18px;z-index:40;font-family:var(--sans)}
-  @media (min-width:901px){.guide{left:18px;right:auto}.guide-panel{left:0;right:auto}}
+  /* on desktops where the page reaches the right edge, a gutter stays free for the guide */
+  @media (min-width:901px) and (max-width:1500px){body{padding-right:118px}}
   .lisa{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 10px}
   .lisa .pill{min-height:40px;display:inline-flex;align-items:center}
   .lisa-status{font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.06em}
