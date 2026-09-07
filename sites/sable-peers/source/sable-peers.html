@@ -1321,8 +1321,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     start.textContent='Hear the tour';if(mic){mic.hidden=true;}
     caption('Hi. Press Talk to '+NAME+' and she opens topics and sections of the whitepaper as you speak. Or press Hear the tour, or tap a topic.',true);
     var TOOLS={
-      navigate:function(p){var t=(p&&(p.topic||p.section)||'home').toString().toLowerCase();var opened=S.open(t);return 'Opened '+NAMES[opened]+'. '+(SAY[opened]||'')+'
-'+liveNow();},
+      navigate:function(p){var t=(p&&(p.topic||p.section)||'home').toString().toLowerCase();var opened=S.open(t);return 'Opened '+NAMES[opened]+'. '+(SAY[opened]||'')+'\n'+liveNow();},
       set_view:function(p){var m=(p&&p.mode||'compact').toString().toLowerCase();return 'View is now '+S.setMode(m)+'.';},
       where_am_i:function(){var c=S.current();return 'The visitor is on '+NAMES[c]+' in '+S.mode()+' view. '+(SAY[c]||'')+'\n'+liveNow();},
       open_section:function(p){var O=window.SABLE_ORRERY;if(!O)return 'The map is not available.';var n=String(p&&(p.section||p.number)||'').trim().replace(/^0/,'').toUpperCase();var secs=O.sections(),idx=-1;for(var k=0;k<secs.length;k++)if(String(parseInt(secs[k].n,10))===n||secs[k].n===n)idx=k;if(idx<0)return 'No section '+n+'. Sections run 01 to 13, plus A for the appendix.';S.open('home');O.select(idx);var sx=secs[idx],q=document.querySelector('#orr-panel .orr-their');return 'Opened section '+sx.n+', '+sx.title+': '+sx.count+' sentences'+(sx.changed?', changed on '+sx.changed:'')+'. Its first sentence: '+(q?q.textContent:'');},
