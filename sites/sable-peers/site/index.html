@@ -867,7 +867,7 @@
           <td><span class="m on">●</span></td>
           <td><span class="m on">●</span></td>
           <td><span class="m half">◐</span><span class="note">optional pay-in, burns for a discount, rolling out since 2 Sep, not live</span></td>
-          <td class="pc" data-state="reading" data-peer="sable-trust,sable-pricing,sable-careers"><span class="note">reading…</span></td></tr>
+          <td class="pc" data-state="reading" data-peer="sable-trust,sable-pricing,sable-careers,sable-docs,sable-docs-mcp-gateway"><span class="note">reading…</span></td></tr>
         <tr><td class="name"><span translate="no">Phala</span><small>2020 · Ethereum L2</small></td>
           <td><span class="m on">●</span><span class="note">GPU CC, H100 to B300</span></td>
           <td><span class="m on">●</span><span class="note">gateway receipt, Jun 2026</span></td>
@@ -1073,6 +1073,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">8 Sep 2026</span><span><b>Announced, then checked.</b> The Log gains a panel that keeps each Sable announcement next to what the deployment answers, from the same public record: the SABL pay-in beside the burn watch, the confidential tier beside the status endpoint, and the MCP Gateway, announced live on 8 September with a docs page that names its routes, beside those routes as the hourly watcher asks them without a key. On this gateway a routed path answers 401 before it looks anything up and an unrouted one 404; on 8 September every documented MCP Gateway route answered 404. The watcher keeps a ledger of every change of state and writes a changelog entry when an announced route first answers, and the daily page watch now also covers Sable's docs index and the MCP Gateway page.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>Burn watch.</b> The Token topic gains one line from the hourly watcher's own record: the SABL supply as the watcher reads it from Solana, with the time and the slot, and whether it has ever fallen. The whitepaper says paying in SABL burns it and that the rail is not live yet, so the first fall of the mint supply is that rail live on-chain, whatever the announcements say. The watcher keeps a separate ledger of every change of the supply and writes a changelog entry on every fall; the line stays hidden until that record exists. Later the same day: the Scenarios condition "burn visible on-chain" reads its answer from the same record, "not yet" or the fall, instead of standing there as an assertion.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>An app on your phone.</b> The page installs on a home screen (Chrome offers Install, Safari has Add to Home Screen), opens full screen with the site's mark as its icon, and works without a network for what it has already shown. The bell in the top bar turns on notifications: a new entry in this log, a change in Sable's whitepaper caught by the hourly watcher, or news about the contest, with the phone's own sound. A subscription is an address at the phone's push service and two keys, nothing else, and it can be turned off with the same bell.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>A thousand lights.</b> The Token topic opens with a ring of a thousand lights, one for every million SABL ever minted, read from Solana through this site's proxy: the lit ones exist, the dark ones are burned, and none can be made, since the mint authority is gone. Beside it the burn, the market cap with its 24-hour move, and a day-by-day strip that the hourly watcher fills from 8 September, one bar a day, from its own record rather than an API's change field.</span></li>
@@ -1119,6 +1120,15 @@
           <span class="k">last check</span><span class="v" id="wp-check">…</span>
         </div>
         <ul class="corr" id="wp-list" aria-live="polite"></ul>
+      </div>
+      <div class="panel wide" id="claims">
+        <h3>Announced, then checked</h3>
+        <p class="note">Sable announces things as live. This panel keeps each announcement next to what the deployment answers, from the same public record this page reads at load: the chain for the token, the status endpoint for the confidential tier, and for a new API surface the routes its docs name, asked every hour without a key. On this gateway a routed path answers 401 before it looks anything up and an unrouted one answers 404, so the answer says whether the route exists; whether the feature works needs a key. <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch/blob/main/claims.json">claims.json</a> lists what is asked.</p>
+        <ul class="corr" id="claims-list" aria-live="polite">
+          <li id="claim-sabl"><span class="d">4 Sep 2026</span><span><b>SABL pay-in.</b> <q translate="no">Integration 001: SABL is now part of the Sable Network. You can now use SABL to pay for services.</q> (Sable on X, 4 Sep 2026.) The whitepaper, re-rendered 2 Sep, says paying in SABL burns it and that the rail is rolling out, not yet live. The chain's answer: <span class="live" id="claim-sabl-live">reading the record…</span></span></li>
+          <li id="claim-conf"><span class="d">Aug 2026</span><span><b>Confidential tier.</b> Whitepaper §10 lists TDX attestation, fail-closed, as built, and the trust page shows the live quote. Built and fail-closed also means it refuses when its backend fails verification. The status endpoint's answer: <span class="live" id="claim-conf-live">reading the record…</span></span></li>
+          <li id="claim-mcp-gateway"><span class="d">8 Sep 2026</span><span><b>MCP Gateway.</b> <q translate="no">MCP Gateway is live on Sable. MCP tools, with budgets and policies around them. Every call is metered and receipted. Shipped.</q> (Sable on X, 8 Sep 2026.) The <a href="https://www.buildsable.com/docs/mcp-gateway">docs</a> describe a tool proxy: register a third-party MCP server, get a proxy URL, every tools/call allowlist-checked, metered per call, receipted as kind mcp_call. The pricing page and the whitepaper do not mention it. The public API's answer: <span class="live" id="claim-mcp-gateway-live">reading the record…</span></span></li>
+        </ul>
       </div>
     </div>
   </section>

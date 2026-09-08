@@ -830,7 +830,7 @@
           <td><span class="m on">●</span></td>
           <td><span class="m on">●</span></td>
           <td><span class="m half">◐</span><span class="note">optional pay-in, burns for a discount, rolling out since 2 Sep, not live</span></td>
-          <td class="pc" data-state="reading" data-peer="sable-trust,sable-pricing,sable-careers"><span class="note">reading…</span></td></tr>
+          <td class="pc" data-state="reading" data-peer="sable-trust,sable-pricing,sable-careers,sable-docs,sable-docs-mcp-gateway"><span class="note">reading…</span></td></tr>
         <tr><td class="name"><span translate="no">Phala</span><small>2020 · Ethereum L2</small></td>
           <td><span class="m on">●</span><span class="note">GPU CC, H100 to B300</span></td>
           <td><span class="m on">●</span><span class="note">gateway receipt, Jun 2026</span></td>
@@ -1036,6 +1036,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
+          <li><span class="d">8 Sep 2026</span><span><b>Announced, then checked.</b> The Log gains a panel that keeps each Sable announcement next to what the deployment answers, from the same public record: the SABL pay-in beside the burn watch, the confidential tier beside the status endpoint, and the MCP Gateway, announced live on 8 September with a docs page that names its routes, beside those routes as the hourly watcher asks them without a key. On this gateway a routed path answers 401 before it looks anything up and an unrouted one 404; on 8 September every documented MCP Gateway route answered 404. The watcher keeps a ledger of every change of state and writes a changelog entry when an announced route first answers, and the daily page watch now also covers Sable's docs index and the MCP Gateway page.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>Burn watch.</b> The Token topic gains one line from the hourly watcher's own record: the SABL supply as the watcher reads it from Solana, with the time and the slot, and whether it has ever fallen. The whitepaper says paying in SABL burns it and that the rail is not live yet, so the first fall of the mint supply is that rail live on-chain, whatever the announcements say. The watcher keeps a separate ledger of every change of the supply and writes a changelog entry on every fall; the line stays hidden until that record exists. Later the same day: the Scenarios condition "burn visible on-chain" reads its answer from the same record, "not yet" or the fall, instead of standing there as an assertion.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>An app on your phone.</b> The page installs on a home screen (Chrome offers Install, Safari has Add to Home Screen), opens full screen with the site's mark as its icon, and works without a network for what it has already shown. The bell in the top bar turns on notifications: a new entry in this log, a change in Sable's whitepaper caught by the hourly watcher, or news about the contest, with the phone's own sound. A subscription is an address at the phone's push service and two keys, nothing else, and it can be turned off with the same bell.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>A thousand lights.</b> The Token topic opens with a ring of a thousand lights, one for every million SABL ever minted, read from Solana through this site's proxy: the lit ones exist, the dark ones are burned, and none can be made, since the mint authority is gone. Beside it the burn, the market cap with its 24-hour move, and a day-by-day strip that the hourly watcher fills from 8 September, one bar a day, from its own record rather than an API's change field.</span></li>
@@ -1082,6 +1083,15 @@
           <span class="k">last check</span><span class="v" id="wp-check">…</span>
         </div>
         <ul class="corr" id="wp-list" aria-live="polite"></ul>
+      </div>
+      <div class="panel wide" id="claims">
+        <h3>Announced, then checked</h3>
+        <p class="note">Sable announces things as live. This panel keeps each announcement next to what the deployment answers, from the same public record this page reads at load: the chain for the token, the status endpoint for the confidential tier, and for a new API surface the routes its docs name, asked every hour without a key. On this gateway a routed path answers 401 before it looks anything up and an unrouted one answers 404, so the answer says whether the route exists; whether the feature works needs a key. <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch/blob/main/claims.json">claims.json</a> lists what is asked.</p>
+        <ul class="corr" id="claims-list" aria-live="polite">
+          <li id="claim-sabl"><span class="d">4 Sep 2026</span><span><b>SABL pay-in.</b> <q translate="no">Integration 001: SABL is now part of the Sable Network. You can now use SABL to pay for services.</q> (Sable on X, 4 Sep 2026.) The whitepaper, re-rendered 2 Sep, says paying in SABL burns it and that the rail is rolling out, not yet live. The chain's answer: <span class="live" id="claim-sabl-live">reading the record…</span></span></li>
+          <li id="claim-conf"><span class="d">Aug 2026</span><span><b>Confidential tier.</b> Whitepaper §10 lists TDX attestation, fail-closed, as built, and the trust page shows the live quote. Built and fail-closed also means it refuses when its backend fails verification. The status endpoint's answer: <span class="live" id="claim-conf-live">reading the record…</span></span></li>
+          <li id="claim-mcp-gateway"><span class="d">8 Sep 2026</span><span><b>MCP Gateway.</b> <q translate="no">MCP Gateway is live on Sable. MCP tools, with budgets and policies around them. Every call is metered and receipted. Shipped.</q> (Sable on X, 8 Sep 2026.) The <a href="https://www.buildsable.com/docs/mcp-gateway">docs</a> describe a tool proxy: register a third-party MCP server, get a proxy URL, every tools/call allowlist-checked, metered per call, receipted as kind mcp_call. The pricing page and the whitepaper do not mention it. The public API's answer: <span class="live" id="claim-mcp-gateway-live">reading the record…</span></span></li>
+        </ul>
       </div>
     </div>
   </section>
@@ -1320,7 +1330,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     token:'Where the token sits. It opens with a ring of a thousand lights, one for every million SABL ever minted, read from Solana: the lit ones exist, the dark ones at the rim are burned, and none can be made, because the mint authority is gone. Beside the ring: how much is burned and its share of the mint, that who burned it is not established, the market cap with its 24-hour move, and a day-by-day strip that the hourly watcher fills from 8 September, one bar a day. Under it a log-scale ladder of market caps against eight peers. SABL’s only role is an optional pay-in that burns the token, and it is not live yet. No yield, no governance, no claim.',
     scenarios:'Scenarios, not predictions. Three bands for what the token could be worth, and what would have to be true first. No multiples, no targets.',
     play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. There is no clock: the shift lasts as long as your budget, every wave is harder than the last, and a wave held without a leak gives budget back. The same arena for everyone today, and a leaderboard without accounts: the top three rows are lit. A contest runs from 7 to 14 September: the highest single run wins, one place per X handle, and to claim a prize the player posts their card on X tagging Sablenetwork. Every run is replayed by the board from its taps before it counts, and a referee flags runs that look scripted. The strip above the board has the countdown, the standings and today’s card to post.',
-    log:'The log. What changed on this page, with dates. The reliability record: how long Sable’s confidential backend has been failing closed, in how many hourly checks it was verified, whether the gateway answered, and a grid of every check by day and hour, with Sable’s own uptime figure next to it. Then the whitepaper watched hourly with every diff, and what this page got wrong.',
+    log:'The log. What changed on this page, with dates. The announcements, each next to what the deployment answers. The reliability record: how long Sable’s confidential backend has been failing closed, in how many hourly checks it was verified, whether the gateway answered, and a grid of every check by day and hour, with Sable’s own uptime figure next to it. Then the whitepaper watched hourly with every diff, and what this page got wrong.',
     community:'The community. Sable’s Telegram and X, and four doors into the rest of this page: Play, Verify, the guide, the Log. On a phone the page installs on the home screen like an app, and the bell in the top bar turns on notifications for changes. Bring a question, not a price.'
   };
   var TOUR=[
@@ -1410,6 +1420,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
       var rf=[].slice.call(document.querySelectorAll('#rfacts .rfact')).map(function(x){var k=x.querySelector('.k'),v=x.querySelector('.v');return k&&v?k.textContent+': '+v.textContent:''}).filter(Boolean);if(rf.length)out.push('Reliability record: '+rf.join('; ')+'.');
       var sp=g('supply-third');if(/\d/.test(sp))out.push(sp+'.');
       var bwEl=document.getElementById('burn-watch');if(bwEl&&!bwEl.hidden&&/\d/.test(bwEl.textContent))out.push(bwEl.textContent.replace(/\s+/g,' ').trim());
+      var cmEl=document.getElementById('claim-mcp-gateway-live');if(cmEl&&!/reading the record/.test(cmEl.textContent))out.push('MCP Gateway, announced live by Sable on 8 September; the public API\'s answer: '+cmEl.textContent.replace(/\s+/g,' ').trim());
       var ct=g('contest');if(ct)out.push('Contest strip: '+ct.slice(0,220)+'.');
       var rows=[].slice.call(document.querySelectorAll('#gb-table tbody tr')).slice(0,3).map(function(r){var td=r.querySelectorAll('td');return td.length>2?td[1].textContent.trim().split('@')[0].trim()+' '+td[2].textContent.trim():''}).filter(Boolean);if(rows.length)out.push('Leaderboard, top three on the tab shown: '+rows.join(', ')+'.');
       var tq=g('orr-today-q');if(tq)out.push('Today\'s sentence: "'+tq.slice(0,220)+'".');
@@ -1881,12 +1892,48 @@ window.SABLE_EXT=(function(){
         var sl=document.getElementById('scn-burn-live');
         if(sl){sl.innerHTML=fell?'Yes: the supply fell by '+no(n6(-f.ui_delta)+' SABL')+' on '+no(when(f.t))+'. <a href="#token">Burn watch</a>.'
           :'Not yet: watched hourly'+(typeof b.t==='string'?' since '+no(b.t.slice(0,10)):'')+', no fall seen. <a href="#token">Burn watch</a>.';sl.hidden=false;}})();
+      /* announced, then checked: each announcement next to what the deployment answers, from the same record.
+         The SABL row reads the burn watch, the confidential row the last status line, the rest the route watch
+         (rec.claims: one entry per announced surface whose documented routes the watcher asks hourly without a key).
+         A row written in the HTML with a matching "-live" span gets its answer; an id the HTML does not know gets a row. */
+      (function(){
+        var ul=document.getElementById('claims-list');if(!ul)return;
+        function no(v){return '<span translate="no">'+esc(v)+'</span>';}
+        function n6(v){return Number(v).toLocaleString('en-US',{maximumFractionDigits:6});}
+        var LEDGER=' <a href="'+GHBASE+'status/claims.jsonl">Ledger</a>.';
+        var sEl=document.getElementById('claim-sabl-live'),cEl=document.getElementById('claim-conf-live');
+        var s=rec.sabl_supply,f=s&&s.last_fall,b=(s&&s.baseline)||{};
+        if(sEl){if(s&&f&&typeof f.ui_delta==='number'&&isFinite(f.ui_delta)&&f.ui_delta<0&&typeof f.t==='string')sEl.innerHTML='live on-chain: the supply fell by '+no(n6(-f.ui_delta)+' SABL')+' on '+no(when(f.t))+'. <a href="#token">Burn watch</a>.';
+          else if(s&&s.latest&&typeof s.latest.t==='string')sEl.innerHTML='not yet: the supply has not fallen since the watch began'+(typeof b.t==='string'?' on '+no(b.t.slice(0,10)):'')+', last read '+no(when(s.latest.t))+'. <a href="#token">Burn watch</a>.';
+          else sEl.textContent='not in the record yet.';}
+        var last=rec.last_check||{};
+        if(cEl){if(last.conf_verified===true)cEl.innerHTML='serving: a verified backend at the last check, '+no(when(last.t))+'. <a href="#log">Reliability record</a>.';
+          else if(last.conf_verified===false)cEl.innerHTML='refusing: failing closed at the last check, '+no(when(last.t))+(typeof last.conf_failures==='number'?', '+no(last.conf_failures.toLocaleString('en-US')+' consecutive refusals'):'')+(last.conf_error?' ('+no(String(last.conf_error))+')':'')+'. <a href="#log">Reliability record</a>.';
+          else cEl.textContent='not in the record yet.';}
+        function answer(c){var L=c.latest&&typeof c.latest==='object'?c.latest:{},h=L.http&&typeof L.http==='object'?L.http:{};
+          var codes=Object.keys(h).map(function(k){return no(k+' '+h[k])}).join(', ');
+          var ctrl=(typeof L.control==='number'||typeof L.control==='string')&&typeof c.control==='string'?' while '+no(c.control+' '+L.control):'';
+          var n=typeof c.checks==='number'&&c.checks>0?', '+no(String(c.checks))+(c.checks===1?' check':' checks'):'';
+          if(c.state==='present')return 'reachable: '+codes+ctrl+(typeof c.state_since==='string'?' since '+no(when(c.state_since)):'')+'. A route that answers exists on the public gateway; whether the feature works needs a key.'+LEDGER;
+          if(c.state==='absent')return 'not reachable from outside: '+codes+ctrl+' at '+no(when(L.t))+(typeof c.first_checked==='string'?'; asked hourly since '+no(when(c.first_checked)):'')+n+', every HTTP answer 404.'+LEDGER;
+          if(c.state==='unreachable')return 'the gateway did not answer at the last check, '+no(when(L.t))+'.'+LEDGER;
+          return 'not in the record yet.';}
+        (Array.isArray(rec.claims)?rec.claims:[]).forEach(function(c){if(!c||typeof c.id!=='string'||!/^[a-z0-9-]{1,40}$/.test(c.id))return;
+          var span=document.getElementById('claim-'+c.id+'-live');if(span){span.innerHTML=answer(c);return;}
+          if(document.getElementById('claim-'+c.id))return;
+          var li=document.createElement('li');li.id='claim-'+c.id;
+          var docs=typeof c.docs==='string'&&/^https:\/\/www\.buildsable\.com\//.test(c.docs)?' <a href="'+esc(c.docs)+'">Docs</a>.':'';
+          li.innerHTML='<span class="d">'+esc(String(c.announced||''))+'</span><span><b>'+esc(String(c.title||c.id))+'.</b> '+(c.announcement?'<q translate="no">'+esc(String(c.announcement))+'</q> ('+esc(String(c.source||'Sable'))+'.) ':'')+(c.docs_say?esc(String(c.docs_say))+docs+' ':'')+'The public API\'s answer: <span class="live" id="claim-'+c.id+'-live">'+answer(c)+'</span></span>';
+          ul.appendChild(li);});
+        [].slice.call(ul.querySelectorAll('.live')).forEach(function(e){if(/reading the record/.test(e.textContent))e.textContent='not in the record yet: the watcher adds it at its next hourly run.';});
+      })();
       list.innerHTML=es.slice(0,8).map(function(e){
         var bytes=num(e.bytes)?num(e.bytes).toLocaleString('en-US')+' bytes':'';var d=safePath(e.diff),s=safePath(e.snapshot);
         var body=e.first?'<b>first snapshot in the record</b> · <span translate="no">'+esc(e.cover||'')+'</span> · '+bytes
           :'<b>'+num(e.added)+' added, '+num(e.removed)+' removed</b> · cover still says <span translate="no">'+esc(e.cover||'?')+'</span> · '+bytes+(d?' · <a href="'+GHBASE+esc(d)+'">diff</a>':'')+(s?' · <a href="'+GHBASE+esc(s)+'">PDF</a>':'');
         return '<li><span class="d">'+esc(e.label||'')+'</span><span>'+body+'</span></li>';}).join('');
-    }).catch(function(){txt('wp-version','record not readable from here');txt('wp-last','open the repository link above');txt('wp-check','');});
+    }).catch(function(){txt('wp-version','record not readable from here');txt('wp-last','open the repository link above');txt('wp-check','');
+      [].slice.call(document.querySelectorAll('#claims-list .live')).forEach(function(e){e.textContent='record not readable from here.';});});
   })();
   /* "page changed" column, read from the public repository */
   (function(){
