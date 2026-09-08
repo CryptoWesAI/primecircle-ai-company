@@ -1,5 +1,5 @@
 // The rule set must be deterministic and must reward judgement.
-import { createGame, replay, autopilot, TICK, RUN_MS } from "../site/game/core.js";
+import { createGame, replay, autopilot, TICK, RUN_MS, WRONG_COST } from "../site/game/core.js";
 const fails = []; const ok = (c, m) => { if (!c) fails.push(m); };
 
 // idle run: nothing refused, the budget bleeds out before the clock
@@ -35,11 +35,11 @@ const other = createGame("2026-09-07:test");
 while (!other.state.over) { autopilot(other); other.step(TICK); }
 ok(other.summary().score !== sp.score, "another seed, another score");
 
-// wrong refusal resets the streak, does not hurt the budget
+// wrong refusal resets the streak and costs WRONG_COST budget: a customer sent away (rule of 8 Sep 2026)
 const w = createGame("x");
 while (w.state.caps.length === 0) w.step(TICK);
 const first = w.state.caps.find((c) => c.kind === "ok");
-if (first) { w.state.streak = 9; w.state.mult = 2; const r = w.input("refuse", first.id); ok(r && r.kind === "ok" && w.state.streak === 0 && w.state.mult === 1 && w.state.budget === 100, "wrong refusal resets streak only"); }
+if (first) { w.state.streak = 9; w.state.mult = 2; const r = w.input("refuse", first.id); ok(r && r.kind === "ok" && w.state.streak === 0 && w.state.mult === 1 && w.state.budget === 100 - WRONG_COST && w.state.score === 0, "wrong refusal resets the streak and costs " + WRONG_COST + " budget, no points"); }
 
 // attest: three charges, slows time
 const a = createGame("y");

@@ -7,13 +7,24 @@ import webpush from "web-push";
 // the deterministic core: copied next to this file in the image, read from the site tree when run from the repo
 const core = await import("./core.js").catch(() => import("../site/game/core.js"));
 const { replay } = core;
+const RULES = String(core.RULES || "");
+// the rules before the current ones, for the hour after a deploy: a page loaded before the
+// change plays the old rules and does not know to say so (it sends no rules field)
+const corePrev = await import("./core-prev.js").catch(() => null);
+const BOOT = Date.now(), GRACE_MS = 60 * 60 * 1000;
 
 const PORT = Number(process.env.PORT || 8787);
 const SECRET = process.env.BOARD_SECRET;
 if (!SECRET || SECRET.length < 32) { console.error("BOARD_SECRET (32+ chars) is required"); process.exit(1); }
 const DB_PATH = process.env.BOARD_DB || "/data/board.sqlite";
 const MIN_MS = Number(process.env.BOARD_MIN_MS || 20000);      // shortest run that counts
-const MAX_AGE_MS = 15 * 60 * 1000;                              // a token is good for one run
+// One line per refused or accepted score, so "my run is not on the board" can be answered. No IP, no device id.
+function note(kind, err, body, extra) {
+  const s = (v, n) => String(v == null ? "" : v).slice(0, n);
+  const b = body && typeof body === "object" ? body : {};
+  console.log(new Date().toISOString(), `score ${kind}: ${err}`, JSON.stringify({ name: s(b.name, 24), score: s(b.score, 12), wave: s(b.wave, 4), dur: s(b.duration_ms, 10), ...(extra || {}) }));
+}
+const MAX_AGE_MS = 45 * 60 * 1000;                              // a token is good for one run, with room for a phone call in the middle (a run is at most 10 minutes of play)
 const ALLOW_ORIGIN = process.env.BOARD_ALLOW_ORIGIN || "";      // local testing only
 const CONTEST = (() => { const m = String(process.env.BOARD_CONTEST || "").match(/^(\d{4}-\d{2}-\d{2})\/(\d{4}-\d{2}-\d{2})$/); return m ? { start: m[1], end: m[2] } : null; })();
 const MAX_LOG = 20000;                                          // inputs per run the board will replay
@@ -182,24 +193,28 @@ const server = createServer(async (req, res) => {
       const d = cleanDevice(body.device); if (!d) return json(res, 400, { error: "device" });
       if (limited("start:" + devHash(d), 120) || limited("startip:" + ipOf(req), 400)) return json(res, 429, { error: "slow down" });
       const seed = seedFor(today());
-      return json(res, 200, { seed, token: makeToken(seed, d), run_ms: 600000, min_ms: MIN_MS });
+      return json(res, 200, { seed, token: makeToken(seed, d), run_ms: 600000, min_ms: MIN_MS, rules: RULES });
     }
     if (req.method === "POST" && path === "/score") {
       const body = await readBody(req, 300 * 1024);
-      const tok = readToken(body.token); if (!tok) return json(res, 400, { error: "token" });
-      const d = cleanDevice(body.device); if (!d || d !== tok.d) return json(res, 400, { error: "device" });
+      const tok = readToken(body.token); if (!tok) { note("rejected", "token", body); return json(res, 400, { error: "token" }); }
+      const d = cleanDevice(body.device); if (!d || d !== tok.d) { note("rejected", "device", body); return json(res, 400, { error: "device" }); }
       const age = Date.now() - Number(tok.t0);
-      if (!(age >= 0 && age <= MAX_AGE_MS)) return json(res, 400, { error: "expired" });
-      if (seenToken.get(tok.sig)) return json(res, 409, { error: "already submitted" });
+      if (!(age >= 0 && age <= MAX_AGE_MS)) { note("rejected", "expired", body, { age_s: Math.round(age / 1000) }); return json(res, 400, { error: "expired" }); }
+      // a client that loaded the page before a rules change would fail the replay; say so by name
+      const oldClient = body.rules === undefined;
+      const graced = oldClient && !!corePrev && Date.now() - BOOT < GRACE_MS;
+      if ((!oldClient && String(body.rules) !== RULES) || (oldClient && !graced)) { note("rejected", "rules", body, { client: oldClient ? "none" : String(body.rules).slice(0, 24), server: RULES }); return json(res, 400, { error: "rules", rules: RULES }); }
+      if (seenToken.get(tok.sig)) { note("rejected", "already submitted", body); return json(res, 409, { error: "already submitted" }); }
       const name = cleanName(body.name); if (!name) return json(res, 400, { error: "name" });
       const handle = cleanHandle(body.handle); if (handle === undefined) return json(res, 400, { error: "handle" });
       const score = Number(body.score), receipts = Number(body.receipts), refused = Number(body.refused), wave = Number(body.wave), dur = Number(body.duration_ms);
       const ints = [score, receipts, refused, wave, dur].every((v) => Number.isInteger(v) && v >= 0);
       if (!ints) return json(res, 400, { error: "numbers" });
       const secs = dur / 1000;
-      if (dur < MIN_MS) return json(res, 400, { error: "too short", min_ms: MIN_MS });
-      if (dur > age + 2000 || dur > 600000 + 1000) return json(res, 400, { error: "duration" });
-      if (score > 500 * secs + 500 || receipts > 4 * secs + 10 || wave > 1 + Math.floor(dur / 20000) + 1) return json(res, 400, { error: "implausible" });
+      if (dur < MIN_MS) { note("rejected", "too short", body); return json(res, 400, { error: "too short", min_ms: MIN_MS }); }
+      if (dur > age + 2000 || dur > 600000 + 1000) { note("rejected", "duration", body, { age_s: Math.round(age / 1000) }); return json(res, 400, { error: "duration" }); }
+      if (score > 500 * secs + 500 || receipts > 4 * secs + 10 || wave > 1 + Math.floor(dur / 20000) + 1) { note("rejected", "implausible", body, { receipts }); return json(res, 400, { error: "implausible" }); }
       // the input log: every tap at its tick, in order
       const log = body.log;
       if (!Array.isArray(log) || log.length > MAX_LOG) return json(res, 400, { error: "log" });
@@ -209,10 +224,13 @@ const server = createServer(async (req, res) => {
         lastTick = e[0];
       }
       const dh = devHash(d);
-      if (limited("score:" + dh, 30) || limited("scoreip:" + ipOf(req), 120)) return json(res, 429, { error: "slow down" });
+      if (limited("score:" + dh, 30) || limited("scoreip:" + ipOf(req), 120)) { note("rejected", "slow down", body); return json(res, 429, { error: "slow down" }); }
       // the proof: the same seed and the same inputs at the same ticks must give the same run
-      const rp = replay(String(tok.seed), log);
-      if (rp.score !== score || rp.receipts !== receipts || rp.refused !== refused || rp.wave !== wave || Math.abs(rp.duration_ms - dur) > 100) return json(res, 400, { error: "replay" });
+      const rp = (graced ? corePrev.replay : replay)(String(tok.seed), log);
+      if (rp.score !== score || rp.receipts !== receipts || rp.refused !== refused || rp.wave !== wave || Math.abs(rp.duration_ms - dur) > 100) {
+        note("rejected", "replay", body, { replayed: { score: rp.score, receipts: rp.receipts, refused: rp.refused, wave: rp.wave, dur: rp.duration_ms }, inputs: log.length });
+        return json(res, 400, { error: "replay" });
+      }
       // the referee: a script taps every request at the same distance, a person never does; and a long
       // shift without one wrong tap or one leak is worth a look. Flagged runs stay on the board and out
       // of the contest until someone reads the log (admin.js flagged / unflag).
@@ -223,6 +241,7 @@ const server = createServer(async (req, res) => {
       markToken.run(tok.sig, now);
       ins.run(day, String(tok.seed), name, handle, score, receipts, refused, wave, dur, dh, rp.log_hash, now, JSON.stringify(log), flagged);
       const rankToday = rankQ.get(day, score).n + 1, rankAll = rankQ.get("0000-00-00", score).n + 1;
+      note("accepted", (graced ? "previous rules, " : "") + (flagged ? "flagged" : "ok"), body, { rank_today: rankToday });
       return json(res, 200, { ok: true, rank_today: rankToday, rank_all: rankAll, name, handle, flagged: !!flagged });
     }
     return json(res, 404, { error: "not found" });

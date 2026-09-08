@@ -143,3 +143,19 @@ of the contest, until `admin.js unflag` after someone has read the log
 and the stored logs are the last line, read by a person before a prize is paid.
 The live game test plays without the autopilot; `tests/board-live.mjs` checks
 the live board's replay and referee through the API with the core.
+
+## A customer sent away (8 September 2026, night)
+
+A shared card showed 54,045 points in wave 15 that the board never received. Checked against the arena of the day: the 216 loops on that arena pay 43,625 points on their own, without a multiplier, so the score was reachable only by refusing nearly everything, sealed requests included. A wrong refusal cost nothing but the streak; the multiplier stayed at 1 and the loops paid anyway. Tapping everything competed with judgement.
+
+Decision: refusing a sealed request costs `WRONG_COST = 5` budget (a quarter of a broken seal), on top of the streak reset, and still scores nothing. Tapping everything now ends a shift by wave 4 (`tests/wrong-cost-test.mjs`); the patient player is untouched. Alternatives rejected: a points penalty (a negative score is confusing and does not stop the run), loop points under the multiplier (cutting a loop is real judgement and should keep paying), a server-side flag for many wrong refusals (a flag after the fact, while the budget cost stops the strategy during the run).
+
+With it, three things the case exposed:
+
+- A rules version, `RULES` in core.js. `/start` returns it, the client sends it with the score, and a mismatch is refused as `rules` with the current version, so a page loaded before a change is told to reload instead of failing the replay without a word. The client plays such a run unranked and says why on the end card.
+- The token window grows from 15 to 45 minutes. A run is at most 10 minutes of play, but a phone call in the middle pauses the game while the token ages; `dur <= age + 2 s` still holds, so nothing is gained by the longer window except fewer legitimate runs refused as `expired`.
+- The board logs one line per accepted or refused submission: reason, name, score, wave, duration, and for a replay failure what the replay produced. No IP, no device id. The nginx log is not enough: it resets on every deploy.
+
+Scores already on the board stand; the arena changes daily and the change is dated in the page log. Deploying the board recreates the container, so deploys go out when nobody has started a run in the last minutes.
+
+Addendum, the same night: the cause of the lost run was found in `nginx.conf`. The `/api/game/` location carried `client_max_body_size 8k`; a run's input log is about 22 bytes per tap, so every submission with more than roughly 360 taps was answered 413 by nginx and never reached the board. The live log showed two 413s while this was being investigated. The cap is now 512k (the board's own `readBody` limit of 300 KB stays the effective one). Recorded under "What this page got wrong". The rules change and the cap fix went out together at 22:00 UTC; the first submission after the deploy (AlfinMzn, 18,340 in wave 9, a page loaded before the change) was accepted through the previous-rules grace path, as designed.

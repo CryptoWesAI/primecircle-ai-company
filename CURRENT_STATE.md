@@ -703,3 +703,26 @@ weigeringen loggen zonder IP, de laatste onverzonden run in de browser bewaren
 met "opnieuw sturen", en het deployscript het bord laten overslaan als
 `leaderboard/` niet veranderde (elke `compose up --build` herstart het bord en
 breekt inzendingen van dat moment).
+
+**De systeemfout gevonden, en de regel aangepast (nacht van 8 op 9 september).**
+De founder wilde het alles-wegtikken bestraft zien en zat met de vraag of hij de
+54.045 handmatig moest toevoegen "omdat hij geen systeemfout kon bewijzen". Die
+fout bleek er wel te zijn: `nginx.conf` had `client_max_body_size 8k` op
+`/api/game/`, en een inputlog is zo'n 22 bytes per tik, dus elke run met meer dan
+ongeveer 360 tikken kreeg 413 en bereikte het bord nooit; het live logboek
+toonde twee 413's terwijl ik zocht. Sinds de opening op 7 september gingen dus
+juist de sterkste runs verloren. Gefixt (512k) en op het record gezet.
+Spelregel: een verzegeld verzoek weigeren kost nu 5 budget (`WRONG_COST` in
+core.js), naast de reeksreset; alles-wegtikken sterft in golf 2 in plaats van
+golf 15 (`tests/wrong-cost-test.mjs`). Bijgeleverd: regelsversie `RULES`
+(`/start` geeft hem, de client stuurt hem mee, mismatch = fout "rules" met
+uitleg op het eindkaartje), overgangsuur met `core-prev.js` (een pagina van
+vóór de wissel wordt een uur lang onder de oude regels nagespeeld), tokenvenster
+15 naar 45 minuten, en één logregel per geaccepteerde of geweigerde inzending
+(zonder IP of device). Board-, kern-, browser- en shell-suites groen; gedeployed
+22:00Z terwijl AlfinMzn speelde: zijn run van 18.340 (golf 9, pagina van vóór de
+wissel) kwam om 22:01Z via het overgangspad op het bord. Nog open: het
+sterrenpatroon van de geposte kaart toetsen zodra de founder het bestand
+aanlevert, en zijn besluit over de 54.045 (advies in het gesprek: wel erkennen,
+niet in de contest, want het bord speelt alleen na wat het kan naspelen en de
+score kwam uit de nu gedichte maas).

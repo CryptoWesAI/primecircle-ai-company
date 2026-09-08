@@ -1,7 +1,7 @@
 // Gatekeeper, the 3D client. Loaded only when the visitor presses Play; three.js
 // is fetched from jsdelivr at that moment. All rules live in core.js; this file
 // only draws, listens and talks to the leaderboard.
-import { createGame, autopilot, RUN_MS, SPAWN_Z } from "./core.js";
+import { createGame, autopilot, RUN_MS, SPAWN_Z, RULES, WRONG_COST } from "./core.js";
 import { drawCard, wireShare } from "./share.js";
 
 const THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js";
@@ -111,7 +111,7 @@ function build(opts) {
   const ro = "ResizeObserver" in window ? new ResizeObserver(size) : null; if (ro) ro.observe(stage);
 
   // game state
-  let game = null, token = null, seed = null, running = false, raf = 0, last = 0, hudAt = 0, shake = 0, autoplayOn = demo, submitted = false;
+  let game = null, token = null, seed = null, running = false, raf = 0, last = 0, hudAt = 0, shake = 0, autoplayOn = demo, submitted = false, rulesStale = false;
   const device = deviceId();
   const v3 = new THREE.Vector3();
   function project(x, y, z) { v3.set(x, y, z).project(camera); return { x: (v3.x + 1) / 2 * W, y: (1 - v3.y) / 2 * H, front: v3.z < 1 }; }
@@ -130,7 +130,7 @@ function build(opts) {
       if (e.type === "receipt") { const p = project(e.x, e.y, 0); pop("+" + e.gain, p.x, p.y, "quiet"); snd("receipt"); }
       else if (e.type === "refused") { const p = project(e.x, e.y, e.z); pop("REFUSED  +" + e.gain, p.x, p.y, "good"); burst(e.x, e.y, e.z, MOON, 10); snd("refuse"); }
       else if (e.type === "loop") { const p = project(e.x, e.y, e.z); pop("LOOP CUT ×" + e.len + "  +" + e.gain, p.x, p.y, "loop"); burst(e.x, e.y, e.z, CYS, 16); snd("refuse"); banner("Refused at the cap · ×" + e.len, "loop"); }
-      else if (e.type === "wrong") { const p = project(e.x, e.y, e.z); pop("SEALED. streak lost", p.x, p.y, "bad"); snd("tap"); }
+      else if (e.type === "wrong") { const p = project(e.x, e.y, e.z); pop("SEALED. a customer sent away: −" + (e.dmg || WRONG_COST) + " budget, streak lost", p.x, p.y, "bad"); snd("tap"); }
       else if (e.type === "hit") { const p = project(e.x, e.y, 0); pop("−" + e.dmg + " budget", p.x, p.y, "bad"); shake = 1; stage.classList.add("hit"); setTimeout(() => stage.classList.remove("hit"), 260); snd("hit"); }
       else if (e.type === "clean") { banner("Clean wave  +" + e.gain, "clean"); snd("clean"); }
       else if (e.type === "wave") { banner("Wave " + e.wave); }
@@ -209,11 +209,15 @@ function build(opts) {
 
   // begin and end
   async function begin() {
-    submitted = false; token = null; seed = new Date().toISOString().slice(0, 10) + ":offline";
+    submitted = false; token = null; rulesStale = false; seed = new Date().toISOString().slice(0, 10) + ":offline";
     if (!demo) {
       try {
         const r = await fetch(BOARD + "/start", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ device }) });
-        if (r.ok) { const j = await r.json(); token = j.token; seed = j.seed; }
+        if (r.ok) {
+          const j = await r.json();
+          // the board names its rules version; a page loaded before a rules change plays unranked and says why
+          if (j.rules && j.rules !== RULES) rulesStale = true; else { token = j.token; seed = j.seed; }
+        }
       } catch { /* offline run */ }
     }
     game = createGame(seed);
@@ -235,7 +239,7 @@ function build(opts) {
       $("ge-receipts").textContent = s.receipts + " receipt" + (s.receipts === 1 ? "" : "s") + " · budget left " + Math.round(s.budget) + "%";
       const form = $("ge-form"), note = $("ge-note"), result = $("ge-result");
       const canSubmit = !!token && !demo && s.duration_ms >= 20000;
-      note.textContent = demo ? "Demo run: not submitted." : !token ? "The leaderboard did not answer, so this run stays on your screen." : s.duration_ms < 20000 ? "Runs shorter than 20 seconds are not ranked." : "";
+      note.textContent = demo ? "Demo run: not submitted." : !token ? (rulesStale ? "The rules changed since this page loaded, so this run stays on your screen. Reload the page for a ranked run." : "The leaderboard did not answer, so this run stays on your screen.") : s.duration_ms < 20000 ? "Runs shorter than 20 seconds are not ranked." : "";
       result.className = "ge-result"; result.textContent = "";
       card({ s, rank: null });
       if (canSubmit && givenName.length >= 3) {
@@ -262,7 +266,7 @@ function build(opts) {
   async function submit(name, handle) {
     if (!game || running || !token || submitted) return { ok: false, error: "nothing to submit" };
     const s = game.summary();
-    const body = { token, device, name, handle: handle || "", score: s.score, receipts: s.receipts, refused: s.refused, wave: s.wave, duration_ms: s.duration_ms, log_hash: s.log_hash, log: game.state.log };
+    const body = { token, device, name, handle: handle || "", rules: RULES, score: s.score, receipts: s.receipts, refused: s.refused, wave: s.wave, duration_ms: s.duration_ms, log_hash: s.log_hash, log: game.state.log };
     try {
       const r = await fetch(BOARD + "/score", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
       const j = await r.json().catch(() => ({}));

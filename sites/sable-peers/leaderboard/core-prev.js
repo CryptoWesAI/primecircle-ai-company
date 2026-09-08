@@ -6,12 +6,6 @@ export const TICK = 1000 / 60;
 export const RUN_MS = 600000;                               // the hard cap: a full shift
 export const WAVE_MS = 20000;
 export const SPAWN_Z = -70;
-// The rules version. The board hands it out with every token and refuses a run played
-// under other rules by name, instead of failing the replay without a word.
-export const RULES = "2026-09-08b";
-// Refusing a sealed request is a customer sent away: it costs budget (a quarter of a
-// broken seal) as well as the streak, so tapping everything is not a strategy.
-export const WRONG_COST = 5;
 
 export function hash32(str) {
   let h = 2166136261 >>> 0;
@@ -117,9 +111,8 @@ export function createGame(seed) {
       if (!c) return { ok: false };
       if (c.kind === "ok") {
         s.zs.push(c.z); s.caps = s.caps.filter((x) => x.id !== id); s.refusedGood++; s.streak = 0; setMult();
-        s.budget -= WRONG_COST;
-        s.events.push({ t: s.t, type: "wrong", id, x: c.x, y: c.y, z: c.z, dmg: WRONG_COST });
-        return { ok: true, kind: "ok", dmg: WRONG_COST };
+        s.events.push({ t: s.t, type: "wrong", id, x: c.x, y: c.y, z: c.z });
+        return { ok: true, kind: "ok" };
       }
       if (c.kind === "bad") {
         s.zs.push(c.z); s.caps = s.caps.filter((x) => x.id !== id); s.refusedBad++; s.streak++; setMult();

@@ -4,7 +4,7 @@
 import { spawn } from "node:child_process";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createGame, autopilot, TICK } from "../site/game/core.js";
+import { createGame, autopilot, TICK, RULES } from "../site/game/core.js";
 import { createServer } from "node:https";
 import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync } from "node:fs";
@@ -40,7 +40,7 @@ try {
   const seed = st.body.seed;
   const run = play(seed, 300); await settle(run);
   ok(run.score > 0 && run.log.length > 0, "the core produced a run with inputs: " + JSON.stringify({ score: run.score, inputs: run.log.length }));
-  const base = { token: st.body.token, device: dev, name: "Optimus", handle: "@0PTIMUS_ONE", ...run };
+  const base = { token: st.body.token, device: dev, name: "Optimus", handle: "@0PTIMUS_ONE", rules: RULES, ...run };
   ok((await post("/score", { ...base, token: st.body.token + "x" })).status === 400, "tampered token refused");
   ok((await post("/score", { ...base, device: "device-other-0123456789abcdef" })).status === 400, "token bound to its device");
   ok((await post("/score", { ...base, name: "ab" })).status === 400, "name too short refused");
@@ -91,6 +91,23 @@ try {
   ok((await post("/push/unsubscribe", { endpoint: "https://127.0.0.1:8793/push/abc" })).status === 200 && (await get("/health")).body.subscribers === 0, "unsubscribe removes it");
   fake.close();
   ok((await get("/nope")).status === 404, "unknown route is 404");
+  // the rules version: named with every token, and a run played under other rules is refused by name, not by a silent replay failure
+  { const s2 = await post("/start", { device: dev }); ok(s2.status === 200 && s2.body.rules === RULES, "start names the rules version: " + JSON.stringify(s2.body.rules));
+    const r2 = play(s2.body.seed, 300); await settle(r2);
+    const stale = await post("/score", { ...base, token: s2.body.token, ...r2, rules: "older-rules" });
+    ok(stale.status === 400 && stale.body.error === "rules" && stale.body.rules === RULES, "a run under other rules is refused as rules: " + JSON.stringify(stale.body));
+    const fresh = await post("/score", { ...base, token: s2.body.token, ...r2, rules: RULES });
+    ok(fresh.status === 200 && fresh.body.ok, "the same run with the current rules version is accepted: " + JSON.stringify(fresh.body)); }
+  // the hour after a deploy: a page loaded before the change sends no rules field and is replayed under the previous rules
+  { const prev = await import("./core-prev.js");
+    // 40 seconds of tapping everything: under the old rules the run lives on, under the new ones the budget is gone by wave 2, so the two replays differ
+    const tapAll = (seed) => { const g = prev.createGame(seed); for (let i = 0; i < 2400 && !g.state.over; i++) { const c = g.state.caps.find((x) => x.z > -32 && (x.kind !== "loop" || x.k === 0)); if (c) g.input("refuse", c.id); g.step(TICK); } if (!g.state.over) g.input("end"); const s = g.summary(); return { wrong: s.refusedGood, score: s.score, receipts: s.receipts, refused: s.refused, wave: s.wave, duration_ms: s.duration_ms, log_hash: s.log_hash, log: g.state.log }; };
+    const s3 = await post("/start", { device: dev }); const { wrong, ...r3 } = tapAll(s3.body.seed); await settle(r3);
+    ok(wrong > 0, "the old-rules run refused sealed requests: " + wrong);
+    const { rules: _drop, ...noRules } = { ...base, token: s3.body.token, ...r3 };
+    const acc = await post("/score", noRules); ok(acc.status === 200 && acc.body.ok, "an old client's run is replayed under the previous rules during the grace hour: " + JSON.stringify(acc.body));
+    const s4 = await post("/start", { device: dev }); const { wrong: w4, ...r4 } = tapAll(s4.body.seed); await settle(r4);
+    const rep = await post("/score", { ...base, token: s4.body.token, ...r4, rules: RULES }); ok(rep.status === 400 && rep.body.error === "replay", "the same old-rules run claiming the current rules fails the replay: " + JSON.stringify(rep.body)); }
   // rate limit: 30 scores per device per hour
   let limitedAt = -1;
   for (let i = 0; i < 32; i++) { const s = await post("/start", { device: dev }); const body = play(s.body.seed, 100 + i); await settle(body); const r = await post("/score", { ...base, token: s.body.token, ...body }); if (r.status === 429) { limitedAt = i; break; } }
