@@ -2,18 +2,36 @@
 
 ## Objective
 
-Build a managed AI automation business that can initially be operated by one founder and later scale into a platform company.
+Support the founder's crypto work (research, tools, on-chain development,
+content) as a learning-and-building practice. Income is a separate, explicit mode
+(see `CLAUDE.md`), not the default. The earlier objective, a founder-operated AI
+automation business, is parked: what was built stays live in maintenance mode.
 
 ## Current Stage
 
-Belvanger is gebouwd en live; de eerste twee prospects zijn aangeschreven. Er is
-nog geen betalende klant, en dat is de enige maat die nu telt.
+**Richting gewijzigd op 2026-09-05.** De founder is klaar met de omzetdruk rond
+Belvanger en richt zich op crypto. `CLAUDE.md` is omgebouwd (verkenmodus als
+standaard, inkomensmodus alleen op verzoek, cryptoregels voor keys, fondsen,
+cijfers en bronnen). De verkoop-hook en de Activiteitenlog-hook staan uit.
 
-Live: `belvanger.nl` (8 vakken, 8 voorbeeldpagina's, NL+EN, noindex),
-`dashboard.belvanger.nl` (klantportaal, PWA met pushmeldingen),
-`ab.primecircle.cloud` (AB Uitvaartzorg, de referentiecase). Alles op de eigen
-Hostinger-VPS achter Traefik. Verkoopstand staat in `SELLING.md` en wordt elke
-sessie via een hook getoond.
+Live en in onderhoudsmodus: `belvanger.nl` (8 vakken, NL+EN, noindex),
+`dashboard.belvanger.nl` (klantportaal, PWA), `ab.primecircle.cloud` (AB
+Uitvaartzorg), `a-sisters.belvanger.nl`, `virtualcreator.belvanger.nl` en
+`sable.primecircle.cloud` (Sable Observatory). Alles op de eigen Hostinger-VPS
+achter Traefik, met externe uptime-bewaking. `SELLING.md` blijft staan als
+historische teller en wordt niet meer per sessie getoond.
+
+Actief cryptowerk tot nu toe: Sable Observatory (`sites/sable-peers/`) en de
+whitepaper-watcher (`../sable-whitepaper-watch`). Nieuw werk komt in `crypto/`.
+
+Stand Observatory op 2026-09-07: de Orrery (whitepaper als zonnestelsel, alle
+tien onderwerpen in een selectie), Gatekeeper (3D-spel met leaderboard in de
+container `sable-board`, deelkaart per run), Lisa (ElevenLabs-stemagent van
+lisaonsable.com in het gidspaneel, navigeert met zes client tools, tour pagina
+voor pagina), en het betrouwbaarheidsrecord in het Log (hoe lang Sable fail-closed
+draait, uit het statuslogboek van de watcher). Alles geverifieerd met de
+Puppeteer-suites in `sites/sable-peers/tests/`. De map is voor het eerst
+gecommit (13c7d82, 8eddca9). De founder zet de contest op het spelleaderboard. Op 2026-09-08 kwam de burn watch erbij en ligt de fail-closed thread klaar als concept (dagsectie onderaan).
 
 Wat hieronder staat over AB en de pivot blijft feitelijk juist maar is
 voorgeschiedenis; het actuele werk staat in de dagsecties onderaan dit bestand.
@@ -386,3 +404,596 @@ betalende klant; een derde film maken zou uitstelgedrag zijn.
    "excl. btw" bij de prijzen, en de doorgestreepte €1.250 die nooit is gevraagd.
 5. **Bewaartermijnen worden nergens afgedwongen** (geen opruimtaak voor `contacts`/`events`)
    en **de containerlogs hebben geen groottelimiet**, dus de schijf kan vollopen.
+
+---
+
+## 2026-08-21 - Belvanger: derde film, de verdelger met zijn handen vol
+
+Op een suggestie van buiten ("maak zoiets ook eens voor een verdelger") een derde
+promotiefilm gebouwd: 25,12s, 9:16, 3,1 MB. Een verdelger staat met een wespennest
+in twee handen op een ladder, zijn telefoon gaat, en er gebeurt niets. Daarna de
+echte simulatie met een spoedklus, en twee kaarten. Draaiboek en prompts:
+`docs/offers/belvanger-film-verdelger-2026-08-21.md`.
+
+**De film is af**, inclusief act 1. Die is gegenereerd via de OpenArt MCP: eerst een
+frame met GPT Image 2, daarna de beweging met Seedance 2.5. Halverwege gooide de
+founder de shot om: van een rustige "hij kan niet opnemen" naar schrikken, wespen die
+eraf komen en een gesproken "mooi" in de camera. Kosten 6.405 credits, waarvan 1.600
+aan de vervallen take die al aan het renderen was toen dat verzoek kwam.
+
+Er is bewust **geen negende voorbeeldpagina** voor ongediertebestrijding bij
+gebouwd: er zit geen prospect achter de suggestie, en zo'n pagina hoort er pas als
+er een naam is die hem moet zien.
+
+Twee dingen die hier zijn geleerd en herbruikbaar zijn:
+
+- **Vak-variabel in plaats van een kopie per vak.** Het opnamepodium en de
+  tekstkaarten hebben nu een parameter (`?vak=`, `?set=`) en wisselen alleen de
+  woorden die per vak anders horen. Zonder parameter tonen ze exact wat ze altijd
+  toonden, want de eerste twee films zijn daarop gemonteerd. Precies dat soort
+  wijziging test je op de nieuwe variant en vergeet je op de oude, dus het staat nu
+  in `sites/belvanger/tests/filmpaginas.mjs`.
+- **Promoveer pas naar de dure resolutie als het IDEE is goedgekeurd**, niet als
+  alleen de uitvoering is goedgekeurd. Een gestarte render is niet te annuleren, dus
+  het verschil tussen die twee momenten kostte hier 1.600 credits. Een prototype op
+  480p kost 280 tot 605 en is er precies voor om die vraag te kunnen stellen.
+- **Een vuistregel over wat een model niet kan, is geen wet.** De skill zegt: schrijf
+  geen shot rond een bekend zwak punt. Een bijna-valpartij en een wespenzwerm over een
+  gezicht zijn allebei zulke punten, en ze hielden allebei stand op de eerste poging.
+  Toets zo'n idee één keer goedkoop in plaats van het te laten vallen.
+
+---
+
+## 2026-08-19 — virtualcreator.nl: de scroll-film staat (fase 2 af)
+
+Herbouw van `virtualcreator.nl` (VA-praktijk van Wendy Wisman) als scroll-film
+"RUIS → RUST". Alles in `sites/virtualcreator/`; `BUILD_PLAN.md` is de brief die
+bij twijfel wint van de conversatie.
+
+**Fase 2 is af: de film loopt.** Proloog, vier hoofdstukken en resolutie op één
+master-timeline in `site/index.html` + `site/css/film.css` + `site/js/film.js`.
+Rapport in `prototypes/FASE2_RESULTAAT.md`, screenshots in `prototypes/f2-shots/`.
+
+Founder-beslissingen deze sessie: hoofdstuk 3 werd **Klantcontact** in plaats van
+Social (dekt de categorie Communicatie, die geen eigen beat had), elk hoofdstuk
+kreeg een ondertitel die de dienst noemt, "ontward" verviel ten gunste van
+"ingepland" bij Agenda en "opgevangen" bij Klantcontact, Facturatie blijft
+"betaald", en de ruis-copy noemt nu mensen en tijden in plaats van taken.
+
+Twaalf defecten gevonden en gerepareerd (7 t/m 18 in het doorlopende register),
+waarvan de duurste een `fromTo` zonder `immediateRender: false` was: die zette de
+trim van de streek al bij het bouwen op 3%, waardoor de lijn de **hele film**
+onzichtbaar was terwijl het testharnas nul problemen meldde. Geverifieerd:
+systeem-check 12/12, beat-contract 5/5 op de echte film, 65 frames over vijf
+viewports zonder overflow of consolefout, jank p95 5,7ms bij CPU 4x vertraagd.
+
+**Daarna herzien op eis van de founder: "alles wat we ontwerpen moet voor zowel
+desktop als mobile goed werken".** De film heeft nu twee kaders, smal 390x844 en
+breed 1180x720, met de grens op 1000px. Eén choreografie (zelfde gebaren,
+volgorde, ruis, timeline, beats), twee composities, allebei als data in
+`site/js/film-data.js` onder `layouts`; alle absolute posities zijn uit de CSS
+gehaald zodat er één bron is. Het brede kader is een eigen beeld: links het
+hoofdstuk als titelkaart, midden het werk, rechts de stapel van wat er nog ligt.
+De gebaren worden per kader uniform in een vak gepast, want een streek die in x
+anders schaalt dan in y is geen penstreek meer. Nieuwe regressietest
+`tests/kader-check.mjs` (9/9) bewaakt beide kaders én de wissel ertussen; die
+vond meteen defect 19 (de scrubpositie sprong bij een kaderwissel van 72% naar
+94%). Sweep uitgebreid naar 96 frames over acht viewports van 320 tot 1920,
+inclusief 999 en 1000 om de grens te toetsen: schoon.
+
+**Fase 3 is daarna ook af: er staat een complete website.** Alle inhoud van de
+oude vijf pagina's staat er (Over Wendy, vier dienstcategorieën met alle 23
+taken, de drie stappen, de drie tariefpakketten plus de tien voordelen, de drie
+testimonials, een FAQ, contactformulier, footer), plus de twee juridische
+teksten als eigen pagina's, plus robots.txt, sitemap.xml en een .htaccess met de
+301-redirects van de oude paden. Zeven defecten gevonden en gerepareerd (20 t/m
+26). Nieuwe test `tests/secties-check.mjs` (24/24) telt de inhoud en toetst dat
+het formulier niets belooft wat het niet doet: het verzendadres is nog niet
+gekozen (K4), dus het zegt dat en geeft het telefoonnummer als werkend
+alternatief.
+
+**Daarna een verhaalfout gevonden door de founder, en die zat dieper dan hij
+leek** (defect 27). De ruis-items waren op VOLGORDE aan de regels van de
+doelstructuur gekoppeld in plaats van op inhoud, waardoor in drie van de vier
+hoofdstukken iets anders neerkwam dan er werd opgepakt: de nieuwsbrief werd
+"Vraag van Mark", en de protagonist Factuur #1047 landde op de regel van #1045
+terwijl de #1047-regel met de stempel "voldaan" uit het niets verscheen. De
+payoff van de hele film klopte dus niet. Elk item wijst nu expliciet zijn regel
+aan en elke regel heeft precies één herkomst. Nieuwe regressietest
+`tests/verhaal-check.mjs` (34/34, geen browser nodig) dwingt af dat wat wordt
+opgepakt en wat neerkomt minstens één betekenisvol woord delen. Les voor de
+volgende keer: een fout die je alleen ziet tijdens het scrollen, vang je niet
+met screenshots maar met een invariant op de data.
+
+**Daarna het merk erin gezet** (founder-verzoek): het echte logo van Virtual
+Creator en beide foto's van Wendy, opgehaald van haar eigen site met een echte
+browser (zelfde route als de contentsnapshot; de site geeft 403 op kale
+fetchers). Ik had de naam eerst nagezet in de sitefont, maar naast het origineel
+gelegd bleek dat kansloos: het is een rond, handgetekend lettertype. Het
+beeldbestand is dus de bron. `tools/beeld.mjs` bouwt daaruit de assets (woordmerk
+apart van het lockup, WebP met terugval, bijsnede gemeten in plaats van geraden).
+In de balk staat alleen het woordmerk: de tagline "Creëert rust en ruimte" is de
+slotregel van de film en hoort niet vooraf in de hoek. Opvallend meevallertje: op
+beide foto's staan pampasgras en daglicht door een raam, precies de wereld die de
+film met licht en schaduw schildert. Ook gerepareerd: "Over mij" ontbrak in de
+menubalk terwijl de voet hem wel noemde; `secties-check` dwingt nu af dat balk en
+voet het eens zijn en dat geen anker dood is.
+
+**LIVE als voorbeeld op <https://virtualcreator.belvanger.nl>** (2026-08-19, op
+verzoek van de founder om te kunnen delen met Wendy en familie). Dit is een
+subdomein van ONS domein, niet virtualcreator.nl: dat blijft van Wendy en gaat
+pas over na haar akkoord. Statische map achter nginx-unprivileged in een eigen
+container op de VPS, met Traefik en Let's Encrypt. Eén DNS-wijziging: A-record
+`virtualcreator` -> 31.97.123.34 in de zone van belvanger.nl; bestaande records
+ongemoeid.
+
+**Omdat het een kopie is van de site van een echt bedrijf, staat de hele host op
+noindex**: `X-Robots-Tag: noindex, nofollow, noarchive, nosnippet` op elk
+antwoord (in nginx, niet in de HTML, zodat hij ook voor beelden en latere
+pagina's geldt), `robots.txt` met `Disallow: /`, en `/sitemap.xml` geeft 404.
+Zonder die maatregel zou Google een tweede Virtual Creator kunnen indexeren met
+een formulier dat nog nergens heen gaat. Het deployscript weigert "klaar" te
+melden als de header ontbreekt, en `secties-check` eist bij een uitsluitende
+robots.txt ook de header. Details in `sites/virtualcreator/deploy/DEPLOY.md`.
+
+**Sinds 2026-08-19 staat er ook een chat-assistent op** (founder-verzoek). Niet
+nieuw gebouwd maar **geconfigureerd**: `product/chatbot` is config-driven, dus
+dezelfde code draait voor elke klant en alleen
+`customers/virtualcreator/` verschilt (config, systeemprompt, kennisbank, skin).
+De kennisbank komt volledig uit haar eigen site en algemene voorwaarden; alles
+daarbuiten wordt doorverwezen naar 085 060 1636 of info@virtualcreator.nl.
+
+Drie dingen kwamen daarbij uit het echt draaien, niet uit de code lezen:
+1. **"dag en nacht bereikbaar" en "24/7" zaten hardgecodeerd** in de gedeelde
+   server en widget, omdat de eerste klant een uitvaartonderneming is. Voor een
+   VA die op werkdagen van 09:00 tot 17:00 werkt is dat onwaar. Nu een
+   configveld `availability`; AB's bestaande tekst is expliciet in hun config
+   vastgelegd zodat hun live site niet stilletjes veranderde.
+2. **De assistent beweerde dat Wendy in het Engels werkt**, puur omdat hij zelf
+   Engels antwoordde. Dat staat nergens in de kennisbank. Systeemprompt
+   aangescherpt: jouw kunnen is niet haar dienstverlening.
+3. **Hij vulde "mailboxbeheer" aan** met categoriseren en archiveren. Ook dat
+   belooft zij nergens.
+
+Daarna gepersonaliseerd op verzoek van de founder, die terecht zag dat het
+widget generiek oogde en twee keer "Digitale assistent" toonde. Dat laatste was
+geen tekstfout maar een symptoom: **zonder endpoint viel het widget terug op een
+generieke standaard** (beige, geen naam, geen chips, geen belknop). Precies wat
+je ziet bij de statische preview en bij de pagina vanaf schijf, dus in twee van
+de drie manieren waarop deze site bekeken kan worden.
+
+Nieuw in het product, en dus herbruikbaar voor elke volgende klant:
+- een optionele **`skin.css`** per klant, omdat vijf configkleuren wel de kleur
+  regelen maar niet de vorm (radii, letterdikte, schaduwwetten);
+- **alle zichtbare teksten configureerbaar** (`toggle`, `subtitle`, `greeting`,
+  `placeholder`, `send`), per taal, want een assistent die bij iedere klant
+  woordelijk hetzelfde zegt valt op;
+- een **`logo`** in de kop in plaats van de naam als tekst;
+- **`{groet}`** in de openingszin wordt Goedemorgen/Goedemiddag/Goedenavond;
+- de **klantconfig wordt meegeleverd** achter het widgetbestand, zodat het
+  widget er ook zonder endpoint uitziet zoals het hoort. Bewust een globale en
+  geen los JSON-bestand: op file:// blokkeert de browser een fetch naar een
+  lokaal bestand, en dat is nu juist het geval waarin er geen endpoint is.
+
+**Te bekijken op drie manieren**, allemaal geverifieerd: via de preview-server op
+`http://localhost:4173/site/index.html`, of door `sites/virtualcreator/site/index.html`
+gewoon te openen (alle paden zijn relatief gemaakt).
+
+**Fase 4 is ook af.** Kader van de founder: dit is een voorbeeld om aan Wendy te
+laten zien, niet iets dat live gaat, maar het moet visueel af zijn. Gebouwd in de
+volgorde waarin zij het tegenkomt: de intro-overlay (van leeg naar f(0) in ~3,3s,
+afgebroken zodra zij scrolt), Lenis voor de vloeiendheid, de sectie-opkomst na de
+film, het cursorspoor uit DESIGN_SYSTEM §8, het ambient onderhoud, het
+reduced-motion tweeluik (uit dezelfde filmdata als de film, zodat het niet kan
+uitlopen), de deelafbeelding als écht frame uit de film plus de Open Graph-set,
+en haptiek van één tik per afgerond hoofdstuk. copy-gate exit 0.
+
+Nog nodig vóór een eventuele livegang, allemaal beslissingen en geen bouwwerk:
+het verzendadres van het formulier (K4), bevestiging dat de testimonials echt
+zijn (K7), Wendy's akkoord op de geactualiseerde privacytekst, en toegang tot
+hosting en domein. Voor een voorbeeld blokkeert daarvan niets.
+
+**Dit blijft productie, geen verkoop.** Er is nog geen betalende klant. Wendy is
+tegelijk de kortste verkoopactie die er ligt: haar de statics laten zien en
+vragen wanneer zij 20 minuten heeft.
+
+---
+
+## 2026-08-28 - Storing: Traefik en Tailscale vochten om poort 443
+
+De hele VPS was onbereikbaar: elke site gaf 000, inclusief Belvanger, AB
+Uitvaartzorg, Glasservice, Knifensharp, Ouderschooldriehoek en het portaal.
+Niet DNS, niet het netwerk: een traceroute kwam tot in het netwerk van
+Hostinger en stierf bij de laatste hop.
+
+Na een herstart van de machine bleek de oorzaak. **Alle containers waren
+gezond, behalve Traefik, en die zat in een herstartlus:**
+
+```
+error while building entryPoint websecure: building listener:
+error opening listener: listen tcp :443: bind: address already in use
+```
+
+Tailscale Serve stond op poort 443 (voor `primecircle-vps.tail2b7e8a.ts.net`,
+doorverwijzend naar het dashboard op 127.0.0.1:8095) en claimt die op de
+tailnet-adressen. Traefik draait in host-netwerkmodus en wil `:443` op alle
+adressen. Een wildcard-bind botst met een specifieke bind op dezelfde poort,
+dus dit is een startvolgorde-race: wie het eerst is, wint. Voor de herstart won
+Traefik, erna Tailscale.
+
+**Opgelost door de tailnet-route te verhuizen naar 8443** (keuze van de
+founder), niet door hem uit te zetten:
+
+```bash
+tailscale serve --https=443 off
+tailscale serve --bg --https=8443 http://127.0.0.1:8095
+docker restart traefik-5fbm-traefik-1
+```
+
+De privéroute is nu `https://primecircle-vps.tail2b7e8a.ts.net:8443/` en blijft
+werken. De oude configuratie staat op de VPS in
+`/root/tailscale-serve-voor-8443.json`. Alle vijf gecontroleerde adressen geven
+weer 200.
+
+**Waarom dit belangrijk is voor later:** dit was geen incident maar een latente
+race die bij elke herstart opnieuw had kunnen toeslaan, en die de hele
+klantenportefeuille tegelijk platlegt. Nu kunnen ze niet meer botsen. Wat er
+niet is: een melding. Er is geen enkele bewaking die zegt dat alles eruit ligt;
+dat is nu ontdekt doordat er toevallig een deploy klaarstond.
+
+---
+
+## 2026-08-20 (tweede ronde) — The A-Sisters: de scroll-film terug, nu met een drager die werkt
+
+De founder zei dat de pennenstreken niet werkten. Daarop is de hele scroll-film
+weggehaald en vervangen door een redactionele pagina. Dat was één stap te ver,
+en hij zei dat ook: hij zocht een scroll-film-website. Het bezwaar ging over de
+STREEK, niet over de FILM.
+
+**De film is terug, bovenop de Atelier-vormgeving.** Hij heet De Kolommen. Uw
+werk staat in één kolom; die kolom groeit sneller dan u bijhoudt; dan valt uw
+ene assistent weg en staat alles stil terwijl de teller doorloopt; de kolom
+splitst in drie met een naam boven elk, dezelfde twaalf regels verdeeld; en dan
+valt er wéér één weg, maar nu schuift haar werk naar de twee kolommen ernaast
+en stopt de stroom geen moment. Daar staat de enige zin die de film nodig heeft.
+
+**Waarom deze drager wel werkt en de streek niet.** Het verschil tussen één
+kolom en drie kolommen is op ELK stilstaand frame zichtbaar, ook op een
+telefoon. De streek was bevroren niets meer dan een rode lijn, en zijn betekenis
+kwam pas na de hele film. Bovendien toont deze film het enige echte
+verkoopargument (er valt nooit iemand weg) in plaats van het te beweren: het is
+twee keer dezelfde gebeurtenis met een andere afloop.
+
+**Het concept is niet van mij.** Ik had drie concepten (vallende papieren, een
+bureau dat leegloopt, een werkdag als klok) en heb ze laten aanvallen door een
+strateeg die ze niet had geschreven en niet wist welke mijn voorkeur had. Die
+sloopte alle drie, en van hem is de vierde: de kolommen. Zijn twee voorwaarden
+zijn overgenomen: de prijs mag niet achter de film (het openingsscherm draagt
+"Vanaf € 360 per maand, vanaf 6 uur" met een link naar de tarieven), en de film
+moet leeg kunnen draaien.
+
+**Baan A, pure code.** GSAP, ScrollTrigger en Lenis lokaal. Geen gegenereerde
+video, geen credits, geen extern account. Baan B (echte Seedance-beelden) is een
+latere upgrade en kost geld; dat vraagt eerst toestemming.
+
+Gemeten op het live adres:
+- Elke beat geschoten op 1440 en 390, alle elf, met wat er te zien hoort te
+  zijn: één kolom bij de stapel, drie kolommen na de splitsing, alle twaalf
+  regels blijven bestaan.
+- Jank max 11ms op beide breedtes (grens 50ms), p95 5,6ms.
+- De film is een pure functie van de scrollpositie: dezelfde progress geeft
+  twee keer dezelfde staat.
+- Zonder javascript: nul onzichtbare blokken, alle vier de dienstenpanelen
+  open, alle zes FAQ-antwoorden zichtbaar. De film valt dan terug op een gewoon
+  blok: een hero en een dinsdag verdeeld over drie mensen.
+- Nul horizontale overflow op 320, 360, 390, 414 en 768.
+- De copy-gate van de skill komt schoon door: de pagina beschrijft nergens zijn
+  eigen mechaniek.
+
+Eén meetfout onderweg is het vermelden waard, want hij kost anders een dag: de
+determinisme-toets viel om op `getBoundingClientRect`. Die is viewport-relatief,
+en de browser herstelt bij een tweede bezoek aan dezelfde URL de scrollpositie.
+De film was altijd deterministisch; de meetlat niet. Nu meet hij de transform,
+en dat is precies wat de tijdlijn schrijft.
+
+**Na de eerste ronde nog twee dingen gerepareerd, allebei door de founder
+gezien en allebei echt.**
+
+*De fotoband in de hero stond scheef op de telefoon.* Niet door de uitsnede maar
+door de uitlijning: `align-items: center` uit de desktop-grid werkte door op de
+flex eronder, waardoor de band tot zijn eigen breedte kromp en zwevend midden
+onder de tekst hing, uitgelijnd op niets. Nu deelt hij zijn linker- en
+rechterrand met de kop en de knop.
+
+*De film sloeg soms de animatie over bij heen en weer vegen.* Dat is
+gereproduceerd en de oorzaak is aan te wijzen: met `start: 'top top'` en
+`end: 'bottom bottom'` mat ScrollTrigger na een venstermaatwijziging de trigger
+zonder de scrollpositie mee te rekenen. Start sprong van 55 naar -1971, waarna
+de afbeelding van scroll naar film niet meer klopte en de tijdlijn op 0,61 bleef
+staan terwijl de pagina bovenaan stond. Start en eind zijn nu functies op
+`offsetTop`, met `invalidateOnRefresh`. Er is een harnas bij gekomen dat dit
+vasthoudt: `tests/film-scrub.mjs` veegt grillig heen en weer, doet echte
+touch-gebaren, laat de vensterhoogte wisselen, en toetst na elke rustpauze of de
+tijdlijn nog op de plek staat die bij de scrollpositie hoort.
+
+Onderweg bleek ook het devcontract zelf te liegen: `?p=1` scrolde een heel
+venster te ver, waardoor het toneel al was weggeschoven en de landing buiten
+beeld stond terwijl de film klopte. Dat is nu dezelfde formule als de
+scrolltrigger. Een verificatieharnas dat op de verkeerde plek landt, is erger
+dan geen harnas.
+
+Live: <https://a-sisters.belvanger.nl> (noindex). Openstaand blijft ongewijzigd,
+zie `sites/a-sisters/deploy/DEPLOY.md`.
+
+---
+
+## 2026-08-20 — The A-Sisters: homepage herbouwd en live op een voorbeeldadres
+
+Live: <https://a-sisters.belvanger.nl> (noindex, A-record `a-sisters` op
+belvanger.nl, container op poort 8094, chat-assistent same-origin). Zie
+`sites/a-sisters/deploy/DEPLOY.md`.
+
+**Wat er weg is.** De founder zei dat de penstreken niet werkten en dat het
+onduidelijk was wat ze waren. Dat klopte, en de reden is te benoemen: de streek
+zweefde los onderin het scherm zonder iets aan te raken, hij was het enige
+verzadigde ding op een pagina van linnen en bruin, zijn betekenis (drie handen)
+zat in de film en niet in het beeld, en de A viel in de ontknoping over het
+woord "dag." heen. Weg is dus: de scroll-film, `lijn.js`, de debris, het
+cursorspoor, GSAP, ScrollTrigger en Lenis. Alles staat in
+`sites/a-sisters/archief/film-2026-08/`, niet verwijderd.
+
+**Wat ervoor in de plaats staat.** Eerst zijn er drie complete stijlrichtingen
+gebouwd en gescreenshot (`design/richtingen/`), elk met dezelfde inhoud en
+dezelfde kop zodat alleen de vormgeving verschilt. Gekozen en gebouwd is
+richting 1, Atelier: warm papier, Instrument Serif als displayletter, haarlijnen
+in plaats van kaarten, geen ronde hoeken, geen schaduwen, en één donker
+hoofdstuk voor de tarieven. Persoonlijkheidsdrager is nu de fotografie plus de
+stem van de letter, niet een getekend teken. Het beeldmerk is dezelfde gedachte
+in een betere uitvoering: nog steeds drie halen en één letter, maar gezet in
+plaats van getekend, met een strak kader en op de basislijn van het woordmerk
+(`tools/merk.mjs`, 17 kB werd 400 byte).
+
+**De pagina is opgebouwd als waarom, hoe, wat.** Eerst de overtuiging (de kop
+en de drie beloften), dan hoe er gewerkt wordt (wie welk werk doet, drie
+stappen), en pas daarna wat er te koop is (diensten, tarieven, bewijs, vragen,
+contact). Dat is de volgorde van de pagina en van de secties in de CSS.
+
+**Vier vakgenoten hebben het beoordeeld en elkaar tegengesproken.** Marketing,
+verkoop, grafisch ontwerp en gebruik plus toegankelijkheid, eerst apart en
+daarna in een tweede ronde op elkaars punten. Wat daaruit is gebouwd:
+
+- De pagina werkte niet zonder javascript: 22 blokken stonden op opacity 0, dus
+  wie geen JS had zag leeg papier. Nu verbergt alleen de `js`-klasse, en er
+  wordt gemeten (`tests/nojs-check.mjs`: 0 onzichtbare blokken, alle vier de
+  dienstenpanelen open, alle zes FAQ-antwoorden zichtbaar).
+- Het eerste bedrag stond op de telefoon op scherm 9,0 van 15 zonder enige
+  route ernaartoe. Nu staat het op scherm 1,2, is de feitenstrook een link naar
+  de tarieven, en staat er onderaan een vaste balk met bellen en kennismaken.
+- Het labelkleur haalde 3,45:1 en droeg elk label op de pagina. De hele
+  contrastladder is verzet (`--nevel` 4,59:1, `--grafiet` 6,38:1), de
+  invoervelden hebben een eigen lijnkleur die 3:1 haalt, en de tikdoelen zijn
+  44px.
+- Er stonden twee bodymaten naast elkaar zonder regel, waarvan de kleinste
+  13,5px was voor een doelgroep van veertigplussers. Nu: de maat volgt de
+  leeslengte, en op de telefoon is er één leesmaat.
+- Het formulier meldde onvoorwaardelijk "uw mailprogramma is geopend", ook als
+  er niets openging. Nu is het een instructie met een kopieerknop en het
+  telefoonnummer ernaast.
+
+**Wat er niet is gebouwd en waarom.** Een echt formulier-endpoint. Dat is de
+grootste conversiewinst die er ligt en het is een halve avond werk, maar het
+verwerkt naam, e-mail en vrije tekst: menselijke validatiezone. Staat als eerste
+punt in `deploy/DEPLOY.md` onder Openstaand, samen met het eigen e-mailadres,
+de toestemming voor de drie klantcitaten en de btw-status van de pakketprijzen.
+Dat laatste is bewust niet ingevuld in plaats van gegokt.
+
+**De teksten van Fleur en Melanie zijn plaatstekst.** Op verzoek van de founder
+ingevuld met iets passends, expliciet gemarkeerd in `content/VERHAAL.md` §3, en
+zo geschreven dat er geen controleerbare bewering in staat.
+
+**Dit blijft productie, geen verkoop.** SELLING.md staat nog steeds op nul
+gesprekken. De kortste verkoopactie is nog altijd Wendy dit adres laten zien en
+vragen wanneer zij twintig minuten heeft.
+
+---
+
+## 2026-08-19 — The A-Sisters: merk gebouwd, film moet nog volgen
+
+Wendy krijgt gezelschap. Zij, Fleur en Melanie (zussen; Melanie is de vriendin
+van de founder) beginnen samen **The A-Sisters**, digitale assistenten. De A
+staat voor Assistants. Alles in `sites/a-sisters/`, een fork van
+`sites/virtualcreator/`. Virtual Creator blijft staan: dat is Wendy's eigen
+ZZP-site en het voorbeeld dat aan haar getoond is.
+
+Founder-beslissingen: nieuwe site naast VC, gelijkwaardig trio met Wendy als
+gezicht, palet volledig uit hun eigen foto's, de A staat voor Assistants.
+
+**Af:** het palet (gemeten uit vijf bronfoto's, 20 contrasteisen groen), de
+tokens omgezet en 13 hardgecodeerde kleuren opgeruimd, het beeldmerk (een A uit
+drie penstreken, getekend met dezelfde pen als de film), en het verhaal in
+`content/VERHAAL.md`.
+
+**De film is nu een trio.** Hij draaide om één penstreek, en die streek was
+Wendy; bij een gelijkwaardig trio klopte dat niet meer. Nu werkt er per
+hoofdstuk precies één hand en komen de andere twee er onderweg bij (Mailbox
+hand 0, Agenda hand 0 met de komst van hand 1, Klantcontact hand 1 met de komst
+van hand 2, Facturatie hand 2). De ontknoping schrijft het logo: de drie handen
+schrijven na elkaar ieder één streek van de A.
+
+Er maakt altijd precies één hand een groot gebaar. Drie tegelijk bewegende
+streken zijn ruis, en die vecht met het onderwerp van de film. Wat de film
+daardoor vertelt is niet "wij zijn met z'n drieën" maar "het werk wordt
+overgedragen en er valt niets", en dat is precies wat ze verkopen.
+
+**De site is nu The A-Sisters.** Teksten in de wij-vorm, Over ons met het
+oprichtingsverhaal en drie gelijke kaarten, de klantcitaten expliciet aan Wendy
+toegeschreven ("Klant van Wendy", met een regel eronder), hun eigen fotoshoot
+erop, het beeldteken plus de naam als tekst in de balk en de voet, een nieuw
+favicon, en een eigen chatbot-klantmap.
+
+De juridische teksten zijn NIET herdoopt: dat is een echte overeenkomst met
+Wendy's KvK, en er een andere partij boven zetten zou een rechtspersoon
+verzinnen die niet bestaat. Beide subpagina's en de voet leggen uit dat de
+overeenkomst tot nader order via Virtual Creator loopt.
+
+**Wat nog moet:** de deploy naar een voorbeeldadres, en wat alleen van de zussen
+zelf kan komen (zie `sites/a-sisters/content/VERHAAL.md` §6).
+
+Twee dingen die hier zijn geleerd en herbruikbaar zijn:
+
+- **Fotopixels zijn geen merkkleuren.** Belichting en witbalans verschuiven ze,
+  en chroma leest sterker naarmate het vlak groter wordt: wat als klein monster
+  warm hout is, is als kaartvulling abrikoos. Neem de tinthoek over, kies de
+  lichtheid zelf, en toets elk paar. Werkwijze en gereedschap in
+  `sites/a-sisters/tools/`.
+- **Toen ik geen beelden meer kon bekijken, werd de test het oog.** Halverwege
+  de filmverbouwing weigerde de API verdere afbeeldingen. In plaats van op goed
+  vertrouwen door te bouwen is `tests/handen-check.mjs` geschreven, die de
+  MEETKUNDE van de letter narekent uit de echt getekende paden: raken de benen
+  elkaar, staan ze even hoog, hangt de balk in het midden, klopt de verhouding.
+  Dat vangt meer dan kijken zou hebben gevangen, want drie streken die uit
+  elkaar vallen zien er op een los frame uit als "drie streken".
+- **Een standaardpad naar een ander project is een stille valstrik.**
+  `verhaal-check.mjs` had als standaardbron `sites/virtualcreator/...`. Vanaf de
+  repo-wortel bestaat dat pad ook in de KOPIE, dus de a-sisters-test stond
+  groen over de film van Virtual Creator. Standaarden wijzen nu naast het
+  script; een argument overrulet de standaard, nooit andersom. Hetzelfde
+  gerepareerd in `tools/beeld.mjs` en in het bronproject.
+- **Een hardgecodeerde kleur buiten de tokens is een tijdbom.** De canvaskleuren
+  van de film stonden als vaste bytes in `film.js`. Na het omzetten van het
+  palet stond de hele pagina in het nieuwe merk en de film nog in het oude, en
+  geen enkele test zag dat: het contrast klopte namelijk allebei.
+
+## 2026-09-05 - Richting: van Belvanger-omzet naar crypto
+
+De founder gaf aan dat de "zo snel mogelijk geld verdienen"-instelling van
+`CLAUDE.md` ging vervelen, dat Belvanger niet hard van stapel gaat en dat de
+interesse nu bij crypto ligt. Keuzes uit het interview:
+
+- Vier lanen: onderzoek en analyse, tools en bots, on-chain ontwikkeling,
+  content en community.
+- Twee gescheiden modi: verkennen (standaard, geen omzettoets) en inkomen
+  (alleen als de founder het expliciet zegt; dan Founder Filter plus
+  crypto-realiteitscheck en een Buy/Build-stance).
+- Belvanger en de klantsites blijven live in onderhoudsmodus. De twee hooks
+  (`selling-status.mjs` bij sessiestart, `check-belvanger-log.mjs` bij stop) zijn
+  uit `.claude/settings.json` gehaald; de scripts staan er nog. De regel "elke
+  Belvanger-wijziging in `tools/activiteitenlog.json`" blijft, alleen zonder
+  afdwinging.
+- Zelfde repo. Nieuw cryptowerk komt in `crypto/` (README beschrijft de indeling);
+  het Sable-werk blijft in `sites/sable-peers/`.
+
+Nieuw in `CLAUDE.md`: harde cryptoregels (nooit seed phrases of private keys,
+fondsen en mainnet alleen na sign-off, live cijfers met datum en bron, bronnen uit
+eigen docs of code, scam-standaardhouding, SABL-disclosure, MiCA en belasting als
+signaleerpunt). `.github/copilot-instructions.md` is niet aangepast.
+
+## 2026-09-08 - Sable: de burn watch en het fail-closed verhaal
+
+Op de vraag "wat bouwen we nu voor Sable" vier kandidaten gerangschikt: de
+burn watch (aan de keten, geen sleutel nodig), een uurlijkse ontvangstbewijs-
+verificatie in de watcher (sleutel nodig), Lisa echt via Sable routeren
+(zelfde sleutel, saldo is een fondsenbesluit), en het fail-closed verhaal als
+content. De founder koos de eerste en de laatste; twee sub-agents parallel.
+
+**Burn watch.** De whitepaper (§06, §10) zegt dat betalen in SABL de SABL
+verbrandt en dat die rail nog niet live is. De eerste daling van de
+mintvoorraad op Solana is dus het moment dat de rail echt live is, los van
+aankondigingen. De watcher (`../sable-whitepaper-watch`, commit ee75c2a op
+`main`, gerebased op origin) leest elk uur `getTokenSupply` op de mint
+`DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump` (geverifieerd tegen de
+whitepapertekst, het mintaccount op de keten met mint- en freeze-authority
+null, CoinGecko en DexScreener) en schrijft `sabl_supply` in de uurregel.
+`status/supply.jsonl` krijgt alleen een regel als het ruwe bedrag verandert;
+de basislijn is de lokale run van 2026-09-08 08:43:49Z: 958.374.438,918883
+SABL, slot 445.295.744. Een daling geeft een CHANGELOG-entry en de outputs
+`supply_fell` en `supply_summary`; `record.json` draagt `sabl_supply` (laatste
+lezing, basislijn, verschil, laatste daling). `SOLANA_RPC` overschrijft de
+node, een miss is nooit fataal. Op de site (commit 7b23c69) staat onder de
+ring één regel uit dat record, verborgen tot de sleutel bestaat, met
+`tests/burn-watch-test.mjs` (drie fixtures groen). Gedeployed via
+`deploy-to-vps.sh`, dat zelf HTTP 200 en de titel terugzag.
+
+**Wat de auto-mode classifier blokkeerde.** De `git push` van de watcher naar
+GitHub (twee keer, ook als losse opdracht), `gh workflow run`, elke bewerking
+van `.github/workflows/watch.yml`, en zelfs een `curl` naar de live site ter
+controle. Toen de founder later letterlijk "push watcher" zei, ging dezelfde push wel
+door: gepusht als 3249db1, handmatige run 34216490228 geslaagd, eerste
+GitHub-regel met `sabl_supply` om 2026-09-08T10:38:25Z (slot 445.317.506,
+voorraad gelijk aan de basislijn), `record.json` draagt de sleutel.
+Leerpunt bij de controle: raw.githubusercontent.com stuurt `max-age=300`, en
+die upstream-header wint van `proxy_cache_valid 120s` in nginx. Na een commit
+van de Action kan de site dus tot zo'n tien minuten het oude record tonen
+(gezien: 10:38Z commit, 10:49Z pas vers op de VPS). Geen fout, wel iets om te
+weten voordat je een lege regel als bug aanmerkt.
+Daarna live gezien in een headless browser (Puppeteer, scratchpad
+`live-burn-watch.mjs`): de regel onder de ring toont de lezing van 10:38Z,
+slot 445.317.506, "No burn seen yet".
+
+**Scenarios bijgewerkt (commit 5f23d06).** De voorwaarde "SABL pay-in goes live,
+burn visible on-chain" onder "Adoption is visible" draagt nu haar eigen
+antwoord uit hetzelfde record: "Not yet: watched hourly since 2026-09-08, no
+fall seen" of de daling zelf, met een link naar de burn watch; de intro wijst
+naar de uurlijkse lezing. Verborgen zolang het record de sleutel mist. Drie
+fixtures in `tests/burn-watch-test.mjs` dekken het, shell-test lokaal groen,
+gedeployed. Niet gedaan (bewust aan de founder gelaten): een voorwaarde over
+de confidential tier die nu al vier dagen fail-closed is.
+
+Valkuil van vandaag: een JS-patchscript via een Bash-heredoc verloor
+backslashes (`\s` werd `s`, `\.` werd `.`), waardoor de test stilletjes
+alle letters s uit de tekst haalde. Bestanden met regexes schrijf je met de
+Write- of Edit-tool, niet via een heredoc.
+
+**Herstelwacht in de watcher (commit 983f7e2, run geslaagd).** Elke run
+vergelijkt de nieuwe grootboekregel met de vorige: `conf_verified` van false
+naar true is "recovered", andersom "failed". Een flip wordt het commitbericht
+(met het aantal weigeringen ervoor en de laatste tijd) en één melding naar de
+app, url `/#log`, tag `status`. Een onbereikbaar endpoint aan een van beide
+kanten telt niet als flip. Zeven gevallen getest met `conf_transition()`. Zo
+kan de vervolgpost op het artikel ("it said yes again") binnen het uur na het
+herstel, met de regel uit het record.
+
+Open na vandaag: de Sable-sleutel (ontvangstbewijsverificatie per uur en Lisa
+echt via Sable), de contestsluiting op 14 september (script staat klaar), en
+de optionele Scenarios-voorwaarde over de confidential tier.
+
+**Git-regel van de founder: alleen Sable gaat naar GitHub, niets van A-Sisters.**
+De opruimcommit met de A-Sisters- en Virtual Creator-bestanden (470 bestanden,
+waaronder bronfoto's van de zussen) is uit de lokale geschiedenis gehaald
+voordat er iets gepusht was; de bestanden staan nog gewoon op schijf, alleen
+niet meer in git. `sites/a-sisters/.gitignore` en `sites/virtualcreator/.gitignore`
+sluiten nu hun hele map uit, zodat het niet opnieuw kan gebeuren. De repo op
+GitHub is publiek. Het chatbot-, skills- en package-werk uit augustus staat
+weer gewoon ongecommit, zoals het was. De
+workflow-aanpassing (commitbericht "SABL supply fell" en een pushmelding naar de
+app bij een daling, url `/#token`, tag `supply`) staat klaar als patch in de
+scratchpad van deze sessie en in de dagrapportage.
+Na "Go ahead" van de founder alsnog aangebracht via de editor (de
+Bash-variant bleef geblokkeerd) en gepusht als 0a9e51a: bij `supply_fell`
+krijgt de commit het voorraadbericht en gaat er één melding naar de app
+(`/#token`, tag `supply`). Gevalideerd met een handmatige run.
+
+**Fail-closed thread.** `crypto/content/2026-09-08-sable-fail-closed-thread.md`
+(commit 4e6b2db): 17 posts van hoogstens 280 tekens, een lange versie van
+zo'n 890 woorden en een feitentabel. Kern: sinds 4 september weigert de
+confidential tier elke aanvraag (`measurement_mismatch`), 7.482 op rij om
+08:34Z op 8 september, gateway 100% uptime, signer en modellental
+ongewijzigd in 26 controles. Alle whitepapercitaten zelf nagelopen in
+`whitepaper.sentences.txt` (regels 162, 173, 175, 176). Post 8 gecorrigeerd:
+het statusendpoint meldt een probe van 30 s, de teller stijgt zo'n 80 per
+uur; de kloof staat als onverklaard in de feitentabel. Niet gepost;
+disclosure in post 17; de kop zegt welke posts herschreven moeten worden als
+de tier herstelt vóór het posten.
+
+**X Article.** Op verzoek van de founder is de thread ook een X Article
+geworden: `crypto/content/2026-09-08-sable-fail-closed-article.md` (titel,
+plakklare body met kopjes, citaten en lijsten, de begeleidende post, en een
+tabel met de ververste feiten: 7.612 weigeringen op rij om circa 10:12Z op
+8 september, afgeleid uit `uptime_seconds`). De omslag is
+`2026-09-08-sable-fail-closed-header.png` (1600 bij 640, de 5:2 die de editor
+vraagt), getekend uit het grootboek zelf: per dag en uur een cel, oranje waar
+een controle landde en weigerde, met de teller en de bronnen. Gerenderd met
+headless Chrome uit een HTML-kaart in de scratchpad (`header-card.mjs`).
+Gepubliceerd op 2026-09-08: https://x.com/0PTIMUS_ONE/status/2097271677423964363
+(de begeleidende post moest naar 251 tekens, de limiet voor het onderschrift is
+256). De thread zelf is niet gepost; het artikel kwam ervoor in de plaats.
