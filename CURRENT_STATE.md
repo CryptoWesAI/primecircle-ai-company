@@ -629,3 +629,18 @@ headless Chrome uit een HTML-kaart in de scratchpad (`header-card.mjs`).
 Gepubliceerd op 2026-09-08: https://x.com/0PTIMUS_ONE/status/2097271677423964363
 (de begeleidende post moest naar 251 tekens, de limiet voor het onderschrift is
 256). De thread zelf is niet gepost; het artikel kwam ervoor in de plaats.
+
+**MCP Gateway (aankondiging 8 september).** Sable postte "MCP Gateway is live
+on Sable. MCP tools, with budgets and policies around them. Every call is
+metered and receipted. Shipped." Getoetst aan de eigen bronnen, uitgewerkt in
+`crypto/research/2026-09-08-sable-mcp-gateway.md`: de docs-pagina
+`/docs/mcp-gateway` bestaat (nieuw sinds 29 augustus) en beschrijft een
+tool-proxy: registreer een MCP-server van een derde, krijg een proxy-URL,
+elke `tools/call` wordt aan een allowlist getoetst, per aanroep gemeterd
+(standaard 100 micro-dollar) en voorzien van een `mcp_call`-receipt met
+vingerafdrukken van argumenten en resultaat. Op de publieke API antwoordden
+om 14:23Z alle gedocumenteerde paden (`/v1/mcp-servers`, `/v1/mcp/servers/:id`)
+404, met en zonder sleutel, terwijl `/v1/mcp` en `/v1/mandates` 401 geven.
+Prijspagina en whitepaper noemen de gateway niet. Zelfde patroon als bij de
+SABL pay-in: docs en post zeggen "live", de deployment nog niet. Niet
+gebouwd, wel overwogen: een uurlijkse 404-naar-401-peiling in de watcher.
