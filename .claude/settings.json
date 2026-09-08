@@ -1,29 +1,4 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/selling-status.mjs",
-            "timeout": 10,
-            "statusMessage": "Verkoopstand lezen..."
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node .claude/hooks/check-belvanger-log.mjs",
-            "timeout": 10,
-            "statusMessage": "Activiteitenlog controleren..."
-          }
-        ]
-      }
-    ]
-  }
+  "hooks": {}
 }

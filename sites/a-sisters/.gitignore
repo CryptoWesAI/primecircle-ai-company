@@ -1,0 +1,4 @@
+
+# Client folder: never goes to git (founder decision, 2026-09-08). Only the guard itself is tracked.
+*
+!.gitignore

@@ -21,6 +21,8 @@ primecircle-ai-company/
       deploy/         #    → eigen git-repo CryptoWesAI/ABUitvaart (parent negeert dit)
       docs/           #    → Alien-specifieke docs
   docs/               # A. Bedrijfskennis (framework, onderzoek, beslissingen, compliance)
+  crypto/             # D. Cryptowerk sinds 2026-09-05 (research/ tools/ contracts/ content/)
+  sites/sable-peers/  # D. Sable Observatory (sable.primecircle.cloud)
   roadmap/  workflow/ # A. Leren & werkwijze
   .claude/  .github/  # A. Skills + Copilot-instructies
 ```
