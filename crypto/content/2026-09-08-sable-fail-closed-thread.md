@@ -1,7 +1,7 @@
 # Four days of no: Sable's confidential tier, fail-closed, on the record
 
 - Date: 2026-09-08
-- Status: draft, not posted
+- Status: not posted as a thread; published as an X Article instead on 2026-09-08, see `2026-09-08-sable-fail-closed-article.md`
 - Author handle: @0PTIMUS_ONE (outsider, SABL holder, not affiliated with Sable Network)
 - Disclosure line carried in the thread (post 17) and at the end of the long form: "Disclosure: I hold SABL. I am not affiliated with Sable Network."
 

@@ -1,7 +1,7 @@
 # X Article: Four days of no
 
 - Date: 2026-09-08
-- Status: draft, not published
+- Status: published 2026-09-08 as an X Article: https://x.com/0PTIMUS_ONE/status/2097271677423964363 (caption shortened to 251 characters for the 256 limit; the tier was still failing closed at publication)
 - Author: @0PTIMUS_ONE (outsider, SABL holder, not affiliated with Sable Network)
 - Built from: `2026-09-08-sable-fail-closed-thread.md` (same sources, same quotes), refreshed with the live status read at about 10:12 UTC on 8 September 2026 (derived from `uptime_seconds` 338,309 against the 08:34:18Z read).
 - Cover image: `2026-09-08-sable-fail-closed-header.png` (1600 by 640, the 5:2 ratio the editor asks for), drawn from the ledger.
