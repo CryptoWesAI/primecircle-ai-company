@@ -159,3 +159,15 @@ With it, three things the case exposed:
 Scores already on the board stand; the arena changes daily and the change is dated in the page log. Deploying the board recreates the container, so deploys go out when nobody has started a run in the last minutes.
 
 Addendum, the same night: the cause of the lost run was found in `nginx.conf`. The `/api/game/` location carried `client_max_body_size 8k`; a run's input log is about 22 bytes per tap, so every submission with more than roughly 360 taps was answered 413 by nginx and never reached the board. The live log showed two 413s while this was being investigated. The cap is now 512k (the board's own `readBody` limit of 300 KB stays the effective one). Recorded under "What this page got wrong". The rules change and the cap fix went out together at 22:00 UTC; the first submission after the deploy (AlfinMzn, 18,340 in wave 9, a page loaded before the change) was accepted through the previous-rules grace path, as designed.
+
+## The card is a record (9 September 2026, 00:15 CEST)
+
+The founder's call after the 54,045 case: leave the board as it is, tell everyone the fix is in, and make the card anti-cheat. A card drawn by the browser from the browser's own numbers can only ever be a claim, so the card now carries the board's verdict instead.
+
+- The card is drawn after the submission, not before. Accepted: a stamp top right, "ON THE BOARD · #n TODAY" and "CHECK CODE <id>-<8 chars>". Not accepted: "NOT ON THE BOARD" with the reason (demo, no answer, refused: replay, rules changed). The share text carries the code too.
+- The code is `cardCode(id, day, name, score, wave)`: eight characters from an HMAC-SHA256 under the board secret, alphabet `ABCDEFGHJKMNPQRSTVWXYZ23456789` (no 0/O, 1/I/L). Handed out only with an acceptance, so a card that was never on the board cannot carry a code that checks out. About 39 bits: enough against guessing behind the per-IP limit of 300 checks an hour; it is not a signature anyone can verify offline, the board is the verifier.
+- `GET /card/:id/:code` answers 404 for a wrong code or unknown run and, for a match, the row plus the card's other numbers replayed from the run's own input log (loops cut, leaked, clean waves, wrong refusals), under the rules the run was played with (current core first, previous core if the score differs). Rank that day included.
+- "Check a card" under the leaderboard on the Play page: type the code, the board answers, every number on the card must match.
+- The forensic star fingerprint (score * 7919 + wave) is unchanged, so `tests/card-stars-check.mjs` still works on cards from before this release.
+
+Rejected: a QR code on the card (a QR encoder is a few hundred lines with no library allowed by the CSP; a short code typed into the page does the same job), an offline-verifiable signature (would need a public key on the page and a bigger code; the board is online anyway), signing the card image itself (a screenshot of a signed image is still a screenshot).

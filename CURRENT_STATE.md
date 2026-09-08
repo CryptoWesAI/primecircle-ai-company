@@ -726,3 +726,19 @@ sterrenpatroon van de geposte kaart toetsen zodra de founder het bestand
 aanlevert, en zijn besluit over de 54.045 (advies in het gesprek: wel erkennen,
 niet in de contest, want het bord speelt alleen na wat het kan naspelen en de
 score kwam uit de nu gedichte maas).
+
+**Het kaartje is een bewijsstuk (9 september, 00:20 CEST).** Op verzoek van de
+founder ("maak het kaartje anti-cheat; de huidige scores blijven staan; ik laat
+iedereen weten dat de fix er is"). De deelkaart wordt nu getekend na het oordeel
+van het bord: geaccepteerd geeft rechtsboven "ON THE BOARD · #n TODAY" plus een
+controlecode als 58-K7Q2M9XA (acht tekens uit een HMAC onder het bordgeheim,
+alfabet zonder 0/O/1/I/L, alleen uitgegeven bij acceptatie); niet geaccepteerd
+geeft "NOT ON THE BOARD" met de reden. `GET /api/game/card/:id/:code` antwoordt
+met de rij plus de overige kaartcijfers, nagespeeld uit de eigen inputlog; onder
+het leaderboard staat "Check a card". Getest: board-suite (code, foute code,
+onbekende run), browsertest (kaart met stempel, code in de resultaatregel),
+shell live groen. Gedeployed 22:18Z op een rustig moment (AlfinMzn's laatste run
+22:15:56Z binnen, geen nieuwe start). Live gecontroleerd: run 58 met de echte
+code geeft 200 met details, een foute code 404. Sterrenvingerafdruk ongewijzigd,
+dus de forensische check werkt ook op oude kaarten. Beslissingen in
+`sites/sable-peers/GAME-PLAN.md`.

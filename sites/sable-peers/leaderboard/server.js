@@ -57,6 +57,17 @@ const topQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, ref
 const contestQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? AND day <= ? AND flagged = 0 AND handle IS NOT NULL AND handle != '' GROUP BY lower(handle) ORDER BY score DESC, id ASC LIMIT ?`);
 const rankQ = db.prepare(`SELECT COUNT(*) AS n FROM (SELECT lower(name) AS k, MAX(score) AS s FROM scores WHERE day >= ? GROUP BY k) WHERE s > ?`);
 const meQ = db.prepare("SELECT name, handle, score, receipts, wave, day FROM scores WHERE device = ? ORDER BY score DESC LIMIT 1");
+const byId = db.prepare("SELECT id, day, seed, name, handle, score, receipts, refused, wave, duration_ms, flagged, verified, log, created_at FROM scores WHERE id = ?");
+// The card code: printed on a share card once the board has accepted the run, checkable by
+// anyone at GET /card/:id/:code. Eight characters from an HMAC over the row, in an alphabet
+// without 0/O and 1/I/L, so a card that was never on the board cannot carry a code that checks out.
+const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTVWXYZ23456789";
+function cardCode(id, day, name, score, wave) {
+  const dig = createHmac("sha256", SECRET).update(`card|${id}|${day}|${name}|${score}|${wave}`).digest();
+  let out = "";
+  for (let i = 0; i < 8; i++) out += CODE_ALPHABET[dig[i] % CODE_ALPHABET.length];
+  return out;
+}
 const countQ = db.prepare("SELECT COUNT(*) AS n FROM scores");
 const delName = db.prepare("DELETE FROM scores WHERE lower(name) = lower(?)");
 const insSub = db.prepare("INSERT OR IGNORE INTO push_subs (endpoint, sub, created_at) VALUES (?, ?, ?)");
@@ -172,6 +183,28 @@ const server = createServer(async (req, res) => {
       }));
       return json(res, 200, { ok: true, sent, failed, removed, subscribers: countSubs.get().n });
     }
+    const cm = req.method === "GET" ? path.match(/^\/card\/(\d{1,9})\/([A-Z0-9]{8})$/) : null;
+    if (cm) {
+      if (limited("cardip:" + ipOf(req), 300)) return json(res, 429, { error: "slow down" });
+      const row = byId.get(Number(cm[1]));
+      const want = row ? cardCode(row.id, row.day, row.name, row.score, row.wave) : "AAAAAAAA";
+      if (!row || !timingSafeEqual(Buffer.from(cm[2]), Buffer.from(want))) return json(res, 404, { ok: false, error: "no such card" });
+      // the details the card shows that the row does not store: replayed from the run's own log, under the rules it was played with
+      let rp = null;
+      try {
+        const log = JSON.parse(row.log || "null");
+        if (Array.isArray(log)) {
+          let r = replay(String(row.seed), log);
+          if (r.score !== row.score && corePrev) r = corePrev.replay(String(row.seed), log);
+          if (r.score === row.score) rp = r;
+        }
+      } catch { rp = null; }
+      return json(res, 200, { ok: true, run: {
+        id: row.id, day: row.day, name: row.name, handle: row.handle, score: row.score, receipts: row.receipts, refused: row.refused, wave: row.wave, duration_ms: row.duration_ms,
+        refused_loops: rp ? rp.refusedLoops : null, leaked: rp ? rp.leaked : null, clean_waves: rp ? rp.cleanWaves : null, wrong_refusals: rp ? rp.refusedGood : null,
+        flagged: !!row.flagged, verified: !!row.verified, created_at: row.created_at, rank_today: rankQ.get(row.day, row.score).n + 1, code: want,
+      } });
+    }
     if (req.method === "GET" && path === "/top") {
       const period = url.searchParams.get("period") || "today";
       const limit = Math.min(100, Math.max(1, Number(url.searchParams.get("limit") || 25)));
@@ -239,10 +272,11 @@ const server = createServer(async (req, res) => {
       const flagged = patient || spotless ? 1 : 0;
       const now = new Date().toISOString(), day = now.slice(0, 10);
       markToken.run(tok.sig, now);
-      ins.run(day, String(tok.seed), name, handle, score, receipts, refused, wave, dur, dh, rp.log_hash, now, JSON.stringify(log), flagged);
+      const inserted = ins.run(day, String(tok.seed), name, handle, score, receipts, refused, wave, dur, dh, rp.log_hash, now, JSON.stringify(log), flagged);
+      const id = Number(inserted.lastInsertRowid), code = cardCode(id, day, name, score, wave);
       const rankToday = rankQ.get(day, score).n + 1, rankAll = rankQ.get("0000-00-00", score).n + 1;
-      note("accepted", (graced ? "previous rules, " : "") + (flagged ? "flagged" : "ok"), body, { rank_today: rankToday });
-      return json(res, 200, { ok: true, rank_today: rankToday, rank_all: rankAll, name, handle, flagged: !!flagged });
+      note("accepted", (graced ? "previous rules, " : "") + (flagged ? "flagged" : "ok"), body, { rank_today: rankToday, id });
+      return json(res, 200, { ok: true, rank_today: rankToday, rank_all: rankAll, name, handle, flagged: !!flagged, id, code });
     }
     return json(res, 404, { error: "not found" });
   } catch (e) {

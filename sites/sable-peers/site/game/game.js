@@ -241,16 +241,18 @@ function build(opts) {
       const canSubmit = !!token && !demo && s.duration_ms >= 20000;
       note.textContent = demo ? "Demo run: not submitted." : !token ? (rulesStale ? "The rules changed since this page loaded, so this run stays on your screen. Reload the page for a ranked run." : "The leaderboard did not answer, so this run stays on your screen.") : s.duration_ms < 20000 ? "Runs shorter than 20 seconds are not ranked." : "";
       result.className = "ge-result"; result.textContent = "";
-      card({ s, rank: null });
       if (canSubmit && givenName.length >= 3) {
-        // the name was given before the run: the score goes up by itself
+        // the name was given before the run: the score goes up by itself, and the card waits for the
+        // board's verdict, so it carries a check code or says it is not on the board
         form.hidden = true; result.textContent = "sending to the board…";
         submit(givenName, givenHandle).then((j) => {
-          if (j && j.ok) card({ s, rank: j.rank_today });
+          if (j && j.ok) card({ s, rank: j.rank_today, status: "board", id: j.id, code: j.code });
+          else card({ s, rank: null, status: "refused", reason: (j && j.error) || "no answer" });
           document.dispatchEvent(new CustomEvent("sable-game-submitted", { detail: j }));
           if (!(j && j.ok)) { form.hidden = false; $("ge-name").value = givenName; $("ge-handle").value = givenHandle; $("ge-submit").disabled = false; }
         });
       } else {
+        card({ s, rank: null, status: demo ? "demo" : "unranked", reason: demo ? null : !token ? (rulesStale ? "rules changed, reload the page" : "no answer from the board") : s.duration_ms < 20000 ? "shorter than 20 seconds" : "not sent to the board" });
         form.hidden = !canSubmit;
         if (canSubmit) { $("ge-name").value = store.get("sable-game-name") || ""; $("ge-handle").value = store.get("sable-game-handle") || ""; $("ge-submit").disabled = false; }
       }
@@ -258,7 +260,8 @@ function build(opts) {
   }
   function card(o) {
     const box = $("ge-share"), cv = $("ge-card"); if (!box || !cv) return;
-    const d = { score: o.s.score, wave: o.s.wave, refused: o.s.refused, refusedLoops: o.s.refusedLoops, leaked: o.s.leaked, cleanWaves: o.s.cleanWaves, seed, name: givenName || store.get("sable-game-name") || "", handle: givenHandle || store.get("sable-game-handle") || "", rank: o.rank };
+    const d = { score: o.s.score, wave: o.s.wave, refused: o.s.refused, refusedLoops: o.s.refusedLoops, leaked: o.s.leaked, cleanWaves: o.s.cleanWaves, seed, name: givenName || store.get("sable-game-name") || "", handle: givenHandle || store.get("sable-game-handle") || "", rank: o.rank,
+      status: o.status || null, reason: o.reason || null, code: o.status === "board" && o.id != null && o.code ? o.id + "-" + o.code : null };
     box.hidden = demo;
     if (demo) return;
     drawCard(cv, d).then(() => wireShare(cv, d, { share: $("ge-share-btn"), save: $("ge-save"), x: $("ge-x") })).catch(() => { box.hidden = true; });
@@ -280,7 +283,9 @@ function build(opts) {
     stage.removeEventListener("pointerdown", onDown); stage.removeEventListener("pointermove", onMove); el.attest.removeEventListener("click", attest); window.removeEventListener("keydown", onKey);
     if (ro) ro.disconnect(); for (const g of nodes.values()) scene.remove(g); nodes.clear(); renderer.dispose();
   }
-  const api = { begin, end, submit, dispose, summary: () => game && game.summary(), running: () => running, token: () => token, seed: () => seed };
+  const api = { begin, end, submit, dispose, summary: () => game && game.summary(), running: () => running, token: () => token, seed: () => seed,
+    // after a submit from the end card's form: the card gets its check code
+    card: (j) => { if (game && !running && j && j.ok) card({ s: game.summary(), rank: j.rank_today, status: "board", id: j.id, code: j.code }); } };
   // the hooks that can drive a run (the patient player, the game object) exist for the tests on a local
   // build and for the demo, never for a real run on the live page: one console line must not win a contest
   if (demo || /^(localhost|127\.0\.0\.1)$/.test(location.hostname)) Object.assign(api, { core: () => game, autoplay: (on) => { autoplayOn = !!on; }, debug: () => ({ W, H, camDist, aspect: camera.aspect, pos: [camera.position.x, camera.position.y, camera.position.z], dpr: renderer.getPixelRatio() }) });

@@ -20,7 +20,26 @@ function fit(ctx, text, max) { while (text.length > 4 && ctx.measureText(text).w
 function seeded(n) { let a = n | 0 || 1; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
 
 export function shareText(d) {
-  return "Gatekeeper on the Sable Observatory: " + d.score.toLocaleString("en-US") + " points in wave " + d.wave + ", " + d.refused + " refused, " + d.leaked + " leaked. Same arena for everyone today. Can you hold the door? sable.primecircle.cloud/#play @Sablenetwork";
+  const proof = d.status === "board" && d.code ? " On the board, check code " + d.code + "." : d.status ? " Unranked run." : "";
+  return "Gatekeeper on the Sable Observatory: " + d.score.toLocaleString("en-US") + " points in wave " + d.wave + ", " + d.refused + " refused, " + d.leaked + " leaked." + proof + " Same arena for everyone today. Can you hold the door? sable.primecircle.cloud/#play @Sablenetwork";
+}
+
+// The stamp, top right: what the board said about this run. A card with a check code can be
+// checked by anyone on the Play page (the board answers with the run's numbers); a card
+// without one says so itself, so a screenshot is a claim and a code is a record.
+function stamp(ctx, d) {
+  if (!d.status) return;
+  const right = 1140, y1 = 78, y2 = 108;
+  ctx.textAlign = "right"; ctx.letterSpacing = "3px";
+  if (d.status === "board" && d.code) {
+    ctx.fillStyle = "#18BFFF"; ctx.font = "600 21px " + MONO; ctx.fillText("ON THE BOARD" + (d.rank ? " · #" + d.rank + " TODAY" : ""), right, y1);
+    ctx.fillStyle = "#72DCFF"; ctx.font = "500 20px " + MONO; ctx.letterSpacing = "2px"; ctx.fillText("CHECK CODE " + d.code, right, y2);
+  } else {
+    const why = d.status === "demo" ? "demo run" : d.status === "refused" ? "refused: " + String(d.reason || "unknown") : String(d.reason || "not sent to the board");
+    ctx.fillStyle = "#FF7A59"; ctx.font = "600 21px " + MONO; ctx.fillText("NOT ON THE BOARD", right, y1);
+    ctx.fillStyle = "#8FA3B0"; ctx.font = "500 18px " + MONO; ctx.letterSpacing = "1px"; ctx.fillText(fit(ctx, why.toUpperCase(), 430), right, y2);
+  }
+  ctx.textAlign = "left"; ctx.letterSpacing = "0px";
 }
 
 export async function drawCard(canvas, d) {
@@ -59,6 +78,7 @@ export async function drawCard(canvas, d) {
   if (who) { ctx.fillStyle = "#72DCFF"; ctx.font = "600 34px " + SANS; ctx.fillText(fit(ctx, who, 620), 74, 530); }
   ctx.fillStyle = "#8FA3B0"; ctx.font = "500 26px " + SANS; ctx.fillText("Can you hold the door? Same arena for everyone today.", 74, 585);
   ctx.fillStyle = "#18BFFF"; ctx.font = "600 28px " + MONO; ctx.fillText("sable.primecircle.cloud/#play", 74, 630);
+  stamp(ctx, d);
   return canvas;
 }
 

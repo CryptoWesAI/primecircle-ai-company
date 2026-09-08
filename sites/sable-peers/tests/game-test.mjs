@@ -68,6 +68,10 @@ try{
   if(!live){
     await p.waitForFunction(()=>/On the board|Not accepted|not allowed|already/.test(document.getElementById("ge-result").textContent),{timeout:10000});
     const res=await text(p,"#ge-result"); ok(/On the board as .*: #\d+ today/.test(res),"score went up by itself with a rank: "+res);
+    ok(/Card code \d+-[A-Z0-9]{8}\./.test(res),"the result names the card's check code: "+res);
+    // the card was drawn after the verdict, with the code on it
+    const cardInfo=await p.evaluate(()=>{const c=document.getElementById("ge-card");const x=c.getContext("2d");const d=x.getImageData(700,60,440,60).data;let lit=0;for(let i=0;i<d.length;i+=4)if(d[i]+d[i+1]+d[i+2]>300)lit++;return {w:c.width,h:c.height,litTopRight:lit};});
+    ok(cardInfo.w===1200&&cardInfo.h===675&&cardInfo.litTopRight>400,"the card carries the stamp top right: "+JSON.stringify(cardInfo));
     ok(!(await vis(p,"#ge-form")),"no form to fill after a named run");
   }else{ await wait(1500); console.log("live end note:",(await text(p,"#ge-note")).slice(0,100),"|",(await text(p,"#ge-result")).slice(0,100)); }
   console.log("contest strip:",(await vis(p,"#contest"))?(await text(p,"#contest")).slice(0,120):"hidden");

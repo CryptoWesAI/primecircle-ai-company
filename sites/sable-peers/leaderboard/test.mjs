@@ -106,6 +106,14 @@ try {
     ok(wrong > 0, "the old-rules run refused sealed requests: " + wrong);
     const { rules: _drop, ...noRules } = { ...base, token: s3.body.token, ...r3 };
     const acc = await post("/score", noRules); ok(acc.status === 200 && acc.body.ok, "an old client's run is replayed under the previous rules during the grace hour: " + JSON.stringify(acc.body));
+    // the card code: handed out with the acceptance, checkable by anyone, and the check replays the run's own log for the card's other numbers
+    ok(Number.isInteger(acc.body.id) && /^[A-Z0-9]{8}$/.test(acc.body.code) && !/[01OIL]/.test(acc.body.code), "acceptance carries an id and an 8-character code: " + acc.body.id + "-" + acc.body.code);
+    const cardOk = await get("/card/" + acc.body.id + "/" + acc.body.code);
+    ok(cardOk.status === 200 && cardOk.body.ok && cardOk.body.run.score === r3.score && cardOk.body.run.wave === r3.wave && cardOk.body.run.name === "Optimus" && cardOk.body.run.wrong_refusals === wrong && Number.isInteger(cardOk.body.run.refused_loops) && Number.isInteger(cardOk.body.run.leaked) && Number.isInteger(cardOk.body.run.rank_today) && cardOk.body.run.verified === true, "the card check returns the run with its replayed details: " + JSON.stringify(cardOk.body.run));
+    const wrongCode = acc.body.code[0] === "A" ? "B" + acc.body.code.slice(1) : "A" + acc.body.code.slice(1);
+    ok((await get("/card/" + acc.body.id + "/" + wrongCode)).status === 404, "a wrong code is no such card");
+    ok((await get("/card/999999/" + acc.body.code)).status === 404, "an unknown run is no such card");
+    ok((await get("/card/" + acc.body.id + "/short")).status === 404, "a malformed code is not a route");
     const s4 = await post("/start", { device: dev }); const { wrong: w4, ...r4 } = tapAll(s4.body.seed); await settle(r4);
     const rep = await post("/score", { ...base, token: s4.body.token, ...r4, rules: RULES }); ok(rep.status === 400 && rep.body.error === "replay", "the same old-rules run claiming the current rules fails the replay: " + JSON.stringify(rep.body)); }
   // rate limit: 30 scores per device per hour
