@@ -10,7 +10,7 @@ Sable posted on X (text pasted by the founder, 8 Sep 2026):
 
 ## 2. What the docs describe
 
-Source: https://www.buildsable.com/docs/mcp-gateway, fetched as raw HTML on 2026-09-08 about 14:15 UTC and converted to text locally (not a WebFetch summary). The page appeared in the docs sidebar between "MCP server" and "Sable Services"; it was not in the sidebar recorded on 2026-08-29.
+Source: <https://www.buildsable.com/docs/mcp-gateway>, fetched as raw HTML on 2026-09-08 about 14:15 UTC and converted to text locally (not a WebFetch summary). The page appeared in the docs sidebar between "MCP server" and "Sable Services"; it was not in the sidebar recorded on 2026-08-29.
 
 Mechanism, in Sable's own words where it matters:
 
@@ -81,8 +81,9 @@ Design choices worth noting:
 3. Does the whitepaper get a new row for the gateway, and does the cover version move this time?
 4. Does a `mcp_call` receipt verify through the public verifier with the same signer (`0xf4a6…a812`) as chat receipts? Needs a key.
 
-## 6. Follow-ups considered
+## 6. Follow-ups, built the same day
 
-- Add `/docs/mcp-gateway` and the docs sidebar to the daily peers watch, so docs additions are recorded with a date.
-- Add an hourly unauthenticated probe of `POST /v1/mcp-servers` to the watcher ledger (expect a flip from 404 to 401) so the Observatory can show when the announced route actually lands, the way the burn watch waits for the first burn.
-- Neither is built as of this note.
+- **The route watch** in the watcher repo (commit d9b0d7f): `claims.json` lists the announcement with its two documented routes and one control route; every hourly run asks them without a key and writes the answers into the hourly line under `claims`. `status/claims.jsonl` gets a line only when the state changes, a route that first answers gets a CHANGELOG entry, a commit message and a push to the app. `record.json` carries the summary under `claims`. Unit tests in `test_watch.py`. First CI run 34241057755 at 2026-09-08T14:52:27Z: `absent`, both routes 404, control 401; baseline line written.
+- **The daily page watch** now also covers `/docs` and `/docs/mcp-gateway`, so a docs addition gets a date.
+- **The Observatory** (commit 064ff00, deployed): the Log has a panel "Announced, then checked" with three rows read from the same record: SABL pay-in beside the burn watch, the confidential tier beside the status endpoint, the MCP Gateway beside its documented routes. Unknown claim ids in the record get their own row without a deploy. Test: `sites/sable-peers/tests/claims-test.mjs`.
+- The moment `POST /v1/mcp-servers` stops answering 404 from outside, the watcher commits "MCP Gateway answered from outside at …", the app gets a push, and the panel switches to "reachable" within the hour.

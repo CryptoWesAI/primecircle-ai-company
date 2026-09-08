@@ -644,3 +644,22 @@ om 14:23Z alle gedocumenteerde paden (`/v1/mcp-servers`, `/v1/mcp/servers/:id`)
 Prijspagina en whitepaper noemen de gateway niet. Zelfde patroon als bij de
 SABL pay-in: docs en post zeggen "live", de deployment nog niet. Niet
 gebouwd, wel overwogen: een uurlijkse 404-naar-401-peiling in de watcher.
+
+**Route watch gebouwd (zelfde dag, na "ja, doe maar").** Watcher-repo commit
+d9b0d7f: `claims.json` beschrijft de aankondiging met de twee gedocumenteerde
+routes en één controleroute (`GET /v1/mandates`, geeft 401 zonder sleutel);
+elke uurlijkse run peilt ze zonder sleutel en schrijft de antwoorden in de
+uurregel onder `claims`. Toestand per claim: `present` zodra een route iets
+anders dan 404 geeft, `absent` als elk HTTP-antwoord 404 is, `unreachable`
+zonder HTTP-antwoord. `status/claims.jsonl` krijgt alleen een regel bij een
+toestandswissel, een route die voor het eerst antwoordt geeft een
+CHANGELOG-regel, een commitbericht en een pushmelding (`/#log`, tag `claims`).
+Tien unittests in `test_watch.py`. Eerste CI-run 34241057755 om 14:52:27Z:
+absent, beide routes 404, controle 401, basislijn geschreven. De dagelijkse
+paginawacht dekt nu ook `/docs` en `/docs/mcp-gateway`. Observatory (commit
+064ff00, gedeployed): paneel "Announced, then checked" in het Log met drie
+rijen uit hetzelfde record (SABL pay-in naast de burn watch, confidential tier
+naast het statusendpoint, MCP Gateway naast zijn routes); onbekende claim-id's
+in het record krijgen een eigen rij zonder deploy. Test
+`tests/claims-test.mjs` (vier fixtures), shell-suite lokaal groen. De
+gh-workflow-run en de push gingen dit keer gewoon door.
