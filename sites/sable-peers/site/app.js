@@ -255,6 +255,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
       var gw=g('st-gw');if(gw&&!/reading/.test(gw))out.push('Sable right now: gateway '+gw+'; confidential backend '+g('st-conf')+'.');
       var rf=[].slice.call(document.querySelectorAll('#rfacts .rfact')).map(function(x){var k=x.querySelector('.k'),v=x.querySelector('.v');return k&&v?k.textContent+': '+v.textContent:''}).filter(Boolean);if(rf.length)out.push('Reliability record: '+rf.join('; ')+'.');
       var sp=g('supply-third');if(/\d/.test(sp))out.push(sp+'.');
+      var bwEl=document.getElementById('burn-watch');if(bwEl&&!bwEl.hidden&&/\d/.test(bwEl.textContent))out.push(bwEl.textContent.replace(/\s+/g,' ').trim());
       var ct=g('contest');if(ct)out.push('Contest strip: '+ct.slice(0,220)+'.');
       var rows=[].slice.call(document.querySelectorAll('#gb-table tbody tr')).slice(0,3).map(function(r){var td=r.querySelectorAll('td');return td.length>2?td[1].textContent.trim().split('@')[0].trim()+' '+td[2].textContent.trim():''}).filter(Boolean);if(rows.length)out.push('Leaderboard, top three on the tab shown: '+rows.join(', ')+'.');
       var tq=g('orr-today-q');if(tq)out.push('Today\'s sentence: "'+tq.slice(0,220)+'".');
@@ -706,6 +707,21 @@ window.SABLE_EXT=(function(){
       txt('wp-last',lc?(String(lc.label)+' · '+num(lc.added)+' sentences added, '+num(lc.removed)+' removed'):'no change recorded yet');
       var last=rec.last_check||{};
       txt('wp-check',when(last.t||rec.generated_at)+(last.status?' · gateway '+String(last.status):'')+(last.conf_verified===false?' · confidential failing closed':last.conf_verified===true?' · confidential verified':''));
+      /* the burn watch: the watcher's own hourly read of the SABL supply on Solana, and whether it has ever fallen.
+         Stays hidden until the record carries the key, so nothing on the page ever says "undefined". */
+      (function(){var bw=document.getElementById('burn-watch'),s=rec.sabl_supply,L=s&&s.latest;
+        if(!bw||!s||!L||typeof L.ui_amount!=='number'||!isFinite(L.ui_amount)||typeof L.t!=='string')return;
+        function n6(v){return Number(v).toLocaleString('en-US',{maximumFractionDigits:6});}
+        function no(v){return '<span translate="no">'+esc(v)+'</span>';}
+        var dec=typeof s.decimals==='number'?s.decimals:6,f=s.last_fall,b=s.baseline||{};
+        var fell=!!f&&typeof f.ui_delta==='number'&&isFinite(f.ui_delta)&&f.ui_delta<0&&typeof f.t==='string';
+        var began=typeof b.t==='string'?' since the watch began on '+no(b.t.slice(0,10)):'';
+        var html='<b>Burn watch.</b> The hourly watcher read '+no(n6(L.ui_amount)+' SABL')+' on Solana at '+no(when(L.t))+(typeof L.slot==='number'?' (slot '+no(L.slot.toLocaleString('en-US'))+')':'')+'. ';
+        if(fell){var n=num(s.falls)||1,tot=s.total_fallen&&typeof s.total_fallen.ui_amount==='number'?s.total_fallen.ui_amount:-f.ui_delta;
+          html+='Supply fell by '+no(n6(-f.ui_delta)+' SABL')+' on '+no(when(f.t))+(/^\d+$/.test(String(f.prev_amount))&&/^\d+$/.test(String(f.amount))?', from '+no(n6(Number(f.prev_amount)/Math.pow(10,dec)))+' to '+no(n6(Number(f.amount)/Math.pow(10,dec))):'')+'; '+no(String(n))+(n===1?' fall':' falls')+began+', '+no(n6(tot)+' SABL')+' in total. The chain says how much and when, not who burned it or why.';}
+        else html+='No burn seen yet: the supply has not fallen'+began+'. The whitepaper says paying in SABL burns it and that the rail is not live; the first fall of the mint supply is that rail live on-chain, whatever the announcements say.';
+        html+=' Source: <a href="'+GHBASE+'status/supply.jsonl">status/supply.jsonl</a> in the public record, read at load.';
+        bw.innerHTML=html;bw.hidden=false;})();
       list.innerHTML=es.slice(0,8).map(function(e){
         var bytes=num(e.bytes)?num(e.bytes).toLocaleString('en-US')+' bytes':'';var d=safePath(e.diff),s=safePath(e.snapshot);
         var body=e.first?'<b>first snapshot in the record</b> · <span translate="no">'+esc(e.cover||'')+'</span> · '+bytes
