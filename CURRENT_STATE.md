@@ -663,3 +663,43 @@ naast het statusendpoint, MCP Gateway naast zijn routes); onbekende claim-id's
 in het record krijgen een eigen rij zonder deploy. Test
 `tests/claims-test.mjs` (vier fixtures), shell-suite lokaal groen. De
 gh-workflow-run en de push gingen dit keer gewoon door.
+
+**Het Log korter, en het uurschema is geen uur (avond 8 september).** De founder
+zag dat de paginalog alles eronder wegdrukte: 28 regels, zo'n 6.000 px, met een
+lege rechterkolom ernaast. Nu toont de lijst zijn nieuwste drie regels en
+scrolt de rest in het kader (hoogte = bovenkant van de vierde regel, gemeten
+met een ResizeObserver omdat het Log in compactmodus verborgen begint); het
+whitepaperpaneel staat ernaast in de rechterkolom; betrouwbaarheidsrecord en
+aankondigingen beginnen nu op 1.535 px in plaats van 6.185 px. Zijn tweede
+opmerking, "het record is misschien wat verouderd", klopte om een andere reden
+dan een cache: GitHub draaide het uurschema (`17 * * * *`) maar zo'n 7 keer
+per dag (33 controles in vier dagen, gaten van twee tot zes uur), dus de
+nieuwste grootboekregel kon vier uur oud zijn terwijl de pagina "hourly" zei.
+Gedaan: vierde feit in het betrouwbaarheidsrecord (laatste controle, hoe lang
+geleden, aantal in 24 uur, gemiddelde per dag), een correctieregel onder "What
+this page got wrong", de whitepapertekst zegt nu "op een uurschema", en de
+workflow heeft een tweede cronregel (`47 * * * *`, commit 9a293f4). Niet
+gedaan, wel de echte oplossing als dit blijft: de run vanaf de VPS aftrappen
+met een fijnkorrelige token (credential op de VPS, dus validatiezone). Tests:
+`tests/log-box-test.mjs` (1320 en 390, grootboekfixture met een regel van 16
+minuten oud), shell-suite verwacht nu vier feiten.
+
+**Scorekaart AlfinMzn, 54.045 in golf 15 (avond 8 september).** De founder kreeg
+een deelkaart die niet op het bord stond. Onderzoek: AlfinMzn heeft zeven
+geaccepteerde runs vandaag (20:26 tot 21:10Z, beste 13.785 in golf 8); de
+54.045-run zit er niet bij. De kaart is vrijwel zeker echt: het zaad van vandaag
+(`2026-09-08:72514487a320`) levert rond 290 s precies 351 kapotte zegels en 216
+loops (simulatie `tests/sim-run.mjs`), de kaart zegt 353 en 216; het
+offline-zaad komt niet boven 350 zegels uit, dus de run draaide met een echte
+token. Perfect spel scoort op dat punt ~87.000, dus 54.045 met 15 lekken is
+gewoon menselijk. Een echte golf-15-run komt door alle servercontroles
+(`tests/long-run-check.mjs`: lokale board, 290 s wachten, HTTP 200). Waarom de
+inzending toch mislukte is niet vast te stellen: de server logt weigeringen
+niet en het nginx-logboek is gereset door mijn deploy van 21:05Z. Kandidaten:
+netwerkfout bij het versturen, token ouder dan 15 minuten (scherm uit tijdens
+de run), of een replay-mismatch. Niet gedaan: de run handmatig toevoegen (het
+bord speelt elke run na; zonder log is er niets na te spelen). Voorgesteld:
+weigeringen loggen zonder IP, de laatste onverzonden run in de browser bewaren
+met "opnieuw sturen", en het deployscript het bord laten overslaan als
+`leaderboard/` niet veranderde (elke `compose up --build` herstart het bord en
+breekt inzendingen van dat moment).
