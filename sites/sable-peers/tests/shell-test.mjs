@@ -67,8 +67,8 @@ ok(/✓ signature valid/.test(await p.$eval("#vout",e=>e.textContent)),"verifier
 const tv=await p.$eval("#t-verify",e=>e.textContent); const tt=await p.$eval("#t-token",e=>e.textContent); console.log("tiles:",tv,"|",tt);
 // the guide
 await p.goto(base,{waitUntil:"load"}); await wait(1500);
-await p.waitForFunction(()=>document.querySelectorAll("#rfacts .rfact").length===3,{timeout:15000}).catch(()=>{});
-ok(await p.evaluate(()=>document.querySelectorAll("#rfacts .rfact").length===3),"reliability facts rendered");
+await p.waitForFunction(()=>document.querySelectorAll("#rfacts .rfact").length===4,{timeout:15000}).catch(()=>{});
+ok(await p.evaluate(()=>document.querySelectorAll("#rfacts .rfact").length===4),"reliability facts rendered");
 ok(await p.evaluate(()=>document.querySelectorAll("#rgrid .rc").length>=24&&document.querySelectorAll("#rgrid .rc.ok,#rgrid .rc.warn,#rgrid .rc.off").length>=1),"reliability grid has checks");
 console.log("reliability:",await p.evaluate(()=>[...document.querySelectorAll("#rfacts .v")].map(e=>e.textContent).join(" | ")));
 if(!base.startsWith("file:")){

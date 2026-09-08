@@ -808,6 +808,18 @@ window.SABLE_EXT=(function(){
       stamp.setAttribute('data-live',n?'1':'0');stamp.textContent=n?('Live: '+n+' of '+rows.length+' values read '+new Date().toUTCString().slice(17,25)+' UTC from '+(by?'CoinGecko':'')+(by&&dx?' and ':'')+(dx?'DexScreener':'')+'; bars rescaled.'):'Live read failed; values as read 4 Sep 2026 16:00 UTC.';
     });
   })();
+  /* the page log shows its newest three entries; the box's height is the top of the fourth, so the rest scroll inside it.
+     Measured again whenever the list changes size: in compact mode the Log is hidden until chosen, and a hidden list measures zero. */
+  (function(){
+    var ul=document.getElementById('upd-list'),more=document.getElementById('upd-more');if(!ul)return;
+    var SHOW=3;
+    function fit(){var items=ul.children;if(items.length<=SHOW){ul.style.maxHeight='';if(more)more.hidden=true;return;}
+      var h=items[SHOW].getBoundingClientRect().top-ul.getBoundingClientRect().top;if(!(h>0))return;
+      var px=Math.round(h)+'px';if(ul.style.maxHeight!==px)ul.style.maxHeight=px;
+      if(more&&more.hidden){more.textContent='The newest '+SHOW+' of '+items.length+' entries. Scroll inside the box for the '+(items.length-SHOW)+' earlier ones.';more.hidden=false;}}
+    fit();addEventListener('resize',fit);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+    if('ResizeObserver' in window)new ResizeObserver(fit).observe(ul);
+  })();
   /* reliability record, read from the public repository */
   (function(){
     var grid=$('rgrid'),facts=$('rfacts'),tbl=$('ledger-table');if(!grid||!facts||!tbl)return;
@@ -841,7 +853,10 @@ window.SABLE_EXT=(function(){
       var f1='<div class="rfact"><span class="k">'+esc(word(cur))+' for</span><span class="v '+(cur==='ok'?'ok':'warn')+'">'+esc(dur(now-since))+'</span><span class="s">every check since '+esc(when(rows[i].t))+(i===0?', the first one in the record':'')+'.'+esc(est)+'</span></div>';
       var f2='<div class="rfact"><span class="k">confidential backend verified</span><span class="v '+(okN?(okN===n?'ok':''):'warn')+'">'+okN+' of '+n+' checks</span><span class="s">'+Math.round(100*okN/n)+'% of the checks since '+esc(label(day(Date.parse(first.t))))+'. Sable reports '+esc(String(last.uptime_24h==null?'?':last.uptime_24h))+'% uptime over 24 h and '+esc(String(last.uptime_30d==null?'?':last.uptime_30d))+'% over 30 days; that figure is the gateway, not the backend.</span></div>';
       var f3='<div class="rfact"><span class="k">gateway reachable</span><span class="v '+(reachN===n?'ok':'warn')+'">'+reachN+' of '+n+' checks</span><span class="s">'+(nodes.length?'Last check: '+esc(nodes.join(' · '))+'. ':'')+(sigN===1?'Signer unchanged across all '+n+' checks.':sigN>1?'Signer changed: '+sigN+' different addresses seen.':'')+'</span></div>';
-      facts.innerHTML=f1+f2+f3;
+      /* when the last check landed, and how often they land: the schedule is hourly, GitHub runs it when it can */
+      var ago=now-Date.parse(last.t),day24=rows.filter(function(r){return now-Date.parse(r.t)<=86400000}).length,spanD=Math.max(1,(now-Date.parse(first.t))/86400000);
+      var f4='<div class="rfact"><span class="k">last check</span><span class="v '+(ago<=95*60000?'ok':'warn')+'">'+esc(dur(ago))+' ago</span><span class="s">'+esc(when(last.t))+'. '+day24+(day24===1?' check':' checks')+' in the last 24 hours, '+(n/spanD).toFixed(1)+' a day on average since '+esc(label(day(Date.parse(first.t))))+'. The schedule is hourly; GitHub runs it when it can, so a fresh line can be hours away.</span></div>';
+      facts.innerHTML=f1+f2+f3+f4;
       /* day by hour, worst check wins the cell */
       var byHour={},rank={ok:1,warn:2,off:3};
       rows.forEach(function(r){var ms=Date.parse(r.t),k=day(ms)+'T'+new Date(ms).getUTCHours(),x=st(r),c=byHour[k]||(byHour[k]={rank:0,s:'',list:[]});if(rank[x]>c.rank){c.rank=rank[x];c.s=x;}c.list.push(r.t.slice(11,16)+' '+word(x));});

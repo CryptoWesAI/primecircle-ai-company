@@ -494,7 +494,7 @@
   .ledger-table{min-width:0;font-size:11.5px}
   .ledger-table th,.ledger-table td{padding:7px 8px;white-space:nowrap}
   .ledger-table td.warn{color:var(--warn)} .ledger-table td.ok{color:var(--ok)}
-  .rfacts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0 14px}
+  .rfacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 14px}
   .rfact{border:1px solid var(--edge);border-radius:10px;padding:12px 14px;background:rgba(5,7,10,.35);min-width:0}
   .rfact .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
   .rfact .v{font-size:21px;font-weight:600;line-height:1.15;display:block;overflow-wrap:anywhere}
@@ -510,6 +510,10 @@
   .corr li{display:grid;grid-template-columns:90px 1fr;gap:14px;font-size:13.5px;color:var(--dim);padding:10px 0;border-top:1px solid var(--edge)}
   .corr li:first-child{border-top:0}
   .corr .d{font-family:var(--mono);font-size:11.5px;color:var(--cyan-soft);padding-top:2px}
+  /* the page log shows its newest three entries; the rest scroll inside the box (the script sets the exact height) */
+  .corr.box{max-height:460px;overflow-y:auto;padding-right:10px;scrollbar-width:thin;scrollbar-color:var(--edge) transparent;overscroll-behavior:contain}
+  .corr.box:focus-visible{outline:1px solid var(--cyan-soft);outline-offset:4px}
+  #upd-more{margin-top:10px;font-size:12px}
   .corr b{color:var(--text);font-weight:600}
 
   /* matrix */
@@ -1033,9 +1037,10 @@
     <h2>Updates</h2>
     <p class="sub">What changed on this page, and what the hourly watcher has seen. <b>The left column is written by a person on every change. The right column is read from the public record at load and nobody edits it.</b></p>
     <div class="vgrid">
-      <div class="panel">
+      <div class="panel" id="page-updates">
         <h3>Page updates</h3>
-        <ul class="corr">
+        <ul class="corr box" id="upd-list" tabindex="0" aria-label="Page updates, newest first. Scroll inside the box for earlier entries.">
+          <li><span class="d">8 Sep 2026</span><span><b>The Log, shorter.</b> This list shows its newest three entries and the rest scroll inside the box, so the reliability record, the whitepaper watch and the announcements are on the first screen again; the whitepaper watch moved up beside the list. The reliability record gained a fourth figure, when the last check landed and how many landed in the last 24 hours, because the hourly schedule is not hourly in practice (see the record below).</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>Announced, then checked.</b> The Log gains a panel that keeps each Sable announcement next to what the deployment answers, from the same public record: the SABL pay-in beside the burn watch, the confidential tier beside the status endpoint, and the MCP Gateway, announced live on 8 September with a docs page that names its routes, beside those routes as the hourly watcher asks them without a key. On this gateway a routed path answers 401 before it looks anything up and an unrouted one 404; on 8 September every documented MCP Gateway route answered 404. The watcher keeps a ledger of every change of state and writes a changelog entry when an announced route first answers, and the daily page watch now also covers Sable's docs index and the MCP Gateway page.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>Burn watch.</b> The Token topic gains one line from the hourly watcher's own record: the SABL supply as the watcher reads it from Solana, with the time and the slot, and whether it has ever fallen. The whitepaper says paying in SABL burns it and that the rail is not live yet, so the first fall of the mint supply is that rail live on-chain, whatever the announcements say. The watcher keeps a separate ledger of every change of the supply and writes a changelog entry on every fall; the line stays hidden until that record exists. Later the same day: the Scenarios condition "burn visible on-chain" reads its answer from the same record, "not yet" or the fall, instead of standing there as an assertion.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>An app on your phone.</b> The page installs on a home screen (Chrome offers Install, Safari has Add to Home Screen), opens full screen with the site's mark as its icon, and works without a network for what it has already shown. The bell in the top bar turns on notifications: a new entry in this log, a change in Sable's whitepaper caught by the hourly watcher, or news about the contest, with the phone's own sound. A subscription is an address at the phone's push service and two keys, nothing else, and it can be turned off with the same bell.</span></li>
@@ -1065,6 +1070,17 @@
           <li><span class="d">4 Sep 2026</span><span><b>Restyled</b> to the PrimeCircle look and rewritten with a plain-language opening for people who do not write code. Community section added.</span></li>
           <li><span class="d">4 Sep 2026</span><span><b>First version:</b> the peer comparison, the market-cap ladder and the three scenarios, published as a card.</span></li>
         </ul>
+        <p class="quiet" id="upd-more" hidden></p>
+      </div>
+      <div class="panel" id="wp">
+        <h3>The whitepaper, watched hourly</h3>
+        <p class="note">An independent record fetches the whitepaper PDF on an hourly schedule, keeps a copy when it changes, and diffs the text sentence by sentence so a re-rendered file does not count as a change. This panel reads that record at page load, so a change shows up here on the next check. GitHub runs the schedule when it can; the reliability record below says when the last check landed. <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch">The full record, with every snapshot and diff.</a></p>
+        <div class="kv">
+          <span class="k">cover says</span><span class="v" id="wp-version" translate="no">reading…</span>
+          <span class="k">last change</span><span class="v" id="wp-last">…</span>
+          <span class="k">last check</span><span class="v" id="wp-check">…</span>
+        </div>
+        <ul class="corr" id="wp-list" aria-live="polite"></ul>
       </div>
       <div class="panel wide" id="ledger">
         <h3>Reliability record</h3>
@@ -1073,16 +1089,6 @@
         <p class="note">One cell per hour, UTC, coloured by the worst check in that hour: <span class="cell-legend ok"></span> verified · <span class="cell-legend warn"></span> failing closed · <span class="cell-legend off"></span> unreachable. A blank cell had no check: the schedule is set hourly, but runs often land two to four hours apart.</p>
         <div class="rgrid" id="rgrid" aria-label="checks by day and hour" translate="no"></div>
         <div class="tablewrap" style="margin-top:14px"><table class="ledger-table" id="ledger-table"><thead><tr><th>time (UTC)</th><th>gateway</th><th>confidential</th><th>refusals</th><th>signer</th></tr></thead><tbody translate="no"><tr><td colspan="5">reading the record…</td></tr></tbody></table></div>
-      </div>
-      <div class="panel wide" id="wp">
-        <h3>The whitepaper, watched hourly</h3>
-        <p class="note">An independent record fetches the whitepaper PDF every hour, keeps a copy when it changes, and diffs the text sentence by sentence so a re-rendered file does not count as a change. This panel reads that record at page load, so a change shows up here within the hour. <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch">The full record, with every snapshot and diff.</a></p>
-        <div class="kv">
-          <span class="k">cover says</span><span class="v" id="wp-version" translate="no">reading…</span>
-          <span class="k">last change</span><span class="v" id="wp-last">…</span>
-          <span class="k">last check</span><span class="v" id="wp-check">…</span>
-        </div>
-        <ul class="corr" id="wp-list" aria-live="polite"></ul>
       </div>
       <div class="panel wide" id="claims">
         <h3>Announced, then checked</h3>
@@ -1101,6 +1107,7 @@
     <h2>What this page got wrong</h2>
     <p class="sub">Sable's whitepaper says where its previous version was incorrect. A page that grades Sable on honesty should do the same. <b>Every correction stays here.</b></p>
     <ul class="corr">
+      <li><span class="d">8 Sep 2026</span><span>Said the watcher checks <b>hourly.</b> The schedule is hourly; GitHub ran it about seven times a day between 4 and 8 September, so a line in the record could be four hours old while the page said "hourly". Fixed: the reliability record shows when the last check landed and how many landed in the last 24 hours, the schedule has two entries an hour, and "hourly" on this page means the schedule, not a promise.</span></li>
       <li><span class="d">4 Sep 2026</span><span>Said Sable was <b>"two engineers."</b> The careers page lists two open roles and calls the team very small. Headcount is not public. Fixed everywhere.</span></li>
       <li><span class="d">4 Sep 2026</span><span>Said a signed response was <b>unique to Sable.</b> Phala, NEAR AI and Nillion ship one. Fixed in the table and the text.</span></li>
       <li><span class="d">4 Sep 2026</span><span>Said paid plans buy <b>"never more privacy."</b> The $199 plan unlocks the confidential mode. Fixed.</span></li>
@@ -1973,6 +1980,18 @@ window.SABLE_EXT=(function(){
       stamp.setAttribute('data-live',n?'1':'0');stamp.textContent=n?('Live: '+n+' of '+rows.length+' values read '+new Date().toUTCString().slice(17,25)+' UTC from '+(by?'CoinGecko':'')+(by&&dx?' and ':'')+(dx?'DexScreener':'')+'; bars rescaled.'):'Live read failed; values as read 4 Sep 2026 16:00 UTC.';
     });
   })();
+  /* the page log shows its newest three entries; the box's height is the top of the fourth, so the rest scroll inside it.
+     Measured again whenever the list changes size: in compact mode the Log is hidden until chosen, and a hidden list measures zero. */
+  (function(){
+    var ul=document.getElementById('upd-list'),more=document.getElementById('upd-more');if(!ul)return;
+    var SHOW=3;
+    function fit(){var items=ul.children;if(items.length<=SHOW){ul.style.maxHeight='';if(more)more.hidden=true;return;}
+      var h=items[SHOW].getBoundingClientRect().top-ul.getBoundingClientRect().top;if(!(h>0))return;
+      var px=Math.round(h)+'px';if(ul.style.maxHeight!==px)ul.style.maxHeight=px;
+      if(more&&more.hidden){more.textContent='The newest '+SHOW+' of '+items.length+' entries. Scroll inside the box for the '+(items.length-SHOW)+' earlier ones.';more.hidden=false;}}
+    fit();addEventListener('resize',fit);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+    if('ResizeObserver' in window)new ResizeObserver(fit).observe(ul);
+  })();
   /* reliability record, read from the public repository */
   (function(){
     var grid=$('rgrid'),facts=$('rfacts'),tbl=$('ledger-table');if(!grid||!facts||!tbl)return;
@@ -2006,7 +2025,10 @@ window.SABLE_EXT=(function(){
       var f1='<div class="rfact"><span class="k">'+esc(word(cur))+' for</span><span class="v '+(cur==='ok'?'ok':'warn')+'">'+esc(dur(now-since))+'</span><span class="s">every check since '+esc(when(rows[i].t))+(i===0?', the first one in the record':'')+'.'+esc(est)+'</span></div>';
       var f2='<div class="rfact"><span class="k">confidential backend verified</span><span class="v '+(okN?(okN===n?'ok':''):'warn')+'">'+okN+' of '+n+' checks</span><span class="s">'+Math.round(100*okN/n)+'% of the checks since '+esc(label(day(Date.parse(first.t))))+'. Sable reports '+esc(String(last.uptime_24h==null?'?':last.uptime_24h))+'% uptime over 24 h and '+esc(String(last.uptime_30d==null?'?':last.uptime_30d))+'% over 30 days; that figure is the gateway, not the backend.</span></div>';
       var f3='<div class="rfact"><span class="k">gateway reachable</span><span class="v '+(reachN===n?'ok':'warn')+'">'+reachN+' of '+n+' checks</span><span class="s">'+(nodes.length?'Last check: '+esc(nodes.join(' · '))+'. ':'')+(sigN===1?'Signer unchanged across all '+n+' checks.':sigN>1?'Signer changed: '+sigN+' different addresses seen.':'')+'</span></div>';
-      facts.innerHTML=f1+f2+f3;
+      /* when the last check landed, and how often they land: the schedule is hourly, GitHub runs it when it can */
+      var ago=now-Date.parse(last.t),day24=rows.filter(function(r){return now-Date.parse(r.t)<=86400000}).length,spanD=Math.max(1,(now-Date.parse(first.t))/86400000);
+      var f4='<div class="rfact"><span class="k">last check</span><span class="v '+(ago<=95*60000?'ok':'warn')+'">'+esc(dur(ago))+' ago</span><span class="s">'+esc(when(last.t))+'. '+day24+(day24===1?' check':' checks')+' in the last 24 hours, '+(n/spanD).toFixed(1)+' a day on average since '+esc(label(day(Date.parse(first.t))))+'. The schedule is hourly; GitHub runs it when it can, so a fresh line can be hours away.</span></div>';
+      facts.innerHTML=f1+f2+f3+f4;
       /* day by hour, worst check wins the cell */
       var byHour={},rank={ok:1,warn:2,off:3};
       rows.forEach(function(r){var ms=Date.parse(r.t),k=day(ms)+'T'+new Date(ms).getUTCHours(),x=st(r),c=byHour[k]||(byHour[k]={rank:0,s:'',list:[]});if(rank[x]>c.rank){c.rank=rank[x];c.s=x;}c.list.push(r.t.slice(11,16)+' '+word(x));});
