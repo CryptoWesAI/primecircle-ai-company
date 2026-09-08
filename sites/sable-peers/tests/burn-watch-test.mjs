@@ -33,9 +33,9 @@ const SUP={mint:"DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump",rpc:"https://api.
 const FALL={t:"2026-09-10T14:17:03Z",prev_amount:"958374438918883",amount:"958373204351883",delta:"-1234567000",ui_delta:-1234.567,slot:445400000};
 const cases=[
   {name:"no supply key",rec:BASE,hidden:true},
-  {name:"baseline, no fall",rec:{...BASE,sabl_supply:SUP},hidden:false,must:[/958,374,438\.918883 SABL/,/2026-09-08 09:17 UTC/,/slot 445,300,123/,/No burn seen yet/,/since the watch began on 2026-09-08/,/status\/supply\.jsonl/]},
+  {name:"baseline, no fall",rec:{...BASE,sabl_supply:SUP},hidden:false,scen:/^Not yet: watched hourly since 2026-09-08, no fall seen\. Burn watch\.$/,must:[/958,374,438\.918883 SABL/,/2026-09-08 09:17 UTC/,/slot 445,300,123/,/No burn seen yet/,/since the watch began on 2026-09-08/,/status\/supply\.jsonl/]},
   {name:"a fall",rec:{...BASE,sabl_supply:{...SUP,latest:{t:"2026-09-10T15:17:19Z",amount:"958373204351883",ui_amount:958373204.351883,slot:445410000},change_since_baseline:{amount:"-1234567000",ui_amount:-1234.567},changes:1,last_change:FALL,falls:1,last_fall:FALL,total_fallen:{amount:"1234567000",ui_amount:1234.567}}},hidden:false,
-   must:[/958,373,204\.351883 SABL/,/Supply fell by 1,234\.567 SABL on 2026-09-10 14:17 UTC/,/from 958,374,438\.918883 to 958,373,204\.351883/,/1 fall since the watch began on 2026-09-08/,/1,234\.567 SABL in total/],mustNot:[/No burn seen yet/]},
+   must:[/958,373,204\.351883 SABL/,/Supply fell by 1,234\.567 SABL on 2026-09-10 14:17 UTC/,/from 958,374,438\.918883 to 958,373,204\.351883/,/1 fall since the watch began on 2026-09-08/,/1,234\.567 SABL in total/],mustNot:[/No burn seen yet/],scen:/^Yes: the supply fell by 1,234\.567 SABL on 2026-09-10 14:17 UTC\. Burn watch\.$/},
 ];
 const b=await puppeteer.launch({executablePath:exe,headless:true});
 const errs=[],fails=[]; const ok=(c,m)=>{if(!c)fails.push(m)};
@@ -64,6 +64,11 @@ for(const c of cases){
   ok(!(await p.evaluate(()=>document.body.textContent.includes("undefined"))),c.name+": the page never says undefined");
   const href=await p.$eval("#burn-watch a",e=>e.getAttribute("href")).catch(()=>null);
   if(!c.hidden)ok(href==="https://github.com/CryptoWesAI/sable-whitepaper-watch/blob/main/status/supply.jsonl",c.name+": source link "+href);
+  // the Scenarios condition "burn visible on-chain" carries the same answer
+  const sHidden=await p.$eval("#scn-burn-live",e=>e.hidden), sText=await p.$eval("#scn-burn-live",e=>e.textContent.replace(/\s+/g," ").trim());
+  ok(sHidden===c.hidden,c.name+": scenario indicator hidden="+sHidden+" (wanted "+c.hidden+")");
+  ok(!/undefined|NaN|null/.test(sText),c.name+": no undefined/NaN/null in the scenario indicator: "+sText);
+  if(c.scen)ok(c.scen.test(sText),c.name+": scenario indicator expected "+c.scen+" in: "+sText);
   ok(!(await p.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth)),c.name+": no horizontal overflow");
   console.log(c.name+":",hidden?"(hidden)":text);
   await p.screenshot({path:`shots/burn-watch-${c.name.replace(/\W+/g,"-")}.png`});

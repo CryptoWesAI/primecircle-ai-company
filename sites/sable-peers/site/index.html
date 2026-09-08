@@ -636,6 +636,7 @@
     .ticks{margin-left:150px;margin-right:84px}
     .foot{grid-template-columns:1fr}
   }
+.scen li .live{display:block;font-size:.88em;opacity:.78;margin-top:2px}
 </style>
 </head>
 <body>
@@ -981,7 +982,7 @@
   <section class="band" id="scenarios">
     <div class="eyebrow left">07 / 07 · What would have to be true</div>
     <h2>Scenarios, not predictions</h2>
-    <p class="sub">What SABL's cap would look like if the market priced it in a peer's band, and what would have to happen first. <b>The only mechanical link between usage and the token is the burn on pay-in, and that rail is not live yet.</b></p>
+    <p class="sub">What SABL's cap would look like if the market priced it in a peer's band, and what would have to happen first. <b>The only mechanical link between usage and the token is the burn on pay-in, and that rail is not live yet.</b> The <a href="#token">Token topic</a> reads the mint supply on Solana every hour, so the one condition below that carries an answer is checked by this page, not asserted.</p>
     <div class="scen">
       <div class="now">
         <div class="k">Stays a community token</div>
@@ -993,7 +994,7 @@
         <div class="k">Adoption is visible</div>
         <div class="range">$7M to $25M</div>
         <div class="band-ref">Marlin to Phala and Nillion band</div>
-        <ul><li>OpenRouter listing lands</li><li>Paying customers on the Private tier</li><li>Agent directory fills with real passports</li><li>SABL pay-in goes live, burn visible on-chain</li><li>Operator programme opens</li></ul>
+        <ul><li>OpenRouter listing lands</li><li>Paying customers on the Private tier</li><li>Agent directory fills with real passports</li><li id="scn-burn">SABL pay-in goes live, burn visible on-chain<span class="live" id="scn-burn-live" hidden translate="no"></span></li><li>Operator programme opens</li></ul>
       </div>
       <div>
         <div class="k">Category re-rate</div>
@@ -1072,7 +1073,7 @@
       <div class="panel">
         <h3>Page updates</h3>
         <ul class="corr">
-          <li><span class="d">8 Sep 2026</span><span><b>Burn watch.</b> The Token topic gains one line from the hourly watcher's own record: the SABL supply as the watcher reads it from Solana, with the time and the slot, and whether it has ever fallen. The whitepaper says paying in SABL burns it and that the rail is not live yet, so the first fall of the mint supply is that rail live on-chain, whatever the announcements say. The watcher keeps a separate ledger of every change of the supply and writes a changelog entry on every fall; the line stays hidden until that record exists.</span></li>
+          <li><span class="d">8 Sep 2026</span><span><b>Burn watch.</b> The Token topic gains one line from the hourly watcher's own record: the SABL supply as the watcher reads it from Solana, with the time and the slot, and whether it has ever fallen. The whitepaper says paying in SABL burns it and that the rail is not live yet, so the first fall of the mint supply is that rail live on-chain, whatever the announcements say. The watcher keeps a separate ledger of every change of the supply and writes a changelog entry on every fall; the line stays hidden until that record exists. Later the same day: the Scenarios condition "burn visible on-chain" reads its answer from the same record, "not yet" or the fall, instead of standing there as an assertion.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>An app on your phone.</b> The page installs on a home screen (Chrome offers Install, Safari has Add to Home Screen), opens full screen with the site's mark as its icon, and works without a network for what it has already shown. The bell in the top bar turns on notifications: a new entry in this log, a change in Sable's whitepaper caught by the hourly watcher, or news about the contest, with the phone's own sound. A subscription is an address at the phone's push service and two keys, nothing else, and it can be turned off with the same bell.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>A thousand lights.</b> The Token topic opens with a ring of a thousand lights, one for every million SABL ever minted, read from Solana through this site's proxy: the lit ones exist, the dark ones are burned, and none can be made, since the mint authority is gone. Beside it the burn, the market cap with its 24-hour move, and a day-by-day strip that the hourly watcher fills from 8 September, one bar a day, from its own record rather than an API's change field.</span></li>
           <li><span class="d">7 Sep 2026</span><span><b>Supply, as Sable lists it.</b> Verify now shows Sable's node listing live, with the ledger's memory of each machine, and one line that says how many third-party machines serve traffic: zero, by Sable's own statement in the whitepaper. That line changes the day the listing does. The reliability record's "third-party node" was the same machine, Sable's own runner; corrected.</span></li>

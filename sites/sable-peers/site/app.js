@@ -721,7 +721,11 @@ window.SABLE_EXT=(function(){
           html+='Supply fell by '+no(n6(-f.ui_delta)+' SABL')+' on '+no(when(f.t))+(/^\d+$/.test(String(f.prev_amount))&&/^\d+$/.test(String(f.amount))?', from '+no(n6(Number(f.prev_amount)/Math.pow(10,dec)))+' to '+no(n6(Number(f.amount)/Math.pow(10,dec))):'')+'; '+no(String(n))+(n===1?' fall':' falls')+began+', '+no(n6(tot)+' SABL')+' in total. The chain says how much and when, not who burned it or why.';}
         else html+='No burn seen yet: the supply has not fallen'+began+'. The whitepaper says paying in SABL burns it and that the rail is not live; the first fall of the mint supply is that rail live on-chain, whatever the announcements say.';
         html+=' Source: <a href="'+GHBASE+'status/supply.jsonl">status/supply.jsonl</a> in the public record, read at load.';
-        bw.innerHTML=html;bw.hidden=false;})();
+        bw.innerHTML=html;bw.hidden=false;
+        /* the Scenarios topic lists "burn visible on-chain" as a condition; this is its answer, from the same record */
+        var sl=document.getElementById('scn-burn-live');
+        if(sl){sl.innerHTML=fell?'Yes: the supply fell by '+no(n6(-f.ui_delta)+' SABL')+' on '+no(when(f.t))+'. <a href="#token">Burn watch</a>.'
+          :'Not yet: watched hourly'+(typeof b.t==='string'?' since '+no(b.t.slice(0,10)):'')+', no fall seen. <a href="#token">Burn watch</a>.';sl.hidden=false;}})();
       list.innerHTML=es.slice(0,8).map(function(e){
         var bytes=num(e.bytes)?num(e.bytes).toLocaleString('en-US')+' bytes':'';var d=safePath(e.diff),s=safePath(e.snapshot);
         var body=e.first?'<b>first snapshot in the record</b> · <span translate="no">'+esc(e.cover||'')+'</span> · '+bytes
