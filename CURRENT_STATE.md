@@ -742,3 +742,30 @@ shell live groen. Gedeployed 22:18Z op een rustig moment (AlfinMzn's laatste run
 code geeft 200 met details, een foute code 404. Sterrenvingerafdruk ongewijzigd,
 dus de forensische check werkt ook op oude kaarten. Beslissingen in
 `sites/sable-peers/GAME-PLAN.md`.
+
+**Elke naam op de lijst (9 september, /loop-opdracht van de founder).** Vraag:
+moet "The field" (8 rijen) gelijk zijn aan "Token" (13 balken), plus een sectie
+die per project de band met Sable en de reden van opname uitlegt, plus een
+onderzoek naar ontstaan en marktkapverloop, wat Sable nodig heeft om een top
+pick te worden, en hoe je communityleden van de buren wint. Antwoord op de
+eerste vraag: nee, de lijsten meten twee dingen (de tabel neemt een project op
+als zijn docs de kolommen beantwoorden, de ladder een token als de markt het
+onder hetzelfde verhaal schaart); wat ontbrak was de uitleg per naam. Gebouwd:
+sectie 05b "Every name, and why it is here" in het Field-onderwerp (13 kaarten:
+wat, band met Sable, welke lijst en waarom, marktkapboog met CoinGecko-cijfers
+van 9 september) plus het paneel "What would move Sable up the ladder" (zeven
+punten, gemeten aan de peers, met disclosure). Onderzoek: zeven Sonnet-agents
+schreven 13 factsheets plus een landschapsnotitie in `crypto/research/peers/`;
+`crypto/tools/cg-history.mjs` haalt genesis, ATH, huidige kap en 1-jaars
+reeks van CoinGecko (de volledige historie vraagt sinds 2024 een sleutel; de
+coin-endpoint niet). Synthese in
+`crypto/research/2026-09-09-sable-peers-deep-dive.md`: elk token op de ladder
+staat 66 tot 100 procent onder zijn top en elf van de twaalf onder een jaar
+geleden; geen enkele peer bewoog op het uitbrengen van confidential AI compute;
+wat Sable nodig heeft (markt met diepte, GPU TEE, launchpartners, één pitch,
+tokenrol die gebruik volgt, betrouwbaarheid, bouwersprogramma's) en het eerlijke
+communityplan (tien tactieken, per buurcommunity de haak). Tests: shell lokaal
+groen, `tests/shot-who.mjs` (13 kaarten, Field-onderwerp, 1320 en 390), de
+translate-suite had een verouderde `#strip`-selector uit 7 september (element
+weg sinds het betrouwbaarheidsrecord), gerepareerd. Niet gedaan, bewust:
+Marlin, iExec en Akash als tabelrij, pas na kolom-voor-kolom lezing van hun docs.

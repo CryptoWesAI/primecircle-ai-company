@@ -459,6 +459,16 @@
   .promise .n{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--cyan);margin-bottom:10px}
   .promise p{color:var(--dim);margin:0;font-size:14px}
   .promise p b{color:var(--text);font-weight:600}
+  /* every name on the list: one card per peer */
+  .who{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:18px 0 22px}
+  .who .card{border:1px solid var(--edge);border-radius:12px;padding:18px 20px;background:rgba(5,7,10,.35);min-width:0}
+  .who h3{margin:0 0 4px;font-size:16px}
+  .who .meta{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--cyan-soft);margin-bottom:10px;line-height:1.5}
+  .who p{margin:0 0 8px;font-size:13.5px;color:var(--dim);line-height:1.55}
+  .who p b{color:var(--text);font-weight:600}
+  .who .arc{font-family:var(--mono);font-size:11.5px;color:var(--text);line-height:1.6;margin:8px 0 0;border-top:1px solid var(--edge);padding-top:8px}
+  #who .src{max-width:90ch;line-height:1.6;color:var(--dim);font-size:12.5px;margin-top:18px}
+  #who-up{margin-top:6px}
   .prose{max-width:66ch}
   .prose p{color:var(--dim)}
   .prose p b{color:var(--text);font-weight:600}
@@ -636,7 +646,7 @@
 
   @media (max-width:820px){
     .band{padding:28px 20px}
-    .three,.scen,.gloss,.door-grid,.kept,.vgrid{grid-template-columns:1fr}
+    .three,.scen,.gloss,.door-grid,.kept,.vgrid,.who{grid-template-columns:1fr}
     .kv{grid-template-columns:1fr}
     .corr li{grid-template-columns:1fr;gap:2px}
     .door-in,.door-stage{padding:16px}
@@ -957,6 +967,94 @@
     <p class="quiet">Sable's confidential tier serves two small open models on CPU-only TDX; its standard tier is not confidential, in its own words. Phala, NEAR AI, Nillion, Secret and Tinfoil run models on GPU confidential computing. That is the clearest capability gap. Signed responses are no longer unique to Sable: Phala, NEAR AI and Nillion ship them. What remains unmatched is the combination of hard per-key caps, shrink-only sub-keys, live x402 and metered sandboxes behind one key.</p>
   </section>
 
+  <section class="band" id="who">
+    <div class="eyebrow left">05b / 07 · Every name on the list</div>
+    <h2>Every name, and why it is here</h2>
+    <p class="sub">The table above and the ladder below answer two different questions, so their lists differ. <b>The table takes a project when its documentation answers the columns; the ladder takes a token when the market files it under the same story.</b> Here is each name once: what it is, how it touches Sable, which list it earned and why, and how its market cap got where it is. Prices and caps from CoinGecko on 9 Sep 2026; the rest from each project's own pages, read that week.</p>
+    <div class="who">
+      <div class="card"><h3><span translate="no">NEAR AI Cloud</span></h3><div class="meta">NEAR since 2018 · token since Oct 2020 · table and ladder</div>
+        <p><b>What.</b> Confidential inference from the NEAR ecosystem: open models inside Intel TDX plus NVIDIA GPU TEEs, an attestation per response, a public attestation endpoint. Launched 3 Dec 2025 with Brave, OpenMind and Phala as partners.</p>
+        <p><b>Link to Sable.</b> The closest feature-for-feature analogue: the same hardware trust, per-response proof, agent traffic. Sable adds per-key caps, sub-keys, x402 and an EIP-191 receipt any wallet checks; NEAR adds a decade of brand, $500M raised and GPU models.</p>
+        <p><b>Why here.</b> In the table because its docs answer the columns; on the ladder as the L1 that funds it.</p>
+        <p class="arc">ATH $20.44 (Jan 2022) · $3.01B on 9 Sep 2026, 89% below · high on L1 scale, off the high on years of unlocks and a lost L1 race</p></div>
+      <div class="card"><h3><span translate="no">Bittensor</span></h3><div class="meta">chain 2021, subnets Oct 2023 · TAO listed 2023 · ladder only</div>
+        <p><b>What.</b> A network of competing subnets paid in TAO for machine intelligence; hard cap of 21M, first halving Dec 2025. Confidential compute exists at subnet level (KubeTEE, subnet 90, "early access" by its own words).</p>
+        <p><b>Link to Sable.</b> Same problem in one subnet, no unified attestation or payment standard across the network. Sable is one gateway with one receipt model.</p>
+        <p><b>Why here.</b> The largest liquid token branded "decentralised AI", so the market compares every AI-compute token to it. Not in the table: no first-party product to read column by column.</p>
+        <p class="arc">ATH $758 (Mar or Apr 2024) · $2.47B on 9 Sep 2026, 66% below · emissions still add supply while the market prices how much subnet work is real demand</p></div>
+      <div class="card"><h3><span translate="no">Virtuals</span></h3><div class="meta">PathDAO 2021, agent pivot Jan 2024 · VIRTUAL on Base · ladder only</div>
+        <p><b>What.</b> An AI-agent launchpad and commerce protocol: tokenised agents on bonding curves, the Agent Commerce Protocol for agent-to-agent trade, 1.1M holder addresses.</p>
+        <p><b>Link to Sable.</b> A customer more than a competitor: its agents need metered compute and machine payments, which is what x402, passports and receipts are for.</p>
+        <p><b>Why here.</b> The agent narrative sets the ceiling for any "agents need money and machines" token. Not in the table: it sells identity and commerce, not compute.</p>
+        <p class="arc">ATH $5.07 (1 Jan 2025) · $469M on 9 Sep 2026, 86% below · rode the agent wave, fell as agent creation and revenue cooled through 2025</p></div>
+      <div class="card"><h3><span translate="no">Akash</span></h3><div class="meta">2018, mainnet Sep 2020 · AKT since Oct 2020 · ladder, table candidate</div>
+        <p><b>What.</b> A decentralised compute marketplace on its own Cosmos chain: GPUs since 2023, managed inference (AkashML) since Nov 2025, hardware-attested TEE deployments (TDX or SEV-SNP, CPU and GPU) since 29 Jul 2026.</p>
+        <p><b>Link to Sable.</b> The nearest production-scale marketplace with the same attestation for AI, priced in AKT leases rather than a USD gateway; no per-response receipt found.</p>
+        <p><b>Why here.</b> On the ladder as the compute benchmark. A table row once its TEE docs are read against the columns.</p>
+        <p class="arc">ATH $8.07 (Apr 2021) · $173M on 9 Sep 2026, 93% below · the only peer above $100M through the sector's down year; inflation up to 8% dilutes</p></div>
+      <div class="card"><h3><span translate="no">Oasis ROFL</span></h3><div class="meta">2018 · ROSE since Nov 2020 · table and ladder</div>
+        <p><b>What.</b> A privacy L1 (Solidity inside SGX since 2020) plus ROFL, off-chain apps in SGX or TDX enclaves anchored to the chain, mainnet 2 Jul 2025, aimed at agents, oracles and AI.</p>
+        <p><b>Link to Sable.</b> Both sell TEE trust for agent compute; Oasis sells it as a chain with validators and a token, Sable as a gateway with receipts and caps.</p>
+        <p><b>Why here.</b> Table: its ROFL docs answer the columns. Ladder: the same confidential-compute story.</p>
+        <p class="arc">ATH $0.60 (Jan 2022) · $55M on 9 Sep 2026, 99% below · the 2022 high was a DeFi story; 278K followers on X and 63K on Discord did not re-rate it</p></div>
+      <div class="card"><h3><span translate="no">iExec</span></h3><div class="meta">2016, ICO Apr 2017 · RLC, fixed 87M · ladder, table candidate</div>
+        <p><b>What.</b> The oldest name here: a compute marketplace on Ethereum, now confidential AI in TDX (DeepSeek in enclaves, ElizaOS agents, an MCP server), privacy tools on Arbitrum since Sep 2025.</p>
+        <p><b>Link to Sable.</b> TEE tasks for agents with remote attestation; no per-response signature, no spend caps found. It retired its own sidechain in Jul 2026, an argument for staying a gateway.</p>
+        <p><b>Why here.</b> Ladder: the 2017-cycle precedent for confidential compute. A table row once its docs are read column by column.</p>
+        <p class="arc">ATH $15.51 (May 2021) · $26M on 9 Sep 2026, 98% below · no unlocks, no inflation; age and newer names carry the story</p></div>
+      <div class="card"><h3><span translate="no">Nillion</span></h3><div class="meta">2021 · NIL since 24 Mar 2025 · table and ladder</div>
+        <p><b>What.</b> "Blind computing": nilAI runs models on NVIDIA confidential computing and signs every completion; Blacklight (Feb 2026) verifies other TEE workloads, Phala included.</p>
+        <p><b>Link to Sable.</b> Signed completions are the nearest thing to Sable's receipts. Nillion runs a whole chain and a mandatory token around it; Sable meters over existing compute with the token optional.</p>
+        <p><b>Why here.</b> Table: the docs answer the columns. Ladder: the same buyers.</p>
+        <p class="arc">ATH $0.90 (TGE day, Mar 2025) · $26M on 9 Sep 2026, 94% below · token before durable usage, an unauthorised market-maker dump in Nov 2025, a chain migration in 2026</p></div>
+      <div class="card"><h3><span translate="no">OpenGradient</span></h3><div class="meta">2024 · OPG on Base since 21 Apr 2026 · table and ladder</div>
+        <p><b>What.</b> A verifiable inference network: zkML proofs or TEE attestation per call, a model hub, x402 payments, mainnet and token together in April 2026, 169K on Discord.</p>
+        <p><b>Link to Sable.</b> The most direct token-bearing competitor: a paid layer between agents and compute with a proof per call and x402. It ships staking and governance too; Sable ships none and prices in USD.</p>
+        <p><b>Why here.</b> Table and ladder both: same product, same story, a real trading history to compare with SABL's.</p>
+        <p class="arc">ATH $0.48 (22 Apr 2026) · $22.5M on 9 Sep 2026, 79% below · token-first launch, then the usual post-TGE unwind</p></div>
+      <div class="card"><h3><span translate="no">Phala</span></h3><div class="meta">2018 · PHA since Sep 2020 · table and ladder</div>
+        <p><b>What.</b> Confidential compute on TDX, SGX and NVIDIA H100 and H200 GPU TEEs since 17 Jul 2025, real-time attestation and a one-click "Chat and Verify". Paid ambassadors (45,000 PHA a month) and a builders programme.</p>
+        <p><b>Link to Sable.</b> The strongest confidential AI product on the list, and a NEAR AI launch partner. Its proof is a TEE quote checked in its own tool; Sable's is a portable signature.</p>
+        <p><b>Why here.</b> Table: yes, on every column. Ladder: the reference confidential-compute token.</p>
+        <p class="arc">ATH $1.39 (May 2021) · $22M on 9 Sep 2026, 98% below · three repositionings since the Polkadot story ended, each costing narrative time; the product got better while the price did not</p></div>
+      <div class="card"><h3><span translate="no">Secret</span></h3><div class="meta">Enigma 2015, relaunch 2020 · SCRT · table and ladder</div>
+        <p><b>What.</b> The oldest confidential-computing chain (SGX contracts since 2020) with Secret AI on NVIDIA TEEs. In 2026: SGX attestation broken by physical attacks, a bridge exploit, SCRT Labs out on 1 Sep, a Binance delisting, an emergency mint that quadrupled supply.</p>
+        <p><b>Link to Sable.</b> The direct predecessor of Sable's TDX tier, and the case for why a per-response receipt should not rest on attestation alone.</p>
+        <p><b>Why here.</b> Table: still documented. Ladder: the same story, at its end.</p>
+        <p class="arc">ATH $10.38 (Oct 2021) · $12M on 9 Sep 2026 · the 2021 cycle peak, then a 2026 collapse of trust, support and supply at once</p></div>
+      <div class="card"><h3><span translate="no">Marlin</span></h3><div class="meta">2017 to 2018 · POND since Dec 2020 · ladder, table candidate</div>
+        <p><b>What.</b> Oyster, a marketplace renting confidential VMs by the hour on SGX, Nitro and TDX (since 2024), with attestation checked in a Solidity library or a portal; usable for AI.</p>
+        <p><b>Link to Sable.</b> Raw confidential compute without the metering, caps or receipts; quiet developer usage for years.</p>
+        <p><b>Why here.</b> Ladder: the floor for infrastructure without a story. A table row once its docs are read column by column.</p>
+        <p class="arc">ATH $0.32 (Dec 2020) · $7.4M on 9 Sep 2026, 100% below · launch hype in 2020, then a long narrative gap; about 4K on Discord</p></div>
+      <div class="card"><h3><span translate="no">Automata</span></h3><div class="meta">2019 to 2021 · ATA since Jun 2021 · ladder only</div>
+        <p><b>What.</b> A machine attestation layer: SGX and TDX quotes verified in smart contracts, an EigenLayer AVS, and 1RPC with a "verified AI gateway" of 39 models on TEE relays.</p>
+        <p><b>Link to Sable.</b> The same hardware trust, sold as a layer others build on rather than as a metered gateway; no caps or per-response signatures found.</p>
+        <p><b>Why here.</b> Ladder: the attestation token. Not in the table: not a compute product with the columns.</p>
+        <p class="arc">ATH $2.36 (Jun 2021) · $634K on 9 Sep 2026, near its all-time low · Binance delisted it on 27 May 2026; a horizontal layer that never got a sticky application of its own</p></div>
+      <div class="card"><h3><span translate="no">Tinfoil</span></h3><div class="meta">2024, YC Summer 2025 · no token · table only</div>
+        <p><b>What.</b> A six-person startup selling confidential inference in TDX, SEV-SNP and GPU TEEs through an OpenAI-compatible API; SDKs verify attestation automatically, code provenance through Sigstore.</p>
+        <p><b>Link to Sable.</b> Sable's pitch without a token or a chain: the sharpest contrast on the list, and proof the category is fundable on its own.</p>
+        <p><b>Why here.</b> Table: its docs answer the columns. Not on the ladder: nothing to trade.</p>
+        <p class="arc">no market cap · about $660K annualised revenue per a third-party estimate (Sep 2025) · a low three-digit following on X</p></div>
+    </div>
+    <div class="panel wide" id="who-up">
+      <h3>What would move Sable up the ladder</h3>
+      <p class="note">Read against the twelve tokens above, not against hopes. Every one of them is 66 to 100 percent below its high and eleven are below where they stood a year ago; no peer's cap moved on shipping confidential AI compute. So this is what an observer would watch, in the order it explains the distance.</p>
+      <ul class="corr">
+        <li><span class="d">market</span><span>Every ladder token above $20M trades on Binance, Coinbase, Kraken or Upbit with millions a day. SABL trades on one Solana pool with about $60K of liquidity. Until a market with depth exists, nothing below can move the bar by more than the pool allows.</span></li>
+        <li><span class="d">GPU TEE</span><span>Five peers run models on GPU confidential computing; Akash joined in July 2026. Sable serves two small CPU-only models on TDX, and that tier has refused every request since 4 September (the reliability record in the Log). The capability gap and the reliability gap are one conversation.</span></li>
+        <li><span class="d">partners</span><span>NEAR AI named Brave, OpenMind and Phala on day one. Sable has an OpenRouter application and no named integration. One partner routing real traffic through the gateway would say more than any feature.</span></li>
+        <li><span class="d">one pitch</span><span>Phala's three repositionings and Marlin's quiet years show the cost of drift; Akash's steady line paid off when the AI wave arrived. "Compute you can prove" is a good line to keep, whitepaper version labels included.</span></li>
+        <li><span class="d">token role</span><span>OpenGradient and Nillion launched token utility before fee-paying usage and fell 79 and 94 percent. Sable's order, USDT first and SABL optional, is the right one; it also means the cap has no reason to move before the pay-in is live and the burn is visible. The burn watch above is the instrument.</span></li>
+        <li><span class="d">reliability</span><span>Secret's 2026 collapse came from attestation breaking and governance improvising. Failing closed is the right design; five days closed without a public note is the opposite of that strength.</span></li>
+        <li><span class="d">builders</span><span>Phala's paid ambassadors, Virtuals' revenue-tied payouts and Akash's paid contribution tasks moved builders by paying for checkable output. A small grants line tied to shipped integrations would be the cheapest credible signal.</span></li>
+      </ul>
+      <p class="quiet">Things that did not help the peers, judging by their arcs: a bigger Discord number, a second chain, token governance, a rebrand.</p>
+    </div>
+    <div class="src">Sources: CoinGecko (prices, highs, caps, 9 Sep 2026) · DexScreener for SABL · each project's own site and docs, read 9 Sep 2026 · one fact sheet per project with every URL and date in <a href="https://github.com/CryptoWesAI/primecircle-ai-company/tree/master/crypto/research/peers">the public research folder</a>. The author holds SABL; the "what would move it" list is opinion.</div>
+  </section>
+
   <section class="band" id="token">
     <div class="eyebrow left">06 / 07 · The token</div>
     <h2>Where the token sits</h2>
@@ -1086,6 +1184,7 @@
       <div class="panel" id="page-updates">
         <h3>Page updates</h3>
         <ul class="corr box" id="upd-list" tabindex="0" aria-label="Page updates, newest first. Scroll inside the box for earlier entries.">
+          <li><span class="d">9 Sep 2026</span><span><b>Every name on the list.</b> The field table and the token ladder never had the same names, because they answer different questions: the table takes a project when its documentation answers the columns, the ladder takes a token when the market files it under the same story. A new section under the table (05b) gives each of the thirteen names one card: what it is, how it touches Sable, which list it earned and why, and its market cap arc from CoinGecko on 9 September (every token on the ladder is 66 to 100 percent below its high, eleven of twelve below a year ago). It closes with what would move Sable up the ladder, read against the peers rather than against hopes. One fact sheet per project, with every source and date, is in the public research folder.</span></li>
           <li><span class="d">9 Sep 2026</span><span><b>Gatekeeper: the card is a record now.</b> A share card is drawn after the board's verdict, not before. A run the board accepted gets a stamp top right, "on the board" with its rank and a check code like 58-K7Q2M9XA that the board hands out with the acceptance; anyone can type that code into "Check a card" under the leaderboard and the board answers with the run's own numbers, replayed from its input log. A run the board did not accept gets "not on the board" and the reason, so a screenshot without a code is a claim and a code is a record. The code is eight characters from a keyed hash over the row, in an alphabet without 0, O, 1, I and L, so a card that was never on the board cannot carry a code that checks out.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>Gatekeeper: a customer sent away costs budget, and long runs reach the board again.</b> A shared card showed 54,045 points in wave 15 that the board never received. The reason sat in this site's own web server: it capped a submission at 8 KB, and a run's input log is about 22 bytes per tap, so every run with more than about 360 taps was refused with 413 since the board opened on 7 September. The strongest runs were exactly the ones lost. The cap is now 512 KB (the board itself stops at 300 KB), and it goes on the record below. Checking the card against the arena of the day showed the score was reachable only by refusing nearly everything, sealed requests included: loops paid without a multiplier and a wrong refusal cost nothing but the streak. From now a wrongly refused sealed request costs 5 budget, a quarter of a broken seal, so tapping everything ends a shift early. Scores already on the board stand. The board now names its rules version with every token, tells a page loaded before a change to reload instead of failing the replay silently, allows 45 minutes between token and run so a phone call does not void a run, and keeps a line per accepted or refused submission (no IP, no device), so the next "my run is not on the board" has an answer.</span></li>
           <li><span class="d">8 Sep 2026</span><span><b>The Log, shorter.</b> This list shows its newest three entries and the rest scroll inside the box, so the reliability record, the whitepaper watch and the announcements are on the first screen again; the whitepaper watch moved up beside the list. The reliability record gained a fourth figure, when the last check landed and how many landed in the last 24 hours, because the hourly schedule is not hourly in practice (see the record below).</span></li>

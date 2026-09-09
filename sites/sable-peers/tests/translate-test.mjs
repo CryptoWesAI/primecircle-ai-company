@@ -29,7 +29,7 @@ await p.goto(base+"?view=full",{waitUntil:"load"}); await wait(4500);
 ok(await p.evaluate(()=>document.documentElement.lang==="en"||location.protocol==="file:"),"html lang is en");
 // 1. translate modes declared the way we want them
 const flags=await p.evaluate(()=>{const q=s=>[...document.querySelectorAll(s)];const bad=[];
-  const no=["#signer","#st-gw","#cipher","#receipt","#kept","#never",".ladder",".ladder .lab",".ladder .val","#strip","#ledger-table tbody","#wp-version","#rcpt","#sig","#exp","td.name > span"];
+  const no=["#signer","#st-gw","#cipher","#receipt","#kept","#never",".ladder",".ladder .lab",".ladder .val","#ledger-table tbody","#wp-version","#rcpt","#sig","#exp","td.name > span"];
   const yes=["#explained h2","#record .corr li","#field th","td.name small","td.pc","#vout","#holdtxt","#st-conf","#wp-list","#t-verify","#guide-cap","#ledger-table th","#mc-stamp","#updates .corr li"];
   no.forEach(s=>{const es=q(s);if(!es.length)bad.push("missing "+s);es.forEach(e=>{if(e.translate!==false)bad.push("translatable but should not be: "+s)})});
   yes.forEach(s=>{const es=q(s);if(!es.length)bad.push("missing "+s);es.forEach(e=>{if(e.translate!==true)bad.push("blocked but should translate: "+s)})});
