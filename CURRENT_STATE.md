@@ -816,3 +816,6 @@ supply, routewacht en statusregel allemaal goed; de push wacht op de sleutel
 op GitHub. Het GitHub-schema blijft als fallback. Open: de founder voegt de
 publieke sleutel toe (staat in het gesprek en op de VPS in
 `/opt/sable-watch/keys/id_ed25519.pub`); daarna is de eerste push het bewijs.
+Vervolg: de founder zette de sleutel erop; de handmatige run om 08:55Z pushte
+(commit 4985716 in de watch-repo, "(vps)" in het bericht), niets meer lokaal
+achter. Vanaf nu elk uur op :05 een regel van de VPS, plus wat GitHub haalt.
