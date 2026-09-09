@@ -74,6 +74,22 @@ try {
   ok(bot.status === 200 && bot.body.ok && bot.body.flagged === true, "patient script's run accepted but flagged: " + JSON.stringify(bot.body) + " refusals " + runb.refused);
   ok(good.body.flagged === false, "a short human-length run is not flagged");
   const ct2 = await get("/top?period=contest"); ok(ct2.body.rows.every((r) => r.name !== "Patient Script") && (await get("/top?period=today")).body.rows.some((r) => r.name === "Patient Script"), "flagged run is on the board but out of the contest");
+  // src tags: a run from a tagged link (?src=java) is counted on its own /top tab; a bad tag never
+  // fails the run, it is just stored as null and stays off every tab
+  const devSrc = "device-src-0123456789abcdefgh";
+  const stSrc = await post("/start", { device: devSrc }); const runSrc = play(stSrc.body.seed, 260); await settle(runSrc);
+  const srcOk = await post("/score", { token: stSrc.body.token, device: devSrc, name: "Java Runner", handle: "", rules: RULES, ...runSrc, src: "java" });
+  ok(srcOk.status === 200 && srcOk.body.ok, "run tagged src=java accepted: " + JSON.stringify(srcOk.body));
+  const topJava = await get("/top?src=java"); ok(topJava.status === 200 && topJava.body.rows.length === 1 && topJava.body.rows[0].name === "Java Runner", "top filtered by src=java shows only the tagged run: " + JSON.stringify(topJava.body.rows));
+  const topOther = await get("/top?src=other"); ok(topOther.status === 200 && topOther.body.rows.length === 0, "top filtered by a different src shows nothing: " + JSON.stringify(topOther.body.rows));
+  const devBad = "device-badsrc-0123456789abcdef";
+  const stBad = await post("/start", { device: devBad }); const runBad = play(stBad.body.seed, 240); await settle(runBad);
+  const badOk = await post("/score", { token: stBad.body.token, device: devBad, name: "Odd Tag Run", handle: "", rules: RULES, ...runBad, src: "bad tag!" });
+  ok(badOk.status === 200 && badOk.body.ok, "a run with an invalid src tag is still accepted: " + JSON.stringify(badOk.body));
+  ok((await get("/top?period=all")).body.rows.some((r) => r.name === "Odd Tag Run"), "the run with a bad src still lands on the ordinary board");
+  ok(!(await get("/top?src=java")).body.rows.some((r) => r.name === "Odd Tag Run"), "a null src does not appear under any tag's tab");
+  const srcStats = await get("/src?tag=java"); ok(srcStats.status === 200 && srcStats.body.tag === "java" && srcStats.body.runs === 1 && srcStats.body.best && srcStats.body.best.score === runSrc.score && srcStats.body.best.name === "Java Runner", "/src reports the run count and best score for the tag: " + JSON.stringify(srcStats.body));
+  ok((await get("/src?tag=" + encodeURIComponent("x!"))).status === 400, "/src refuses an invalid tag");
   // notifications: a phone subscribes (here a fake push service on this machine), a notification is sent, the wrong secret is refused
   // push services only speak https, so the fake one here has a throwaway certificate (the board is told to accept it, in this test only)
   const dir = mkdtempSync(join(tmpdir(), "sable-push-")); execFileSync("openssl", ["req", "-x509", "-newkey", "ec", "-pkeyopt", "ec_paramgen_curve:prime256v1", "-nodes", "-keyout", join(dir, "key.pem"), "-out", join(dir, "cert.pem"), "-subj", "/CN=127.0.0.1", "-days", "2"], { stdio: "ignore" });

@@ -49,13 +49,18 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS push_subs (id INTEGER PRIMARY KEY, endpoint TEXT UNIQUE NOT NULL, sub TEXT NOT NULL, created_at TEXT NOT NULL);
 `);
 // rows from before 8 September 2026 carry no log and stay unverified
-for (const col of ["verified INTEGER NOT NULL DEFAULT 0", "log TEXT", "flagged INTEGER NOT NULL DEFAULT 0"]) { try { db.exec(`ALTER TABLE scores ADD COLUMN ${col}`); } catch { /* already there */ } }
-const ins = db.prepare("INSERT INTO scores (day, seed, name, handle, score, receipts, refused, wave, duration_ms, device, log_hash, created_at, verified, log, flagged) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)");
+for (const col of ["verified INTEGER NOT NULL DEFAULT 0", "log TEXT", "flagged INTEGER NOT NULL DEFAULT 0", "src TEXT"]) { try { db.exec(`ALTER TABLE scores ADD COLUMN ${col}`); } catch { /* already there */ } }
+const ins = db.prepare("INSERT INTO scores (day, seed, name, handle, score, receipts, refused, wave, duration_ms, device, log_hash, created_at, verified, log, flagged, src) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)");
 const markToken = db.prepare("INSERT INTO used_tokens (sig, created_at) VALUES (?, ?)");
 const seenToken = db.prepare("SELECT 1 FROM used_tokens WHERE sig = ?");
 const topQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? GROUP BY lower(name) ORDER BY score DESC, id ASC LIMIT ?`);
+// same as topQ, filtered to one src tag: a tagged link's runs, visible on their own leaderboard tab
+const topSrcQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? AND src = ? GROUP BY lower(name) ORDER BY score DESC, id ASC LIMIT ?`);
 const contestQ = db.prepare(`SELECT name, handle, MAX(score) AS score, receipts, refused, wave, day FROM scores WHERE day >= ? AND day <= ? AND flagged = 0 AND handle IS NOT NULL AND handle != '' GROUP BY lower(handle) ORDER BY score DESC, id ASC LIMIT ?`);
 const rankQ = db.prepare(`SELECT COUNT(*) AS n FROM (SELECT lower(name) AS k, MAX(score) AS s FROM scores WHERE day >= ? GROUP BY k) WHERE s > ?`);
+// GET /src?tag=: a small dashboard for one event's tag, over its unflagged runs only
+const srcStatsQ = db.prepare(`SELECT COUNT(*) AS runs, COUNT(DISTINCT CASE WHEN handle IS NOT NULL AND handle != '' THEN lower(handle) END) AS players, MIN(created_at) AS first, MAX(created_at) AS last FROM scores WHERE src = ? AND flagged = 0`);
+const srcBestQ = db.prepare(`SELECT score, name, handle FROM scores WHERE src = ? AND flagged = 0 ORDER BY score DESC, id ASC LIMIT 1`);
 const meQ = db.prepare("SELECT name, handle, score, receipts, wave, day FROM scores WHERE device = ? ORDER BY score DESC LIMIT 1");
 const byId = db.prepare("SELECT id, day, seed, name, handle, score, receipts, refused, wave, duration_ms, flagged, verified, log, created_at FROM scores WHERE id = ?");
 // The card code: printed on a share card once the board has accepted the run, checkable by
@@ -129,6 +134,14 @@ function cleanHandle(h) {
   if (typeof h !== "string") return undefined;
   h = h.trim().replace(/^@/, "");
   return /^[A-Za-z0-9_]{1,15}$/.test(h) ? h : undefined;
+}
+// the tag on a link like ?src=java: lowercased when it looks like a tag, otherwise null. A run
+// is never rejected for a bad tag, so this has no undefined case: it only ever stores or drops it.
+const SRC_RE = /^[a-z0-9-]{1,24}$/i;
+function cleanSrc(v) {
+  if (typeof v !== "string") return null;
+  const s = v.toLowerCase();
+  return SRC_RE.test(s) ? s : null;
 }
 const cleanDevice = (d) => (typeof d === "string" && /^[A-Za-z0-9_-]{16,64}$/.test(d)) ? d : null;
 
@@ -206,11 +219,20 @@ const server = createServer(async (req, res) => {
       } });
     }
     if (req.method === "GET" && path === "/top") {
-      const period = url.searchParams.get("period") || "today";
+      const srcTag = cleanSrc(url.searchParams.get("src"));
+      // a tagged tab has no natural "today": an event's runs should stay visible after the day ends
+      const period = url.searchParams.get("period") || (srcTag ? "all" : "today");
       const limit = Math.min(100, Math.max(1, Number(url.searchParams.get("limit") || 25)));
       if (period === "contest") return json(res, 200, { period, window: CONTEST, rows: CONTEST ? contestQ.all(CONTEST.start, CONTEST.end, limit) : [] });
       const since = period === "all" ? "0000-00-00" : period === "week" ? dayAgo(6) : today();
-      return json(res, 200, { period, since, rows: topQ.all(since, limit) });
+      const rows = srcTag ? topSrcQ.all(since, srcTag, limit) : topQ.all(since, limit);
+      return json(res, 200, srcTag ? { period, since, src: srcTag, rows } : { period, since, rows });
+    }
+    if (req.method === "GET" && path === "/src") {
+      const tag = cleanSrc(url.searchParams.get("tag")); if (!tag) return json(res, 400, { error: "tag" });
+      if (limited("srcip:" + ipOf(req), 300)) return json(res, 429, { error: "slow down" });
+      const stats = srcStatsQ.get(tag), best = srcBestQ.get(tag) || null;
+      return json(res, 200, { tag, runs: stats.runs, players: stats.players, best, first: stats.first, last: stats.last });
     }
     if (req.method === "GET" && path === "/contest") {
       if (!CONTEST) return json(res, 200, { contest: null });
@@ -241,6 +263,7 @@ const server = createServer(async (req, res) => {
       if (seenToken.get(tok.sig)) { note("rejected", "already submitted", body); return json(res, 409, { error: "already submitted" }); }
       const name = cleanName(body.name); if (!name) return json(res, 400, { error: "name" });
       const handle = cleanHandle(body.handle); if (handle === undefined) return json(res, 400, { error: "handle" });
+      const src = cleanSrc(body.src); // a bad tag never fails the run, it just does not get a tab
       const score = Number(body.score), receipts = Number(body.receipts), refused = Number(body.refused), wave = Number(body.wave), dur = Number(body.duration_ms);
       const ints = [score, receipts, refused, wave, dur].every((v) => Number.isInteger(v) && v >= 0);
       if (!ints) return json(res, 400, { error: "numbers" });
@@ -272,7 +295,7 @@ const server = createServer(async (req, res) => {
       const flagged = patient || spotless ? 1 : 0;
       const now = new Date().toISOString(), day = now.slice(0, 10);
       markToken.run(tok.sig, now);
-      const inserted = ins.run(day, String(tok.seed), name, handle, score, receipts, refused, wave, dur, dh, rp.log_hash, now, JSON.stringify(log), flagged);
+      const inserted = ins.run(day, String(tok.seed), name, handle, score, receipts, refused, wave, dur, dh, rp.log_hash, now, JSON.stringify(log), flagged, src);
       const id = Number(inserted.lastInsertRowid), code = cardCode(id, day, name, score, wave);
       const rankToday = rankQ.get(day, score).n + 1, rankAll = rankQ.get("0000-00-00", score).n + 1;
       note("accepted", (graced ? "previous rules, " : "") + (flagged ? "flagged" : "ok"), body, { rank_today: rankToday, id });
