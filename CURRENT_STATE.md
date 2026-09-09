@@ -782,3 +782,23 @@ aankondiging in andermans Telegram). Handles van de sites zelf gelezen en
 gekruist met CoinGecko. Elke post geteld met de link als 23 tekens, alles
 onder 280. Kaartafbeeldingen per project op 2x in
 `sites/sable-peers/tests/shots/cards/` (`tests/shot-cards.mjs`).
+
+**De chart (9 september, ochtend).** Founder: "kunnen we een Sable-chart van
+DexScreener op de site zetten, eigen pagina onder Token?" Na controle: de
+SABL/SOL-pool (PumpSwap, 25 augustus) staat op GeckoTerminal met gratis
+candles (uur en dag), dus geen embed nodig. Spec in
+`sites/sable-peers/CHART-PLAN.md`, daarna gebouwd: sectie `#chart` in het
+Token-onderwerp (TOPICS token:['token','chart'], ALIAS chart), cijferrij uit
+de bestaande DexScreener-proxy, canvas met candles (1h/1d, 24h/7d/all,
+keuze onthouden), de uurlijkse lezingen van de watcher als stippellijn met de
+gaten eerlijk open, de gebeurtenissen uit het record genummerd op de as
+(statisch: pool, whitepaper-herrender, Integration 001 plus fail-closed, MCP
+Gateway; dynamisch: eerste burn en eerste antwoordende route), rechteras
+marktkap = prijs maal de laatst gelezen supply, crosshair met tooltip en
+pijltjestoetsen, samenvattingsregel voor lezers, gids en tests. Twee
+nginx-proxies `/ext/ohlcv-hour` (60 s) en `/ext/ohlcv-day` (300 s) met de
+pool vast in de config. Kleuren uit de CSS-variabelen, IBM Plex Mono, geen
+bibliotheek. Tests: `tests/chart-test.mjs` (drie fixtures), shell lokaal en
+live groen, `tests/shot-chart.mjs` live: 168 uurkaarsen, 15 lezingen in zeven
+dagen, alleen de eigen host aangeroepen. Twee deploys (08:33Z en de
+legendafix erna), beide op een moment zonder lopende run.
