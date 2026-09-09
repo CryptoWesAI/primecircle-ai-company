@@ -769,3 +769,16 @@ groen, `tests/shot-who.mjs` (13 kaarten, Field-onderwerp, 1320 en 390), de
 translate-suite had een verouderde `#strip`-selector uit 7 september (element
 weg sinds het betrouwbaarheidsrecord), gerepareerd. Niet gedaan, bewust:
 Marlin, iExec en Akash als tabelrij, pas na kolom-voor-kolom lezing van hun docs.
+
+**Peer-posts (9 september, ochtend).** Op verzoek: tweets en threads die de
+peers taggen en aandacht naar Sable leiden. `crypto/content/2026-09-09-peer-posts.md`:
+een lanceerthread (8 posts), dertien losse posts (één per project, elk eerst
+iets waars en nuttigs over het getagde project, dan één eerlijk contrast, dan
+de kaartpagina, altijd met "I hold SABL."), een afsluitende thread over wat
+Sable omhoog zou brengen (getagd @Sablenetwork), een postkalender van een
+week (één project per dagdeel, geen dertien tags in één post), en de
+etiquette (antwoorden met bron, fout dezelfde dag herstellen, nooit als
+aankondiging in andermans Telegram). Handles van de sites zelf gelezen en
+gekruist met CoinGecko. Elke post geteld met de link als 23 tekens, alles
+onder 280. Kaartafbeeldingen per project op 2x in
+`sites/sable-peers/tests/shots/cards/` (`tests/shot-cards.mjs`).
