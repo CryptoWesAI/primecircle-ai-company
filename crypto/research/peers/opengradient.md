@@ -1,4 +1,4 @@
-# OpenGradient (opengradient.ai) — Fact Sheet
+# OpenGradient (opengradient.ai): Fact Sheet
 
 Compiled 2026-09-09.
 
@@ -12,7 +12,7 @@ Funding rounds found:
 
 ## 2. The product that matters
 
-OpenGradient runs a "Verifiable Inference Network": a compute layer that "executes AI workloads and attaches cryptographic proofs to every inference, enabling downstream applications to verify exactly what model ran, on what input, and what it returned" (opengradient.ai). It combines two verification methods rather than one: "500K+ zkML Proofs + TEE Attestations" (opengradient.ai homepage). Docs describe an inference node that, in its TEE path, "publishes the node's TLS certificate and signing key, both generated inside the enclave," and a lower-assurance "Vanilla" method that offers "only signature verification and no proof of correct execution, suitable for low-risk workloads, prototyping" (docs.opengradient.ai/learn/onchain_inference/verification). One product page states "every LLM call within an autonomous AI agent is cryptographically signed with the exact prompt used" (docs.opengradient.ai) — directionally close to Sable's signed-receipt model, though no source confirms the specific signature curve (secp256k1 or otherwise).
+OpenGradient runs a "Verifiable Inference Network": a compute layer that "executes AI workloads and attaches cryptographic proofs to every inference, enabling downstream applications to verify exactly what model ran, on what input, and what it returned" (opengradient.ai). It combines two verification methods rather than one: "500K+ zkML Proofs + TEE Attestations" (opengradient.ai homepage). Docs describe an inference node that, in its TEE path, "publishes the node's TLS certificate and signing key, both generated inside the enclave," and a lower-assurance "Vanilla" method that offers "only signature verification and no proof of correct execution, suitable for low-risk workloads, prototyping" (docs.opengradient.ai/learn/onchain_inference/verification). One product page states "every LLM call within an autonomous AI agent is cryptographically signed with the exact prompt used" (docs.opengradient.ai), directionally close to Sable's signed-receipt model, though no source confirms the specific signature curve (secp256k1 or otherwise).
 
 Mainnet launched **April 2026** (multiple sources tie this to the April 21-22, 2026 TGE window); before that the network ran on testnet. Live components as of 2026-09-09: a Model Hub hosting 4,500+ models on-chain, an on-chain AI SDK, "OpenGradient Chat," and agent-facing apps including BitQuant (quant/trading agent framework) and "Digital Twins." Its `tee-gateway` repo ("TEE-secured inference node for 3rd-party LLM inference requests") and `veil` repo ("local OpenAI-compatible proxy keeping agentic prompts private and verifiable") show live agent-tooling work, and an `x402` fork shows x402-payment support for inference calls, an explicit protocol overlap with Sable.
 
@@ -22,9 +22,9 @@ Ticker **OPG**, on **Base** (ERC-20; contract 0xfbc2051ae2265686a469421b2c5a2d54
 
 Allocation (opengradient.foundation/blog/tokenomics): Ecosystem 40% (400M, 10% at TGE, 60-month vest), Foundation 15% (150M, 33.33% at TGE, 48-month vest), Core Contributors 15% (154.5M, 0% at TGE, 12-month cliff, 36-month vest), Investors + Advisors 10% (95.5M, 0% at TGE, 12-month cliff, 36-month vest), Staking Rewards 10% (100M, 96-month vest), Liquidity & Launch 6% (60M, unlocked at TGE), Airdrop 4% (40M, unlocked at TGE).
 
-Utility, per the project's own summary ("$OPG is how you pay for that trust, earn from it, and govern what comes next" — opengradient.foundation): inference payments for verified AI calls, model-creator monetization, staking by validators to secure proofs, unlocking premium features in integrated apps, and governance over TEE hardware choices, gas pricing and protocol upgrades.
+Utility, per the project's own summary ("$OPG is how you pay for that trust, earn from it, and govern what comes next", opengradient.foundation): inference payments for verified AI calls, model-creator monetization, staking by validators to secure proofs, unlocking premium features in integrated apps, and governance over TEE hardware choices, gas pricing and protocol upgrades.
 
-Exchange listings: 26 trading pairs across CEXs and DEXs as of 2026-09-09 (CoinGecko), including Binance, Coinbase Exchange, Bybit, MEXC, LBank and PancakeSwap. Binance listed OPG roughly around the TGE window (search-derived: "~109 days ago" from a 2026-09 baseline, i.e. approximately late May 2026 — treat as approximate); South Korea's Upbit added a KRW pair later, which one source ties to a ~45% single-day price surge to $0.1795 on July 7, 2026 (search-derived, unverified against Upbit's own announcement).
+Exchange listings: 26 trading pairs across CEXs and DEXs as of 2026-09-09 (CoinGecko), including Binance, Coinbase Exchange, Bybit, MEXC, LBank and PancakeSwap. Binance listed OPG roughly around the TGE window (search-derived: "~109 days ago" from a 2026-09 baseline, i.e. approximately late May 2026, treat as approximate); South Korea's Upbit added a KRW pair later, which one source ties to a ~45% single-day price surge to $0.1795 on July 7, 2026 (search-derived, unverified against Upbit's own announcement).
 
 ## 4. Market cap / valuation arc
 

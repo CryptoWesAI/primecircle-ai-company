@@ -1,4 +1,4 @@
-# Virtuals Protocol (VIRTUAL) — Project Fact Sheet
+# Virtuals Protocol (VIRTUAL): Project Fact Sheet
 
 Compiled 2026-09-09. All figures dated; crypto data moves by the minute.
 

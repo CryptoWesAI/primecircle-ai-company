@@ -1,4 +1,4 @@
-# Tinfoil (tinfoil.sh) — Fact Sheet
+# Tinfoil (tinfoil.sh): Fact Sheet
 
 Compiled 2026-09-09.
 
@@ -24,11 +24,11 @@ Tinfoil is financed the conventional startup way: seed-stage VC plus a usage-bas
 
 ## 4. Valuation / market cap arc
 
-No token means no market cap. Last known funding signal is the YC Summer 2025 batch plus the Tekedia Capital investment reported in May 2026; no post-money valuation has been publicly disclosed by Tinfoil, PitchBook, or Crunchbase as of 2026-09-09 (PitchBook's profile requires a paid account to view the number). One third-party revenue data point: Latka reported Tinfoil at $660K annualized revenue with a 6-person team around September 2025 (getlatka.com, accessed 2026-09-09) — third-party estimate, not confirmed by Tinfoil itself.
+No token means no market cap. Last known funding signal is the YC Summer 2025 batch plus the Tekedia Capital investment reported in May 2026; no post-money valuation has been publicly disclosed by Tinfoil, PitchBook, or Crunchbase as of 2026-09-09 (PitchBook's profile requires a paid account to view the number). One third-party revenue data point: Latka reported Tinfoil at $660K annualized revenue with a 6-person team around September 2025 (getlatka.com, accessed 2026-09-09), third-party estimate, not confirmed by Tinfoil itself.
 
 ## 5. Community
 
-- X/Twitter: official account is @TinfoilAI (not @tinfoilsh); a search-engine snippet reported a low three-digit follower count. This was not independently verified by direct page access (X pages are not fetchable here) and may be stale — treat as low-confidence.
+- X/Twitter: official account is @TinfoilAI (not @tinfoilsh); a search-engine snippet reported a low three-digit follower count. This was not independently verified by direct page access (X pages are not fetchable here) and may be stale, treat as low-confidence.
 - GitHub (github.com/tinfoilsh, checked 2026-09-09): small but active, top repos are `cvmimage` (23 stars), `tinfoil-webapp` (18), `tinfoil-python` (14), `modelwrap` (14), `tinfoil-js` (12), `encrypted-http-body-protocol` (12). No repo exceeds ~25 stars, consistent with an early-stage, developer-tool-sized project.
 - Discord/Telegram/Reddit: no public community numbers found.
 - No CoinGecko/CoinMarketCap community tab exists (no token).
@@ -39,7 +39,7 @@ No token means no market cap. Last known funding signal is the YC Summer 2025 ba
 
 Overlap: both sell confidential AI compute with hardware-rooted attestation as the trust mechanism, both support Intel TDX, and both target developers/agents who need to prove a request wasn't tampered with or leaked. Both also emphasize automatic client-side verification rather than asking users to trust a brand.
 
-Difference: Tinfoil is a pure Web2 startup, no token, no on-chain payment rail, no per-key spend caps, and no cryptographically signed receipt attached to every response the way Sable's secp256k1/EIP-191 model does — Tinfoil's proof lives in attestation + Sigstore transparency logs, checked once per connection, not as a portable per-response artifact. Tinfoil also runs full GPU confidential computing (Hopper/Blackwell) today, which is a broader hardware footprint than a single-tier TDX offering.
+Difference: Tinfoil is a pure Web2 startup, no token, no on-chain payment rail, no per-key spend caps, and no cryptographically signed receipt attached to every response the way Sable's secp256k1/EIP-191 model does, Tinfoil's proof lives in attestation + Sigstore transparency logs, checked once per connection, not as a portable per-response artifact. Tinfoil also runs full GPU confidential computing (Hopper/Blackwell) today, which is a broader hardware footprint than a single-tier TDX offering.
 
 What Sable could learn: Tinfoil's SDK-side "verify automatically, don't make the user think about it" UX is a stronger adoption wedge than a manually-checked receipt, and its transparency-log-plus-Sigstore approach to code provenance is a cheap credibility signal Sable's TDX tier could borrow.
 
