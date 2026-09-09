@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gatekeeper on the street: the guide</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root { --ink:#0A1118; --cyan:#18BFFF; --cyan-deep:#0A7FB0; --moon:#FF7A59; --moon-deep:#C24B2C; --paper:#fff; --mist:#F1F5F8; --line:#D6DEE5; --muted:#5B6B78; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  @page { size:A4; margin:16mm 16mm 18mm; }
+  html { font-size:10.6pt; }
+  body { font-family:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif; color:var(--ink); background:var(--paper); line-height:1.5; }
+  .mono, code, .link, .say { font-family:"IBM Plex Mono", ui-monospace, Consolas, monospace; }
+
+  header.top { border-bottom:1.2mm solid var(--ink); padding-bottom:4mm; margin-bottom:6mm; display:flex; justify-content:space-between; align-items:flex-end; gap:8mm; }
+  .kicker { font-family:"IBM Plex Mono", monospace; font-size:8pt; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan-deep); }
+  h1 { font-size:26pt; line-height:1.05; font-weight:700; letter-spacing:-.01em; margin-top:1.5mm; }
+  .version { font-family:"IBM Plex Mono", monospace; font-size:8pt; color:var(--muted); text-align:right; white-space:nowrap; }
+  .intro { font-size:11.5pt; color:#22313D; max-width:150mm; }
+
+  h2 { font-size:14pt; font-weight:700; margin:8mm 0 2.5mm; padding-top:2mm; border-top:.3mm solid var(--line); break-after:avoid; }
+  h2 .n { font-family:"IBM Plex Mono", monospace; color:var(--cyan-deep); font-weight:500; font-size:10pt; margin-right:2.5mm; }
+  h3 { font-size:11pt; font-weight:600; margin:4mm 0 1.5mm; break-after:avoid; }
+  p { margin:0 0 2.5mm; }
+  ul { margin:0 0 2.5mm 5mm; }
+  li { margin-bottom:1.4mm; }
+  ol { margin:0 0 2.5mm 5.5mm; }
+  ol li { padding-left:1mm; }
+  b, strong { font-weight:600; }
+
+  .rule { background:#FFF3EE; border-left:1.6mm solid var(--moon); padding:4mm 5mm; margin:3mm 0 4mm; break-inside:avoid; }
+  .rule .big { font-size:15pt; font-weight:700; line-height:1.25; margin-bottom:2mm; }
+  .rule p:last-child { margin-bottom:0; }
+
+  .qa { display:grid; grid-template-columns:1fr; gap:2mm; margin:2mm 0 3mm; }
+  .qa div { background:var(--mist); border-radius:2mm; padding:3mm 4mm; break-inside:avoid; }
+  .qa .q { font-weight:600; margin-bottom:1mm; }
+  .qa .a { color:#22313D; }
+
+  .linkbox { display:flex; align-items:center; gap:6mm; border:.4mm solid var(--ink); border-radius:3mm; padding:4mm 5mm; margin:3mm 0 4mm; break-inside:avoid; }
+  .linkbox .qr { width:34mm; height:34mm; flex:0 0 auto; }
+  .linkbox .qr img, .linkbox .qr canvas { width:34mm !important; height:34mm !important; display:block; }
+  .link { font-size:12.5pt; font-weight:600; color:var(--cyan-deep); word-break:break-all; }
+  .linkbox small { display:block; color:var(--muted); margin-top:1.5mm; }
+
+  .say { background:var(--ink); color:#F4F7FA; border-radius:2.5mm; padding:4mm 5mm; margin:2mm 0 3mm; font-size:11pt; line-height:1.5; white-space:pre-line; break-inside:avoid; }
+  .say .lang { font-size:8pt; letter-spacing:.14em; text-transform:uppercase; color:#72DCFF; display:block; margin-bottom:1.5mm; }
+
+  .check { list-style:none; margin-left:0; }
+  .check li { position:relative; padding-left:8mm; margin-bottom:2.2mm; }
+  .check li::before { content:""; position:absolute; left:0; top:.9mm; width:4.6mm; height:4.6mm; border:.45mm solid var(--ink); border-radius:1mm; }
+
+  .no { list-style:none; margin-left:0; }
+  .no li { position:relative; padding-left:7mm; }
+  .no li::before { content:"×"; position:absolute; left:0; top:-.4mm; color:var(--moon-deep); font-weight:700; font-size:13pt; }
+
+  .pre { font-family:"IBM Plex Mono", monospace; font-size:9.5pt; background:var(--mist); border-radius:2mm; padding:3.5mm 4.5mm; white-space:pre-wrap; margin:2mm 0 3mm; break-inside:avoid; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
+  .contest ol li { margin-bottom:2mm; }
+  .card { border:.3mm solid var(--line); border-radius:2.5mm; padding:3.5mm 4.5mm; margin:2mm 0 3mm; break-inside:avoid; }
+  .appendix h2 { border-top:.3mm solid var(--line); }
+  .pb { break-before:page; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div>
+    <div class="kicker">Gatekeeper on the street</div>
+    <h1>The guide for the day</h1>
+  </div>
+  <div class="version">Version 10 Sep 2026<br>Read it twice</div>
+</header>
+
+<p class="intro">You are getting people to play a 60-second phone game called <b>Gatekeeper</b> and to put their score on its leaderboard. The game lives on an independent site about Sable Network, an AI compute service. The site is run by a private person who holds the SABL token and is not part of Sable Network.</p>
+<p class="intro">You are not selling anything. You are not promoting a token. You are running a game day, and the count of played runs is how the day is measured.</p>
+
+<h2><span class="n">01</span>The one rule</h2>
+<div class="rule">
+  <div class="big">No token. No price. No "invest", "buy", "early", "moon", "SABL".</div>
+  <p>Not on the poster, not from your mouth, not in your posts.</p>
+</div>
+<p><b>Why.</b> Indonesia's regulator OJK only allows licensed exchanges to advertise crypto assets, it summoned influencers in June 2026 for promoting unlicensed platforms, and its 2026 conduct rule (POJK 6/2026) requires paid promotion to be disclosed and forbids promises of returns. SABL is not on the OJK list. If you promote it on the street, the risk is yours, not the founder's. The game is legal and fun. Keep it there.</p>
+<div class="qa">
+  <div><div class="q">If someone asks "is this crypto?"</div><div class="a">"The site is about an AI service that also has a token. I am not here for the token and I am not allowed to promote it. The game is free: no wallet, no account, no money."</div></div>
+  <div><div class="q">If someone asks "can I earn money?"</div><div class="a">"No. It is a game. The best score gets its name lit on the board, that is all."</div></div>
+</div>
+
+<h2><span class="n">02</span>The link and the QR</h2>
+<div class="linkbox">
+  <div class="qr" data-qr></div>
+  <div>
+    <div class="link">sable.primecircle.cloud/java</div>
+    <small>That short link sends the phone to the game with the tag "java" attached; the QR carries the same destination in full (<span class="mono">sable.primecircle.cloud/?src=java#play</span>). Every run that starts from either is counted under "java" on the board. That count is how the founder measures your day. Use only these: on the poster, in the QR, and when you type it for someone. The plain site link without the tag counts nothing.</small>
+  </div>
+</div>
+<p>The site loads a small 3D library, so it needs a normal phone browser and mobile data. It works on Android and iPhone. If a phone is very old, use the Demo.</p>
+
+<h2><span class="n">03</span>The game, so you can explain it</h2>
+<p>You are the door of an AI agent. Requests arrive at the door. Sealed ones pass and become receipts. Broken seals and runaway loops must be refused before they reach the door. <b>Only refusals build your streak.</b> A wave held without a leak gives budget back. There is no clock: the run lasts as long as your budget. Runs of 20 seconds or longer are ranked. The board replays every run from its taps before it counts, so a faked score never lands.</p>
+<p>The <b>Demo</b> button plays a 60-second run by itself. Use it to show a group what the game looks like before they try.</p>
+
+<h2><span class="n">04</span>The 20-second pitch</h2>
+<div class="two">
+  <div class="say"><span class="lang">Indonesian (draft, fix the wording so it sounds like you)</span>Mau coba game 60 detik? Kamu jadi penjaga pintu buat AI.
+Scan, main, masuk papan peringkat. Gratis, tanpa akun.</div>
+  <div class="say"><span class="lang">English</span>Want a 60-second game? You are the gatekeeper for an AI.
+Scan, play, get on the board. Free, no account.</div>
+</div>
+<p>Then hand them the QR, let them press <b>Play</b>, and step back. When the run ends, ask them to type a name and, if they have one, their X handle, and press submit. That is one counted run. Names can be anything; handles are optional.</p>
+
+<h2><span class="n">05</span>Ask for a video</h2>
+<p>If they liked it, ask them to film their next run (10 to 60 seconds, phone held upright) and post it on X with <b>#GatekeeperJava</b> and <b>@Sablenetwork</b>. Everyone who posts one within the week is in a random draw for a prize, drawn and announced by the site's owner on his X account one week after the day. <b>The leaderboard is the prize for playing; the draw is for the videos.</b></p>
+<div class="say"><span class="lang">The short version to say out loud</span>Film your run, post it with #GatekeeperJava and @Sablenetwork, and you are in the draw.</div>
+<p>Two things to keep straight: the video is about the game, not the token (a video that mentions the token is out of the draw, for the same reason as the one rule), and filming a friend needs their yes.</p>
+
+<h2><span class="n">06</span>Where to go</h2>
+<p>Places where people have five minutes and a phone: computer science faculties, coworking spaces, tech meetups, cafes near a university, game cafes, hackathon venues. Not traffic lights, not places of worship, not schools with minors.</p>
+<p>Ask the owner before you put up a poster inside. For posters outside, check your city's rules; many cities fine wild posting. A hand-held sign is always fine.</p>
+
+<h2><span class="n">07</span>What counts</h2>
+<ul>
+  <li><b>Counted:</b> a run started from your link, 20 seconds or longer, submitted with a name. Runs the referee flags as scripted do not count.</li>
+  <li><b>See the count yourself, any time:</b> <code>sable.primecircle.cloud/api/game/src?tag=java</code> (runs, players, best). On the game page, a tab <b>"from java"</b> lists the runs.</li>
+  <li>Photos are the story. Runs are the measure.</li>
+</ul>
+
+<h2><span class="n">08</span>Photos and content</h2>
+<ul>
+  <li>Ask before you photograph anyone: <span class="mono">"Boleh saya foto untuk media sosial?"</span> No photos of children. No faces of people who said no.</li>
+  <li>Send the same evening: 10 to 20 photos, a few short vertical clips of 10 to 20 seconds, the city and the place, and how many people played. Send by WhatsApp or Telegram.</li>
+  <li>If you post about it yourself: no token, no price, tag only the site. Say who you ran it with, so nobody thinks you are Sable. A caption is in appendix B. If anything about this day is sponsored, Indonesian rules (POJK 6/2026) require you to say so in your own post.</li>
+</ul>
+
+<h2><span class="n">09</span>Do not</h2>
+<ul class="no">
+  <li>Do not shout anything about SABL or crypto. Shouting "come play a game" is fine.</li>
+  <li>No stickers on public property, no posters over other people's posters, no blocking a sidewalk.</li>
+  <li>Do not collect anyone's phone number, wallet address, or email. The game needs none of them.</li>
+  <li>Do not promise anything beyond the board and the video draw. The draw is one week after the day; what the prize is, is the site owner's to announce.</li>
+  <li>Do not argue with police or security. Pack up and move.</li>
+</ul>
+
+<h2><span class="n">10</span>Day checklist</h2>
+<ul class="check">
+  <li>Phone charged, power bank, mobile data.</li>
+  <li><b>Morning:</b> open the link on your own phone, play one run, submit it, and check that it shows on the "from java" tab. If it does not, message the founder before you start.</li>
+  <li>Posters and tape (with permission), one hand-held sign, the flyers. Scan one printed poster with your own phone before you leave: it must open the game with "from java" on the board.</li>
+  <li>Say the one rule out loud to your friends before you start.</li>
+  <li><b>Evening:</b> photos, clips, the count, sent.</li>
+</ul>
+
+<div class="appendix">
+<h2 class="pb"><span class="n">A</span>Poster text</h2>
+<div class="pre">GATEKEEPER
+You are the door for an AI agent. 60 seconds.
+Scan. Play. Get on the board.
+Scan. Main. Masuk papan peringkat.
+Free. No account, no wallet.
+sable.primecircle.cloud/java
+A game on an independent site by a SABL holder, not affiliated with Sable Network.</div>
+
+<h2><span class="n">B</span>Caption template</h2>
+<div class="pre">Ran a game day in [city] today: [N] people played Gatekeeper, a 60-second game where you are the door for an AI agent. Best score on the board: [score] by [name]. Try it: sable.primecircle.cloud/java
+Run with the owner of the site, an independent SABL holder, not with Sable Network.</div>
+
+<h2><span class="n">C</span>Questions people ask</h2>
+<div class="qa">
+  <div><div class="q">"What is Sable?"</div><div class="a">A service where AI agents buy computing and get a signed receipt for every answer. The site explains it, with a simulation you can click through.</div></div>
+  <div><div class="q">"Is this a scam?"</div><div class="a">There is nothing to give. No wallet, no sign-up, no payment. Play and leave.</div></div>
+  <div><div class="q">"Who made the game?"</div><div class="a">A private person in the Netherlands who watches Sable from the outside and built the site. His X handle is on the site.</div></div>
+  <div><div class="q">"Can I win something?"</div><div class="a">Your name lit on the board if you are top three today. And if you post a video of your run with #GatekeeperJava and @Sablenetwork, you are in a random draw for a prize.</div></div>
+  <div><div class="q">"Why are you doing this?"</div><div class="a">The person who runs the site asked me to run a game day here. I am not from Sable.</div></div>
+</div>
+</div>
+
+<script>
+  document.querySelectorAll("[data-qr]").forEach((el) => {
+    new QRCode(el, { text: "https://sable.primecircle.cloud/?src=java#play", width: 400, height: 400, correctLevel: QRCode.CorrectLevel.M, colorDark: "#0A1118", colorLight: "#ffffff" });
+  });
+  window.__ready = true;
+</script>
+</body>
+</html>
