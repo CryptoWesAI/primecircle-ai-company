@@ -102,3 +102,17 @@ until there's a concrete, repeatable task to automate.
   Higgsfield account/credits, the `higgsfield` CLI, `ffmpeg`/`ffprobe`, and
   optionally PIL). Scanned safe before install (image/DOM helpers only, no
   network exfiltration). Update by re-copying from the upstream repo.
+- **crypto-project-dossier**: authored by us (2026-09-09), distilled from the Sable
+  Network work of Aug 29 to Sep 9, 2026 (surface inventory, 13 peer fact sheets,
+  community landscape, peers deep dive, X playbook, peer-post series, whitepaper and
+  claims watcher). Runs the same workflow for any crypto project in seven steps: intake
+  brief, four-agent surface inventory ending in an announcements-versus-docs-versus-live
+  table, two deliberately different peer lists (the field, compared column by column
+  against docs; the ladder, traded tokens in the same narrative) with a seven-section
+  fact sheet per peer, a community landscape with ranked tactics, a synthesis written on
+  the main line, an X playbook plus a first content set, an optional fork of the watcher,
+  and a reviewer pass against a fixed checklist. Encodes the crypto rules (primary sources
+  only, every number dated, disclosure, nothing posts automatically) and fifteen gotchas
+  from the Sable run (WebFetch paraphrases, the whitepaper version label that did not
+  change when the text did, pdftotext platform differences, dead X read routes, the one
+  corrected post). First run on a second project still pending.
