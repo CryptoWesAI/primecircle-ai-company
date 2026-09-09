@@ -18,7 +18,10 @@ async function shot(hash,sel,name,settle=2500){
   await el.evaluate(e=>e.scrollIntoView({block:"start"})); await wait(400);
   await el.screenshot({path:join(out,name)}); console.log(name);
 }
-await shot("#field","#field .tablewrap","field-table.png",4000);
+// the table scrolls sideways inside its wrapper; widen the viewport so every column is in the crop
+await p.setViewport({width:2100,height:900,deviceScaleFactor:2});
+await shot("#field","#field table","field-table.png",4000);
+await p.setViewport({width:1320,height:900,deviceScaleFactor:2});
 await shot("#field","#field",  "field-section-top.png",4000);
 await shot("#token","#token .ladder","token-ladder.png",4000);
 await shot("#token","#token .ring-stage, #token .ring-wrap, #ring","token-ring.png",4000);

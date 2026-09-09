@@ -89,7 +89,7 @@ Handles, read from each project's own site on 2026-09-09 and cross-checked again
 
 1/ I compared @Sablenetwork with twelve tokens and one startup, from their own docs and CoinGecko on 9 Sep 2026. Here is what would move Sable up the ladder, in the order it explains the distance. Not hopes, measurements. A thread.
 
-2/ Market. Every ladder token above $20M trades on Binance, Coinbase, Kraken or Upbit with millions a day. SABL trades on one Solana pool with about $60K of liquidity. Until a market with depth exists, nothing else can move the bar by more than the pool allows.
+2/ Market. Every ladder token above $20M trades on Binance, Coinbase, Kraken or Upbit with millions a day. SABL trades on one Solana pool with under $100K of liquidity. Until a market with depth exists, nothing else can move the bar by more than the pool allows.
 
 3/ GPU TEE. @PhalaNetwork, @near_ai, @nillion, Secret and @TinfoilAI run models on GPU TEEs; @akashnet joined in July. Sable serves two small CPU-only models on TDX, and that tier has refused every request since 4 September. Capability and reliability are one conversation.
 
@@ -147,7 +147,7 @@ Thread 2
 
 Singles: the project's own card from `cards/` (`phala.png`, `near-ai-cloud.png`, `nillion.png`, `opengradient.png`, `oasis-rofl.png`, `akash.png`, `virtuals.png`, `secret.png`, `marlin.png`, `iexec.png`, `automata.png`, `bittensor.png`, `tinfoil.png`). For Oasis add `thread/field-table.png` as a second image, since the post mentions the daily page watch, which is the table's last column.
 
-Alt text, one line per image, for accessibility and for readers with images off: "Card for <project> from the Sable Observatory: what it is, its link to Sable, which list it is on, and its market cap arc, dated 9 Sep 2026." For the table: "Checklist of eight private or provable AI compute projects read from their own documentation." For the ladder: "Market caps on a log scale, SABL at the bottom." For the grid: "Hour-by-hour record of Sable's confidential tier, failing closed since 4 September 2026."
+Alt text, one line per image, for accessibility and for readers with images off: "Card for (project) from the Sable Observatory: what it is, its link to Sable, which list it is on, and its market cap arc, dated 9 Sep 2026." For the table: "Checklist of eight private or provable AI compute projects read from their own documentation." For the ladder: "Market caps on a log scale, SABL at the bottom." For the grid: "Hour-by-hour record of Sable's confidential tier, failing closed since 4 September 2026."
 
 ## Before posting
 
