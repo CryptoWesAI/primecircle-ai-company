@@ -27,7 +27,9 @@ const base=`http://127.0.0.1:${port}/`;
 // fixtures: 200 hour candles ending at a fixed time, 16 day candles, a slow drift with one spike
 const END=Date.parse("2026-09-09T15:00:00Z")/1000;
 function series(n,step){const out=[];let p=0.0005;for(let i=n-1;i>=0;i--){const t=END-i*step;const drift=Math.sin(i/9)*0.00004+(i===40?0.00012:0);const o=p,c=Math.max(0.0002,p+drift*(i%3===0?-1:1));const h=Math.max(o,c)*1.02,l=Math.min(o,c)*0.98;out.push([t,o,h,l,c,1500+((i*37)%900)]);p=c;}return out.reverse();}
-const HOUR={data:{attributes:{ohlcv_list:series(200,3600)}}}, DAY={data:{attributes:{ohlcv_list:series(16,86400)}}};
+const HOUR={data:{attributes:{ohlcv_list:series(200,3600)}}}, DAY={data:{attributes:{ohlcv_list:series(16,86400)}}}, MINUTE={data:{attributes:{ohlcv_list:series(400,300)}}};
+// the same hour series with the last close a tenth higher: what a refresh should pick up
+const HOUR2=JSON.parse(JSON.stringify(HOUR)); { const l=HOUR2.data.attributes.ohlcv_list[0]; l[4]=l[4]*1.1; l[2]=Math.max(l[2],l[4]); }
 const SABL={pairs:[{chainId:"solana",dexId:"pumpswap",pairAddress:"7Y5pool",priceUsd:"0.0006021",marketCap:577046,fdv:577046,liquidity:{usd:75983.9},volume:{h24:41230.5},priceChange:{h24:4.2},pairCreatedAt:1787396790000,url:"https://dexscreener.com/solana/7Y5pool"}]};
 const ledgerRows=[];for(let i=0;i<40;i++){const t=new Date((END-3600*(i*4))*1000).toISOString().replace(/\.\d{3}Z$/,"Z");ledgerRows.unshift(JSON.stringify({t,status:"degraded",conf_verified:false,token:{price_usd:0.00055+Math.sin(i/5)*0.00005,mcap:530000,liq_usd:70000}}));}
 const LEDGER=ledgerRows.join("\n")+"\n";
@@ -47,8 +49,10 @@ for(const c of cases){
   const p=await b.newPage(); await p.setViewport({width:1320,height:900});
   await p.setRequestInterception(true);
   const cors={"Access-Control-Allow-Origin":"*"};
+  let hourCalls=0;
   p.on("request",r=>{const u=r.url();
-    if(/ohlcv-hour|\/ohlcv\/hour/.test(u))return r.respond(c.ohlcv===200?{status:200,headers:cors,contentType:"application/json",body:JSON.stringify(HOUR)}:{status:500,headers:cors,contentType:"text/plain",body:"down"});
+    if(/ohlcv-hour|\/ohlcv\/hour/.test(u)){hourCalls++;return r.respond(c.ohlcv===200?{status:200,headers:cors,contentType:"application/json",body:JSON.stringify(hourCalls>1?HOUR2:HOUR)}:{status:500,headers:cors,contentType:"text/plain",body:"down"});}
+    if(/ohlcv-minute|\/ohlcv\/minute/.test(u))return r.respond(c.ohlcv===200?{status:200,headers:cors,contentType:"application/json",body:JSON.stringify(MINUTE)}:{status:500,headers:cors,contentType:"text/plain",body:"down"});
     if(/ohlcv-day|\/ohlcv\/day/.test(u))return r.respond(c.ohlcv===200?{status:200,headers:cors,contentType:"application/json",body:JSON.stringify(DAY)}:{status:500,headers:cors,contentType:"text/plain",body:"down"});
     if(/\/ext\/sabl|dexscreener\.com/.test(u))return r.respond({status:200,headers:cors,contentType:"application/json",body:JSON.stringify(SABL)});
     if(/\/ext\/ledger|status\/log\.jsonl/.test(u))return r.respond({status:200,headers:cors,contentType:"text/plain",body:LEDGER});
@@ -82,8 +86,21 @@ for(const c of cases){
     await p.mouse.move(box.x+box.w*0.6,box.y+box.h*0.4); await new Promise(r=>setTimeout(r,150));
     const tip=await p.$eval("#chart-tip",e=>({hidden:e.hidden,text:e.textContent.replace(/\s+/g," ").trim()}));
     ok(!tip.hidden&&/O \$0\.\d+ H \$0\.\d+ L \$0\.\d+ C \$0\.\d+/.test(tip.text)&&/UTC/.test(tip.text)&&/cap \$/.test(tip.text),c.name+": crosshair tooltip with OHLC, time and cap: "+tip.text);
-    // controls: day candles, then all range
-    await p.click('#chart button[data-tf="day"]'); await new Promise(r=>setTimeout(r,300));
+    // live: a refresh fetches the series again and the summary follows the new close; the stamp says when
+    const stamp0=clean(await p.$eval("#chart-stamp",e=>e.textContent));
+    ok(/^live · updated \d\d:\d\d:\d\d UTC$/.test(stamp0),c.name+": stamp after the first read: "+stamp0);
+    await p.evaluate(()=>window.SABLE_CHART.refreshNow()); await new Promise(r=>setTimeout(r,400));
+    const sum2=clean(await p.$eval("#chart-sum",e=>e.textContent));
+    const close1=(sum.match(/Last close (\$0\.\d+)/)||[])[1], close2=(sum2.match(/Last close (\$0\.\d+)/)||[])[1];
+    ok(close1&&close2&&close1!==close2&&hourCalls>=2,c.name+": a refresh picked up the new close ("+close1+" -> "+close2+", "+hourCalls+" fetches)");
+    ok((await p.evaluate(()=>window.SABLE_CHART.refreshMs()))===60000,c.name+": hour candles refresh every 60 s");
+    // 5-minute candles: 24 h range is 288 of them, and the refresh cadence tightens to 30 s
+    await p.click('#chart button[data-tf="minute"]'); await p.click('#chart button[data-range="24h"]'); await new Promise(r=>setTimeout(r,400));
+    const sumM=clean(await p.$eval("#chart-sum",e=>e.textContent));
+    ok(/288 candles of five minutes/.test(sumM)&&/24 hours: high/.test(sumM),c.name+": 24 hours of 5-minute candles: "+sumM);
+    ok((await p.evaluate(()=>window.SABLE_CHART.refreshMs()))===30000,c.name+": 5-minute candles refresh every 30 s");
+    // controls: day candles over 7 days, then all range
+    await p.click('#chart button[data-tf="day"]'); await p.click('#chart button[data-range="7d"]'); await new Promise(r=>setTimeout(r,300));
     const sumDay=clean(await p.$eval("#chart-sum",e=>e.textContent));
     ok(/\b7 candles\b|\b8 candles\b/.test(sumDay),c.name+": 7 days of day candles is 7 or 8 candles: "+sumDay);
     await p.click('#chart button[data-range="all"]'); await new Promise(r=>setTimeout(r,300));

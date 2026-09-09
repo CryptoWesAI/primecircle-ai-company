@@ -819,3 +819,14 @@ publieke sleutel toe (staat in het gesprek en op de VPS in
 Vervolg: de founder zette de sleutel erop; de handmatige run om 08:55Z pushte
 (commit 4985716 in de watch-repo, "(vps)" in het bericht), niets meer lokaal
 achter. Vanaf nu elk uur op :05 een regel van de VPS, plus wat GitHub haalt.
+
+**De chart is live (9 september, vervolg).** Vraag van de founder: kan de chart
+live? Streaming bestaat niet zonder eigen relay en de CSP laat geen externe
+verbinding toe, dus live = pollen via de eigen proxies: elke 30 s bij
+5-minutenkaarsen (nieuw, `/ext/ohlcv-minute`, 30 s cache) en elke 60 s bij uur
+en dag, alleen terwijl de sectie in beeld is en het tabblad zichtbaar; lezingen
+en record elke vijf minuten. Stempel bij de knoppen "live · updated HH:MM:SS
+UTC" met een pulserende stip (niet bij reduced motion, amber als de laatste
+lezing te oud is); de vormende kaars krijgt een cyaan omlijning en een stip
+op de rechteras. Test uitgebreid: een refresh pikt een veranderde slotkoers
+op, 24 uur aan 5-minutenkaarsen zijn er 288, de cadans wordt 30 s.

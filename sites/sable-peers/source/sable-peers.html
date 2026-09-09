@@ -442,6 +442,12 @@
   .chart-ctl button{appearance:none;-webkit-appearance:none;border:1px solid var(--edge2);background:transparent;color:var(--dim);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer}
   .chart-ctl button.on{background:var(--cyan);color:#04121A;font-weight:600;border-color:var(--cyan)}
   .chart-ctl button:focus-visible{outline:1px solid var(--cyan-soft);outline-offset:2px}
+  .chart-stamp{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--dim);display:inline-flex;align-items:center;gap:7px}
+  .chart-stamp .live-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(143,208,184,.6)}
+  .chart-stamp.fresh .live-dot{animation:chart-pulse 1.2s ease-out 1}
+  .chart-stamp.stale .live-dot{background:var(--warn)}
+  @keyframes chart-pulse{0%{box-shadow:0 0 0 0 rgba(143,208,184,.6)}100%{box-shadow:0 0 0 9px rgba(143,208,184,0)}}
+  @media (prefers-reduced-motion:reduce){.chart-stamp.fresh .live-dot{animation:none}}
   .chart-stage{position:relative;margin:10px 0 8px}
   .chart-stage canvas{display:block;width:100%;height:380px;border:1px solid var(--edge);border-radius:12px;background:rgba(5,7,10,.35);touch-action:pan-y;outline:none}
   .chart-stage canvas:focus-visible{outline:1px solid var(--cyan-soft)}
@@ -1074,13 +1080,14 @@
     <p class="sub">SABL's pool, drawn by this page: candles through the site's own proxy, the hourly watcher's readings on top, the record's events on the axis. <b>Read the distance, not the direction.</b> No embed: the page contacts only its own host. The author holds SABL.</p>
     <div class="rfacts chart-facts" id="chart-facts" translate="no"><div class="rfact"><span class="k">reading the pool</span><span class="v">…</span></div></div>
     <div class="chart-ctl" role="group" aria-label="Chart controls">
-      <span class="lbl">candles</span><button type="button" class="on" data-tf="hour">1h</button><button type="button" data-tf="day">1d</button>
+      <span class="lbl">candles</span><button type="button" data-tf="minute">5m</button><button type="button" class="on" data-tf="hour">1h</button><button type="button" data-tf="day">1d</button>
       <span class="lbl">range</span><button type="button" data-range="24h">24h</button><button type="button" class="on" data-range="7d">7d</button><button type="button" data-range="all">all</button>
+      <span class="chart-stamp" id="chart-stamp" translate="no"><span class="live-dot" aria-hidden="true"></span>live · waiting for the first read</span>
     </div>
     <div class="chart-stage"><canvas id="chart-cv" tabindex="0" role="img" aria-label="SABL price chart"></canvas><div class="chart-tip" id="chart-tip" hidden translate="no"></div></div>
     <p class="chart-sum" id="chart-sum" aria-live="polite" translate="no">reading the pool…</p>
     <ol class="chart-events" id="chart-events" translate="no"></ol>
-    <p class="quiet">Candles: GeckoTerminal, pool SABL/SOL on PumpSwap (created 25 Aug 2026), through this site's cached proxy, a minute for hours and five for days. Figures: DexScreener at load. Readings: the watcher's hourly line since 4 Sep 2026, gaps left as gaps. The market cap on the right axis is the price times the supply the watcher last read on Solana. Arrow keys move the crosshair when the chart has focus. <a href="https://dexscreener.com/solana/9bwoXpdt3fcq8Ui8TVLXo7JVbdoEzypDm5ZBD9XADqsB">The pool on DexScreener</a>.</p>
+    <p class="quiet">Live means polled: while this section is on screen and the tab is open, the page asks its own proxy again every 30 seconds for 5-minute candles and every minute for the others, and the figures with them; the stamp by the controls says when. The forming candle is outlined. Candles: GeckoTerminal, pool SABL/SOL on PumpSwap (created 25 Aug 2026), through this site's cached proxy, half a minute for 5-minute candles, a minute for hours and five for days. Figures: DexScreener at load. Readings: the watcher's hourly line since 4 Sep 2026, gaps left as gaps. The market cap on the right axis is the price times the supply the watcher last read on Solana. Arrow keys move the crosshair when the chart has focus. <a href="https://dexscreener.com/solana/9bwoXpdt3fcq8Ui8TVLXo7JVbdoEzypDm5ZBD9XADqsB">The pool on DexScreener</a>.</p>
   </section>
 
   <section class="band" id="scenarios">
@@ -1630,7 +1637,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
 window.SABLE_EXT=(function(){
   var live=location.hostname==='sable.primecircle.cloud';
   var GH='https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/';
-  return live?{markets:'/ext/markets',sabl:'/ext/sabl',record:'/ext/record',peers:'/ext/peers',ledger:'/ext/ledger',whitepaper:'/ext/whitepaper',board:'/api/game',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes',supply:'/ext/supply',mint:'/ext/mint',ohlcvHour:'/ext/ohlcv-hour',ohlcvDay:'/ext/ohlcv-day'}
+  return live?{markets:'/ext/markets',sabl:'/ext/sabl',record:'/ext/record',peers:'/ext/peers',ledger:'/ext/ledger',whitepaper:'/ext/whitepaper',board:'/api/game',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes',supply:'/ext/supply',mint:'/ext/mint',ohlcvHour:'/ext/ohlcv-hour',ohlcvDay:'/ext/ohlcv-day',ohlcvMinute:'/ext/ohlcv-minute'}
   :{markets:'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=automata,marlin,secret,pha,opengradient,nillion,iexec-rlc,oasis-network,akash-network,virtual-protocol,bittensor,near&per_page=50&page=1&sparkline=false&price_change_percentage=30d',
     sabl:'https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump',record:GH+'record.json',peers:GH+'peers-record.json',ledger:GH+'status/log.jsonl',whitepaper:GH+'whitepaper.json',board:'http://127.0.0.1:8791',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes'};
 })();
@@ -2144,15 +2151,16 @@ window.SABLE_EXT=(function(){
     var cv=document.getElementById('chart-cv'),sec=document.getElementById('chart');if(!cv||!sec)return;
     var EXT=window.SABLE_EXT||{},POOL='9bwoXpdt3fcq8Ui8TVLXo7JVbdoEzypDm5ZBD9XADqsB',GHW='https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/';
     var GT='https://api.geckoterminal.com/api/v2/networks/solana/pools/'+POOL+'/ohlcv/';
-    var SRC={hour:EXT.ohlcvHour||GT+'hour?aggregate=1&limit=1000',day:EXT.ohlcvDay||GT+'day?aggregate=1&limit=1000'};
-    var sumEl=document.getElementById('chart-sum'),tip=document.getElementById('chart-tip'),legend=document.getElementById('chart-events'),facts=document.getElementById('chart-facts'),stage=cv.parentNode;
+    var SRC={minute:EXT.ohlcvMinute||GT+'minute?aggregate=5&limit=1000',hour:EXT.ohlcvHour||GT+'hour?aggregate=1&limit=1000',day:EXT.ohlcvDay||GT+'day?aggregate=1&limit=1000'};
+    var STEP={minute:300000,hour:3600000,day:86400000},TFNAME={minute:'five minutes',hour:'one hour',day:'one day'};
+    var sumEl=document.getElementById('chart-sum'),tip=document.getElementById('chart-tip'),legend=document.getElementById('chart-events'),facts=document.getElementById('chart-facts'),stage=cv.parentNode,stampEl=document.getElementById('chart-stamp');
     var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var STATIC=[{t:Date.parse('2026-08-25T23:06:30Z'),text:'Pool created on PumpSwap',kind:'edge'},
       {t:Date.parse('2026-09-02T12:00:00Z'),text:'Whitepaper re-rendered under the same version label: SABL becomes an optional pay-in',kind:'edge'},
       {t:Date.parse('2026-09-04T16:10:00Z'),text:'Integration 001 posted; the confidential tier starts failing closed',kind:'edge'},
       {t:Date.parse('2026-09-08T12:00:00Z'),text:'MCP Gateway announced as live; every documented route answers 404',kind:'edge'}];
-    var S={tf:'hour',range:'7d',data:{},err:{},readings:[],supply:null,events:STATIC.slice(),hover:-1,vis:[],geom:null};
-    try{var sv=JSON.parse(localStorage.getItem('sable-chart')||'{}');if(sv.tf==='day'||sv.tf==='hour')S.tf=sv.tf;if(['24h','7d','all'].indexOf(sv.range)>=0)S.range=sv.range;}catch(e){}
+    var S={tf:'hour',range:'7d',data:{},err:{},readings:[],supply:null,events:STATIC.slice(),hover:-1,vis:[],geom:null,onScreen:false,lastRead:0,reads:0};
+    try{var sv=JSON.parse(localStorage.getItem('sable-chart')||'{}');if(STEP[sv.tf])S.tf=sv.tf;if(['24h','7d','all'].indexOf(sv.range)>=0)S.range=sv.range;}catch(e){}
     function save(){try{localStorage.setItem('sable-chart',JSON.stringify({tf:S.tf,range:S.range}))}catch(e){}}
     function css(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
     function escx(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -2163,28 +2171,43 @@ window.SABLE_EXT=(function(){
     function whenFull(ms){var d=new Date(ms);return d.toISOString().slice(0,10)+' '+pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+' UTC'}
     function whenLong(ms){var d=new Date(ms);return d.getUTCDate()+' '+MON[d.getUTCMonth()]+' '+d.getUTCFullYear()+' '+pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+' UTC'}
     function getJSON(u){return fetch(u,{cache:'no-store'}).then(function(r){return r.ok?r.json():Promise.reject(r.status)})}
-    function loadCandles(tf){if(S.data[tf]||S.err[tf])return Promise.resolve();
+    function loadCandles(tf,force){if(!force&&(S.data[tf]||S.err[tf]))return Promise.resolve();
       return getJSON(SRC[tf]).then(function(j){var l=(((j||{}).data||{}).attributes||{}).ohlcv_list;if(!Array.isArray(l))throw 0;
-        S.data[tf]=l.map(function(r){return {t:+r[0]*1000,o:+r[1],h:+r[2],l:+r[3],c:+r[4],v:+r[5]||0}}).filter(function(c){return c.t>0&&c.c>0&&c.h>0&&c.l>0}).sort(function(a,b){return a.t-b.t});
-      }).catch(function(){S.err[tf]=true;});}
+        S.data[tf]=l.map(function(r){return {t:+r[0]*1000,o:+r[1],h:+r[2],l:+r[3],c:+r[4],v:+r[5]||0}}).filter(function(c){return c.t>0&&c.c>0&&c.h>0&&c.l>0}).sort(function(a,b){return a.t-b.t});S.err[tf]=false;S.lastRead=Date.now();S.reads++;
+      }).catch(function(){if(!S.data[tf])S.err[tf]=true;});}
     /* the watcher's readings: token.price_usd per hourly line */
-    fetch(EXT.ledger||GHW+'status/log.jsonl',{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){
-      S.readings=t.split('\n').filter(Boolean).map(function(l){try{return JSON.parse(l)}catch(e){return null}})
+    function loadReadings(){return fetch(EXT.ledger||GHW+'status/log.jsonl',{cache:'no-store'}).then(function(r){return r.ok?r.text():''}).then(function(t){
+      var rows=t.split('\n').filter(Boolean).map(function(l){try{return JSON.parse(l)}catch(e){return null}})
         .filter(function(r){return r&&r.t&&r.token&&typeof r.token.price_usd==='number'&&r.token.price_usd>0}).map(function(r){return {t:Date.parse(r.t),p:r.token.price_usd}})
-        .filter(function(r){return r.t>0}).sort(function(a,b){return a.t-b.t});draw();}).catch(function(){});
+        .filter(function(r){return r.t>0}).sort(function(a,b){return a.t-b.t});if(rows.length)S.readings=rows;}).catch(function(){});}
     /* the record: the supply for the right axis, and the two dynamic events */
-    getJSON(EXT.record||GHW+'record.json').then(function(rec){var s=rec&&rec.sabl_supply;
+    function loadRecord(){return getJSON(EXT.record||GHW+'record.json').then(function(rec){var s=rec&&rec.sabl_supply,ev=STATIC.slice();
       if(s&&s.latest&&typeof s.latest.ui_amount==='number'&&isFinite(s.latest.ui_amount))S.supply=s.latest.ui_amount;
-      if(s&&s.last_fall&&typeof s.last_fall.t==='string'&&typeof s.last_fall.ui_delta==='number'&&s.last_fall.ui_delta<0)S.events.push({t:Date.parse(s.last_fall.t),text:'Supply fell by '+Number(-s.last_fall.ui_delta).toLocaleString('en-US',{maximumFractionDigits:6})+' SABL: the first burn on record',kind:'burn'});
-      (Array.isArray(rec.claims)?rec.claims:[]).forEach(function(c){(Array.isArray(c&&c.changes)?c.changes:[]).forEach(function(ch){if(ch&&ch.to==='present'&&typeof ch.t==='string')S.events.push({t:Date.parse(ch.t),text:String(c.title||c.id)+' answered from outside for the first time',kind:'route'})})});
-      S.events=S.events.filter(function(e){return e.t>0}).sort(function(a,b){return a.t-b.t});draw();}).catch(function(){});
-    /* the figures row: DexScreener at load */
-    getJSON(EXT.sabl||'https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump').then(function(j){
+      if(s&&s.last_fall&&typeof s.last_fall.t==='string'&&typeof s.last_fall.ui_delta==='number'&&s.last_fall.ui_delta<0)ev.push({t:Date.parse(s.last_fall.t),text:'Supply fell by '+Number(-s.last_fall.ui_delta).toLocaleString('en-US',{maximumFractionDigits:6})+' SABL: the first burn on record',kind:'burn'});
+      (Array.isArray(rec.claims)?rec.claims:[]).forEach(function(c){(Array.isArray(c&&c.changes)?c.changes:[]).forEach(function(ch){if(ch&&ch.to==='present'&&typeof ch.t==='string')ev.push({t:Date.parse(ch.t),text:String(c.title||c.id)+' answered from outside for the first time',kind:'route'})})});
+      S.events=ev.filter(function(e){return e.t>0}).sort(function(a,b){return a.t-b.t});}).catch(function(){});}
+    /* the figures row: DexScreener, at load and on every refresh */
+    function loadFigures(){return getJSON(EXT.sabl||'https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump').then(function(j){
       var ps=((j&&j.pairs)||[]).filter(function(p){return p&&p.liquidity&&typeof p.liquidity.usd==='number'}).sort(function(a,b){return b.liquidity.usd-a.liquidity.usd});var p=ps[0];if(!p)throw 0;
       var now=new Date(),stamp='read '+pad(now.getUTCHours())+':'+pad(now.getUTCMinutes())+' UTC';var chg=p.priceChange&&typeof p.priceChange.h24==='number'?p.priceChange.h24:null;
       var tiles=[['price',fmtP(+p.priceUsd),'DexScreener, PumpSwap pool, '+stamp],['market cap',fmtBig(+p.marketCap),'circulating, per DexScreener'],['FDV',fmtBig(+p.fdv),'fully diluted'],['liquidity',fmtBig(p.liquidity.usd),'in the pool'],['24 h volume',fmtBig(+(p.volume&&p.volume.h24)),'traded in the last 24 hours'],['24 h change',chg==null?'?':(chg>=0?'+':'')+chg.toFixed(1)+'%','against 24 hours ago']];
       facts.innerHTML=tiles.map(function(t){return '<div class="rfact"><span class="k">'+escx(t[0])+'</span><span class="v'+(t[0]==='24 h change'&&chg!=null?(chg>=0?' ok':' warn'):'')+'">'+escx(t[1])+'</span><span class="s">'+escx(t[2])+'</span></div>'}).join('');
-    }).catch(function(){facts.innerHTML='<div class="rfact"><span class="k">figures</span><span class="v">not readable from here</span><span class="s">DexScreener did not answer just now.</span></div>'});
+    }).catch(function(){if(!facts.querySelector('.rfact .s'))facts.innerHTML='<div class="rfact"><span class="k">figures</span><span class="v">not readable from here</span><span class="s">DexScreener did not answer just now.</span></div>'});}
+    loadReadings().then(draw);loadRecord().then(draw);loadFigures();
+    /* live means polled: the current candle series and the figures again every 30 s for 5-minute candles, every
+       60 s otherwise, only while the section is on screen and the tab is visible; the readings and the record
+       every five minutes, since they change by the hour. The stamp says when the last read landed. */
+    function stamp(){if(!stampEl)return;var d=S.lastRead?new Date(S.lastRead):null;var old=d&&Date.now()-S.lastRead>3*refreshMs();
+      stampEl.className='chart-stamp'+(old?' stale':'');stampEl.innerHTML='<span class="live-dot" aria-hidden="true"></span>'+(d?'live · updated '+escx(pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+' UTC'):'live · waiting for the first read');
+      if(d&&!old){void stampEl.offsetWidth;stampEl.className='chart-stamp fresh';}}
+    function refreshMs(){return S.tf==='minute'?30000:60000}
+    var lastSlow=0;
+    function refresh(){var slow=Date.now()-lastSlow>300000;if(slow)lastSlow=Date.now();
+      return Promise.all([loadCandles(S.tf,true),loadFigures(),slow?loadReadings():null,slow?loadRecord():null]).then(function(){draw();stamp();});}
+    var lastTick=0;
+    setInterval(function(){if(document.hidden||!S.onScreen)return;if(Date.now()-lastTick<refreshMs())return;lastTick=Date.now();refresh();},5000);
+    if('IntersectionObserver' in window)new IntersectionObserver(function(es){es.forEach(function(e){S.onScreen=e.isIntersecting;});},{threshold:0.05}).observe(sec);else S.onScreen=true;
+    document.addEventListener('visibilitychange',function(){if(!document.hidden&&S.onScreen&&Date.now()-lastTick>refreshMs()){lastTick=Date.now();refresh();}});
     function rangeMs(){return S.range==='24h'?86400000:S.range==='7d'?7*86400000:Infinity}
     function visible(){var d=S.data[S.tf]||[];if(!d.length)return [];var last=d[d.length-1].t,from=last-rangeMs()+1;return d.filter(function(c){return c.t>=from})}
     var DPR=Math.min(2,window.devicePixelRatio||1);
@@ -2197,7 +2220,7 @@ window.SABLE_EXT=(function(){
       x.font='10.5px '+MONO;x.fillStyle=C.dim;x.textBaseline='middle';x.textAlign='center';
       if(!vis.length){var msg=S.err[S.tf]?'candles not readable from here':'reading the pool…';x.fillText(msg,W/2,H/2);sumEl.textContent=S.err[S.tf]?'candles not readable from here; the figures above still come from DexScreener.':'reading the pool…';legend.innerHTML='';tip.hidden=true;S.geom=null;return;}
       var padL=Math.min(88,Math.max(62,Math.round(W*0.085))),padR=S.supply?padL:24,padT=44,padB=44,pw=W-padL-padR,ph=H-padT-padB,volH=Math.round(ph*0.18),priceH=ph-volH-8;
-      var step=S.tf==='hour'?3600000:86400000,t0=vis[0].t,tN=vis[vis.length-1].t+step;
+      var step=STEP[S.tf]||3600000,t0=vis[0].t,tN=vis[vis.length-1].t+step;
       var reads=S.readings.filter(function(r){return r.t>=t0&&r.t<=tN});
       var lo=Infinity,hi=-Infinity,vmax=0;vis.forEach(function(c){if(c.l<lo)lo=c.l;if(c.h>hi)hi=c.h;if(c.v>vmax)vmax=c.v});reads.forEach(function(r){if(r.p<lo)lo=r.p;if(r.p>hi)hi=r.p});
       var padP=(hi-lo)*0.06||hi*0.05;lo=Math.max(0,lo-padP);hi+=padP;
@@ -2209,10 +2232,12 @@ window.SABLE_EXT=(function(){
       x.font='600 9.5px '+MONO;x.letterSpacing='1.5px';x.textAlign='left';x.fillText('PRICE USD',padL,padT-32);if(S.supply){x.textAlign='right';x.fillText('MARKET CAP',W-padR,padT-32);}x.letterSpacing='0px';x.font='10.5px '+MONO;
       /* time ticks, about six */
       var n=vis.length,every=Math.max(1,Math.ceil(n/6));x.textAlign='center';
-      for(var k=0;k<n;k+=every){var c0=vis[k],xx=Math.round(X(c0.t)+cw/2)+0.5,d0=new Date(c0.t);x.strokeStyle=C.grid;x.beginPath();x.moveTo(xx,padT);x.lineTo(xx,padT+ph);x.stroke();x.fillStyle=C.dim;x.fillText(S.tf==='day'?d0.getUTCDate()+' '+MON[d0.getUTCMonth()]:d0.getUTCDate()+' '+MON[d0.getUTCMonth()]+' '+pad(d0.getUTCHours())+':00',xx,H-padB+18);}
+      for(var k=0;k<n;k+=every){var c0=vis[k],xx=Math.round(X(c0.t)+cw/2)+0.5,d0=new Date(c0.t);x.strokeStyle=C.grid;x.beginPath();x.moveTo(xx,padT);x.lineTo(xx,padT+ph);x.stroke();x.fillStyle=C.dim;x.fillText(S.tf==='day'?d0.getUTCDate()+' '+MON[d0.getUTCMonth()]:S.tf==='minute'?pad(d0.getUTCHours())+':'+pad(d0.getUTCMinutes()):d0.getUTCDate()+' '+MON[d0.getUTCMonth()]+' '+pad(d0.getUTCHours())+':00',xx,H-padB+18);}
       /* volume, then candles */
       x.globalAlpha=0.4;x.fillStyle=C.bar;vis.forEach(function(c){var h=vmax?c.v/vmax*volH:0,bw=Math.max(1,cw*0.7);x.fillRect(X(c.t)+(cw-bw)/2,padT+priceH+8+volH-h,bw,h);});x.globalAlpha=1;
-      vis.forEach(function(c){var up=c.c>=c.o,col=up?C.ok:C.moon,xm=X(c.t)+cw/2,bw=Math.max(1,Math.min(cw*0.7,14));x.strokeStyle=col;x.fillStyle=col;x.beginPath();x.moveTo(Math.round(xm)+0.5,Y(c.h));x.lineTo(Math.round(xm)+0.5,Y(c.l));x.stroke();var y1=Y(Math.max(c.o,c.c)),y2=Y(Math.min(c.o,c.c));x.fillRect(xm-bw/2,y1,bw,Math.max(1,y2-y1));});
+      vis.forEach(function(c,i){var up=c.c>=c.o,col=up?C.ok:C.moon,xm=X(c.t)+cw/2,bw=Math.max(1,Math.min(cw*0.7,14));x.strokeStyle=col;x.fillStyle=col;x.beginPath();x.moveTo(Math.round(xm)+0.5,Y(c.h));x.lineTo(Math.round(xm)+0.5,Y(c.l));x.stroke();var y1=Y(Math.max(c.o,c.c)),y2=Y(Math.min(c.o,c.c));x.fillRect(xm-bw/2,y1,bw,Math.max(1,y2-y1));
+        /* the forming candle: the last one, outlined, with its close marked on the right axis */
+        if(i===vis.length-1&&Date.now()<c.t+step){x.strokeStyle=C.cyan;x.globalAlpha=0.9;x.strokeRect(Math.round(xm-bw/2)-1.5,Math.round(y1)-1.5,bw+3,Math.max(1,y2-y1)+3);x.globalAlpha=1;var yc0=Math.round(Y(c.c))+0.5;x.fillStyle=C.cyan;x.beginPath();x.arc(W-padR,yc0,2.5,0,Math.PI*2);x.fill();}});
       /* the watcher's readings: dotted, a dot per reading, no bridge over a gap wider than two and a half candles */
       if(reads.length){x.strokeStyle=C.cyan;x.fillStyle=C.cyan;x.lineWidth=1.2;x.setLineDash([2,4]);x.beginPath();var prev=null;reads.forEach(function(r){var px=X(r.t),py=Y(r.p);if(prev&&r.t-prev.t<=step*2.5)x.lineTo(px,py);else x.moveTo(px,py);prev=r;});x.stroke();x.setLineDash([]);reads.forEach(function(r){x.beginPath();x.arc(X(r.t),Y(r.p),2.2,0,Math.PI*2);x.fill();});x.lineWidth=1;}
       /* the record's events */
@@ -2227,7 +2252,7 @@ window.SABLE_EXT=(function(){
       /* the summary: for readers, the guide and the tests */
       var last=vis[vis.length-1],hiC=vis.reduce(function(a,c){return c.h>a.h?c:a},vis[0]),loC=vis.reduce(function(a,c){return c.l<a.l?c:a},vis[0]);
       var rl=S.range==='24h'?'24 hours':S.range==='7d'?'7 days':'all';
-      var txt='Last close '+fmtP(last.c)+' at '+whenFull(last.t)+' · '+rl+': high '+fmtP(hiC.h)+' ('+when(hiC.t)+'), low '+fmtP(loC.l)+' ('+when(loC.t)+') · '+vis.length+(vis.length===1?' candle':' candles')+' of '+(S.tf==='hour'?'one hour':'one day')+' · watcher: '+reads.length+(reads.length===1?' reading':' readings')+(evs.length?' · '+evs.length+(evs.length===1?' event':' events')+' on the axis':'');
+      var txt='Last close '+fmtP(last.c)+' at '+whenFull(last.t)+' · '+rl+': high '+fmtP(hiC.h)+' ('+when(hiC.t)+'), low '+fmtP(loC.l)+' ('+when(loC.t)+') · '+vis.length+(vis.length===1?' candle':' candles')+' of '+(TFNAME[S.tf]||S.tf)+' · watcher: '+reads.length+(reads.length===1?' reading':' readings')+(evs.length?' · '+evs.length+(evs.length===1?' event':' events')+' on the axis':'');
       sumEl.textContent=txt;cv.setAttribute('aria-label','SABL price chart. '+txt);
     }
     function pick(clientX){var g=S.geom;if(!g)return -1;var r=cv.getBoundingClientRect(),i=Math.floor((clientX-r.left-g.padL)/g.cw);return i>=0&&i<S.vis.length?i:-1;}
@@ -2238,12 +2263,12 @@ window.SABLE_EXT=(function(){
     [].slice.call(sec.querySelectorAll('.chart-ctl button')).forEach(function(b){b.addEventListener('click',function(){
       if(b.dataset.tf){S.tf=b.dataset.tf;}else if(b.dataset.range){S.range=b.dataset.range;}
       [].slice.call(sec.querySelectorAll('.chart-ctl button')).forEach(function(o){o.classList.toggle('on',(o.dataset.tf&&o.dataset.tf===S.tf)||(o.dataset.range&&o.dataset.range===S.range));});
-      S.hover=-1;save();loadCandles(S.tf).then(draw);});});
+      S.hover=-1;save();loadCandles(S.tf).then(function(){draw();stamp();});});});
     [].slice.call(sec.querySelectorAll('.chart-ctl button')).forEach(function(o){o.classList.toggle('on',(o.dataset.tf&&o.dataset.tf===S.tf)||(o.dataset.range&&o.dataset.range===S.range));});
     if('ResizeObserver' in window)new ResizeObserver(function(){draw()}).observe(stage);
     window.addEventListener('resize',draw);
-    loadCandles(S.tf).then(draw);
-    window.SABLE_CHART={state:S,draw:draw};
+    loadCandles(S.tf).then(function(){draw();stamp();});
+    window.SABLE_CHART={state:S,draw:draw,refreshNow:refresh,refreshMs:refreshMs};
   })();
   /* the page log shows its newest three entries; the box's height is the top of the fourth, so the rest scroll inside it.
      Measured again whenever the list changes size: in compact mode the Log is hidden until chosen, and a hidden list measures zero. */

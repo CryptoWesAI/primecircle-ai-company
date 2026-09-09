@@ -476,6 +476,12 @@
   .chart-ctl button{appearance:none;-webkit-appearance:none;border:1px solid var(--edge2);background:transparent;color:var(--dim);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;padding:7px 12px;border-radius:999px;cursor:pointer}
   .chart-ctl button.on{background:var(--cyan);color:#04121A;font-weight:600;border-color:var(--cyan)}
   .chart-ctl button:focus-visible{outline:1px solid var(--cyan-soft);outline-offset:2px}
+  .chart-stamp{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--dim);display:inline-flex;align-items:center;gap:7px}
+  .chart-stamp .live-dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(143,208,184,.6)}
+  .chart-stamp.fresh .live-dot{animation:chart-pulse 1.2s ease-out 1}
+  .chart-stamp.stale .live-dot{background:var(--warn)}
+  @keyframes chart-pulse{0%{box-shadow:0 0 0 0 rgba(143,208,184,.6)}100%{box-shadow:0 0 0 9px rgba(143,208,184,0)}}
+  @media (prefers-reduced-motion:reduce){.chart-stamp.fresh .live-dot{animation:none}}
   .chart-stage{position:relative;margin:10px 0 8px}
   .chart-stage canvas{display:block;width:100%;height:380px;border:1px solid var(--edge);border-radius:12px;background:rgba(5,7,10,.35);touch-action:pan-y;outline:none}
   .chart-stage canvas:focus-visible{outline:1px solid var(--cyan-soft)}
@@ -1111,13 +1117,14 @@
     <p class="sub">SABL's pool, drawn by this page: candles through the site's own proxy, the hourly watcher's readings on top, the record's events on the axis. <b>Read the distance, not the direction.</b> No embed: the page contacts only its own host. The author holds SABL.</p>
     <div class="rfacts chart-facts" id="chart-facts" translate="no"><div class="rfact"><span class="k">reading the pool</span><span class="v">…</span></div></div>
     <div class="chart-ctl" role="group" aria-label="Chart controls">
-      <span class="lbl">candles</span><button type="button" class="on" data-tf="hour">1h</button><button type="button" data-tf="day">1d</button>
+      <span class="lbl">candles</span><button type="button" data-tf="minute">5m</button><button type="button" class="on" data-tf="hour">1h</button><button type="button" data-tf="day">1d</button>
       <span class="lbl">range</span><button type="button" data-range="24h">24h</button><button type="button" class="on" data-range="7d">7d</button><button type="button" data-range="all">all</button>
+      <span class="chart-stamp" id="chart-stamp" translate="no"><span class="live-dot" aria-hidden="true"></span>live · waiting for the first read</span>
     </div>
     <div class="chart-stage"><canvas id="chart-cv" tabindex="0" role="img" aria-label="SABL price chart"></canvas><div class="chart-tip" id="chart-tip" hidden translate="no"></div></div>
     <p class="chart-sum" id="chart-sum" aria-live="polite" translate="no">reading the pool…</p>
     <ol class="chart-events" id="chart-events" translate="no"></ol>
-    <p class="quiet">Candles: GeckoTerminal, pool SABL/SOL on PumpSwap (created 25 Aug 2026), through this site's cached proxy, a minute for hours and five for days. Figures: DexScreener at load. Readings: the watcher's hourly line since 4 Sep 2026, gaps left as gaps. The market cap on the right axis is the price times the supply the watcher last read on Solana. Arrow keys move the crosshair when the chart has focus. <a href="https://dexscreener.com/solana/9bwoXpdt3fcq8Ui8TVLXo7JVbdoEzypDm5ZBD9XADqsB">The pool on DexScreener</a>.</p>
+    <p class="quiet">Live means polled: while this section is on screen and the tab is open, the page asks its own proxy again every 30 seconds for 5-minute candles and every minute for the others, and the figures with them; the stamp by the controls says when. The forming candle is outlined. Candles: GeckoTerminal, pool SABL/SOL on PumpSwap (created 25 Aug 2026), through this site's cached proxy, half a minute for 5-minute candles, a minute for hours and five for days. Figures: DexScreener at load. Readings: the watcher's hourly line since 4 Sep 2026, gaps left as gaps. The market cap on the right axis is the price times the supply the watcher last read on Solana. Arrow keys move the crosshair when the chart has focus. <a href="https://dexscreener.com/solana/9bwoXpdt3fcq8Ui8TVLXo7JVbdoEzypDm5ZBD9XADqsB">The pool on DexScreener</a>.</p>
   </section>
 
   <section class="band" id="scenarios">
