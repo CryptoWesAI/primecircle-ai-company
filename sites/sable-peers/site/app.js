@@ -886,7 +886,10 @@ window.SABLE_EXT=(function(){
     if('IntersectionObserver' in window)new IntersectionObserver(function(es){es.forEach(function(e){S.onScreen=e.isIntersecting;});},{threshold:0.05}).observe(sec);else S.onScreen=true;
     document.addEventListener('visibilitychange',function(){if(!document.hidden&&S.onScreen&&Date.now()-lastTick>refreshMs()){lastTick=Date.now();refresh();}});
     function rangeMs(){return S.range==='24h'?86400000:S.range==='7d'?7*86400000:Infinity}
-    function visible(){var d=S.data[S.tf]||[];if(!d.length)return [];var last=d[d.length-1].t,from=last-rangeMs()+1;return d.filter(function(c){return c.t>=from})}
+    function nowMs(){return typeof window.__SABLE_NOW==='number'?window.__SABLE_NOW:Date.now()}
+    /* the window is measured back from now, and a candle that overlaps it is shown: 7d on day candles is eight
+       candles, today's partial one included, so an event on the first day of the window is on the chart */
+    function visible(){var d=S.data[S.tf]||[];if(!d.length)return [];var step=STEP[S.tf]||3600000,from=nowMs()-rangeMs();return d.filter(function(c){return c.t+step>from})}
     var DPR=Math.min(2,window.devicePixelRatio||1);
     function draw(){
       var W=cv.clientWidth,H=cv.clientHeight;if(!(W>50)||!(H>50))return;
@@ -914,7 +917,7 @@ window.SABLE_EXT=(function(){
       x.globalAlpha=0.4;x.fillStyle=C.bar;vis.forEach(function(c){var h=vmax?c.v/vmax*volH:0,bw=Math.max(1,cw*0.7);x.fillRect(X(c.t)+(cw-bw)/2,padT+priceH+8+volH-h,bw,h);});x.globalAlpha=1;
       vis.forEach(function(c,i){var up=c.c>=c.o,col=up?C.ok:C.moon,xm=X(c.t)+cw/2,bw=Math.max(1,Math.min(cw*0.7,14));x.strokeStyle=col;x.fillStyle=col;x.beginPath();x.moveTo(Math.round(xm)+0.5,Y(c.h));x.lineTo(Math.round(xm)+0.5,Y(c.l));x.stroke();var y1=Y(Math.max(c.o,c.c)),y2=Y(Math.min(c.o,c.c));x.fillRect(xm-bw/2,y1,bw,Math.max(1,y2-y1));
         /* the forming candle: the last one, outlined, with its close marked on the right axis */
-        if(i===vis.length-1&&Date.now()<c.t+step){x.strokeStyle=C.cyan;x.globalAlpha=0.9;x.strokeRect(Math.round(xm-bw/2)-1.5,Math.round(y1)-1.5,bw+3,Math.max(1,y2-y1)+3);x.globalAlpha=1;var yc0=Math.round(Y(c.c))+0.5;x.fillStyle=C.cyan;x.beginPath();x.arc(W-padR,yc0,2.5,0,Math.PI*2);x.fill();}});
+        if(i===vis.length-1&&nowMs()<c.t+step){x.strokeStyle=C.cyan;x.globalAlpha=0.9;x.strokeRect(Math.round(xm-bw/2)-1.5,Math.round(y1)-1.5,bw+3,Math.max(1,y2-y1)+3);x.globalAlpha=1;var yc0=Math.round(Y(c.c))+0.5;x.fillStyle=C.cyan;x.beginPath();x.arc(W-padR,yc0,2.5,0,Math.PI*2);x.fill();}});
       /* the watcher's readings: dotted, a dot per reading, no bridge over a gap wider than two and a half candles */
       if(reads.length){x.strokeStyle=C.cyan;x.fillStyle=C.cyan;x.lineWidth=1.2;x.setLineDash([2,4]);x.beginPath();var prev=null;reads.forEach(function(r){var px=X(r.t),py=Y(r.p);if(prev&&r.t-prev.t<=step*2.5)x.lineTo(px,py);else x.moveTo(px,py);prev=r;});x.stroke();x.setLineDash([]);reads.forEach(function(r){x.beginPath();x.arc(X(r.t),Y(r.p),2.2,0,Math.PI*2);x.fill();});x.lineWidth=1;}
       /* the record's events */

@@ -27,7 +27,14 @@ for(const [w,h] of [[1320,900],[390,844]]){
   ok(foreign.length===0,w+": the page contacted only its own host: "+[...hosts].join(", "));
   await p.evaluate(()=>document.getElementById("chart").scrollIntoView()); await new Promise(r=>setTimeout(r,300));
   await p.screenshot({path:join(here,"shots",`chart-live-${w}.png`)});
-  console.log(w+": "+sum); if(w>1000){console.log("figures:",facts.join(" | "));console.log("events:",events.join(" || "));}
+  console.log(w+": "+sum); if(w>1000){console.log("figures:",facts.join(" | "));console.log("events (hour, 7d):",events.join(" || "));
+    // day candles over 7 days must carry the same events, the first day of the window included
+    await p.click('#chart button[data-tf="day"]'); await p.click('#chart button[data-range="7d"]'); await new Promise(r=>setTimeout(r,1500));
+    const evDay=await p.$$eval("#chart-events li",l=>l.map(x=>x.textContent.replace(/\s+/g," ").trim()));
+    const sumDay=await p.$eval("#chart-sum",e=>e.textContent.replace(/\s+/g," ").trim());
+    console.log("day 7d:",sumDay); console.log("events (day, 7d):",evDay.join(" || "));
+    ok(evDay.length>=events.length,w+": day 7d shows at least the events hour 7d shows ("+evDay.length+" vs "+events.length+")");
+    await p.click('#chart button[data-tf="hour"]');}
   await p.close();
 }
 await b.close();

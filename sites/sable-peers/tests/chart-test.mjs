@@ -26,7 +26,8 @@ const base=`http://127.0.0.1:${port}/`;
 
 // fixtures: 200 hour candles ending at a fixed time, 16 day candles, a slow drift with one spike
 const END=Date.parse("2026-09-09T15:00:00Z")/1000;
-function series(n,step){const out=[];let p=0.0005;for(let i=n-1;i>=0;i--){const t=END-i*step;const drift=Math.sin(i/9)*0.00004+(i===40?0.00012:0);const o=p,c=Math.max(0.0002,p+drift*(i%3===0?-1:1));const h=Math.max(o,c)*1.02,l=Math.min(o,c)*0.98;out.push([t,o,h,l,c,1500+((i*37)%900)]);p=c;}return out.reverse();}
+// candles sit on their grid like the real ones: days at 00:00 UTC, hours at :00, 5-minute candles at :00/:05/...
+function series(n,step){const out=[];let p=0.0005;const end=Math.floor(END/step)*step;for(let i=n-1;i>=0;i--){const t=end-i*step;const drift=Math.sin(i/9)*0.00004+(i===40?0.00012:0);const o=p,c=Math.max(0.0002,p+drift*(i%3===0?-1:1));const h=Math.max(o,c)*1.02,l=Math.min(o,c)*0.98;out.push([t,o,h,l,c,1500+((i*37)%900)]);p=c;}return out.reverse();}
 const HOUR={data:{attributes:{ohlcv_list:series(200,3600)}}}, DAY={data:{attributes:{ohlcv_list:series(16,86400)}}}, MINUTE={data:{attributes:{ohlcv_list:series(400,300)}}};
 // the same hour series with the last close a tenth higher: what a refresh should pick up
 const HOUR2=JSON.parse(JSON.stringify(HOUR)); { const l=HOUR2.data.attributes.ohlcv_list[0]; l[4]=l[4]*1.1; l[2]=Math.max(l[2],l[4]); }
@@ -63,7 +64,7 @@ for(const c of cases){
   p.on("pageerror",e=>errs.push(c.name+": "+e.message));
   p.on("console",m=>{if(m.type()==="error"&&!/404|500|Failed to load resource|sable-api|\/ext\/|\/api\/|blocked in this test|CORS policy/.test(m.text()))errs.push(c.name+": "+m.text())});
   // each case starts from the default choice: the page remembers the last one in localStorage
-  await p.evaluateOnNewDocument(()=>{try{localStorage.removeItem("sable-chart")}catch(e){}});
+  await p.evaluateOnNewDocument((nowMs)=>{try{localStorage.removeItem("sable-chart")}catch(e){} window.__SABLE_NOW=nowMs;},END*1000);
   await p.goto(base+"#chart",{waitUntil:"load"});
   await p.waitForFunction(()=>!/reading the pool/.test(document.getElementById("chart-sum").textContent),{timeout:10000}).catch(()=>{});
   await new Promise(r=>setTimeout(r,500));
@@ -75,7 +76,7 @@ for(const c of cases){
   if(c.ohlcv===200){
     ok(/Last close \$0\.\d+ at 2026-09-09 15:00 UTC/.test(sum),c.name+": summary names the last close and time: "+sum);
     ok(/7 days: high \$0\.\d+ \(\d+ Sep \d\d:\d\d\), low \$0\.\d+ \(\d+ Sep \d\d:\d\d\)/.test(sum),c.name+": summary names high and low with times: "+sum);
-    ok(/168 candles/.test(sum),c.name+": 7 days of hour candles is 168 candles: "+sum);
+    ok(/169 candles/.test(sum),c.name+": 7 days back from now on hour candles is 169 candles, the overlapping first one included: "+sum);
     ok(/watcher: \d+ readings/.test(sum),c.name+": summary counts the watcher's readings: "+sum);
     // pixels in the candle colours
     const px=await p.evaluate(()=>{const cv=document.getElementById("chart-cv"),x=cv.getContext("2d"),d=x.getImageData(0,0,cv.width,cv.height).data;let up=0,down=0,cyan=0;for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2];if(r>120&&r<160&&g>190&&b>160&&b<200)up++;if(r>230&&g>100&&g<140&&b<110)down++;if(r>100&&r<125&&g>210&&b>240)cyan++;}return {up,down,cyan,w:cv.width,h:cv.height};});
@@ -97,12 +98,16 @@ for(const c of cases){
     // 5-minute candles: 24 h range is 288 of them, and the refresh cadence tightens to 30 s
     await p.click('#chart button[data-tf="minute"]'); await p.click('#chart button[data-range="24h"]'); await new Promise(r=>setTimeout(r,400));
     const sumM=clean(await p.$eval("#chart-sum",e=>e.textContent));
-    ok(/288 candles of five minutes/.test(sumM)&&/24 hours: high/.test(sumM),c.name+": 24 hours of 5-minute candles: "+sumM);
+    ok(/289 candles of five minutes/.test(sumM)&&/24 hours: high/.test(sumM),c.name+": 24 hours of 5-minute candles: "+sumM);
     ok((await p.evaluate(()=>window.SABLE_CHART.refreshMs()))===30000,c.name+": 5-minute candles refresh every 30 s");
     // controls: day candles over 7 days, then all range
     await p.click('#chart button[data-tf="day"]'); await p.click('#chart button[data-range="7d"]'); await new Promise(r=>setTimeout(r,300));
     const sumDay=clean(await p.$eval("#chart-sum",e=>e.textContent));
-    ok(/\b7 candles\b|\b8 candles\b/.test(sumDay),c.name+": 7 days of day candles is 7 or 8 candles: "+sumDay);
+    ok(/\b8 candles\b/.test(sumDay),c.name+": 7 days of day candles is 8 candles, today's partial one included: "+sumDay);
+    // the founder's case: on day candles over 7 days, the 2 Sep event must still be on the chart
+    const evDay=await p.$$eval("#chart-events li",l=>l.map(x=>x.textContent.replace(/\s+/g," ").trim()));
+    ok(evDay.some(t=>/2 Sep 2026.*Whitepaper/.test(t))&&evDay.some(t=>/4 Sep 2026/.test(t))&&evDay.some(t=>/8 Sep 2026.*MCP/.test(t)),c.name+": day 7d lists the 2, 4 and 8 Sep events: "+evDay.join(" | ").slice(0,240));
+    ok(evDay.length===(c.burn?4:3),c.name+": day 7d event count "+evDay.length+" (wanted "+(c.burn?4:3)+")");
     await p.click('#chart button[data-range="all"]'); await new Promise(r=>setTimeout(r,300));
     const sumAll=clean(await p.$eval("#chart-sum",e=>e.textContent));
     ok(/16 candles/.test(sumAll)&&/all: high/.test(sumAll),c.name+": all range shows every day candle: "+sumAll);
