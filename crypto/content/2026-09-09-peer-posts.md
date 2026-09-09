@@ -115,7 +115,39 @@ Handles, read from each project's own site on 2026-09-09 and cross-checked again
 | 6 | Marlin | Automata |
 | 7 | Bittensor, Secret (only on a quiet day for them) | Thread 2 |
 
-Media: the card PNG per single; for thread 1 the overview screenshot of the section (`tests/shots/who-1320.png`); for thread 2 `tests/shots/cards/what-would-move-sable.png`.
+## Images per post
+
+All paths under `sites/sable-peers/tests/shots/`. Cards are 2x crops of the live page (`cards/`), the rest are 2x crops made by `tests/shot-thread.mjs` (`thread/`). X takes up to four images per post; the order given is the order to attach.
+
+Thread 1
+
+| Post | Image(s) | Why |
+| --- | --- | --- |
+| 1/ | `who-1320.png` | the section as a reader meets it: title, intro, first cards |
+| 2/ | `thread/field-table.png`, `thread/token-ladder.png` | the two lists side by side, the whole point of the post |
+| 3/ | `cards/tinfoil.png`, `cards/akash.png`, `cards/marlin.png`, `cards/iexec.png` | the four names the post says are on one list but not the other |
+| 4/ | `thread/token-ladder.png` | the arcs are on the ladder bars and the card footers; the ladder shows the distance in one glance |
+| 5/ | `cards/near-ai-cloud.png`, `cards/phala.png`, `cards/akash.png`, `cards/iexec.png` | the four projects that shipped confidential compute while their tokens fell; the arc line at the bottom of each card carries the dates |
+| 6/ | `cards/phala.png`, `cards/near-ai-cloud.png`, `cards/opengradient.png`, `cards/tinfoil.png` | strongest, twin, competitor, no-token proof, in that order |
+| 7/ | `cards/what-would-move-sable.png` | the seven-point panel |
+| 8/ | `thread/who-intro.png` | the intro paragraph with the sourcing line, next to the link |
+
+Thread 2
+
+| Post | Image(s) | Why |
+| --- | --- | --- |
+| 1/ | `thread/field-table.png` | Sable's own row against the peers, read from the docs |
+| 2/ | `thread/token-ladder.png` | the SABL bar at the bottom of a log scale is the whole argument |
+| 3/ | `thread/reliability-grid.png`, `thread/reliability-facts.png` | the hour-by-hour grid of refusals since 4 September, then the four figures |
+| 4/ | `cards/near-ai-cloud.png` | the launch partners are in the card's first line |
+| 5/ | `cards/phala.png`, `cards/marlin.png`, `cards/akash.png` | three repositionings, quiet years, one line kept |
+| 6/ | `cards/opengradient.png`, `cards/nillion.png`, `thread/burn-watch.png` | the two token-first arcs, then the instrument that will show the SABL burn |
+| 7/ | `cards/secret.png`, `thread/announced-then-checked.png` | attestation breaking, and Sable's own announcements next to what the deployment answers |
+| 8/ | `cards/what-would-move-sable.png` | the list itself, so the last post stands alone when quoted |
+
+Singles: the project's own card from `cards/` (`phala.png`, `near-ai-cloud.png`, `nillion.png`, `opengradient.png`, `oasis-rofl.png`, `akash.png`, `virtuals.png`, `secret.png`, `marlin.png`, `iexec.png`, `automata.png`, `bittensor.png`, `tinfoil.png`). For Oasis add `thread/field-table.png` as a second image, since the post mentions the daily page watch, which is the table's last column.
+
+Alt text, one line per image, for accessibility and for readers with images off: "Card for <project> from the Sable Observatory: what it is, its link to Sable, which list it is on, and its market cap arc, dated 9 Sep 2026." For the table: "Checklist of eight private or provable AI compute projects read from their own documentation." For the ladder: "Market caps on a log scale, SABL at the bottom." For the grid: "Hour-by-hour record of Sable's confidential tier, failing closed since 4 September 2026."
 
 ## Before posting
 
