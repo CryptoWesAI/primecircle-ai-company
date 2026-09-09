@@ -21,4 +21,4 @@ Check it yourself, receipt verifier and an hourly watch of their status and whit
 Not financial advice.
 ```
 
-1,213 characters. If the group wants shorter, the first paragraph plus the three numbered lines and the two links stand on their own.
+1,362 characters, well inside Telegram's 4,096. If the group wants shorter, the first paragraph plus the three numbered lines and the two links stand on their own.
