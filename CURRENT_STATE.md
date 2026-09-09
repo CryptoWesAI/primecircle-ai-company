@@ -802,3 +802,17 @@ bibliotheek. Tests: `tests/chart-test.mjs` (drie fixtures), shell lokaal en
 live groen, `tests/shot-chart.mjs` live: 168 uurkaarsen, 15 lezingen in zeven
 dagen, alleen de eigen host aangeroepen. Twee deploys (08:33Z en de
 legendafix erna), beide op een moment zonder lopende run.
+
+**De watcher draait nu ook op de VPS (9 september, "Ga door").** Container
+`sable-watch` in `/opt/sable-watch` (bron: `sites/sable-peers/watcher-vps/`):
+dezelfde `watch.py`, elk uur op minuut 05, pull over https, commit met
+dezelfde berichten als de Action, push over ssh met een deploy key die op de
+VPS zelf is aangemaakt (de privésleutel verlaat de VPS niet, alleen de
+publieke helft gaat naar GitHub als deploy key met schrijfrecht), en dezelfde
+pushmeldingen naar de app (PUSH_SECRET uit het .env van de site gekopieerd
+naar een eigen .env, 600). Bij een rebase-conflict met de Action laat de runner
+zijn eigen commit van dat uur vallen. Eerste run handmatig gedraaid: whitepaper,
+supply, routewacht en statusregel allemaal goed; de push wacht op de sleutel
+op GitHub. Het GitHub-schema blijft als fallback. Open: de founder voegt de
+publieke sleutel toe (staat in het gesprek en op de VPS in
+`/opt/sable-watch/keys/id_ed25519.pub`); daarna is de eerste push het bewijs.

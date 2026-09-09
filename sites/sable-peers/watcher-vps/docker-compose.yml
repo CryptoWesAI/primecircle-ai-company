@@ -1,0 +1,17 @@
+services:
+  sable-watch:
+    build: .
+    container_name: sable-watch
+    restart: unless-stopped
+    volumes:
+      - ./repo:/repo
+      - ./keys:/keys:ro
+    env_file: .env
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
