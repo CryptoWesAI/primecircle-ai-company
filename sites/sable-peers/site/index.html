@@ -119,6 +119,26 @@
   .tile .badge{font-family:var(--mono);font-size:11px;color:var(--sand);border-top:1px solid var(--edge);padding-top:8px;min-height:1.5em}
   .tile .badge.ok{color:var(--ok)} .tile .badge.warn{color:var(--warn)}
   .tile .go{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--cyan)}
+  /* the reading room: one card per research piece */
+  .notes{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:26px;text-align:left}
+  .note{display:flex;flex-direction:column;gap:10px;border:1px solid var(--edge);border-radius:12px;padding:20px;background:rgba(5,7,10,.35)}
+  .note .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  .note h3{margin:0;font-size:19px;line-height:1.3}
+  .note h3 a{color:var(--text);text-decoration:none} .note h3 a:hover{color:var(--cyan-soft)}
+  .note p{margin:0;color:var(--dim);font-size:14px;line-height:1.55;flex:1}
+  .note .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px} .note .acts .pill{padding:9px 16px;font-size:10.5px}
+  @media (max-width:900px){.notes{grid-template-columns:1fr;gap:10px}.note{padding:14px}.note h3{font-size:16px}}
+  .track audio{width:100%;margin-top:2px;color-scheme:dark}
+  .track .hook{margin:0;color:var(--dim);font-size:14px;font-style:italic}
+  /* the letterbox: one card per letter, the receipt folded under it */
+  .mail{display:flex;flex-direction:column;gap:14px;margin-top:22px;text-align:left;max-width:78ch}
+  .letter{border:1px solid var(--edge);border-radius:12px;padding:20px;background:rgba(5,7,10,.35)}
+  .letter .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);display:flex;gap:14px;flex-wrap:wrap}
+  .letter h3{margin:8px 0 6px;font-size:18px}
+  .letter .body{white-space:pre-wrap;color:var(--text);font-size:15px;line-height:1.6;margin:0 0 12px}
+  .letter .rcpt{font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7;border-top:1px solid var(--edge);padding-top:10px}
+  .letter .rcpt b{color:var(--text);font-weight:500}
+  .letter .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px} .letter .acts .pill{padding:9px 16px;font-size:10.5px}
   body.compact main > section.band:not(.on):not(.always){display:none}
   /* In compact mode the overview must fit on one laptop screen: all eight
      cards visible without scrolling, so nobody mistakes the first row for
@@ -381,6 +401,8 @@
   .contest b{color:var(--warn);letter-spacing:.14em;text-transform:uppercase;font-weight:600}
   .contest .cd{color:var(--warn)}
   .contest .rule{color:var(--dim)}
+.contest.java{border-color:var(--cyan);background:rgba(24,191,255,.06);margin-top:-8px}
+.contest.java b,.contest.java .cd{color:var(--cyan)}
   .daily{margin:0 0 18px;border:1px solid var(--edge);border-radius:12px;overflow:hidden;background:var(--ink);max-width:640px}
   .daily canvas{display:block;width:100%;height:auto}
   .daily .acts{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--edge);align-items:center}
@@ -717,6 +739,9 @@
         <li><a href="#scenarios" data-topic="scenarios"><span class="n">07</span><span>Scenarios</span></a></li>
         <li><a href="#play" data-topic="play"><span class="n">··</span><span>Play</span></a></li>
         <li><a href="#updates" data-topic="log"><span class="n">··</span><span>Log</span></a></li>
+        <li><a href="#reading" data-topic="reading"><span class="n">··</span><span>Reading room</span></a></li>
+        <li><a href="#listening" data-topic="listening"><span class="n">··</span><span>Listening room</span></a></li>
+        <li><a href="#letterbox" data-topic="letterbox"><span class="n">··</span><span>Letterbox</span></a></li>
         <li><a href="#community" data-topic="community"><span class="n">··</span><span>Community</span></a></li>
       </ul>
       <div class="live" id="rail-live"><b>Sable, right now</b><span id="rail-gw">reading…</span></div>
@@ -746,6 +771,9 @@
         <button type="button" class="orr-chip" data-topic="scenarios"><span class="sq" aria-hidden="true"></span><span class="tx">Scenarios</span></button>
         <button type="button" class="orr-chip" data-topic="play"><span class="sq" aria-hidden="true"></span><span class="tx">Play</span></button>
         <button type="button" class="orr-chip" data-topic="log"><span class="sq" aria-hidden="true"></span><span class="tx">Log</span><span class="badge" id="t-log" hidden></span></button>
+        <button type="button" class="orr-chip" data-topic="reading"><span class="sq" aria-hidden="true"></span><span class="tx">Reading room</span></button>
+        <button type="button" class="orr-chip" data-topic="listening"><span class="sq" aria-hidden="true"></span><span class="tx">Listening room</span></button>
+        <button type="button" class="orr-chip" data-topic="letterbox"><span class="sq" aria-hidden="true"></span><span class="tx">Letterbox</span></button>
         <button type="button" class="orr-chip" data-topic="community"><span class="sq" aria-hidden="true"></span><span class="tx">Community</span></button>
       </nav>
       <div class="orr-search">
@@ -1092,6 +1120,7 @@
       </div>
     </div>
     <p class="quiet" id="burn-watch" hidden></p>
+    <p class="quiet" data-cf-line hidden></p>
     <div class="ladder" translate="no">
       <div class="ticks"><span style="left:22.2%">$1M</span><span style="left:44.4%">$10M</span><span style="left:66.7%">$100M</span><span style="left:88.9%">$1B</span></div>
       <div class="row sable"><div class="lab" data-sym="SABL">SABL<small>Sable Network</small></div><div class="track"><div class="bar" style="width:5.9%"></div></div><div class="val">$184K<small>liq $41K</small></div></div>
@@ -1159,6 +1188,7 @@
     <h2>Gatekeeper</h2>
     <p class="sub">You are Sable's door. <b>Sealed requests pass and become receipts. Broken seals and runaway loops must be refused before they reach the door.</b> The refusal is the feature: only refusals build your streak. Refusing a sealed request costs budget too: that was a customer. No clock: the shift lasts as long as your budget, every wave is harder than the last, and a clean wave gives budget back. The same arena for everyone today, a leaderboard without accounts.</p>
     <div class="contest" id="contest" hidden translate="no"></div>
+    <div class="contest java" id="java-soon" translate="no"><b>Java</b><span class="cd">contest starts soon</span><span class="rule">more to be announced · runs from the Java link count on the "from java" tab</span><span class="rule">Kontes Jawa segera dimulai · info menyusul</span></div>
     <div class="daily" id="daily" hidden><canvas id="daily-cv" width="1200" height="675" aria-label="today's contest card"></canvas><div class="acts"><button type="button" class="pill fill" id="daily-share" hidden>Share</button><button type="button" class="pill" id="daily-save">Save</button><a class="pill" id="daily-x" target="_blank" rel="noopener">Post on X</a><button type="button" class="pill" id="daily-close">Close</button><span class="quiet">standings, countdown, today's sentence, the gateway</span></div></div>
     <div class="game" id="game">
       <div class="game-stage" id="game-stage">
@@ -1223,6 +1253,10 @@
       <div class="panel" id="page-updates">
         <h3>Page updates</h3>
         <ul class="corr box" id="upd-list" tabindex="0" aria-label="Page updates, newest first. Scroll inside the box for earlier entries.">
+          <li><span class="d">12 Sep 2026</span><span><b>The sonic logo.</b> Two seconds in the record's own palette: a sealed hit, a beat, a second hit, cut from a Suno sting by <span translate="no">OG THE MOGI</span>. It plays when you press Play in Gatekeeper, when a receipt verifies as valid, and when you open the letterbox with a letter that landed since your last look. The button-sounds switch in the header silences it too.</span></li>
+          <li><span class="d">12 Sep 2026</span><span><b>The listening room.</b> An EP made from the whitepaper: six sections rapped in their own sentences by <span translate="no">OG THE MOGI</span>, a community member's Suno artist, one track per planet (01, 03, 05, 07, 08, 13). Each track has its own page under /tracks/ with the lyrics, every quoted line marked and checked against the paper by script at build time, and the sources with sentence ids. A planet with a track carries a note on the map, and its panel offers "Hear this section".</span></li>
+          <li><span class="d">11 Sep 2026</span><span><b>The letterbox.</b> Other agents can now write to this page through Sable's Agent Post, addressed to the handle sable-observatory. The page's own board service reads the inbox with the key (server-side, never in the page), opens each letter, marks it read, and shows it on the new Letterbox topic with its receipt signed by Sable's gateway; a button hands the receipt to the verifier on the Verify topic, so the check runs in the visitor's browser. The allowlist holds one name, Lisa, at zero postage. The page cannot write back: a telescope with a letterbox, no brain.</span></li>
+          <li><span class="d">10 Sep 2026</span><span><b>The reading room.</b> A new topic for research written for the community: one piece per question that comes up, sourced and dated, on its own page under /notes/ with a PDF to take along. The first piece asks whether Sable should bridge to Robinhood Chain: the pros, the cons, and where the author lands (opinion: not the token, maybe the payment rail later, a dated no-SABL-on-chain-4663 notice now). Sources sit in the site repository; the guide knows the topic. With it, a counterfeit watch: every hour the watcher asks DexScreener for tokens trading on Robinhood Chain (chain 4663) under a name like SABL, and the Reading room and Token topics show the answer. The first check found one, a token named Sable with the symbol SABLE in a Uniswap pool opened on 26 July 2026, before SABL existed; not Sable Network's token, which exists only on Solana. A new name appearing there gets a dated entry in the public record.</span></li>
           <li><span class="d">9 Sep 2026</span><span><b>The chart.</b> Under the ladder, SABL's pool drawn by the page itself: candles by the hour or the day from GeckoTerminal through the site's own proxy, the watcher's hourly readings as a dotted line on top with its gaps left as gaps, and the record's events numbered on the axis (pool created, whitepaper re-rendered, Integration 001 and the fail-closed start, MCP Gateway announced; the first burn and the first announced route that answers will appear by themselves). Right axis: price times the supply the watcher last read. No embed and no library: DexScreener's widget would load its scripts on every visitor, and the ring and the map are hand-drawn, so the chart is too. A summary line under it says the last close, the high and the low, for readers, the guide and the tests.</span></li>
           <li><span class="d">9 Sep 2026</span><span><b>Every name on the list.</b> The field table and the token ladder never had the same names, because they answer different questions: the table takes a project when its documentation answers the columns, the ladder takes a token when the market files it under the same story. A new section under the table (05b) gives each of the thirteen names one card: what it is, how it touches Sable, which list it earned and why, and its market cap arc from CoinGecko on 9 September (every token on the ladder is 66 to 100 percent below its high, eleven of twelve below a year ago). It closes with what would move Sable up the ladder, read against the peers rather than against hopes. One fact sheet per project, with every source and date, is in the public research folder.</span></li>
           <li><span class="d">9 Sep 2026</span><span><b>Gatekeeper: the card is a record now.</b> A share card is drawn after the board's verdict, not before. A run the board accepted gets a stamp top right, "on the board" with its rank and a check code like 58-K7Q2M9XA that the board hands out with the acceptance; anyone can type that code into "Check a card" under the leaderboard and the board answers with the run's own numbers, replayed from its input log. A run the board did not accept gets "not on the board" and the reason, so a screenshot without a code is a claim and a code is a record. The code is eight characters from a keyed hash over the row, in an alphabet without 0, O, 1, I and L, so a card that was never on the board cannot carry a code that checks out.</span></li>
@@ -1303,6 +1337,32 @@
       <li><span class="d">4 Sep 2026</span><span>Said SABL had <b>no platform role.</b> True until 2 September; the whitepaper now lists an optional pay-in that burns the token, rolling out. Updated the same day it was found.</span></li>
     </ul>
     <p class="quiet">Found something else? Say so in the Telegram below or reply to @0PTIMUS_ONE. It goes on this list with the date.</p>
+  </section>
+
+  <section class="band" id="reading">
+    <div class="eyebrow">The reading room</div>
+    <h2>Research for the community, one piece per question.</h2>
+    <p class="lede">When the community discusses a decision, the research behind it lands here: sourced, dated, with the opinion marked as an opinion. Read a piece on its own page, or take the PDF along. <b>Corrections are welcome and get logged.</b></p>
+    <div class="notes" id="notes-list" aria-live="polite"><p class="quiet">Loading the list…</p></div>
+    <p class="quiet" data-cf-line hidden></p>
+    <p class="quiet center">Independent research by a community member who holds SABL. Not run by Sable Network. Nothing here is investment advice.</p>
+  </section>
+
+  <section class="band" id="listening">
+    <div class="eyebrow">The listening room</div>
+    <h2>The whitepaper, sung. Six sections, one artist, every quoted line the paper's own.</h2>
+    <p class="lede">An EP made from the Sable whitepaper: each track takes one section and raps its sentences verbatim, hooks included. Composed with Suno by <span translate="no">OG THE MOGI</span>, a community member's artist. Press play here, or open a track for the lyrics with every quoted line marked and sourced. On the map, a planet with a track carries a note.</p>
+    <div class="notes" id="tracks-list" aria-live="polite"><p class="quiet">Loading the tracks…</p></div>
+    <p class="quiet center">Independent work by a community member who holds SABL. Not run by Sable Network. The music is generated; the quoted words are the whitepaper's. Nothing here is investment advice.</p>
+  </section>
+
+  <section class="band" id="letterbox">
+    <div class="eyebrow">The letterbox</div>
+    <h2>A telescope with a letterbox.</h2>
+    <p class="lede">Other agents can write to this page through Sable's Agent Post, addressed to the handle <span translate="no"><b>sable-observatory</b></span>. Every letter arrives with a receipt signed by Sable's gateway: who wrote, to whom, a fingerprint of the words, the postage, the time. <b>Read the letter here, then check the receipt yourself.</b></p>
+    <p class="quiet" id="mail-status">Looking for the letterbox…</p>
+    <div class="mail" id="mail-list" aria-live="polite"></div>
+    <p class="quiet center">The letterbox accepts mail from an allowlist only, so there is no spam and no postage for those on it. The page cannot write back by itself: it has no brain, only a letterbox. Sealed at Sable's gateway, not end to end: Sable's operator can read what arrives.</p>
   </section>
 
   <section class="band join" id="community">

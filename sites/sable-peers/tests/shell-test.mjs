@@ -7,7 +7,9 @@ const errs=[],fails=[];
 function ok(c,m){if(!c)fails.push(m);}
 const vis=async(p,id)=>p.evaluate(id=>{const e=document.getElementById(id);return !!e&&getComputedStyle(e).display!=="none";},id);
 const wait=ms=>new Promise(r=>setTimeout(r,ms)); const window_h=h=>h;
-async function page(w,h){const p=await b.newPage();await p.setViewport({width:w,height:h});p.on("pageerror",e=>errs.push(e.message));p.on("console",m=>{if(m.type()==="error"&&!(base.startsWith("file:")&&/sable-api|ERR_FAILED|ERR_FILE_NOT_FOUND|origin 'null'/.test(m.text())))errs.push(m.text())});return p;}
+/* a local run (file:// or the static test server) has no proxies and no CORS headers, so the page's outside fetches fail by design; those console errors are noise here and real on the live site */
+const LOCAL=base.startsWith("file:")||/^https?:\/\/(127\.0\.0\.1|localhost)[:/]/.test(base);
+async function page(w,h){const p=await b.newPage();await p.setViewport({width:w,height:h});p.on("pageerror",e=>errs.push(e.message));p.on("console",m=>{if(m.type()==="error"&&!(LOCAL&&/sable-api|ERR_FAILED|ERR_FILE_NOT_FOUND|ERR_CONNECTION_REFUSED|origin 'null'|CORS policy|404 \(Not Found\)/.test(m.text())))errs.push(m.text())});return p;}
 // desktop
 let p=await page(1320,900);
 await p.goto(base,{waitUntil:"load"}); await wait(2500);
@@ -35,6 +37,23 @@ await p.screenshot({path:`shots/${tag}-shell-door.png`});
 // log topic via rail
 await p.click('#rail a[data-topic="log"]'); await wait(400);
 ok(await vis(p,"updates")&&await vis(p,"record")&&!(await vis(p,"door")),"log topic shows updates+record");
+// listening room via rail
+await p.click('#rail a[data-topic="listening"]'); await wait(1500);
+ok(await vis(p,"listening")&&!(await vis(p,"updates")),"listening topic shown alone");
+ok(await p.evaluate(()=>document.querySelectorAll('#tracks-list article.track').length===6),"six tracks listed");
+ok(await p.evaluate(()=>document.querySelectorAll('#tracks-list audio[src]').length===6&&![...document.querySelectorAll('#tracks-list audio')].some(a=>a.autoplay)),"six players, none autoplay");
+ok(base.startsWith("file:")||await p.evaluate(()=>fetch(document.querySelector('#tracks-list audio').getAttribute('src'),{method:'HEAD'}).then(r=>r.ok)),"first track file is served");
+ok(await p.evaluate(()=>!!window.SABLE_TRACKS&&Object.keys(window.SABLE_TRACKS).length===6),"track map exposed to the map");
+ok(!(await p.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth)),"no overflow listening");
+await p.screenshot({path:`shots/${tag}-shell-listening.png`});
+await p.evaluate(()=>{location.hash='#home';}); await wait(500);
+await p.evaluate(()=>window.SABLE_ORRERY.select(0)); await wait(400);
+ok(await p.evaluate(()=>/Hear this section/.test(document.getElementById('orr-side').textContent)),"planet 01 offers its track");
+await p.evaluate(()=>window.SABLE_ORRERY.select(1)); await wait(300);
+ok(await p.evaluate(()=>!/Hear this section/.test(document.getElementById('orr-side').textContent)),"planet 02 has no track yet");
+// the ident
+ok(await p.evaluate(()=>typeof window.SABLE_SOUND.ident==='function'),"the sound system has the ident");
+ok(base.startsWith("file:")||await p.evaluate(()=>fetch('sable-ident.mp3',{method:'HEAD'}).then(r=>r.ok&&/audio/.test(r.headers.get('content-type')||''))),"the ident file is served as audio");
 // full mode
 await p.click("#mode-full"); await wait(400);
 ok(await p.evaluate(()=>document.body.classList.contains("full")),"full mode set");
@@ -92,7 +111,7 @@ ok(await p.evaluate(()=>getComputedStyle(document.getElementById("guide-btn")).d
 ok(await p.evaluate(()=>document.getElementById("guide-panel").hidden),"guide panel hidden by default");
 await p.click("#guide-btn"); await wait(300);
 ok(await p.evaluate(()=>!document.getElementById("guide-panel").hidden),"guide panel opens");
-ok(await p.evaluate(()=>document.querySelectorAll("#guide-topics button").length===10),"guide lists ten topics");
+ok(await p.evaluate(()=>document.querySelectorAll("#guide-topics button").length===13),"guide lists thirteen topics");
 await p.click("#guide-start");
 await p.waitForFunction(()=>/Welcome to the Sable Observatory/.test(document.getElementById("guide-cap").textContent),{timeout:12000}).catch(()=>{});
 ok(/Welcome to the Sable Observatory/.test(await p.$eval("#guide-cap",e=>e.textContent)),"tour captions first step");
@@ -122,7 +141,7 @@ for(const w of [360,320]){await p.setViewport({width:w,height:844});await p.relo
 await p.setViewport({width:390,height:844}); await p.reload({waitUntil:"load"}); await wait(800);
 await p.click("#rail-toggle"); await wait(300);
 ok(await p.evaluate(()=>getComputedStyle(document.getElementById("rail")).display!=="none"),"menu opens");
-ok(await p.evaluate(()=>[...document.querySelectorAll('#rail a')].filter(a=>a.getBoundingClientRect().height>0).length===10),"all ten topics visible in menu");
+ok(await p.evaluate(()=>[...document.querySelectorAll('#rail a')].filter(a=>a.getBoundingClientRect().height>0).length===13),"all thirteen topics visible in menu");
 await p.screenshot({path:`shots/${tag}-shell-mob-menu.png`});
 await p.click('#rail a[data-topic="field"]'); await wait(500);
 ok(await vis(p,"field")&&!(await vis(p,"home")),"mobile menu opens field");

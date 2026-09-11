@@ -67,6 +67,12 @@ services:
       - VAPID_PRIVATE=${VAPID_PRIVATE:-}
       - VAPID_SUBJECT=https://sable.primecircle.cloud
       - PUSH_SECRET=${PUSH_SECRET:-}
+      # the letterbox (Sable's Agent Post): the API key of the Observatory's passport, in .env on the
+      # VPS only. Unset means the letterbox stays closed. POST_WEBHOOK_SECRET is Sable's signing secret
+      # for a post_received webhook pointed at https://sable.primecircle.cloud/api/post/webhook (optional).
+      - SABLE_POST_KEY=${SABLE_POST_KEY:-}
+      - SABLE_POST_HANDLE=${SABLE_POST_HANDLE:-sable-observatory}
+      - POST_WEBHOOK_SECRET=${POST_WEBHOOK_SECRET:-}
     volumes:
       - board-data:/data
     cap_drop:

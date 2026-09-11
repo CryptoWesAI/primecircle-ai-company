@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promises Don't Scale · Sable Observatory</title>
+<meta name="description" content="Section 13 of the Sable whitepaper, “Conclusion”, rapped in its own words. Track 6 of 6 from the whitepaper EP by OG THE MOGI.">
+<link rel="canonical" href="https://sable.primecircle.cloud/tracks/promises-dont-scale.html">
+<meta property="og:type" content="music.song">
+<meta property="og:site_name" content="Sable Observatory">
+<meta property="og:title" content="Promises Don't Scale · the whitepaper EP">
+<meta property="og:description" content="Section 13 of the Sable whitepaper, “Conclusion”, rapped in its own words. Track 6 of 6 from the whitepaper EP by OG THE MOGI.">
+<meta property="og:url" content="https://sable.primecircle.cloud/tracks/promises-dont-scale.html">
+<meta property="og:image" content="https://sable.primecircle.cloud/tracks/06-promises-dont-scale.jpg">
+<meta property="og:audio" content="https://sable.primecircle.cloud/tracks/06-promises-dont-scale.mp3">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@0PTIMUS_ONE">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05070A">
+<style>
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/ibm-plex-mono-400.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/ibm-plex-mono-500.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/ibm-plex-mono-600.woff2) format("woff2")}
+:root{--void:#05070A;--ink:#0A1118;--text:#E8F2F8;--dim:#8FA3B0;--dim2:#4C6070;--cyan:#18BFFF;--cyan-soft:#72DCFF;--moon:#FF7A59;--edge:rgba(114,220,255,.14);--edge2:rgba(114,220,255,.28);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;--mono:"IBM Plex Mono","SF Mono","Roboto Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+html{background:var(--void)}
+body{margin:0;background:radial-gradient(1200px 700px at 50% -10%,#0E1C28 0%,var(--ink) 45%,var(--void) 100%);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan-soft);overflow-wrap:anywhere} a:hover{color:var(--cyan)}
+.paper{overflow-wrap:anywhere}
+.top{display:flex;align-items:center;gap:18px;padding:18px 28px;border-bottom:1px solid var(--edge);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.top .brand{color:var(--text);text-decoration:none;letter-spacing:.24em;font-weight:600} .top .brand span{color:var(--cyan)}
+.top .back{margin-left:auto;color:var(--cyan-soft);text-decoration:none;white-space:nowrap} .top .back:hover{text-decoration:underline}
+.paper{max-width:76ch;margin:0 auto;padding:48px 28px 64px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:18px}
+h1{font-size:clamp(28px,4.2vw,40px);line-height:1.15;margin:0 0 22px;letter-spacing:-.01em}
+h3{font-size:22px;margin:40px 0 12px;padding-top:22px;border-top:1px solid var(--edge)}
+h4{font-size:18px;margin:26px 0 8px}
+p{margin:0 0 16px}
+.paper > p:first-of-type{color:var(--dim);font-size:15px}
+.paper > p:first-of-type em{font-style:normal}
+ul,ol{padding-left:24px;margin:0 0 18px} li{margin:0 0 8px} li::marker{color:var(--cyan);font-family:var(--mono)}
+strong{color:var(--text)}
+code{font-family:var(--mono);font-size:.85em;background:rgba(114,220,255,.08);border:1px solid var(--edge);border-radius:4px;padding:1px 5px;word-break:break-all}
+hr{border:0;border-top:1px solid var(--edge);margin:32px 0}
+.paper h3:last-of-type ~ ul{font-size:14px;color:var(--dim)} .paper h3:last-of-type ~ ul a{word-break:break-all}
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin:36px 0 0}
+.pill{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;padding:12px 22px;border-radius:999px;border:1px solid var(--edge2);color:var(--text);background:rgba(5,7,10,.5);text-decoration:none}
+.pill.fill{background:var(--cyan);color:#04121A;border-color:var(--cyan);font-weight:600} .pill:hover{border-color:var(--cyan-soft);text-decoration:none}
+.foot{max-width:76ch;margin:0 auto;padding:22px 28px 48px;border-top:1px solid var(--edge);font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+@media (max-width:640px){.top{padding:14px 16px;gap:10px;font-size:10px}.top .sub{display:none}.paper{padding:32px 18px 48px}body{font-size:16px}}
+
+.cover{display:block;width:100%;max-width:360px;height:auto;border-radius:12px;border:1px solid var(--edge);margin:4px 0 22px}
+.player{margin:6px 0 30px}.player audio{width:100%;color-scheme:dark}
+.legend{font-family:var(--mono);font-size:12px;color:var(--dim);line-height:1.7;margin:8px 0 0}
+.lyrics{font-family:var(--mono);font-size:14px;line-height:1.7;margin:14px 0 8px}
+.lyrics .tag{display:block;color:var(--cyan);font-size:11px;letter-spacing:.14em;text-transform:uppercase;margin:14px 0 6px}
+.lyrics .line{display:block;padding-left:12px;border-left:2px solid transparent}
+.lyrics .gap{display:block;height:8px}
+.lyrics .q{border-left-color:var(--cyan);color:var(--text)} .lyrics .g{color:var(--dim)}
+.sources{font-size:14.5px} .sources li{margin:0 0 10px} .sources .id{font-family:var(--mono);color:var(--cyan);font-size:12px;margin-right:8px}
+details{border:1px solid var(--edge);border-radius:10px;padding:12px 16px;margin:22px 0} details p{margin:12px 0 0;font-size:14.5px;color:var(--dim)}
+summary{cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/">PRIME <span>CIRCLE</span></a><span class="sub">Sable Observatory · independent</span><a class="back" href="/#listening">← The listening room</a></header>
+<main class="paper">
+<div class="eyebrow">The listening room · track 6 of 6 · planet 13</div>
+<h1>Promises Don't Scale</h1>
+<p>Section 13 of the Sable whitepaper, <em>Conclusion</em>, rapped in its own words by OG THE MOGI. The hook: “We earn trust through architecture, not assurances. Promises don't scale.”.</p>
+<img class="cover" src="/tracks/06-promises-dont-scale.jpg" width="1500" height="1500" alt="Cover of Promises Don't Scale: planet 13 of the whitepaper's solar system">
+<div class="player"><audio controls preload="metadata" src="/tracks/06-promises-dont-scale.mp3" aria-label="Promises Don't Scale"></audio>
+<p class="legend">2:58 · composed with Suno, 12 Sep 2026 · <a href="https://suno.com/s/XJhntLrD3A52X5Xh" rel="noopener">open on Suno</a> · <a href="/tracks/06-promises-dont-scale.mp3">the MP3</a></p></div>
+<h3>Lyrics</h3>
+<p class="legend">A line with a blue edge is a sentence of the whitepaper, verbatim, checked against the text when this page was built. A grey line is the author's glue.</p>
+<div class="lyrics"><span class="tag">Intro: spoken, sparse</span>
+<span class="line q" title="verbatim, whitepaper section 13">The machines are the commodity</span>
+<span class="line q" title="verbatim, whitepaper section 13">The trust layer over them is not</span>
+<span class="gap"></span>
+<span class="tag">Verse 1: fast double-time flow</span>
+<span class="line q" title="verbatim, whitepaper section 13">The agent economy will route an enormous volume of machine intent</span>
+<span class="line q" title="verbatim, whitepaper section 13">through a small number of compute endpoints</span>
+<span class="line q" title="verbatim, whitepaper section 13">Whether that layer becomes an unaccountable one</span>
+<span class="line q" title="verbatim, whitepaper section 13">where nobody can say what ran, on what, for whom, or how much</span>
+<span class="line q" title="verbatim, whitepaper section 13">is being decided now</span>
+<span class="line q" title="verbatim, whitepaper section 13">by the defaults the infrastructure ships with</span>
+<span class="gap"></span>
+<span class="tag">Hook: layered harmonies, sing-rap</span>
+<span class="line q" title="verbatim, whitepaper section 13">We earn trust through architecture, not assurances</span>
+<span class="line q" title="verbatim, whitepaper section 13">Promises don't scale</span>
+<span class="line q" title="verbatim, whitepaper section 13">Promises don't scale</span>
+<span class="line g">Show me the receipt, not the word</span>
+<span class="gap"></span>
+<span class="tag">Verse 2: fast double-time flow</span>
+<span class="line q" title="verbatim, whitepaper section 13">Metered where the metering can be trusted</span>
+<span class="line q" title="verbatim, whitepaper section 13">bounded before the money moves</span>
+<span class="line q" title="verbatim, whitepaper section 13">attested where the hardware allows it</span>
+<span class="line q" title="verbatim, whitepaper section 13">and signed into a receipt that outlives the request</span>
+<span class="line q" title="verbatim, whitepaper section 13">and does not require trusting the party that issued it</span>
+<span class="gap"></span>
+<span class="tag">Bridge: half-time, stacked harmonies</span>
+<span class="line q" title="verbatim, whitepaper section 13">Build that, and the machine underneath stops needing to be trusted</span>
+<span class="line q" title="verbatim, whitepaper section 13">which is exactly what makes it replaceable</span>
+<span class="line q" title="verbatim, whitepaper section 13">and exactly why the trust layer is the part worth owning</span>
+<span class="line q" title="verbatim, whitepaper section 13">The buyer is paying for the proof, not the silicon</span>
+<span class="gap"></span>
+<span class="tag">Verse 3: half-time, quiet</span>
+<span class="line q" title="verbatim, whitepaper section 13">An exchange with no sellers is the most common artefact in this industry</span>
+<span class="line q" title="verbatim, whitepaper section 13">We would rather ship late than describe one</span>
+<span class="gap"></span>
+<span class="tag">Hook: layered harmonies, sing-rap</span>
+<span class="line q" title="verbatim, whitepaper section 13">We earn trust through architecture, not assurances</span>
+<span class="line q" title="verbatim, whitepaper section 13">Promises don't scale</span>
+<span class="line q" title="verbatim, whitepaper section 13">Promises don't scale</span>
+<span class="line g">Show me the receipt, not the word</span>
+<span class="gap"></span>
+<span class="tag">Hook: layered harmonies, sing-rap</span>
+<span class="line q" title="verbatim, whitepaper section 13">We earn trust through architecture, not assurances</span>
+<span class="line q" title="verbatim, whitepaper section 13">Promises don't scale</span>
+<span class="line q" title="verbatim, whitepaper section 13">Promises don't scale</span>
+<span class="gap"></span>
+<span class="tag">Outro: quiet, harmonies</span>
+<span class="line q" title="verbatim, whitepaper section 13">The machines are the commodity</span>
+<span class="line q" title="verbatim, whitepaper section 13">The trust layer over them is not</span>
+<span class="line q" title="verbatim, whitepaper section 13">Promises don't scale</span></div>
+<h3>Sources</h3>
+<p>Section 13, “Conclusion”, of the Sable whitepaper: cover v2.0, August 2026, snapshot 4 Sep 2026, 254 sentences in the <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch" rel="noopener">watcher's record</a>. An id is section.sentence in that record.</p>
+<ol class="sources">
+<li><span class="id">11.01</span>The machines are the commodity.</li>
+<li><span class="id">11.02</span>The trust layer over them is not.</li>
+<li><span class="id">11.13</span>the buyer is paying for the proof, not the silicon.</li>
+<li><span class="id">11.19</span>An exchange with no sellers is the most common artefact in this industry.</li>
+<li><span class="id">11.20</span>We would rather ship late than describe one.</li>
+<li><span class="id">13.01</span>The agent economy will route an enormous volume of machine intent through a small number of compute endpoints.</li>
+<li><span class="id">13.02</span>Whether that layer becomes an unaccountable one — where nobody can say what ran, on what, for whom, or how much — is being decided now, by the defaults the infrastructure ships with.</li>
+<li><span class="id">13.03</span>metered where the metering can be trusted, bounded before the money moves, attested where the hardware allows it, and signed into a receipt that outlives the request and does not require trusting the party that issued it.</li>
+<li><span class="id">13.04</span>Build that, and the machine underneath stops needing to be trusted — which is exactly what makes it replaceable, and exactly why the trust layer is the part worth owning.</li>
+<li><span class="id">13.05</span>We earn trust through architecture, not assurances.</li>
+<li><span class="id">13.06</span>Promises don't scale.</li>
+</ol>
+<p class="legend">Glue (my words): &quot;Show me the receipt, not the word&quot;. Everything else is the paper.</p>
+<details><summary>How it was made</summary>
+<p>Lyrics assembled from the section's own sentences, with a few lines of glue, and checked by script (every quoted line must appear verbatim in the paper and in the song). Generated on Suno by the artist OG THE MOGI, two takes, the cleaner one kept. Remixing off.</p>
+<p>Style prompt: Melodic rap, Midwest flow. Fast double-time triplet flow, hypnotic and rhythmic, delivered like a prophet with a message. Layered sing-rap harmonies on the hook. Smooth synth pads, mellow piano chords, g-funk style synth leads, soulful strings and vocal samples low in the mix, boom-bap drums with modern polish. 90 to 100 BPM, swinging, fluid, wavy. Male voice, melodic and raspy. Uplifting, confident, reflective, triumphant, with a crypto-futurist edge. Clear diction, every word intelligible. The closer. Spacious and anthemic, strings up, a slow build to one big final hook with full harmonies, then it ends quiet on the last line.</p>
+</details>
+<div class="acts"><a class="pill fill" href="/#listening">Back to the listening room</a><a class="pill" href="/tracks/fails-closed.html">← Fails Closed</a><a class="pill" href="https://www.buildsable.com/sable-whitepaper.pdf">The whitepaper</a></div>
+</main>
+<footer class="foot">Independent page by a community member. Not run by Sable Network. The author holds SABL. The music is generated with Suno; the quoted words are the whitepaper's own. Nothing here is investment advice. Corrections: reply on X to @0PTIMUS_ONE or in Sable's Telegram; they are logged with the date.</footer>
+</body>
+</html>

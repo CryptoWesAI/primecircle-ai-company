@@ -34,6 +34,16 @@ const VAPID_PUBLIC = process.env.VAPID_PUBLIC || "", VAPID_PRIVATE = process.env
 const PUSH_ON = !!(VAPID_PUBLIC && VAPID_PRIVATE);
 if (PUSH_ON) webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
 const RECORD_URL = "https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/record.json";
+// The letterbox: letters sent to the Observatory's passport handle through Sable's Agent Post.
+// The key lives only here (the VPS .env), never in the page. This service reads the inbox with
+// it, opens each letter, marks it read, and serves the letters with their signed receipts at
+// /post/* for the page (nginx: /api/post/). Off entirely until SABLE_POST_KEY is set.
+const SABLE_API = (process.env.SABLE_API_BASE || "https://api.buildsable.com").replace(/\/+$/, "");
+const POST_KEY = process.env.SABLE_POST_KEY || "";
+const POST_HANDLE = (process.env.SABLE_POST_HANDLE || "sable-observatory").toLowerCase();
+const POST_WEBHOOK_SECRET = process.env.POST_WEBHOOK_SECRET || "";         // Sable's webhook signing secret, when a post_received webhook is registered
+const POST_POLL_MS = Math.max(15000, Number(process.env.POST_POLL_MS || 300000));
+const POST_ON = !!POST_KEY;
 const DENY = ["fuck", "shit", "cunt", "nigg", "fag", "hitler", "nazi", "rape", "porn", "cock", "dick", "pussy", "whore", "slut"];
 
 const db = new DatabaseSync(DB_PATH);
@@ -48,6 +58,20 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS used_tokens (sig TEXT PRIMARY KEY, created_at TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS push_subs (id INTEGER PRIMARY KEY, endpoint TEXT UNIQUE NOT NULL, sub TEXT NOT NULL, created_at TEXT NOT NULL);
 `);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS post_messages (
+    id TEXT PRIMARY KEY, thread_id TEXT, from_handle TEXT, to_handle TEXT, subject TEXT, body TEXT,
+    created_at TEXT, received_at TEXT NOT NULL, receipt TEXT, signature TEXT, signer TEXT, payload TEXT, read_marked INTEGER NOT NULL DEFAULT 0);
+  CREATE TABLE IF NOT EXISTS post_state (k TEXT PRIMARY KEY, v TEXT);
+`);
+const insMail = db.prepare("INSERT OR IGNORE INTO post_messages (id, thread_id, from_handle, to_handle, subject, body, created_at, received_at, receipt, signature, signer, payload, read_marked) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+const seenMail = db.prepare("SELECT read_marked FROM post_messages WHERE id = ?");
+const markMailRead = db.prepare("UPDATE post_messages SET read_marked = 1 WHERE id = ?");
+const listMail = db.prepare("SELECT id, thread_id, from_handle, to_handle, subject, body, created_at, received_at, receipt, signature, signer, payload FROM post_messages ORDER BY created_at DESC, received_at DESC LIMIT ?");
+const countMail = db.prepare("SELECT COUNT(*) AS n FROM post_messages");
+const setState = db.prepare("INSERT INTO post_state (k, v) VALUES (?, ?) ON CONFLICT(k) DO UPDATE SET v = excluded.v");
+const getState = db.prepare("SELECT v FROM post_state WHERE k = ?");
+const st = (k) => { const r = getState.get(k); return r ? r.v : null; };
 // rows from before 8 September 2026 carry no log and stay unverified
 for (const col of ["verified INTEGER NOT NULL DEFAULT 0", "log TEXT", "flagged INTEGER NOT NULL DEFAULT 0", "src TEXT"]) { try { db.exec(`ALTER TABLE scores ADD COLUMN ${col}`); } catch { /* already there */ } }
 const ins = db.prepare("INSERT INTO scores (day, seed, name, handle, score, receipts, refused, wave, duration_ms, device, log_hash, created_at, verified, log, flagged, src) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?)");
@@ -150,6 +174,15 @@ function json(res, code, body, extra = {}) {
   if (ALLOW_ORIGIN) { h["Access-Control-Allow-Origin"] = ALLOW_ORIGIN; h["Access-Control-Allow-Headers"] = "content-type"; h["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"; }
   res.writeHead(code, h); res.end(JSON.stringify(body));
 }
+function readRaw(req, max = 65536) {
+  return new Promise((resolve, reject) => {
+    if (Number(req.headers["content-length"] || 0) > max) return reject(new Error("too large"));
+    let size = 0; const chunks = [];
+    req.on("data", (c) => { size += c.length; if (size > max) { reject(new Error("too large")); req.destroy(); } else chunks.push(c); });
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", reject);
+  });
+}
 function readBody(req, max = 8192) {
   return new Promise((resolve, reject) => {
     if (Number(req.headers["content-length"] || 0) > max) return reject(new Error("too large"));
@@ -162,12 +195,80 @@ function readBody(req, max = 8192) {
 const ipOf = (req) => (req.headers["x-forwarded-for"] || req.socket.remoteAddress || "").toString().split(",")[0].trim();
 const dayAgo = (n) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
 
+/* ---- the letterbox: Sable's Agent Post, read with the key, served without it ---- */
+async function sableFetch(path, init = {}) {
+  const r = await fetch(SABLE_API + path, { ...init, headers: { accept: "application/json", authorization: "Bearer " + POST_KEY, ...(init.headers || {}) }, signal: AbortSignal.timeout(12000) });
+  const text = await r.text();
+  let body = null; try { body = text ? JSON.parse(text) : null; } catch { body = null; }
+  if (!r.ok) throw new Error(`${r.status} ${path}${body && body.error && body.error.message ? ": " + String(body.error.message).slice(0, 120) : ""}`);
+  return body;
+}
+const str = (v, n = 4000) => (v == null ? null : String(v).slice(0, n));
+// One letter as Sable returns it, in whichever envelope: the receipt may come as {receipt, signature, signer, payload}
+// or as flat fields; the payload is decoded from the receipt when it is not given.
+function normMessage(o) {
+  let m = o && typeof o === "object" ? o : {};
+  if (m.message && typeof m.message === "object") m = { ...m, ...m.message };
+  const env = m.receipt && typeof m.receipt === "object" ? m.receipt : (m.signed_receipt && typeof m.signed_receipt === "object" ? m.signed_receipt : null);
+  const receipt = env ? env.receipt : (typeof m.receipt === "string" ? m.receipt : (m.receipt_b64 || null));
+  const signature = env ? env.signature : (m.signature || m.receipt_signature || null);
+  const signer = env ? env.signer : (m.signer || m.receipt_signer || null);
+  let payload = env && env.payload && typeof env.payload === "object" ? env.payload : (m.payload && typeof m.payload === "object" ? m.payload : null);
+  if (!payload && typeof receipt === "string") { try { payload = JSON.parse(Buffer.from(receipt, "base64url").toString("utf8")); } catch { payload = null; } }
+  const p = payload || {};
+  return {
+    id: str(m.id || m.message_id || p.id, 80), thread_id: str(m.thread_id || p.thread_id, 80),
+    from: str(m.from ?? m.from_handle ?? p.from, 80), to: str(m.to ?? m.to_handle ?? p.to, 80),
+    subject: str(m.subject, 200), body: typeof m.body === "string" ? m.body.slice(0, 65536) : (m.body == null ? null : JSON.stringify(m.body).slice(0, 65536)),
+    created_at: str(m.created_at || m.sent_at || p.created_at, 40),
+    receipt: typeof receipt === "string" ? receipt.slice(0, 20000) : null, signature: str(signature, 200), signer: str(signer, 80), payload,
+  };
+}
+let pollInflight = null;
+function pollPost(reason = "timer") {
+  if (!POST_ON) return Promise.resolve({ on: false });
+  if (pollInflight) return pollInflight;
+  pollInflight = (async () => {
+    const started = new Date().toISOString(); let stored = 0, marked = 0;
+    try {
+      const inbox = await sableFetch("/v1/post/inbox?unread_only=true&limit=50");
+      const items = Array.isArray(inbox) ? inbox : (inbox && (inbox.messages || inbox.items || inbox.data)) || [];
+      for (const it of items) {
+        const id = str(it && (it.id || it.message_id), 80); if (!id || !/^[A-Za-z0-9_.:-]{1,80}$/.test(id)) continue;
+        const seen = seenMail.get(id);
+        if (!seen) {
+          const opened = normMessage(await sableFetch("/v1/post/messages/" + encodeURIComponent(id)));
+          insMail.run(id, opened.thread_id, opened.from, opened.to, opened.subject, opened.body, opened.created_at, new Date().toISOString(), opened.receipt, opened.signature, opened.signer, opened.payload ? JSON.stringify(opened.payload) : null, 0);
+          stored++;
+          console.log(new Date().toISOString(), `post: letter ${id} from ${opened.from || "unknown"} stored (${reason})`);
+        }
+        if (!seen || !seen.read_marked) {
+          try { await sableFetch("/v1/post/messages/" + encodeURIComponent(id) + "/read", { method: "POST" }); markMailRead.run(id); marked++; }
+          catch (e) { console.log(new Date().toISOString(), `post: could not mark ${id} read: ${e.message}`); }
+        }
+      }
+      setState.run("last_poll", started); setState.run("last_error", "");
+      if (stored) setState.run("last_letter", started);
+    } catch (e) {
+      setState.run("last_poll", started); setState.run("last_error", String(e && e.message || e).slice(0, 200));
+      console.log(new Date().toISOString(), `post: poll failed: ${e.message}`);
+    } finally { pollInflight = null; }
+    return { on: true, stored, marked };
+  })();
+  return pollInflight;
+}
+function rowToPublic(r) {
+  let payload = null; try { payload = r.payload ? JSON.parse(r.payload) : null; } catch { payload = null; }
+  return { id: r.id, thread_id: r.thread_id, from: r.from_handle, to: r.to_handle, subject: r.subject, body: r.body, created_at: r.created_at, received_at: r.received_at, receipt: r.receipt, signature: r.signature, signer: r.signer, payload };
+}
+function postStatus() { return { on: POST_ON, handle: POST_ON ? POST_HANDLE : null, last_poll: st("last_poll"), last_letter: st("last_letter"), last_error: st("last_error") || null, count: POST_ON ? countMail.get().n : 0, poll_ms: POST_POLL_MS, webhook: !!POST_WEBHOOK_SECRET }; }
+
 const server = createServer(async (req, res) => {
   const url = new URL(req.url, "http://x");
   const path = url.pathname.replace(/\/+$/, "") || "/";
   try {
     if (req.method === "OPTIONS" && ALLOW_ORIGIN) return json(res, 204, {});
-    if (req.method === "GET" && path === "/health") return json(res, 200, { ok: true, rows: countQ.get().n, seed: seedFor(today()), push: PUSH_ON, subscribers: countSubs.get().n });
+    if (req.method === "GET" && path === "/health") return json(res, 200, { ok: true, rows: countQ.get().n, seed: seedFor(today()), push: PUSH_ON, subscribers: countSubs.get().n, letterbox: POST_ON });
     /* the app's notifications: a subscription is an endpoint at the phone's push service plus two keys; nothing else about the visitor */
     if (req.method === "GET" && path === "/push/key") return PUSH_ON ? json(res, 200, { key: VAPID_PUBLIC }) : json(res, 404, { error: "push off" });
     if (req.method === "POST" && path === "/push/subscribe") {
@@ -217,6 +318,34 @@ const server = createServer(async (req, res) => {
         refused_loops: rp ? rp.refusedLoops : null, leaked: rp ? rp.leaked : null, clean_waves: rp ? rp.cleanWaves : null, wrong_refusals: rp ? rp.refusedGood : null,
         flagged: !!row.flagged, verified: !!row.verified, created_at: row.created_at, rank_today: rankQ.get(row.day, row.score).n + 1, code: want,
       } });
+    }
+    /* the letterbox, without the key: what arrived, with each letter's signed receipt */
+    if (req.method === "GET" && path === "/post/status") return json(res, 200, postStatus());
+    if (req.method === "GET" && path === "/post/messages") {
+      if (!POST_ON) return json(res, 404, { error: "letterbox closed" });
+      if (limited("mailip:" + ipOf(req), 600)) return json(res, 429, { error: "slow down" });
+      const limit = Math.min(50, Math.max(1, Number(url.searchParams.get("limit") || 20)));
+      return json(res, 200, { handle: POST_HANDLE, messages: listMail.all(limit).map(rowToPublic) });
+    }
+    if (req.method === "POST" && path === "/post/webhook") {
+      // Sable's delivery: HMAC-SHA256 of the raw body in X-Sable-Signature ("sha256=<hex>"); metadata only, so the letter is fetched, never trusted from here
+      if (!POST_ON || !POST_WEBHOOK_SECRET) return json(res, 404, { error: "webhook off" });
+      const raw = await readRaw(req, 65536);
+      const given = String(req.headers["x-sable-signature"] || "");
+      const want = "sha256=" + createHmac("sha256", POST_WEBHOOK_SECRET).update(raw).digest("hex");
+      if (given.length !== want.length || !timingSafeEqual(Buffer.from(given), Buffer.from(want))) return json(res, 401, { error: "signature" });
+      let ev = {}; try { ev = JSON.parse(raw.toString("utf8")); } catch { ev = {}; }
+      const type = String(ev.type || req.headers["x-sable-event"] || "");
+      if (type === "post_received" || type === "webhook_test") setTimeout(() => pollPost("webhook"), 300);
+      return json(res, 200, { ok: true, event: type });
+    }
+    if (req.method === "POST" && path === "/post/poll") {
+      // admin: check the letterbox now (docker exec sable-board node admin.js post-poll)
+      if (!POST_ON || !PUSH_SECRET) return json(res, 404, { error: "letterbox closed" });
+      const given = String(req.headers["x-push-secret"] || "");
+      if (given.length !== PUSH_SECRET.length || !timingSafeEqual(Buffer.from(given), Buffer.from(PUSH_SECRET))) return json(res, 401, { error: "secret" });
+      const r = await pollPost("admin");
+      return json(res, 200, { ...r, ...postStatus() });
     }
     if (req.method === "GET" && path === "/top") {
       const srcTag = cleanSrc(url.searchParams.get("src"));
@@ -309,6 +438,7 @@ const server = createServer(async (req, res) => {
 });
 server.requestTimeout = 10000;
 server.headersTimeout = 8000;
-server.listen(PORT, "0.0.0.0", () => console.log(`board listening on ${PORT}, db ${DB_PATH}, min run ${MIN_MS} ms`));
+server.listen(PORT, "0.0.0.0", () => console.log(`board listening on ${PORT}, db ${DB_PATH}, min run ${MIN_MS} ms, letterbox ${POST_ON ? "open as " + POST_HANDLE + " (every " + Math.round(POST_POLL_MS / 1000) + " s)" : "closed"}`));
+if (POST_ON) { setTimeout(() => pollPost("start"), 2000).unref(); setInterval(() => pollPost("timer"), POST_POLL_MS).unref(); }
 
 export { delName };

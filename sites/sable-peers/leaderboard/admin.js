@@ -11,6 +11,8 @@
 import { DatabaseSync } from "node:sqlite";
 const db = new DatabaseSync(process.env.BOARD_DB || "/data/board.sqlite");
 const [cmd, ...args] = process.argv.slice(2);
+const BOARD = "http://127.0.0.1:" + (process.env.PORT || 8787);
+const API = (process.env.SABLE_API_BASE || "https://api.buildsable.com").replace(/\/+$/, "");
 if (cmd === "count") console.log(db.prepare("SELECT COUNT(*) AS n FROM scores").get().n);
 else if (cmd === "top") console.table(db.prepare("SELECT day, name, handle, score, receipts, wave, duration_ms, verified, flagged FROM scores ORDER BY score DESC LIMIT ?").all(Number(args[0] || 10)));
 else if (cmd === "delete-name") { const r = db.prepare("DELETE FROM scores WHERE lower(name) = lower(?)").run(String(args[0] || "")); console.log("deleted", r.changes); }
@@ -29,4 +31,26 @@ else if (cmd === "push") {
 }
 else if (cmd === "flagged") console.table(db.prepare("SELECT id, day, name, handle, score, refused, wave, duration_ms FROM scores WHERE flagged = 1 ORDER BY score DESC LIMIT 50").all());
 else if (cmd === "unflag") { const r = db.prepare("UPDATE scores SET flagged = 0 WHERE lower(name) = lower(?)").run(String(args[0] || "")); console.log("unflagged", r.changes); }
-else { console.log("commands: count | top [n] | delete-name <name> | contest [start/end] | run <name> | flagged | unflag <name>"); process.exit(1); }
+/* the letterbox (Sable's Agent Post). The key is read from the environment and never printed.
+     post-status                       what the board knows: open or closed, last check, count
+     post-check [handle]               Sable's public answer for the handle (accepts: false is normal with an allowlist)
+     post-settings [h1,h2]             allowlist only, zero postage; default allowlist lisa-on-sable
+     post-settings-show                the settings as Sable stores them
+     post-poll                         read the inbox now
+     post-inbox                        the letters the board has stored */
+else if (cmd === "post-status") { const r = await fetch(BOARD + "/post/status"); console.log(await r.text()); }
+else if (cmd === "post-poll") { const r = await fetch(BOARD + "/post/poll", { method: "POST", headers: { "x-push-secret": process.env.PUSH_SECRET || "" } }); console.log(r.status, await r.text()); }
+else if (cmd === "post-check") { const h = String(args[0] || process.env.SABLE_POST_HANDLE || "sable-observatory"); const r = await fetch(API + "/v1/post/handles/" + encodeURIComponent(h)); console.log(r.status, await r.text()); }
+else if (cmd === "post-settings" || cmd === "post-settings-show") {
+  const key = process.env.SABLE_POST_KEY || ""; if (!key) { console.log("SABLE_POST_KEY is not set in the environment"); process.exit(1); }
+  const headers = { authorization: "Bearer " + key, "content-type": "application/json", accept: "application/json" };
+  if (cmd === "post-settings-show") { const r = await fetch(API + "/v1/post/settings", { headers }); console.log(r.status, await r.text()); }
+  else {
+    const allow = String(args[0] || "lisa-on-sable").split(",").map((s) => s.trim().toLowerCase()).filter((s) => /^[a-z0-9-]{1,64}$/.test(s));
+    const body = JSON.stringify({ postage_micro_usd: 0, accept_policy: "allowlist", allowlist: allow });
+    console.log("PUT /v1/post/settings", body);
+    const r = await fetch(API + "/v1/post/settings", { method: "PUT", headers, body }); console.log(r.status, await r.text());
+  }
+}
+else if (cmd === "post-inbox") console.table(db.prepare("SELECT id, from_handle, subject, created_at, received_at, read_marked FROM post_messages ORDER BY created_at DESC LIMIT 20").all());
+else { console.log("commands: count | top [n] | delete-name <name> | contest [start/end] | run <name> | flagged | unflag <name> | subs | push | post-status | post-check | post-settings | post-settings-show | post-poll | post-inbox"); process.exit(1); }

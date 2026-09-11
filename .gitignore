@@ -40,3 +40,32 @@ sites/belvanger/film/frames/*-b.png
 sites/belvanger/film/clips/clip-A1-werkbank.mp4
 sites/belvanger/film/clips/clip-A2-steiger.mp4
 sites/belvanger/film/clips/clip-A3-schermuit.mp4
+
+# Gegenereerd door sites/a-sisters/assemble.mjs (gebouwde app/ + widget-kopieën)
+sites/a-sisters/app/
+sites/a-sisters/site/assets/ab-chat.js
+sites/a-sisters/site/assets/ab-chat.css
+
+# Verificatie-uitvoer: goedkoop opnieuw te maken met tests/kijk.mjs.
+# NIET genegeerd: tools/huidig/ (de oude versie, het bewijs bij de diagnose van
+# de penstreek) en design/richtingen/schoten/ (de drie stijlrichtingen waar de
+# keuze op gemaakt is). Die horen bij een beslissing en niet bij een build.
+sites/a-sisters/tools/kijk/
+sites/a-sisters/tools/live/
+
+# Werkmap van de verdelgerfilm: 200+ opnameframes, tussensegmenten en de wav. Alles
+# erin is in een minuut opnieuw te maken met neem-verdelger-op.mjs en
+# monteer-verdelger.sh, dus het hoort niet in de geschiedenis. De gemonteerde film
+# zelf staat er een map hoger en wordt WEL bewaard.
+sites/belvanger/film/werkmap-verdelger/
+
+# Whitepaper EP: WAV masters and logo renders stay local, MP3s ship
+crypto/content/2026-09-11-sable-whitepaper-ep/audio/*.wav
+crypto/content/2026-09-11-sable-whitepaper-ep/sonic-logo/out/
+crypto/content/2026-09-11-sable-whitepaper-ep/covers/*.png
+# Observatory promo: the rendered videos stay local (119 MB), the pipeline ships
+crypto/content/2026-09-10-observatory-promo/*.mp4
+# Whitepaper EP: the raw sting WAV stays local; site/tracks media is build output from the EP folder
+crypto/content/2026-09-11-sable-whitepaper-ep/sonic-logo/sting.wav
+sites/sable-peers/site/tracks/*.mp3
+sites/sable-peers/site/tracks/*.jpg

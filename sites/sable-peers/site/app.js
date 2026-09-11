@@ -1,4 +1,84 @@
 /* block 1 */
+/* the listening room: the EP list, read from tracks/index.json (written by build-tracks.mjs);
+   one player at a time; the map learns which planets have a track through window.SABLE_TRACKS */
+(function(){
+  var box=document.getElementById('tracks-list');if(!box)return;
+  function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function safe(p){p=String(p||'');return /^[A-Za-z0-9._-]+$/.test(p)?p:'';}
+  function mmss(s){s=Number(s)||0;return s?Math.floor(s/60)+':'+('0'+(s%60)).slice(-2):'';}
+  fetch('tracks/index.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error(String(r.status));return r.json();}).then(function(list){
+    if(!Array.isArray(list)||!list.length){box.innerHTML='<p class="quiet">Nothing here yet.</p>';return;}
+    list.sort(function(a,b){return (Number(a.track)||0)-(Number(b.track)||0);});
+    var map={};list.forEach(function(t){if(safe(t.slug)&&t.planet)map[String(t.planet)]={slug:t.slug,title:t.title};});
+    window.SABLE_TRACKS=map;try{document.dispatchEvent(new CustomEvent('sable-tracks'));}catch(e){}
+    box.innerHTML=list.map(function(t){var slug=safe(t.slug),audio=safe(t.audio);if(!slug||!audio)return '';
+      var suno=/^https:\/\/suno\.com\/[A-Za-z0-9\/_-]+$/.test(String(t.suno||''))?t.suno:'';
+      return '<article class="note track"><span class="n">Track '+esc(t.track)+' · planet '+esc(t.planet)+' · section '+esc(t.section)+(t.seconds?' · '+mmss(t.seconds):'')+'</span><h3><a href="tracks/'+slug+'.html">'+esc(t.title)+'</a></h3><p class="hook">“'+esc(t.hook||'')+'”</p><audio controls preload="none" src="tracks/'+audio+'" aria-label="'+esc(t.title)+'"></audio><div class="acts"><a class="pill fill" href="tracks/'+slug+'.html">Lyrics and sources</a>'+(suno?'<a class="pill" href="'+esc(suno)+'" rel="noopener">On Suno</a>':'')+'</div></article>';}).join('');
+    var players=[].slice.call(box.querySelectorAll('audio'));
+    players.forEach(function(a){a.addEventListener('play',function(){players.forEach(function(o){if(o!==a&&!o.paused)o.pause();});});});
+  }).catch(function(){box.innerHTML='<p class="quiet">The tracks could not be loaded. Try again in a moment.</p>';});
+})();
+
+/* the reading room: the list of research pieces, read from notes/index.json (written by build-notes.mjs) */
+(function(){
+  var box=document.getElementById('notes-list');if(!box)return;
+  function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function day(d){var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(d||''));if(!m)return esc(d||'');var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return parseInt(m[3],10)+' '+M[parseInt(m[2],10)-1]+' '+m[1];}
+  function safe(p){p=String(p||'');return /^[A-Za-z0-9._-]+$/.test(p)?p:'';}
+  fetch('notes/index.json',{cache:'no-cache'}).then(function(r){if(!r.ok)throw new Error(String(r.status));return r.json();}).then(function(list){
+    if(!Array.isArray(list)||!list.length){box.innerHTML='<p class="quiet">Nothing here yet.</p>';return;}
+    list.sort(function(a,b){return String(b.date).localeCompare(String(a.date));});
+    box.innerHTML=list.map(function(n){var slug=safe(n.slug),pdf=safe(n.pdf);if(!slug)return '';
+      return '<article class="note"><span class="n">'+day(n.date)+(n.words?' · about '+esc(n.words)+' words':'')+'</span><h3><a href="notes/'+slug+'.html">'+esc(n.title)+'</a></h3><p>'+esc(n.summary||'')+'</p><div class="acts"><a class="pill fill" href="notes/'+slug+'.html">Read</a>'+(pdf?'<a class="pill" href="notes/'+pdf+'" download>PDF</a>':'')+'</div></article>';}).join('');
+  }).catch(function(){box.innerHTML='<p class="quiet">The list could not be loaded. Try again in a moment.</p>';});
+  /* the counterfeit watch: tokens trading on Robinhood Chain (4663) under a name like SABL, from the watcher's record */
+  var cf=[].slice.call(document.querySelectorAll('[data-cf-line]'));
+  if(cf.length){var live=/^https?:/.test(location.protocol);
+    fetch(live?'/ext/record':'https://raw.githubusercontent.com/CryptoWesAI/sable-whitepaper-watch/main/record.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(rec){
+      var w=rec&&rec.counterfeit_4663;if(!w||!Array.isArray(w.hits))return;
+      function short(a){a=String(a||'');return a.length>12?a.slice(0,6)+'…'+a.slice(-4):a;}
+      function usd(v){return typeof v==='number'&&isFinite(v)?'$'+Math.round(v).toLocaleString('en-US'):'unknown';}
+      var since=day(w.baseline_t),last=day(w.last_check&&w.last_check.t?w.last_check.t:w.latest_t);
+      var html='<b>Counterfeit watch, Robinhood Chain (chain 4663).</b> ';
+      if(!w.hits.length)html+='No token trading there under a name like SABL.';
+      else html+=w.hits.length+' token'+(w.hits.length>1?'s':'')+' trading there under a name like SABL: '+w.hits.map(function(h){return '<span translate="no">'+esc(h.symbol||'?')+'</span> (“'+esc(h.name||'')+'”) at <span translate="no">'+esc(short(h.address))+'</span>'+(h.url?' <a href="'+esc(h.url)+'" rel="noopener">on '+esc(h.dex||'a DEX')+'</a>':'')+(h.pair_created?', pool opened '+day(h.pair_created):'')+', liquidity '+usd(h.liquidity_usd)+(h.first_seen?', on this watch since '+day(h.first_seen):'');}).join('; ')+'. Not Sable Network\'s token: SABL exists only on Solana.';
+      html+=' Checked hourly through DexScreener since '+since+'; last check '+last+'.';
+      cf.forEach(function(el){el.innerHTML=html;el.hidden=false;});
+    }).catch(function(){});}
+})();
+
+/* block 2 */
+/* the letterbox: letters that reached the handle sable-observatory through Sable's Agent Post, read by this
+   site's own board service (server-side, with the key) and served here without the key: /api/post/ */
+(function(){
+  var list=document.getElementById('mail-list'),status=document.getElementById('mail-status');if(!list||!status)return;
+  var live=/^https?:/.test(location.protocol);
+  function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function when(t){var d=new Date(t);return isNaN(d)?esc(t):d.toISOString().slice(0,16).replace('T',' ')+' UTC';}
+  function usd(micro){var n=Number(micro);return isFinite(n)?(n===0?'$0':'$'+(n/1e6).toFixed(n%1000?6:3).replace(/0+$/,'').replace(/\.$/,'')):'?';}
+  function no(s){return '<span translate="no">'+esc(s)+'</span>';}
+  if(!live){status.textContent='The letterbox reads from this site\'s board service, which is not part of a local copy.';return;}
+  fetch('/api/post/status',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(s){
+    if(!s||!s.on){status.textContent='The letterbox is not open yet: the Observatory\'s passport is being minted. Come back soon.';return;}
+    status.innerHTML='Handle '+no(s.handle)+' · mail from the allowlist only · '+(s.last_poll?'letterbox checked '+esc(when(s.last_poll)):'not checked yet')+(s.last_error?' · <span class="warn">last check failed: '+esc(s.last_error)+'</span>':'')+' · '+esc(String(s.count))+' letter'+(s.count===1?'':'s');
+    return fetch('/api/post/messages',{cache:'no-store'}).then(function(r){return r.ok?r.json():{messages:[]}}).then(function(j){
+      var ms=Array.isArray(j.messages)?j.messages:[];
+      if(!ms.length){list.innerHTML='<p class="quiet">No letters yet. The first one is Lisa\'s.</p>';return;}
+      /* a letter that landed since this visitor's last look: the letterbox chimes when they open it (the ident, after their tap) */
+      var newest=ms.reduce(function(a,m){return !a||String(m.created_at||'')>String(a.created_at||'')?m:a},null);
+      try{var seen=localStorage.getItem('sable-mail-seen');if(newest&&newest.id){if(seen&&seen!==String(newest.id))window.SABLE_MAIL_NEW=true;localStorage.setItem('sable-mail-seen',String(newest.id));}}catch(e){}
+      list.innerHTML=ms.map(function(m){var p=m.payload||{};
+        var rc='<div class="rcpt"><b>Receipt</b> · id '+no(m.id)+(p.from?' · from '+no(p.from):'')+(p.to?' · to '+no(p.to):'')+(p.body_fp?' · fingerprint '+no(String(p.body_fp).slice(0,16)+'…'):'')+(p.postage_micro_usd!=null?' · postage '+esc(usd(p.postage_micro_usd)):'')+(p.created_at?' · '+esc(when(p.created_at)):'')+(m.signer?'<br>signed by '+no(m.signer):'')+'</div>';
+        var acts='<div class="acts">'+(m.receipt&&m.signature?'<button type="button" class="pill fill" data-verify="'+esc(m.id)+'">Verify the receipt here</button>':'')+'<a class="pill" href="https://www.buildsable.com/verify" rel="noopener">Sable\'s verifier</a></div>';
+        return '<article class="letter" data-id="'+esc(m.id)+'"><div class="n"><span>from '+no(m.from||'unknown')+'</span><span>'+esc(when(m.created_at))+'</span>'+(m.thread_id?'<span>thread '+no(String(m.thread_id).slice(0,12))+'</span>':'')+'</div>'+(m.subject?'<h3>'+esc(m.subject)+'</h3>':'')+'<p class="body">'+esc(m.body||'')+'</p>'+rc+acts+'</article>';}).join('');
+      list.querySelectorAll('button[data-verify]').forEach(function(b){b.addEventListener('click',function(){var m=ms.filter(function(x){return x.id===b.getAttribute('data-verify')})[0];if(!m)return;
+        var rc=document.getElementById('rcpt'),sg=document.getElementById('sig'),ex=document.getElementById('exp'),vb=document.getElementById('verify-btn');if(!rc||!sg||!ex||!vb)return;
+        rc.value=m.receipt;sg.value=m.signature;ex.value=m.signer||ex.value;location.hash='#check';setTimeout(function(){vb.click();var out=document.getElementById('vout');if(out)out.scrollIntoView({block:'center'});},350);});});
+    });
+  }).catch(function(){status.textContent='The letterbox could not be reached. Try again in a moment.';});
+})();
+
+/* block 3 */
 /* button sounds: a short glass tick made by the browser itself, nothing loaded.
    Off switch in the header, remembered in localStorage. */
 (function(){
@@ -12,6 +92,10 @@
     o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+0.05);
     g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+0.006);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
     o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+0.02);}
+  /* the ident: two seconds of the record's own sound (cut B of the Suno sting, see the whitepaper EP folder).
+     Same off switch as the ticks. Browsers refuse audio before the first tap, so it only ever plays after a click. */
+  var identEl=null;
+  function ident(){if(!on)return false;try{if(!identEl){identEl=new Audio('sable-ident.mp3');identEl.preload='auto';identEl.volume=0.7;}identEl.currentTime=0;var pr=identEl.play();if(pr&&pr.catch)pr.catch(function(){});played++;return true;}catch(e){return false;}}
   function tick(kind){
     if(!on)return;var c=ac();if(!c)return;var t=c.currentTime;
     if(kind==='hit'){partial(c,t,180,120,0.12,0.22);partial(c,t,95,70,0.08,0.26);}
@@ -24,27 +108,28 @@
   document.addEventListener('click',function(e){
     var el=e.target&&e.target.closest?e.target.closest('button,a.pill,a.tile,#rail a,a.back'):null;
     if(!el||el.disabled)return;
+    if(window.SABLE_MAIL_NEW&&el.getAttribute&&(el.getAttribute('data-topic')==='letterbox'||el.getAttribute('href')==='#letterbox')){window.SABLE_MAIL_NEW=false;ident();return;}
     if(el===btn){on=!on;try{localStorage.setItem(KEY,on?'on':'off');}catch(e2){}paint();if(on)tick('fill');return;}
     tick(el.classList.contains('fill')?'fill':'tap');
   },true);
   paint();
-  window.SABLE_SOUND={tick:function(k){tick(k||'tap')},supported:function(){return !!AC},enabled:function(){return on},set:function(v){on=!!v;try{localStorage.setItem(KEY,on?'on':'off');}catch(e){}paint();return on},played:function(){return played}};
+  window.SABLE_SOUND={ident:function(){return ident()},tick:function(k){tick(k||'tap')},supported:function(){return !!AC},enabled:function(){return on},set:function(v){on=!!v;try{localStorage.setItem(KEY,on?'on':'off');}catch(e){}paint();return on},played:function(){return played}};
 })();
 
-/* block 2 */
+/* block 4 */
 /* The guide. Speaks with the browser's own voice, captions every sentence,
    opens topics on request by tap or by voice. If an ElevenLabs agent id is
    set below, the panel hands over to Lisa, and the page gives her two tools:
    navigate(topic) and set_view(mode). */
 window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:'Lisa'};   /* set the id and the name of your voice agent here */
 
-/* block 3 */
+/* block 5 */
 /* The shell. One topic at a time in compact mode; the whole page in full mode.
    Hash-routed so every existing link (#door, #check, #updates) still lands. */
 (function(){
   var body=document.body,content=document.getElementById('content'),back=document.getElementById('back');
-  var TOPICS={home:['hero','home'],explained:['explained'],door:['door'],check:['check'],field:['field','who'],token:['token','chart'],scenarios:['scenarios'],play:['play'],log:['updates','record'],community:['community']};
-  var ALIAS={updates:'log',record:'log',hero:'home',join:'community',verify:'check',game:'play',gatekeeper:'play',who:'field',peers:'field',chart:'token'};
+  var TOPICS={home:['hero','home'],explained:['explained'],door:['door'],check:['check'],field:['field','who'],token:['token','chart'],scenarios:['scenarios'],play:['play'],log:['updates','record'],reading:['reading'],listening:['listening'],letterbox:['letterbox'],community:['community']};
+  var ALIAS={notes:'reading',research:'reading',music:'listening',tracks:'listening',songs:'listening',ep:'listening',post:'letterbox',mail:'letterbox',inbox:'letterbox',updates:'log',record:'log',hero:'home',join:'community',verify:'check',game:'play',gatekeeper:'play',who:'field',peers:'field',chart:'token'};
   var sections=[].slice.call(content.querySelectorAll(':scope > section.band'));
   var links=[].slice.call(document.querySelectorAll('#rail a'));
   var mode='compact';
@@ -152,14 +237,14 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
   window.SABLE_SHELL={open:function(topic){if(!TOPICS[topic])topic=ALIAS[topic]||'home';if(location.hash.replace('#','')===(topic==='home'?'home':TOPICS[topic][0])){show(topic,true);}else{location.hash=topic==='home'?'home':TOPICS[topic][0];}return topic;},setMode:function(m){if(m==='full'||m==='compact')setMode(m,true);return mode;},current:function(){return current;},mode:function(){return mode;},topics:Object.keys(TOPICS)};
 })();
 
-/* block 4 */
+/* block 6 */
 (function(){
   var $=function(id){return document.getElementById(id)};
   var btn=$('guide-btn'),panel=$('guide-panel'),cap=$('guide-cap'),start=$('guide-start'),stop=$('guide-stop'),mic=$('guide-mic'),close=$('guide-close'),topicsBox=$('guide-topics');
   if(!btn||!panel||!window.SABLE_SHELL)return;
   var S=window.SABLE_SHELL,synth=window.speechSynthesis,speaking=false,tourTimer=null,rec=null,listening=false;
   var lisaMode=!!((window.SABLE_GUIDE||{}).elevenlabsAgentId);
-  var NAMES={home:'Overview',explained:'Explained',door:'Try it',check:'Verify',field:'The field',token:'Token',scenarios:'Scenarios',play:'Play',log:'Log',community:'Community'};
+  var NAMES={home:'Overview',explained:'Explained',door:'Try it',check:'Verify',field:'The field',token:'Token',scenarios:'Scenarios',play:'Play',log:'Log',reading:'Reading room',listening:'Listening room',letterbox:'Letterbox',community:'Community'};
   var SAY={
     home:'This is the overview. The map is the whitepaper as a solar system: thirteen sections turn around one sentence, every dot is a sentence of the paper, orange where it changed. Tap a planet, or use the arrows under the map. The squares on the outer ring, and the row of buttons under the map, are the pages of this site: tap one to open it. You can also say: section five, today\'s sentence, or search receipt.',
     explained:'Sable, explained in plain words. Three promises: it forgets what you told it, it cannot overspend your budget, and it hands you a receipt you can check yourself. Then who it is for, what it costs, and what it is not yet.',
@@ -168,8 +253,11 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
     field:'The field. Eight projects on one checklist, read from their own documentation. The last column shows when each project’s public page last changed, checked daily. Scroll the table sideways on a phone. Below the table, every name on the table and on the token ladder gets a card: what it is, how it touches Sable, which list it earned, and how its market cap got where it is; then a list of what would move Sable up the ladder.',
     token:'Where the token sits. It opens with a ring of a thousand lights, one for every million SABL ever minted, read from Solana: the lit ones exist, the dark ones at the rim are burned, and none can be made, because the mint authority is gone. Beside the ring: how much is burned and its share of the mint, that who burned it is not established, the market cap with its 24-hour move, and a day-by-day strip that the hourly watcher fills from 8 September, one bar a day. Under it a log-scale ladder of market caps against eight peers. Under the ladder, the chart: SABL’s pool drawn by the page itself, candles by the hour or the day, the watcher’s own hourly readings on top, and the record’s events on the axis; a summary line under it says the last close, the high and the low. SABL’s only role is an optional pay-in that burns the token, and it is not live yet. No yield, no governance, no claim.',
     scenarios:'Scenarios, not predictions. Three bands for what the token could be worth, and what would have to be true first. No multiples, no targets.',
-    play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. There is no clock: the shift lasts as long as your budget, every wave is harder than the last, and a wave held without a leak gives budget back. The same arena for everyone today, and a leaderboard without accounts: the top three rows are lit. A contest runs from 7 to 14 September: the highest single run wins, one place per X handle, and to claim a prize the player posts their card on X tagging Sablenetwork. Every run is replayed by the board from its taps before it counts, and a referee flags runs that look scripted. The strip above the board has the countdown, the standings and today’s card to post. A link with a source tag counts runs from an event on their own tab.',
+    play:'Gatekeeper, a game. You are Sable’s door: sealed requests pass and become receipts, broken seals and runaway loops must be refused before they reach the door. Only refusals build your streak. There is no clock: the shift lasts as long as your budget, every wave is harder than the last, and a wave held without a leak gives budget back. The same arena for everyone today, and a leaderboard without accounts: the top three rows are lit. A contest runs from 7 to 14 September: the highest single run wins, one place per X handle, and to claim a prize the player posts their card on X tagging Sablenetwork. A Java contest is announced to start soon, with more to be announced; runs from the Java link count on their own tab. Every run is replayed by the board from its taps before it counts, and a referee flags runs that look scripted. The strip above the board has the countdown, the standings and today’s card to post. A link with a source tag counts runs from an event on their own tab.',
     log:'The log. What changed on this page, with dates. The announcements, each next to what the deployment answers. The reliability record: how long Sable’s confidential backend has been failing closed, in how many hourly checks it was verified, whether the gateway answered, and a grid of every check by day and hour, with Sable’s own uptime figure next to it. Then the whitepaper watched hourly with every diff, and what this page got wrong.',
+    reading:'The reading room. Research written for the community, one piece per question that comes up: sourced, dated, with the opinion marked as an opinion. Each piece opens on its own page and comes with a PDF. The first piece asks whether Sable should bridge to Robinhood Chain.',
+    listening:'The listening room. The whitepaper, sung: six sections rapped with their own sentences as lyrics, one track per planet, composed with Suno by a community member’s artist, OG THE MOGI. Press play on a track, or open it for the lyrics with every quoted line marked and sourced. On the map, a planet with a track carries a note.',
+    letterbox:'The letterbox. Other agents can write to this page through Sable’s Agent Post, addressed to the handle sable-observatory. Every letter arrives with a receipt signed by Sable’s gateway, and you can verify that receipt in your own browser with the verifier on the Verify topic. Only Lisa is on the allowlist for now, so nothing else gets in.',
     community:'The community. Sable’s Telegram and X, and four doors into the rest of this page: Play, Verify, the guide, the Log. On a phone the page installs on the home screen like an app, and the bell in the top bar turns on notifications for changes. Bring a question, not a price.'
   };
   var TOUR=[
@@ -220,9 +308,9 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
       var m2=t.match(/\b(?:search|find|look for)\s+(?:the word\s+)?([a-z0-9-]+)/);
       if(m2){S.open('home');O.search(m2[1]);var sp=document.querySelector('#orr-qres span');return speak('Searched the whitepaper for '+m2[1]+'. '+(sp?sp.textContent:'Nothing found')+'. The matching sentences light up on the map.');}
       if(/\b(map|orrery|solar|planets?|whitepaper)\b/.test(t))return goTopic('home');}
-    var map=[[/(overview|home|start|menu)/,'home'],[/(explain|plain|what is sable|simple)/,'explained'],[/(door|try|prompt|send|loop|budget)/,'door'],[/(verify|check|receipt|status|signer|trust)/,'check'],[/(field|compare|comparison|projects|peers|table)/,'field'],[/(token|sabl|market|cap|ladder|price)/,'token'],[/(scenario|worth|future|bands?)/,'scenarios'],[/(play|game|gatekeeper|score|leaderboard)/,'play'],[/(log|updates?|ledger|wrong|corrections?)/,'log'],[/(community|telegram|join|twitter|\bx\b)/,'community']];
+    var map=[[/(overview|home|start|menu)/,'home'],[/(explain|plain|what is sable|simple)/,'explained'],[/(door|try|prompt|send|loop|budget)/,'door'],[/(verify|check|receipt|status|signer|trust)/,'check'],[/(field|compare|comparison|projects|peers|table)/,'field'],[/(token|sabl|market|cap|ladder|price)/,'token'],[/\b(listen|listening|music|song|songs|track|tracks|rap|ep)\b/,'listening'],[/(scenario|worth|future|bands?)/,'scenarios'],[/(play|game|gatekeeper|score|leaderboard)/,'play'],[/(log|updates?|ledger|wrong|corrections?)/,'log'],[/(reading|research|notes?|articles?|analysis|robinhood)/,'reading'],[/(letterbox|mailbox|inbox|letters?|mail|agent post)/,'letterbox'],[/(community|telegram|join|twitter|\bx\b)/,'community']];
     for(var i=0;i<map.length;i++){if(map[i][0].test(t))return goTopic(map[i][1]);}
-    speak('I did not catch a topic. You can say: explained, try it, verify, the field, token, scenarios, log, or community. Or say full, or compact.');}
+    speak('I did not catch a topic. You can say: explained, try it, verify, the field, token, scenarios, log, listening room, or community. Or say full, or compact.');}
   window.SABLE_GUIDE_API={interpret:interpret};
   function stopListening(){listening=false;mic.setAttribute('aria-pressed','false');mic.textContent='Voice commands';if(rec){try{rec.stop();}catch(e){}}}
   function listen(){if(!SR)return;if(listening){stopListening();caption('Voice commands off.',true);return;}
@@ -309,7 +397,7 @@ window.SABLE_GUIDE={elevenlabsAgentId:'agent_6301m1xbpgm2eg8s3bjbc658p2ga',name:
   }
 })();
 
-/* block 5 */
+/* block 7 */
 /* Where the page reads its live data from. On the live host everything goes
    through this host's own read-only cache, so a visitor's browser never
    contacts CoinGecko, DexScreener or GitHub. Anywhere else (the artifact,
@@ -322,7 +410,7 @@ window.SABLE_EXT=(function(){
     sabl:'https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump',record:GH+'record.json',peers:GH+'peers-record.json',ledger:GH+'status/log.jsonl',whitepaper:GH+'whitepaper.json',board:'http://127.0.0.1:8791',status:'/sable-api/status',pubkey:'/sable-api/receipts/pubkey',models:'/sable-api/models',nodes:'/sable-api/nodes'};
 })();
 
-/* block 6 */
+/* block 8 */
 /* The Orrery. The whitepaper as a solar system: thirteen sections turn around
    one sentence, every dot is a sentence of the paper, orange means it arrived
    or left after the first snapshot. Data is whitepaper.json from the watch
@@ -357,15 +445,15 @@ window.SABLE_EXT=(function(){
   };
   var COVER_LINE='A control plane for agent compute: an OpenAI- and Anthropic-compatible API plus metered code sandboxes, where every unit of work is metered at the gateway, bounded by a budget the caller sets, paid in prepaid stablecoin, and signed on the way out as a receipt anyone can verify.';
   var FALLBACK=[['01','The delegation problem',18],['02','The control plane',23],['03','The privacy contract',26],['04','Architecture',20],['05','Metering, budgets & delegation',19],['06','Payment: prepaid USDT and x402',32],['07','Verifiable receipts',10],['08','Confidential execution & attestation',19],['09','Sandbox compute',17],['10','What is built, and what is not',9],['11','Direction: compute for rent',20],['12','Threat model & trust boundaries',24],['13','Conclusion',5],['A','Appendix: API surface',3]];
-  var TOPICS={explained:'Explained',door:'Try it',check:'Verify',field:'The field',token:'Token',scenarios:'Scenarios',updates:'The log',community:'Community'};
+  var TOPICS={explained:'Explained',door:'Try it',check:'Verify',field:'The field',token:'Token',scenarios:'Scenarios',updates:'The log',reading:'Reading room',listening:'Listening room',letterbox:'Letterbox',community:'Community'};
   function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function day(l,short){if(!l)return '';var m=String(l).match(/^(\d{4})-(\d{2})-(\d{2})/);if(!m)return String(l);var M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return parseInt(m[3],10)+' '+M[parseInt(m[2],10)-1]+(short?'':' '+m[1]);}
   function safe(p){p=String(p||'');return /^[A-Za-z0-9._\/-]+$/.test(p)&&p.indexOf('..')<0?p:'';}
   var data=null,S=[],sel=-1,selSent=-1,filter=null,word='',W=0,H=0,dpr=1,cx=0,cy=0,R=0,frames=0,raf=0,last=0,inview=true,hoverI=-1,ready=false,today=null,fresh=null,visit=null,liveText='';
   function setLive(t){liveText=t;live.textContent=t;}
-  var hoverT=null,MARKS=['explained','door','check','field','token','scenarios','play','log','community'];
-  var NAMES_T={explained:'Explained',door:'Try it',check:'Verify',field:'The field',token:'Token',scenarios:'Scenarios',play:'Play',log:'Log',community:'Community'};
-  var LINKS={explained:['01','02','03','10','12'],door:['04','05'],check:['07','08'],field:['09','10','11'],token:['06'],scenarios:['11','13'],play:['05','12'],log:['sun'],community:[]};
+  var hoverT=null,MARKS=['explained','door','check','field','token','scenarios','play','log','reading','listening','letterbox','community'];
+  var NAMES_T={explained:'Explained',door:'Try it',check:'Verify',field:'The field',token:'Token',scenarios:'Scenarios',play:'Play',log:'Log',reading:'Reading room',listening:'Listening room',letterbox:'Letterbox',community:'Community'};
+  var LINKS={explained:['01','02','03','10','12'],door:['04','05'],check:['07','08'],field:['09','10','11'],token:['06'],scenarios:['11','13'],play:['05','12'],log:['sun'],listening:['01','03','05','07','08','13'],community:[]};
   function wide(){return W>=480;}
   var T0=Date.now()/1000;function clock(){return reduce?T0:Date.now()/1000;}
   function build(list){
@@ -411,7 +499,8 @@ window.SABLE_EXT=(function(){
     if(x.changed){var pulse=reduce?0.5:0.5+0.5*Math.sin(t*1.6+i);ctx.strokeStyle='rgba(255,122,89,'+(0.22+0.38*pulse)+')';ctx.lineWidth=1;ctx.beginPath();ctx.arc(p.x,p.y,r+3.5,0,Math.PI*2);ctx.stroke();}
     if(big||hoverI===i){ctx.shadowBlur=16;ctx.shadowColor='rgba(24,191,255,.9)';}
     ctx.fillStyle=big?'#18BFFF':(hits&&hits.length)?'#72DCFF':'#E8F2F8';ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-    if(wide()||big||x.changed||hoverI===i){ctx.font=(big?'600 11px':'500 9px')+' "IBM Plex Mono",monospace';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=big?'#E8F2F8':x.changed?'rgba(255,122,89,.9)':'rgba(143,163,176,.75)';ctx.fillText(x.n,p.x+r+4,p.y-r-3);}}
+    if(wide()||big||x.changed||hoverI===i){ctx.font=(big?'600 11px':'500 9px')+' "IBM Plex Mono",monospace';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=big?'#E8F2F8':x.changed?'rgba(255,122,89,.9)':'rgba(143,163,176,.75)';ctx.fillText(x.n,p.x+r+4,p.y-r-3);}
+    if(window.SABLE_TRACKS&&window.SABLE_TRACKS[x.n]){ctx.font='500 10px "IBM Plex Mono",monospace';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle=big?'#72DCFF':'rgba(114,220,255,.75)';ctx.fillText('♪',p.x+r+4,p.y+r+5);}}
   function draw(){var t=clock();ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
     S.forEach(function(x,i){ctx.beginPath();ctx.ellipse(cx,cy,R*x.r,R*x.r*EY,0,0,Math.PI*2);var hit=word&&x.hits&&x.hits.length;ctx.strokeStyle=i===sel?'rgba(24,191,255,.42)':hit?'rgba(114,220,255,.3)':x.changed?'rgba(255,122,89,.18)':'rgba(24,191,255,.13)';ctx.lineWidth=i===sel?1.2:0.8;ctx.stroke();});
     links(t);var ps=S.map(function(x,i){var p=pos(x,t);p.i=i;p.s=x;return p;}).sort(function(a,b){return a.y-b.y});var drewSun=false;
@@ -460,7 +549,8 @@ window.SABLE_EXT=(function(){
     if(o.line)h+='<p class="orr-ours"><b>In plain words.</b> '+esc(o.line)+'<span class="orr-stamp">our words · written '+day(OURS_DATE)+(x.sents[0]?' · the quote above is the section\'s own first sentence':'')+'</span></p>';
     if(changedAfter)h+='<p class="orr-warn">This section changed on '+day(x.changed)+', after the summary above was written. Until it is re-read, trust the sentences below, not the summary.</p>';
     var diff=x.changed?safe('diffs/'+String(x.changed)+'.diff'):'';
-    h+='<div class="orr-links">'+(o.topic&&TOPICS[o.topic]?'<a class="pill ghost" href="#'+o.topic+'">On this page: '+TOPICS[o.topic]+'</a>':'')+'<a class="pill ghost" href="'+PDF+'">The PDF</a>'+(diff?'<a class="pill ghost" href="'+GH+diff+'">The diff</a>':'')+'</div>';
+    var TR=(window.SABLE_TRACKS||{})[x.n],tr=TR&&/^[a-z0-9-]+$/.test(String(TR.slug))?'tracks/'+TR.slug+'.html':'';
+    h+='<div class="orr-links">'+(tr?'<a class="pill ghost" href="'+tr+'">Hear this section</a>':'')+(o.topic&&TOPICS[o.topic]?'<a class="pill ghost" href="#'+o.topic+'">On this page: '+TOPICS[o.topic]+'</a>':'')+'<a class="pill ghost" href="'+PDF+'">The PDF</a>'+(diff?'<a class="pill ghost" href="'+GH+diff+'">The diff</a>':'')+'</div>';
     var list=x.sents.map(function(se,i){return {t:se.t,s:se.s,i:i}});
     if(filter)list=list.filter(function(y){return x.hits&&x.hits.indexOf(y.i)>=0});
     h+='<h3>'+(filter?'Sentences with \u201c'+esc(word)+'\u201d':'Every sentence')+' <span>('+list.length+')</span></h3>';
@@ -515,10 +605,11 @@ window.SABLE_EXT=(function(){
     setLive((wide()?String(d.cover||'').split(',')[0]+' · ':'')+d.sentence_count+' sentences · '+(lastChg?'changed '+day(lastChg,true)+' · '+chg.filter(function(x){return x.changed===lastChg}).map(function(x){return x.n}).join(', '):'no change since '+day(d.first,true)));
     renderCtl();if(sel!==-1)renderPanel();if(word)search();if(reduce)draw();
   }).catch(function(){hud.classList.add('off');setLive('the record did not answer · the map is drawn without its sentences');});
+  document.addEventListener('sable-tracks',function(){try{if(reduce)draw();if(sel>=0)renderPanel();}catch(e){}});
   window.SABLE_ORRERY={ready:function(){return ready},sections:function(){return S.map(function(x){return {n:x.n,title:x.title,count:x.count,changed:x.changed,added:x.added}})},select:function(i){select(i,{quiet:true})},selected:function(){return sel},pos:function(i){var p=pos(S[i],clock());return {x:p.x,y:p.y}},frames:function(){return frames},today:function(){return today},marker:function(tp){var m=markPos(MARKS.indexOf(tp));return {x:m.x,y:m.y}},visit:function(){return visit},search:function(w){q.value=w||'';search();},data:function(){return data}};
 })();
 
-/* block 7 */
+/* block 9 */
 /* Gatekeeper: the 3D client loads only when Play is pressed; the leaderboard
    table needs no 3D and reads the board service on this site's own origin. */
 (function(){
@@ -564,7 +655,7 @@ window.SABLE_EXT=(function(){
       .catch(function(e){play.disabled=false;demo.disabled=false;document.getElementById('game-fine').textContent='The game could not load here ('+(e&&e.message?e.message:'unknown')+'). On the live site it loads from jsdelivr.';});}
   var gsName=document.getElementById('gs-name'),gsHandle=document.getElementById('gs-handle');
   try{gsName.value=localStorage.getItem('sable-game-name')||'';gsHandle.value=localStorage.getItem('sable-game-handle')||'';}catch(e){}
-  play.addEventListener('click',function(){var name=gsName.value.trim(),handle=gsHandle.value.trim();try{localStorage.setItem('sable-game-name',name);localStorage.setItem('sable-game-handle',handle);}catch(e){}if(name)myName=name.toLowerCase();run({name:name,handle:handle})});
+  play.addEventListener('click',function(){if(window.SABLE_SOUND)window.SABLE_SOUND.ident();var name=gsName.value.trim(),handle=gsHandle.value.trim();try{localStorage.setItem('sable-game-name',name);localStorage.setItem('sable-game-handle',handle);}catch(e){}if(name)myName=name.toLowerCase();run({name:name,handle:handle})});
   demo.addEventListener('click',function(){run({demo:true})});
   again.addEventListener('click',function(){document.getElementById('game-end').hidden=true;document.getElementById('game-start').hidden=false;});
   form.addEventListener('submit',function(e){e.preventDefault();var R=window.SABLE_GAME_RUN;if(!R)return;var name=document.getElementById('ge-name').value.trim(),handle=document.getElementById('ge-handle').value.trim(),out=document.getElementById('ge-result'),btn=document.getElementById('ge-submit');
@@ -589,7 +680,7 @@ window.SABLE_EXT=(function(){
   window.SABLE_GAME={run:run,load:load,board:BOARD};
 })();
 
-/* block 8 */
+/* block 10 */
 /* The sky. A static starfield drawn once; a shooting star every few seconds
    that animates only while it is in flight; and a drifter, Sable's robot or
    its moon mark, floating past behind the glass now and then. Everything
@@ -636,7 +727,7 @@ window.SABLE_EXT=(function(){
   window.SABLE_SKY={shoot:shoot,drift:drift};
 })();
 
-/* block 9 */
+/* block 11 */
 (function(){
   var $=function(id){return document.getElementById(id)};
   if(!$('send')||!window.crypto||!crypto.subtle){return;}
@@ -681,7 +772,7 @@ window.SABLE_EXT=(function(){
         return crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},key.privateKey,data).then(function(sig){
           var s=b64(sig);el.rwait.hidden=true;el.receipt.hidden=false;
           el.receipt.innerHTML=Object.keys(rec).map(function(k){return '<span class="k">'+k+'</span>: <span class="v">'+esc(String(rec[k]))+'</span>'}).join('\n')+'<div class="sig" translate="yes"><span>sig <span class="v" translate="no">'+s.slice(0,22)+'…</span></span><button class="pill ghost" id="verify" type="button">Verify in your browser</button><span id="vres"></span></div>';
-          $('verify').addEventListener('click',function(){crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},key.publicKey,sig,data).then(function(ok){$('vres').innerHTML=ok?'<span class="ok">✓ valid · checked by your browser, not by Sable</span>':'✗ invalid';});});
+          $('verify').addEventListener('click',function(){crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},key.publicKey,sig,data).then(function(ok){if(ok&&window.SABLE_SOUND)window.SABLE_SOUND.ident();$('vres').innerHTML=ok?'<span class="ok">✓ valid · checked by your browser, not by Sable</span>':'✗ invalid';});});
           records.push(rec);el.s[3].classList.add('done');
           el.kept.textContent='row '+records.length+': inference · sable-fast · '+n(tin+tout)+' tokens · '+n(cost)+' µ$ · '+rec.issued_at.slice(11,19)+' UTC';
           el.never.textContent=text;el.search.disabled=false;el.searchres.textContent='';money();busy=false;el.send.disabled=false;return true;});});});}
@@ -696,7 +787,7 @@ window.SABLE_EXT=(function(){
   money();
 })();
 
-/* block 10 */
+/* block 12 */
 (function(){
   var $=function(id){return document.getElementById(id)};
   if(!$('verify-btn'))return;

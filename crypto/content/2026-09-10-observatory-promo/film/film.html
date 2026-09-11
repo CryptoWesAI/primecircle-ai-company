@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sable Observatory film</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; background: #05070A; overflow: hidden; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script>
+// The Sable Observatory film: an animated explainer drawn in code, one scene per
+// narration line. window.draw(t) renders the frame at time t (seconds); render.mjs
+// steps through it with headless Chrome. Timeline matches mix.py STARTS exactly.
+const W = 1920, H = 1080;
+const cv = document.getElementById("c");
+const ctx = cv.getContext("2d");
+
+const C = {
+  ink: "#0A1118", void: "#05070A", cyan: "#18BFFF", soft: "#72DCFF", text: "#E8F2F8",
+  dim: "#8FA3B0", dim2: "#4C6070", bar: "#5B7386", moon: "#FF7A59", ok: "#8FD0B8", warn: "#E0BE72",
+};
+const MONO = '"IBM Plex Mono", Consolas, monospace';
+const SANS = '"IBM Plex Sans", Inter, system-ui, sans-serif';
+
+// ---- helpers ---------------------------------------------------------------
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, x) => a + (b - a) * x;
+const smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x); };
+const easeOut = (x) => 1 - Math.pow(1 - clamp(x), 3);
+const easeOutBack = (x) => { x = clamp(x); const c = 1.70158; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+const seg = (t, a, b) => clamp((t - a) / (b - a));                    // 0..1 progress between a and b
+function rng(seed) { let s = seed >>> 0; return () => { s += 0x6D2B79F5; let r = Math.imul(s ^ (s >>> 15), 1 | s); r ^= r + Math.imul(r ^ (r >>> 7), 61 | r); return ((r ^ (r >>> 14)) >>> 0) / 4294967296; }; }
+function rgba(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`; }
+
+function text(s, x, y, size, color, opts = {}) {
+  ctx.save();
+  ctx.font = `${opts.weight || 400} ${size}px ${opts.font || SANS}`;
+  ctx.fillStyle = color;
+  ctx.textAlign = opts.align || "left";
+  ctx.textBaseline = opts.base || "alphabetic";
+  ctx.letterSpacing = opts.track ? `${opts.track}px` : "0px";
+  if (opts.alpha != null) ctx.globalAlpha *= clamp(opts.alpha);
+  ctx.fillText(s, x, y);
+  ctx.restore();
+}
+const label = (s, x, y, size, color, opts = {}) => text(s.toUpperCase(), x, y, size, color, { font: MONO, weight: 500, track: Math.round(size * 0.18), ...opts });
+
+function background() {
+  const g = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 1300);
+  g.addColorStop(0, C.ink); g.addColorStop(1, C.void);
+  ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  // a faint field of stars, fixed
+  const r = rng(7);
+  ctx.fillStyle = rgba(C.soft, 0.16);
+  for (let i = 0; i < 140; i++) { const x = r() * W, y = r() * H, s = 0.6 + r() * 1.3; ctx.fillRect(x, y, s, s); }
+}
+function header(alpha = 1) {
+  ctx.save(); ctx.globalAlpha *= alpha;
+  label("Prime Circle", 96, 84, 20, C.soft);
+  text("Sable Observatory  ·  independent", 96, 116, 19, C.dim, { font: MONO });
+  ctx.restore();
+}
+function caption(L, eyebrow, line, D) {
+  const a = smooth(seg(L, 0.25, 0.7)) * (D ? 1 - smooth(seg(L, D - 0.35, D)) : 1);
+  if (a <= 0) return;
+  ctx.save(); ctx.globalAlpha *= a;
+  const y0 = H - 72 + (1 - a) * 18;
+  ctx.font = `500 36px ${SANS}`;
+  const w = Math.max(ctx.measureText(line).width, 260) + 56;
+  ctx.fillStyle = rgba(C.ink, 0.85); roundRect(72, y0 - 104, w, 104, 14); ctx.fill();
+  ctx.fillStyle = C.cyan; ctx.fillRect(72, y0 - 104, 5, 104);
+  label(eyebrow, 100, y0 - 66, 21, C.soft);
+  text(line, 100, y0 - 22, 36, C.text, { weight: 500 });
+  ctx.restore();
+}
+function roundRect(x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+function panel(x, y, w, h, alpha = 1) { ctx.save(); ctx.globalAlpha *= alpha; ctx.fillStyle = rgba("#0E1822", 0.92); roundRect(x, y, w, h, 16); ctx.fill(); ctx.strokeStyle = rgba(C.soft, 0.16); ctx.lineWidth = 1; ctx.stroke(); ctx.restore(); }
+function glowDot(x, y, r, color, a = 1) { ctx.save(); ctx.globalAlpha *= a; const g = ctx.createRadialGradient(x, y, 0, x, y, r * 3); g.addColorStop(0, rgba(color, 0.55)); g.addColorStop(1, rgba(color, 0)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, r * 3, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+
+// envelope: sealed (lock), broken (crack), or plain. scale s, alpha a.
+function envelope(x, y, w, h, state = "sealed", a = 1, open = 0) {
+  ctx.save(); ctx.globalAlpha *= a; ctx.lineWidth = 3; ctx.lineJoin = "round";
+  ctx.fillStyle = rgba("#101C28", 0.95); ctx.strokeStyle = state === "broken" ? C.moon : C.soft;
+  roundRect(x - w / 2, y - h / 2, w, h, 8); ctx.fill(); ctx.stroke();
+  // flap
+  ctx.beginPath(); ctx.moveTo(x - w / 2, y - h / 2);
+  const tipY = y - h / 2 + h * 0.55 - open * h * 0.9;
+  ctx.lineTo(x, tipY); ctx.lineTo(x + w / 2, y - h / 2); ctx.stroke();
+  if (state === "sealed") { // a small lock at the flap tip
+    const s = h * 0.22; ctx.fillStyle = C.cyan; roundRect(x - s / 2, tipY - s * 0.1, s, s * 0.8, 3); ctx.fill();
+    ctx.strokeStyle = C.cyan; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(x, tipY - s * 0.1, s * 0.28, Math.PI, 0); ctx.stroke();
+  } else if (state === "broken") { // a crack
+    ctx.strokeStyle = C.moon; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - 6, tipY - h * 0.25); ctx.lineTo(x + 6, tipY - h * 0.05); ctx.lineTo(x - 4, tipY + h * 0.12); ctx.lineTo(x + 8, tipY + h * 0.3); ctx.stroke();
+  }
+  ctx.restore();
+}
+function door(x, y, w, h, lit = 1, a = 1) {
+  ctx.save(); ctx.globalAlpha *= a;
+  const g = ctx.createLinearGradient(x, y - h / 2, x, y + h / 2); g.addColorStop(0, rgba(C.cyan, 0.05 + 0.35 * lit)); g.addColorStop(1, rgba(C.cyan, 0.0));
+  ctx.fillStyle = g; ctx.fillRect(x - w / 2 - 60, y - h / 2, w + 120, h);
+  ctx.fillStyle = C.ink; roundRect(x - w / 2, y - h / 2, w, h, 10); ctx.fill();
+  ctx.strokeStyle = rgba(C.soft, 0.4 + 0.6 * lit); ctx.lineWidth = 4; ctx.stroke();
+  ctx.fillStyle = rgba(C.cyan, 0.25 + 0.75 * lit); ctx.fillRect(x - 4, y - h / 2 + 12, 8, h - 24);
+  ctx.restore();
+}
+function bar(x, y, w, h, fill, color = C.cyan, cap = null, hold = 0) {
+  ctx.fillStyle = rgba(C.bar, 0.3); roundRect(x, y, w, h, h / 2); ctx.fill();
+  ctx.fillStyle = color; roundRect(x, y, Math.max(h, w * clamp(fill)), h, h / 2); ctx.fill();
+  if (hold > 0) { ctx.fillStyle = rgba(C.warn, 0.7); roundRect(x + w * clamp(fill - hold), y, w * hold, h, h / 2); ctx.fill(); }
+  if (cap != null) { ctx.fillStyle = C.moon; ctx.fillRect(x + w * cap - 2, y - 8, 4, h + 16); }
+}
+function check(x, y, s, p, color = C.ok) {
+  if (p <= 0) return; ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = s * 0.16; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  ctx.beginPath(); ctx.moveTo(x - s * 0.45, y); const p1 = clamp(p / 0.4), p2 = clamp((p - 0.4) / 0.6);
+  ctx.lineTo(x - s * 0.45 + s * 0.3 * p1, y + s * 0.3 * p1); if (p2 > 0) ctx.lineTo(x - s * 0.15 + s * 0.6 * p2, y + s * 0.3 - s * 0.7 * p2); ctx.stroke(); ctx.restore();
+}
+function receipt(x, y, w, h, a = 1, lines = 6, stamp = 0) {
+  ctx.save(); ctx.globalAlpha *= a; ctx.fillStyle = "#101C28"; ctx.strokeStyle = rgba(C.soft, 0.35); ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + h);
+  for (let i = 0; i <= 8; i++) ctx.lineTo(x + w - (w / 8) * i, y + h + (i % 2 ? -8 : 0)); ctx.lineTo(x, y); ctx.fill(); ctx.stroke();
+  for (let i = 0; i < lines; i++) { ctx.fillStyle = rgba(C.dim, 0.35 + (i === 0 ? 0.3 : 0)); ctx.fillRect(x + 24, y + 30 + i * 26, (i === 0 ? 0.55 : 0.4 + ((i * 37) % 40) / 100) * (w - 48), 8); }
+  if (stamp > 0) { const s = easeOutBack(stamp); ctx.save(); ctx.translate(x + w * 0.66, y + h * 0.72); ctx.rotate(-0.18); ctx.scale(s, s); ctx.strokeStyle = C.ok; ctx.lineWidth = 3; roundRect(-78, -24, 156, 48, 8); ctx.stroke(); label("signed", 0, 8, 20, C.ok, { align: "center" }); ctx.restore(); }
+  ctx.restore();
+}
+
+// ---- scenes ----------------------------------------------------------------
+function sIntro(L, D) {
+  background();
+  for (let i = 0; i < 3; i++) { const r = lerp(60, [520, 400, 290][i], easeOut(seg(L, 0.1 + i * 0.15, 1.6))); ctx.strokeStyle = rgba(C.soft, 0.08 + i * 0.02); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(W / 2, H / 2, r, 0, Math.PI * 2); ctx.stroke(); }
+  glowDot(W / 2, H / 2, 5, C.cyan, smooth(seg(L, 0.2, 0.8)));
+  header(smooth(seg(L, 0.4, 1)));
+  text("Sable Observatory", W / 2, H / 2 - 20, 108, C.text, { weight: 600, align: "center", alpha: smooth(seg(L, 0.25, 1.0)) });
+  text("sable.primecircle.cloud", W / 2, H / 2 + 60, 46, C.cyan, { font: MONO, weight: 600, align: "center", alpha: smooth(seg(L, 0.8, 1.5)) });
+  text("An independent page about Sable Network", W / 2, H / 2 + 128, 30, C.dim, { align: "center", alpha: smooth(seg(L, 1.3, 2.0)) });
+}
+
+const ORR = (() => { const r = rng(11); const rings = []; for (let i = 0; i < 13; i++) { const n = 10 + Math.floor(r() * 16); const dots = []; for (let k = 0; k < n; k++) dots.push({ a0: r() * Math.PI * 2, sa: r() * Math.PI * 2, sr: 620 + r() * 420, changed: r() < 0.07, sz: 2.2 + r() * 1.8 }); rings.push({ radius: 96 + i * 27, speed: (0.03 + r() * 0.05) * (r() < 0.5 ? 1 : -1), dots }); } return rings; })();
+function sOrrery(L, D) {
+  background(); header();
+  const cx = 700, cy = 560;
+  ctx.save();
+  ORR.forEach((ring, i) => {
+    const arrive = easeOut(seg(L, 0.1 + i * 0.09, 1.4 + i * 0.09));
+    ctx.strokeStyle = rgba(C.soft, 0.06 + 0.1 * arrive); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, ring.radius, 0, Math.PI * 2); ctx.stroke();
+    const rot = L * ring.speed;
+    ring.dots.forEach((d) => {
+      const tx = cx + Math.cos(d.a0 + rot) * ring.radius, ty = cy + Math.sin(d.a0 + rot) * ring.radius;
+      const sx = cx + Math.cos(d.sa) * d.sr, sy = cy + Math.sin(d.sa) * d.sr;
+      const x = lerp(sx, tx, arrive), y = lerp(sy, ty, arrive);
+      const hot = d.changed && L > 3.0;
+      const pulse = hot ? 1 + 0.5 * Math.sin((L - 3.0) * 5) : 1;
+      ctx.fillStyle = hot ? C.moon : rgba(C.soft, 0.55 + 0.45 * arrive); ctx.beginPath(); ctx.arc(x, y, d.sz * pulse, 0, Math.PI * 2); ctx.fill();
+      if (hot) glowDot(x, y, d.sz, C.moon, 0.6);
+    });
+  });
+  ctx.restore();
+  glowDot(cx, cy, 6, C.cyan, smooth(seg(L, 0.0, 0.5)));
+  label("01 / 07 · the whitepaper", 1180, 380, 22, C.soft, { alpha: smooth(seg(L, 0.5, 1.1)) });
+  text("Sable, explained.", 1180, 460, 74, C.text, { weight: 600, alpha: smooth(seg(L, 0.7, 1.4)) });
+  text("13 sections turn around one sentence.", 1180, 530, 34, C.dim, { alpha: smooth(seg(L, 1.2, 1.9)) });
+  text("Every dot is a sentence of the paper.", 1180, 580, 34, C.dim, { alpha: smooth(seg(L, 1.7, 2.4)) });
+  const a2 = smooth(seg(L, 3.1, 3.7)); if (a2 > 0) { ctx.fillStyle = C.moon; ctx.globalAlpha = a2; ctx.beginPath(); ctx.arc(1196, 640, 7, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; text("orange where the text changed", 1220, 650, 30, C.moon, { alpha: a2 }); }
+  caption(L, "01 / Overview", "The whitepaper as a solar system. Every dot is a sentence.", D);
+}
+
+function sPromises(L, D) {
+  background(); header();
+  label("02 / 07 · in plain words", 96, 200, 22, C.soft, { alpha: smooth(seg(L, 0.05, 0.5)) });
+  text("Three promises most AI services do not make.", 96, 272, 58, C.text, { weight: 600, alpha: smooth(seg(L, 0.15, 0.7)) });
+  const cards = [
+    { t: "It forgets", s: "Your words are sealed on arrival and kept nowhere.", at: 0.5 },
+    { t: "It cannot overspend", s: "A budget is held before the work runs.", at: 1.2 },
+    { t: "It shows its work", s: "Every answer comes with a signed receipt.", at: 1.9 },
+  ];
+  cards.forEach((c, i) => {
+    const a = smooth(seg(L, c.at, c.at + 0.5)); if (a <= 0) return;
+    const x = 96 + i * 590, y = 360 + (1 - a) * 30, w = 540, h = 520;
+    panel(x, y, w, h, a);
+    ctx.save(); ctx.globalAlpha *= a;
+    const ix = x + w / 2, iy = y + 190, k = L - c.at;
+    if (i === 0) { // envelope dissolving to particles, looping
+      const cyc = (k % 2.4) / 2.4; const dis = smooth(seg(cyc, 0.35, 0.85));
+      envelope(ix, iy, 220, 140, "sealed", 1 - dis);
+      const r = rng(3); for (let p = 0; p < 60; p++) { const ang = r() * Math.PI * 2, dist = 30 + r() * 160 * dis, sz = 1.5 + r() * 2.5; ctx.fillStyle = rgba(C.soft, (1 - dis) * 0.9 * (dis > 0 ? 1 : 0)); ctx.beginPath(); ctx.arc(ix + Math.cos(ang) * dist, iy + Math.sin(ang) * dist * 0.7, sz, 0, Math.PI * 2); ctx.fill(); }
+    } else if (i === 1) { // a bar that stops at the cap
+      const cyc = (k % 2.6) / 2.6; const f = 0.62 * easeOut(seg(cyc, 0.05, 0.6)) + (cyc > 0.6 ? 0.03 * Math.sin((cyc - 0.6) * 40) * (1 - seg(cyc, 0.6, 0.9)) : 0);
+      bar(ix - 190, iy - 12, 380, 24, Math.min(f, 0.62), C.cyan, 0.62);
+      label("cap", ix - 190 + 380 * 0.62, iy - 30, 18, C.moon, { align: "center" });
+      label("$0.05 held", ix - 190, iy + 52, 18, C.dim);
+    } else { // receipt with a check
+      const cyc = (k % 2.8) / 2.8;
+      receipt(ix - 100, iy - 100, 200, 190, 1, 5, seg(cyc, 0.45, 0.8));
+      check(ix + 92, iy - 70, 44, seg(cyc, 0.15, 0.45));
+    }
+    text(c.t, x + 40, y + 380, 40, C.text, { weight: 600 });
+    text(c.s, x + 40, y + 430, 24, C.dim);
+    ctx.restore();
+  });
+  caption(L, "02 / Explained", "Sable in plain words: three promises.", D);
+}
+
+const PROMPT = "Draft a reply to our biggest client about the delayed invoice.";
+function sDoor(L, D) {
+  background(); header();
+  label("03 / 07 · try it", 96, 200, 22, C.soft, { alpha: smooth(seg(L, 0.05, 0.5)) });
+  text("Send a prompt through the door.", 96, 272, 58, C.text, { weight: 600, alpha: smooth(seg(L, 0.1, 0.6)) });
+  const fold = smooth(seg(L, 1.15, 1.65)), travel = easeOut(seg(L, 1.6, 2.5));
+  const bx = 96, by = 380, bw = 760, bh = 220;
+  // the box shrinks into an envelope and travels to the door
+  const ex = lerp(bx + bw / 2, 1380, travel), ey = lerp(by + bh / 2, 560, travel);
+  if (fold < 1) {
+    ctx.save(); ctx.globalAlpha *= 1 - fold;
+    panel(bx, by, bw, bh, 1);
+    label("your prompt", bx + 28, by + 44, 18, C.dim);
+    const n = Math.floor(seg(L, 0.2, 1.1) * PROMPT.length);
+    text(PROMPT.slice(0, n) + (L < 1.1 && Math.floor(L * 4) % 2 ? "▌" : ""), bx + 28, by + 110, 30, C.text, { font: MONO });
+    ctx.restore();
+  }
+  if (fold > 0) envelope(ex, ey, lerp(320, 220, fold), lerp(200, 140, fold), "sealed", fold);
+  door(1620, 560, 150, 440, 0.3 + 0.7 * travel, smooth(seg(L, 0.3, 0.9)));
+  label("the door", 1620, 830, 20, C.dim, { align: "center", alpha: smooth(seg(L, 0.5, 1)) });
+  text("Nothing you type is sent anywhere. The simulation runs in your browser.", 96, 680, 26, C.dim, { alpha: smooth(seg(L, 0.6, 1.2)) });
+  caption(L, "03 / Try it", "Send a prompt through the door. Nothing leaves your browser.", D);
+}
+
+function sSteps(L, D) {
+  background(); header();
+  const steps = [["Sealed on arrival", "a fingerprint of your words, nothing else kept"], ["Budget held first", "$0.050 on this key, held before any work"], ["Opened once, in one frame", "decrypted inside sealed hardware, then gone"], ["Metered and signed", "a receipt you can verify yourself"]];
+  steps.forEach((s, i) => {
+    const at = 0.3 + i * 0.8, a = smooth(seg(L, at, at + 0.4)); if (a <= 0) return;
+    const y = 300 + i * 150; ctx.save(); ctx.globalAlpha *= a;
+    ctx.strokeStyle = rgba(C.soft, 0.5); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(130, y - 12, 26, 0, Math.PI * 2); ctx.stroke();
+    text(String(i + 1), 130, y - 2, 26, C.soft, { font: MONO, weight: 600, align: "center" });
+    text(s[0], 190, y, 40, C.text, { weight: 600 }); text(s[1], 190, y + 44, 24, C.dim);
+    check(760, y - 12, 34, seg(L, at + 0.3, at + 0.7)); ctx.restore();
+  });
+  // the illustrations, right side, 2x2
+  const gx = 1040, gy = 280, cw = 380, ch = 300;
+  const cells = [(x, y, k) => { envelope(x, y, 200, 130, "sealed", 1); text("sha-256", x, y + 100, 20, C.dim, { font: MONO, align: "center" }); },
+    (x, y, k) => { bar(x - 150, y - 12, 300, 24, 1, rgba(C.cyan, 0.5), null, 0.4 * smooth(seg(k, 0, 0.6))); label("held", x + 30, y + 46, 18, C.warn, { align: "center" }); label("balance", x - 150, y + 46, 18, C.dim); },
+    (x, y, k) => { ctx.strokeStyle = rgba(C.cyan, 0.9); ctx.lineWidth = 3; ctx.setLineDash([10, 8]); ctx.strokeRect(x - 150, y - 100, 300, 200); ctx.setLineDash([]); envelope(x, y, 180, 120, "plain", 1, smooth(seg(k, 0.1, 0.7))); label("one frame", x, y + 128, 18, C.soft, { align: "center" }); },
+    (x, y, k) => { receipt(x - 90, y - 100, 180, 190, 1, 5, seg(k, 0.2, 0.7)); }];
+  cells.forEach((fn, i) => { const at = 0.3 + i * 0.8, a = smooth(seg(L, at, at + 0.4)); if (a <= 0) return; ctx.save(); ctx.globalAlpha *= a; const x = gx + (i % 2) * cw, y = gy + Math.floor(i / 2) * ch; panel(x, y, cw - 20, ch - 20, 1); fn(x + (cw - 20) / 2, y + (ch - 20) / 2, L - at); ctx.restore(); });
+  caption(L, "03 / Try it", "Sealed. Budget held. Opened once. Receipted.", D);
+}
+
+function sLoop(L, D) {
+  background(); header();
+  label("03 / 07 · let it loop", 96, 200, 22, C.soft, { alpha: smooth(seg(L, 0.05, 0.5)) });
+  text("A runaway agent resends everything, every time.", 96, 272, 54, C.text, { weight: 600, alpha: smooth(seg(L, 0.1, 0.6)) });
+  const n = Math.min(15, Math.floor(seg(L, 0.3, 2.5) * 16));
+  for (let i = 0; i < n; i++) { const x = 160 + i * 96, s = 1 + i * 0.09; envelope(x, 560 - i * 6, 70 * s, 46 * s, "sealed", 0.55 + 0.45 * (i === n - 1 ? 1 : 0.5)); }
+  const drain = 1 - 0.9 * easeOut(seg(L, 0.3, 2.5));
+  bar(96, 720, 1200, 26, drain, C.cyan, 0.1);
+  label(`${n} requests · context growing`, 96, 700, 20, C.dim, { alpha: smooth(seg(L, 0.3, 0.7)) });
+  label("$0.05 cap", 96 + 1200 * 0.1, 780, 18, C.moon, { align: "center" });
+  const st = easeOutBack(seg(L, 2.55, 2.95));
+  if (st > 0) { ctx.save(); ctx.translate(1480, 520); ctx.rotate(-0.1); ctx.scale(st, st); ctx.fillStyle = rgba(C.ink, 0.9); roundRect(-300, -110, 600, 220, 16); ctx.fill(); ctx.strokeStyle = C.moon; ctx.lineWidth = 6; ctx.stroke(); text("402", 0, -10, 96, C.moon, { font: MONO, weight: 600, align: "center" }); label("payment required · refused", 0, 50, 22, C.moon, { align: "center" }); ctx.restore(); }
+  text("Refused before anything upstream ran.", 96, 880, 30, C.dim, { alpha: smooth(seg(L, 2.9, 3.3)) });
+  caption(L, "03 / Try it", "A runaway agent hits the cap and is refused.", D);
+}
+
+function sVerify(L, D) {
+  background(); header();
+  label("04 / 07 · verify, don't trust", 96, 200, 22, C.soft, { alpha: smooth(seg(L, 0.05, 0.5)) });
+  text("Now check Sable itself.", 96, 272, 58, C.text, { weight: 600, alpha: smooth(seg(L, 0.1, 0.6)) });
+  const cards = [["Sable, right now", (x, y, k) => { const p = 0.6 + 0.4 * Math.sin(k * 4); glowDot(x + 20, y + 10, 8, C.ok, p); text("gateway reachable", x + 50, y + 18, 26, C.text, { font: MONO }); text("read live from Sable's own API", x + 20, y + 64, 22, C.dim); }],
+    ["Published signer", (x, y, k) => { const r = rng(5); for (let i = 0; i < 32; i++) { const on = i < 32 * seg(k, 0.1, 1.2); ctx.fillStyle = on ? rgba(C.soft, 0.4 + r() * 0.6) : rgba(C.bar, 0.25); ctx.fillRect(x + 20 + i * 14, y + 4 + (r() * 10), 10, 18); } text("the key every receipt is checked against", x + 20, y + 64, 22, C.dim); }],
+    ["Supply, as Sable lists it", (x, y, k) => { for (let i = 0; i < 3; i++) { const a = smooth(seg(k, 0.2 + i * 0.3, 0.6 + i * 0.3)); ctx.globalAlpha = a; ctx.fillStyle = rgba(C.dim, 0.5); ctx.fillRect(x + 20, y + 4 + i * 22, 180 + (i * 53) % 90, 10); ctx.fillStyle = rgba(C.soft, 0.8); ctx.fillRect(x + 300, y + 4 + i * 22, 60, 10); } ctx.globalAlpha = 1; text("every machine on the node listing, and since when", x + 20, y + 94, 22, C.dim); }],
+    ["Verify a receipt in your browser", (x, y, k) => { receipt(x + 20, y - 24, 150, 130, 1, 4, 0); check(x + 260, y + 30, 60, seg(k, 0.4, 1.0)); text("verified", x + 320, y + 42, 28, C.ok, { font: MONO, alpha: smooth(seg(k, 0.9, 1.3)) }); text("the maths runs locally, nothing is sent", x + 20, y + 140, 22, C.dim); }]];
+  cards.forEach((c, i) => { const at = 0.3 + i * 0.6, a = smooth(seg(L, at, at + 0.45)); if (a <= 0) return; const x = 96 + (i % 2) * 880, y = 330 + Math.floor(i / 2) * 270 + (1 - a) * 20; ctx.save(); ctx.globalAlpha *= a; panel(x, y, 840, 240, 1); text(c[0], x + 28, y + 50, 30, C.text, { weight: 600 }); c[1](x + 8, y + 100, L - at); ctx.restore(); });
+  caption(L, "04 / Verify", "Check Sable yourself: live status, signer, supply.", D);
+}
+
+const RING = (() => { const pts = []; let i = 0; const bands = [40, 64, 88, 112, 136, 160, 184, 216]; bands.forEach((n, b) => { for (let k = 0; k < n; k++) pts.push({ r: 120 + b * 34, a: (k / n) * Math.PI * 2 + b * 0.2, i: i++ }); }); return pts; })();   // 1000 lights
+function sToken(L, D) {
+  background(); header();
+  const cx = 560, cy = 560, lit = seg(L, 0.2, 2.2), burn = smooth(seg(L, 2.5, 3.1));
+  RING.forEach((p) => { const on = p.i / RING.length < lit; if (!on) return; const x = cx + Math.cos(p.a + L * 0.05) * p.r, y = cy + Math.sin(p.a + L * 0.05) * p.r; const dead = p.r >= 358 && burn > 0 && ((p.i * 7919) % 100) < 19; ctx.fillStyle = dead ? rgba(C.bar, 0.35 + 0.65 * (1 - burn)) : rgba(C.soft, 0.85); ctx.beginPath(); ctx.arc(x, y, dead ? 2.4 : 2.8, 0, Math.PI * 2); ctx.fill(); });
+  glowDot(cx, cy, 4, C.cyan, 0.8);
+  label("06 / 07 · the token", 1120, 340, 22, C.soft, { alpha: smooth(seg(L, 0.1, 0.6)) });
+  text("A thousand lights.", 1120, 410, 64, C.text, { weight: 600, alpha: smooth(seg(L, 0.2, 0.8)) });
+  text("One per million SABL ever minted, read from Solana.", 1120, 462, 30, C.dim, { alpha: smooth(seg(L, 0.6, 1.2)) });
+  const n = Math.round(958374437 * easeOut(seg(L, 0.8, 2.4)));
+  text(n.toLocaleString("en-US"), 1120, 580, 72, C.soft, { font: MONO, weight: 600, alpha: smooth(seg(L, 0.8, 1.2)) });
+  label("in existence · as read on 10 Sep 2026", 1120, 620, 20, C.dim, { alpha: smooth(seg(L, 1.0, 1.4)) });
+  text("Dark at the rim: burned.", 1120, 700, 28, C.moon, { alpha: burn });
+  text("None can be made: the mint authority is gone.", 1120, 740, 28, C.moon, { alpha: burn });
+  text("No yield, no governance, no claim.", 1120, 810, 26, C.dim, { alpha: smooth(seg(L, 3.2, 3.7)) });
+  caption(L, "06 / Token", "A thousand lights, one per million SABL, read from Solana.", D);
+}
+
+function sPlay(L, D) {
+  background(); header();
+  label("play · gatekeeper", 96, 200, 22, C.soft, { alpha: smooth(seg(L, 0.05, 0.5)) });
+  text("You are Sable's door.", 96, 272, 58, C.text, { weight: 600, alpha: smooth(seg(L, 0.1, 0.6)) });
+  door(1060, 600, 150, 460, 1, smooth(seg(L, 0.2, 0.7)));
+  const waves = [[0.5, "sealed"], [1.1, "broken"], [1.7, "sealed"], [2.2, "broken"], [2.8, "sealed"], [3.3, "broken"], [3.8, "sealed"]];
+  let streak = 0;
+  waves.forEach(([at, st]) => { const k = L - at; if (k < 0) return; const p = k / 1.1; if (st === "sealed") { if (p > 1.3) return; const x = lerp(300, 1060, easeOut(clamp(p))) + (p > 1 ? (p - 1) * 500 : 0); envelope(x, 600, 110, 72, "sealed", p > 1 ? 1 - (p - 1) / 0.3 : 1); } else { if (k > 0.55) streak++; if (p > 1.2) return; const x = p < 0.55 ? lerp(300, 960, easeOut(p / 0.55)) : lerp(960, 700, easeOut((p - 0.55) / 0.65)); envelope(x, 600 + (p > 0.55 ? Math.sin((p - 0.55) * 12) * 14 : 0), 110, 72, "broken", p > 0.9 ? 1 - (p - 0.9) / 0.3 : 1); if (p > 0.5 && p < 0.9) label("refused", 960, 520, 22, C.moon, { align: "center" }); } });
+  label("streak", 1420, 420, 22, C.dim, { alpha: smooth(seg(L, 0.3, 0.8)) });
+  text(String(streak), 1420, 520, 110, C.soft, { font: MONO, weight: 600, alpha: smooth(seg(L, 0.3, 0.8)) });
+  text("Only refusals build the streak.", 1420, 580, 26, C.dim, { alpha: smooth(seg(L, 0.5, 1.0)) });
+  const la = smooth(seg(L, 1.4, 1.9)); if (la > 0) { ctx.save(); ctx.globalAlpha *= la; panel(1420, 640, 400, 210, 1); label("leaderboard", 1448, 680, 18, C.dim); for (let i = 0; i < 3; i++) { ctx.fillStyle = i === 0 ? C.soft : rgba(C.soft, 0.5); ctx.fillRect(1448, 708 + i * 40, 22, 22); ctx.fillStyle = rgba(C.dim, 0.5); ctx.fillRect(1484, 714 + i * 40, 150 - i * 30, 10); ctx.fillStyle = rgba(C.dim, 0.7); ctx.fillRect(1700, 714 + i * 40, 90 - i * 20, 10); } ctx.restore(); }
+  caption(L, "Play", "Gatekeeper: you are the door. Climb the leaderboard.", D);
+}
+
+function sLog(L, D) {
+  background(); header();
+  label("log · the whitepaper, watched hourly", 96, 200, 22, C.soft, { alpha: smooth(seg(L, 0.05, 0.5)) });
+  text("Every change on record.", 96, 272, 58, C.text, { weight: 600, alpha: smooth(seg(L, 0.1, 0.6)) });
+  // clock
+  const cx = 330, cy = 620, hours = L * 3.2;
+  ctx.strokeStyle = rgba(C.soft, 0.5); ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, 150, 0, Math.PI * 2); ctx.stroke();
+  for (let i = 0; i < 12; i++) { const a = (i / 12) * Math.PI * 2; ctx.fillStyle = rgba(C.soft, 0.6); ctx.beginPath(); ctx.arc(cx + Math.cos(a) * 132, cy + Math.sin(a) * 132, 3, 0, Math.PI * 2); ctx.fill(); }
+  const ha = (hours / 12) * Math.PI * 2 - Math.PI / 2; ctx.strokeStyle = C.cyan; ctx.lineWidth = 5; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(ha) * 100, cy + Math.sin(ha) * 100); ctx.stroke();
+  const tick = hours - Math.floor(hours); if (tick < 0.25) glowDot(cx, cy - 190, 6, C.ok, 1 - tick / 0.25);
+  label("checked every hour", cx, cy + 210, 20, C.dim, { align: "center" });
+  // document with a diff
+  const dx = 640, dy = 400; panel(dx, dy, 560, 460, 1);
+  for (let i = 0; i < 12; i++) { const changed = i === 5 && L > 1.5; ctx.fillStyle = changed ? C.moon : rgba(C.dim, 0.4); ctx.fillRect(dx + 40, dy + 50 + i * 32, changed ? 300 : 200 + ((i * 71) % 220), 9); if (changed) { text("−  one sentence, section 07", dx + 40, dy + 50 + 13 * 32, 22, C.moon, { font: MONO, alpha: smooth(seg(L, 1.6, 2.0)) }); text("+  its replacement, recorded", dx + 40, dy + 50 + 14 * 32 - 4, 22, C.ok, { font: MONO, alpha: smooth(seg(L, 1.9, 2.3)) }); } }
+  // timeline of checks
+  const tx = 1290, ty = 560; label("the record", tx, ty - 40, 20, C.dim);
+  for (let i = 0; i < 24; i++) { const on = i < 24 * seg(L, 0.2, 3.0); ctx.fillStyle = on ? (i === 13 ? C.moon : rgba(C.ok, 0.8)) : rgba(C.bar, 0.3); ctx.fillRect(tx + i * 22, ty, 16, 40); }
+  text("Reliability, uptime, every diff, and what this page got wrong.", tx, ty + 100, 24, C.dim, { alpha: smooth(seg(L, 1.0, 1.5)) });
+  caption(L, "Log", "The whitepaper watched hourly. Every change on record.", D);
+}
+
+function sCommunity(L, D) {
+  background(); header();
+  text("Built in the open.", W / 2, 400, 96, C.text, { weight: 600, align: "center", alpha: smooth(seg(L, 0.1, 0.7)) });
+  text("An independent page, by a community member. Corrections welcome.", W / 2, 470, 30, C.dim, { align: "center", alpha: smooth(seg(L, 0.5, 1.1)) });
+  const doors = ["Hold the door", "Check Sable yourself", "Talk to the guide", "What changed, and when"];
+  doors.forEach((d, i) => { const a = smooth(seg(L, 0.8 + i * 0.25, 1.2 + i * 0.25)); if (a <= 0) return; const x = 260 + i * 370; ctx.save(); ctx.globalAlpha *= a; door(x + 150, 660, 60, 150, 0.8, 1); text(d, x + 150, 790, 24, C.text, { align: "center" }); ctx.restore(); });
+  caption(L, "Community", "Built in the open, by a community member.", D);
+}
+
+function sGuide(L, D) {
+  background(); header();
+  const ox = 620, oy = 560, pulse = 1 + 0.06 * Math.sin(L * 3);
+  const g = ctx.createRadialGradient(ox - 30, oy - 30, 10, ox, oy, 150 * pulse); g.addColorStop(0, C.soft); g.addColorStop(0.5, C.cyan); g.addColorStop(1, rgba(C.cyan, 0));
+  ctx.save(); ctx.globalAlpha = smooth(seg(L, 0.1, 0.8)); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(ox, oy, 150 * pulse, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  label("Lisa · the guide", ox, oy + 240, 22, C.soft, { align: "center", alpha: smooth(seg(L, 0.4, 0.9)) });
+  const ba = smooth(seg(L, 0.7, 1.2)); if (ba > 0) { ctx.save(); ctx.globalAlpha *= ba; panel(920, 420, 860, 250, 1); const q = "Hi, I'm Lisa. I can walk you through this page and open any topic for you. Where would you like to start?"; ctx.font = `400 30px ${SANS}`; ctx.fillStyle = C.text; const words = q.split(" "); let line = "", y = 480, shown = Math.floor(seg(L, 0.9, 3.0) * words.length); words.slice(0, shown).forEach((w) => { const test = line ? line + " " + w : w; if (ctx.measureText(test).width > 800) { ctx.fillText(line, 950, y); line = w; y += 42; } else line = test; }); ctx.fillText(line, 950, y); ctx.restore(); }
+  const chips = ["Overview", "Try it", "Verify", "Token", "Play", "Log"]; chips.forEach((c, i) => { const a = smooth(seg(L, 2.6 + i * 0.12, 3.0 + i * 0.12)); if (a <= 0) return; ctx.save(); ctx.globalAlpha *= a; const x = 950 + i * 138; ctx.strokeStyle = rgba(C.soft, 0.6); ctx.lineWidth = 2; roundRect(x, 720, 124, 44, 22); ctx.stroke(); text(c, x + 62, 749, 20, C.soft, { font: MONO, align: "center" }); ctx.restore(); });
+  caption(L, "Guide", "Ask Lisa, the guide, to walk you through.", D);
+}
+
+function sEnd(L, D) {
+  background();
+  for (let i = 0; i < 3; i++) { ctx.strokeStyle = rgba(C.soft, 0.08 + i * 0.02); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(W / 2, H / 2, [520, 400, 290][i] + L * 6, 0, Math.PI * 2); ctx.stroke(); }
+  text("sable.primecircle.cloud", W / 2, H / 2 - 40, 88, C.cyan, { font: MONO, weight: 600, align: "center", alpha: smooth(seg(L, 0.2, 0.9)) });
+  text("Try the door. Check Sable. Play Gatekeeper. Watch the whitepaper change.", W / 2, H / 2 + 50, 38, C.text, { weight: 500, align: "center", alpha: smooth(seg(L, 0.8, 1.5)) });
+  const out = smooth(seg(L, D - 0.9, D)); if (out > 0) { ctx.fillStyle = rgba(C.void, out); ctx.fillRect(0, 0, W, H); }
+}
+
+// ---- timeline (must match mix.py STARTS) ------------------------------------
+const SCENES = [[0.0, sIntro], [2.6, sOrrery], [7.6, sPromises], [11.6, sDoor], [14.2, sSteps], [18.2, sLoop], [21.8, sVerify], [25.8, sToken], [30.3, sPlay], [34.8, sLog], [38.3, sCommunity], [40.9, sGuide], [44.9, sEnd]];
+const TOTAL = 51.9, XFADE = 0.45;
+function sceneIndex(t) { let i = 0; SCENES.forEach((s, k) => { if (t >= s[0]) i = k; }); return i; }
+function drawScene(i, t) { const start = SCENES[i][0], end = i + 1 < SCENES.length ? SCENES[i + 1][0] : TOTAL; SCENES[i][1](t - start, end - start); }
+window.draw = function (t) {
+  ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1;
+  const i = sceneIndex(t), local = t - SCENES[i][0];
+  if (i > 0 && local < XFADE) { drawScene(i - 1, t); ctx.globalAlpha = smooth(local / XFADE); drawScene(i, t); ctx.globalAlpha = 1; }
+  else drawScene(i, t);
+  if (t < 0.6) { ctx.fillStyle = rgba(C.void, 1 - smooth(t / 0.6)); ctx.fillRect(0, 0, W, H); }
+};
+Promise.all([document.fonts.load(`600 100px "IBM Plex Sans"`), document.fonts.load(`400 30px "IBM Plex Sans"`), document.fonts.load(`500 30px "IBM Plex Mono"`), document.fonts.load(`600 30px "IBM Plex Mono"`)])
+  .catch(() => {}).then(() => { window.draw(1.5); window.__ready = true; });
+</script>
+</body>
+</html>

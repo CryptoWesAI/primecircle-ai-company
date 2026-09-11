@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Should Sable bridge to Robinhood Chain? What the poll is really asking · Sable Observatory</title>
+<meta name="description" content="A community poll asks whether Sable should bridge to Robinhood Chain. The question bundles two decisions with different costs, moving the SABL token and adding the chain as a payment rail. The pros, the cons, and where the author lands.">
+<link rel="canonical" href="https://sable.primecircle.cloud/notes/robinhood-chain-bridge.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Sable Observatory">
+<meta property="og:title" content="Should Sable bridge to Robinhood Chain? What the poll is really asking">
+<meta property="og:description" content="A community poll asks whether Sable should bridge to Robinhood Chain. The question bundles two decisions with different costs, moving the SABL token and adding the chain as a payment rail. The pros, the cons, and where the author lands.">
+<meta property="og:url" content="https://sable.primecircle.cloud/notes/robinhood-chain-bridge.html">
+<meta property="og:image" content="https://sable.primecircle.cloud/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@0PTIMUS_ONE">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05070A">
+<style>
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/ibm-plex-mono-400.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/ibm-plex-mono-500.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/ibm-plex-mono-600.woff2) format("woff2")}
+:root{--void:#05070A;--ink:#0A1118;--text:#E8F2F8;--dim:#8FA3B0;--dim2:#4C6070;--cyan:#18BFFF;--cyan-soft:#72DCFF;--moon:#FF7A59;--edge:rgba(114,220,255,.14);--edge2:rgba(114,220,255,.28);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;--mono:"IBM Plex Mono","SF Mono","Roboto Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+html{background:var(--void)}
+body{margin:0;background:radial-gradient(1200px 700px at 50% -10%,#0E1C28 0%,var(--ink) 45%,var(--void) 100%);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan-soft);overflow-wrap:anywhere} a:hover{color:var(--cyan)}
+.paper{overflow-wrap:anywhere}
+.top{display:flex;align-items:center;gap:18px;padding:18px 28px;border-bottom:1px solid var(--edge);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.top .brand{color:var(--text);text-decoration:none;letter-spacing:.24em;font-weight:600} .top .brand span{color:var(--cyan)}
+.top .back{margin-left:auto;color:var(--cyan-soft);text-decoration:none;white-space:nowrap} .top .back:hover{text-decoration:underline}
+.paper{max-width:76ch;margin:0 auto;padding:48px 28px 64px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:18px}
+h1{font-size:clamp(28px,4.2vw,40px);line-height:1.15;margin:0 0 22px;letter-spacing:-.01em}
+h3{font-size:22px;margin:40px 0 12px;padding-top:22px;border-top:1px solid var(--edge)}
+h4{font-size:18px;margin:26px 0 8px}
+p{margin:0 0 16px}
+.paper > p:first-of-type{color:var(--dim);font-size:15px}
+.paper > p:first-of-type em{font-style:normal}
+ul,ol{padding-left:24px;margin:0 0 18px} li{margin:0 0 8px} li::marker{color:var(--cyan);font-family:var(--mono)}
+strong{color:var(--text)}
+code{font-family:var(--mono);font-size:.85em;background:rgba(114,220,255,.08);border:1px solid var(--edge);border-radius:4px;padding:1px 5px;word-break:break-all}
+hr{border:0;border-top:1px solid var(--edge);margin:32px 0}
+.paper h3:last-of-type ~ ul{font-size:14px;color:var(--dim)} .paper h3:last-of-type ~ ul a{word-break:break-all}
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin:36px 0 0}
+.pill{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;padding:12px 22px;border-radius:999px;border:1px solid var(--edge2);color:var(--text);background:rgba(5,7,10,.5);text-decoration:none}
+.pill.fill{background:var(--cyan);color:#04121A;border-color:var(--cyan);font-weight:600} .pill:hover{border-color:var(--cyan-soft);text-decoration:none}
+.foot{max-width:76ch;margin:0 auto;padding:22px 28px 48px;border-top:1px solid var(--edge);font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+@media (max-width:640px){.top{padding:14px 16px;gap:10px;font-size:10px}.top .sub{display:none}.paper{padding:32px 18px 48px}body{font-size:16px}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/">PRIME <span>CIRCLE</span></a><span class="sub">Sable Observatory · independent</span><a class="back" href="/#reading">← The reading room</a></header>
+<main class="paper">
+<div class="eyebrow">The reading room · 10 Sep 2026</div>
+<h1>Should Sable bridge to Robinhood Chain? What the poll is really asking</h1>
+<p><em>10 September 2026. Written by a community member who holds SABL and runs the independent Sable Observatory at sable.primecircle.cloud. Not run by Sable Network. Facts are dated and sourced; where I give an opinion, I say so.</em></p>
+<p>There is a poll asking whether Sable Network should bridge to Robinhood Chain. Before voting, it helps to notice that the question bundles two very different things:</p>
+<ul>
+<li><strong>The token reading.</strong> Bridge SABL from Solana to Robinhood Chain as an ERC-20 and list it there.</li>
+<li><strong>The rail reading.</strong> Let agents on Robinhood Chain pay Sable from there.</li>
+</ul>
+<p>They have different costs, different risks and, I think, different answers. Here is what each side is actually arguing, and where I land.</p>
+<h3>What Robinhood Chain is, today</h3>
+<p>Robinhood Chain is an Ethereum Layer 2 on the Arbitrum stack, built with Offchain Labs. Testnet opened on 10 February 2026, mainnet on 1 July 2026. Chain ID 4663, gas paid in ETH, blocks around 100 milliseconds with preconfirmations. Uniswap, 1inch, Lighter, Chainlink and Morpho are live on it. Its native dollar is USDG from Paxos, not USDT.</p>
+<p>Its purpose is Stock Tokens: tokenised US stocks and ETFs, &quot;tokenised debt securities, held in self-custody through the Robinhood Wallet, with 24/7 trading in more than 120 countries&quot;. Not in the US, Canada, the UK, Switzerland or the UAE. Robinhood has close to 28 million customers and calls the chain &quot;AI-native and purpose-built for real-world assets&quot;. Its &quot;agentic trading&quot; is an MCP server for US brokerage accounts, launched in May 2026, crypto added in July.</p>
+<p>For bridging: the canonical Arbitrum bridge connects it to Ethereum, and LayerZero is the official cross-chain partner, so a Solana-to-Robinhood-Chain route for a token is technically available.</p>
+<h3>What Sable and SABL are, today</h3>
+<p>Sable is a pay-as-you-go gateway between AI agents and compute. A request is sealed on arrival, a budget is held before the work runs, and a signed receipt comes back. The whitepaper (v2.0, August 2026) is blunt about money: &quot;Compute is bought and sold here in dollars. If supply is ever paid, it is paid in dollars too.&quot; Deposits in USDT are live on Ethereum, Arbitrum One and Solana, and the gateway speaks x402, so an out-of-credit request gets a 402 that tells the agent exactly how to pay.</p>
+<p>SABL launched in August 2026 on Solana with a fixed supply and its mint and freeze authority revoked. Since 2 September it has exactly one role: pay for Sable compute or Pro in SABL, and the payment burns the token and earns a discount. No yield, no governance, no claim. Its market is small: a market cap between roughly $330K and $585K over 8 to 10 September, with about $60K to $67K of liquidity in one Solana pool (DexScreener).</p>
+<h3>The case for bridging</h3>
+<p>I want to steelman this, because the appeal is real.</p>
+<ol>
+<li><strong>The narrative fits.</strong> Robinhood is selling an &quot;AI-native&quot; chain built for agents and real-world assets. Sable sells compute to agents. Being present where that story is told is not nothing.</li>
+<li><strong>The audience is enormous, and it is not American.</strong> Stock Tokens are aimed at 120-plus countries outside the US, which includes the EU. Sable's most natural users are the same people: builders outside the US who want to pay for compute without a card.</li>
+<li><strong>It is technically cheap to reach.</strong> Robinhood Chain runs the Arbitrum stack, and Sable already verifies deposits on Arbitrum One. The canonical bridge and LayerZero exist. Nothing exotic is required.</li>
+<li><strong>A second venue could bring buyers.</strong> Uniswap on Robinhood Chain is a listing without a centralised exchange. A token with one pool on one chain is easy to ignore.</li>
+<li><strong>Early is cheap.</strong> A new chain has few tokens and a lot of attention. Being among the first agent-compute projects there costs less than being the hundredth.</li>
+<li><strong>Agents on that chain will need compute.</strong> An agent trading tokenised stocks around the clock needs a model behind it, a budget cap, and a receipt. That is Sable's product description.</li>
+</ol>
+<h3>The case against</h3>
+<ol>
+<li><strong>A bridged SABL reintroduces the power Sable gave up.</strong> The Solana mint has its authorities revoked, so the only bridge shape available is lock-and-mint: real SABL locked on Solana, wrapped SABL minted on Robinhood Chain. The escrow, its keys and the bridge's verifiers become a second mint authority for the total supply. A Solscan check would still say &quot;authority revoked&quot; while the aggregate supply had quietly become elastic. Secret Network's bridge was exploited in June 2026 through an infinite-mint bug that went unnoticed for a week; that is the failure shape, on a token a thousand times smaller.</li>
+<li><strong>It splits a pool that is already thin.</strong> SABL's whole market is about $60K to $67K of liquidity. A second pool halves it, invites arbitrage bots to skim the spread between the two, and leaves the team as the unpaid market-maker on both sides.</li>
+<li><strong>The security budget and the market cap embarrass each other.</strong> A bridge protecting a $0.5M token is either far more expensive than the token, or cheap and the biggest attack surface in the project.</li>
+<li><strong>The token's utility does not need to move.</strong> The discount is applied by the gateway: burn SABL on Solana, present the transaction, get the discount on whatever you pay in dollars from wherever. That is the same pattern Sable already uses to credit deposits. A wrapped SABL on another chain adds no utility the token does not already have.</li>
+<li><strong>The chain's audience is not Sable's audience yet.</strong> Stock Token buyers are people outside the US buying exposure to Apple. Robinhood's agentic traders are US brokerage clients, and Stock Tokens are not sold in the US. Neither group is buying compute today.</li>
+<li><strong>The rail reading has a dollar problem.</strong> Robinhood Chain's native stablecoin is USDG. Sable's deposit flow is written around USDT. Whether the verifier is truly token-agnostic is the question that decides whether &quot;add Robinhood Chain&quot; is a config line or an engineering job.</li>
+<li><strong>A yes vote spends someone else's time.</strong> Every &quot;yes&quot; in a poll like this is a claim on scarce engineering hours by voters who bear none of the cost. Sable has zero third-party machines serving traffic today; that is where the hours belong.</li>
+<li><strong>Reachability is not endorsement.</strong> &quot;Sable on Robinhood Chain&quot; will be read as a partnership by people who want it to be. It would not be one.</li>
+</ol>
+<h3>What the mechanism says</h3>
+<p>Strip the narrative away and the question becomes two questions.</p>
+<p><strong>Can an agent on Robinhood Chain pay Sable?</strong> Almost. Dollars can move from Robinhood Chain to Arbitrum One over the canonical bridge today, and Sable already accepts USDT on Arbitrum One. Adding chain 4663 directly is, per the whitepaper, an operator configuration: a chain, an RPC node, a token contract. The open point is USDG versus USDT in the verifier.</p>
+<p><strong>Does SABL need to exist on Robinhood Chain for that?</strong> No. The discount is a gateway-side credit. Burn on Solana, spend anywhere. Sable is chain-agnostic by construction, and that is a feature worth defending, not a gap to bridge.</p>
+<h3>Where I land (opinion)</h3>
+<ul>
+<li><strong>Bridge the token: no.</strong> It trades the one hard promise SABL makes, fixed supply with no authority, for a listing on a chain where nobody has asked to pay yet.</li>
+<li><strong>Add the rail: not yet, and cheap when yes.</strong> Do it the day a real agent wants to pay from chain 4663, after confirming the verifier handles USDG. That is a config change plus a test, not a bridge.</li>
+<li><strong>Do now, for free:</strong> publish a dated statement that Sable Network has no token on Robinhood Chain, that the only SABL is the Solana mint <code>DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump</code>, and that anything trading there under the name is not it. Split the poll into its two halves with a cost on each. Keep the same confirmation and linked-wallet rules on any new chain; a 100 millisecond preconfirmation is not finality.</li>
+</ul>
+<p>The better question for the team is not &quot;which chain should SABL live on&quot; but &quot;which chain did the first paying agents arrive from&quot;. If that list is empty, no bridge matters. If it fills with Arbitrum-stack addresses, the rail question answers itself and the token question never comes up.</p>
+<h3>What the Observatory will do</h3>
+<p>The Observatory already watches the whitepaper, the gateway and the SABL supply every hour. Since 10 September 2026 it also watches Robinhood Chain for any token trading under a name like SABL, through DexScreener's search (the chain's own explorer sits behind a bot wall). The first check found one: a token named &quot;Sable&quot; with the symbol SABLE at <code>0xd00126f6f702367808d85bdEd7b41BDBD59e48cf</code>, in a Uniswap pool opened on 26 July 2026 with about $3,400 of liquidity and almost no trading. It predates SABL, which launched in August, and it is not Sable Network's token; SABL exists only on Solana. The line on the Reading room and Token pages updates every hour, and a new name appearing there gets its own dated entry in the public record.</p>
+<p><em>Disclosure: I hold SABL. This is an independent page, not run by Sable Network. Nothing here is investment advice.</em></p>
+<h3>Sources</h3>
+<ul>
+<li>Robinhood newsroom, 1 July 2026, mainnet, Stock Tokens, agentic trading: <a href="https://robinhood.com/us/en/newsroom/robinhood-accelerates-global-expansion-robinhood-chain-mainnet-stock-tokens-agentic-trading/" rel="noopener">robinhood.com/us/en/newsroom/robinhood-accelerates-global-expansion-robinhood-chain-mainnet-stock-tokens-agentic-trading/</a></li>
+<li>Robinhood Chain docs, chain ID, gas, bridge: <a href="https://docs.robinhood.com/chain/connecting" rel="noopener">docs.robinhood.com/chain/connecting</a></li>
+<li>Arbitrum DAO factsheet, Robinhood Chain mainnet: <a href="https://forum.arbitrum.foundation/t/arbitrumdao-factsheet-robinhood-chain-mainnet-launch/31041" rel="noopener">forum.arbitrum.foundation/t/arbitrumdao-factsheet-robinhood-chain-mainnet-launch/31041</a></li>
+<li>LayerZero deployments, Robinhood Chain (endpoint 30416): <a href="https://docs.layerzero.network/v2/deployments/chains/robinhood" rel="noopener">docs.layerzero.network/v2/deployments/chains/robinhood</a></li>
+<li>TechCrunch, 27 May 2026, Robinhood agentic trading: <a href="https://techcrunch.com/2026/05/27/robinhood-now-lets-your-ai-agents-trade-stocks/" rel="noopener">techcrunch.com/2026/05/27/robinhood-now-lets-your-ai-agents-trade-stocks/</a></li>
+<li>USDG as native stablecoin (secondary reports, 21 Aug 2026): <a href="https://kucoin.com/news/flash/robinhood-chain-selects-usdg-as-native-stablecoin-aiming-to-share-yield-with-network-participants" rel="noopener">kucoin.com/news/flash/robinhood-chain-selects-usdg-as-native-stablecoin-aiming-to-share-yield-with-network-participants</a></li>
+<li>Sable whitepaper v2.0, August 2026, sections 06 Payment and On Tokens, snapshot of 4 September 2026 at <a href="https://buildsable.com/sable-whitepaper.pdf" rel="noopener">buildsable.com/sable-whitepaper.pdf</a></li>
+<li>SABL market figures: DexScreener, read through sable.primecircle.cloud on 8 to 10 September 2026</li>
+<li>Secret Network bridge exploit, June 2026: <a href="https://forum.scrt.network/t/security-incident-axelar-secret-ibc-bridge-exploit-june-10-2026/7995" rel="noopener">forum.scrt.network/t/security-incident-axelar-secret-ibc-bridge-exploit-june-10-2026/7995</a></li>
+</ul>
+<div class="acts"><a class="pill fill" href="/#reading">Back to the reading room</a><a class="pill" href="/notes/2026-09-10-robinhood-chain-bridge.pdf" download>Download the PDF</a></div>
+</main>
+<footer class="foot">Independent page by a community member. Not run by Sable Network. The author holds SABL. Nothing here is investment advice. Corrections: reply on X to @0PTIMUS_ONE or in Sable's Telegram; they are logged on the page.</footer>
+</body>
+</html>

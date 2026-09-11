@@ -10,10 +10,15 @@ node shell-test.mjs     "file:///c:/.../sites/sable-peers/site/index.html" local
 node shell-test.mjs     https://sable.primecircle.cloud/ live
 node sky-test.mjs       https://sable.primecircle.cloud/ live
 node translate-test.mjs https://sable.primecircle.cloud/ live
+node tracks-test.mjs    https://sable.primecircle.cloud/ live
 ```
 
 - `shell-test.mjs`: the dashboard shell on desktop and phone (38 checks): compact
   and full modes, rail, Topics menu, the door, the verifier, the guide.
+- `tracks-test.mjs`: the listening room's track pages: index.json, six pages with one
+  player each and a served MP3, quoted lines marked at least as often as the
+  sources list, stamp and disclosure, no overflow at 390. Local runs need
+  `static-server.mjs` (audio and index.json are fetched, not opened as files).
 - `sky-test.mjs`: the starfield, the drifter, reduced motion.
 - `translate-test.mjs`: simulates a browser translating the page (every
   translatable text node rewritten with rot13 and wrapped in `<font>` pairs, the
