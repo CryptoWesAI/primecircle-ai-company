@@ -11,11 +11,16 @@
     list.sort(function(a,b){return (Number(a.track)||0)-(Number(b.track)||0);});
     var map={};list.forEach(function(t){if(safe(t.slug)&&t.planet)map[String(t.planet)]={slug:t.slug,title:t.title};});
     window.SABLE_TRACKS=map;try{document.dispatchEvent(new CustomEvent('sable-tracks'));}catch(e){}
-    box.innerHTML=list.map(function(t){var slug=safe(t.slug),audio=safe(t.audio);if(!slug||!audio)return '';
+    box.innerHTML=list.map(function(t){var slug=safe(t.slug),audio=safe(t.audio),cover=safe(t.cover||'');if(!slug||!audio)return '';
       var suno=/^https:\/\/suno\.com\/[A-Za-z0-9\/_-]+$/.test(String(t.suno||''))?t.suno:'';
-      return '<article class="note track"><span class="n">Track '+esc(t.track)+' · planet '+esc(t.planet)+' · section '+esc(t.section)+(t.seconds?' · '+mmss(t.seconds):'')+'</span><h3><a href="tracks/'+slug+'.html">'+esc(t.title)+'</a></h3><p class="hook">“'+esc(t.hook||'')+'”</p><audio controls preload="none" src="tracks/'+audio+'" aria-label="'+esc(t.title)+'"></audio><div class="acts"><a class="pill fill" href="tracks/'+slug+'.html">Lyrics and sources</a>'+(suno?'<a class="pill" href="'+esc(suno)+'" rel="noopener">On Suno</a>':'')+'</div></article>';}).join('');
+      return '<article class="note track">'+(cover?'<img class="cover" src="tracks/'+cover+'" width="1500" height="1500" alt="" loading="lazy">':'')+'<span class="n">Track '+esc(t.track)+' · planet '+esc(t.planet)+' · section '+esc(t.section)+(t.seconds?' · '+mmss(t.seconds):'')+'</span><h3><a href="tracks/'+slug+'.html">'+esc(t.title)+'</a></h3><p class="hook">“'+esc(t.hook||'')+'”</p><div class="player"><audio controls preload="none" src="tracks/'+audio+'" aria-label="'+esc(t.title)+'"></audio></div><div class="acts"><a class="pill fill" href="tracks/'+slug+'.html">Lyrics and sources</a>'+(suno?'<a class="pill" href="'+esc(suno)+'" rel="noopener">On Suno</a>':'')+'</div></article>';}).join('');
     var players=[].slice.call(box.querySelectorAll('audio'));
-    players.forEach(function(a){a.addEventListener('play',function(){players.forEach(function(o){if(o!==a&&!o.paused)o.pause();});});});
+    /* the native controls size themselves once; give them a second pass after the grid has settled, or the first player can paint its narrow layout */
+    requestAnimationFrame(function(){players.forEach(function(a){a.removeAttribute('controls');void a.offsetWidth;a.setAttribute('controls','');});});
+    players.forEach(function(a,i){a.addEventListener('play',function(){players.forEach(function(o){if(o!==a&&!o.paused)o.pause();});});
+      /* the EP plays through: when a track ends the next one starts, until the last */
+      a.addEventListener('ended',function(){var nx=players[i+1];if(nx){var pr=nx.play();if(pr&&pr.catch)pr.catch(function(){});}});});
+    var all=document.getElementById('tracks-playall');if(all)all.addEventListener('click',function(){var f=players[0];if(f){var pr=f.play();if(pr&&pr.catch)pr.catch(function(){});f.scrollIntoView({block:'center',behavior:'smooth'});}});
   }).catch(function(){box.innerHTML='<p class="quiet">The tracks could not be loaded. Try again in a moment.</p>';});
 })();
 

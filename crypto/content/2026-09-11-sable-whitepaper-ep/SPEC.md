@@ -220,10 +220,23 @@ Budget: six tracks at two takes is 12 generations, well inside a Pro month.
   pixels). Each track page now shows its cover and uses it as the share image.
   The album title is a proposal; it is one string in the script.
 
+## Covers on the page, 2026-09-12 (evening)
+
+- The listening room shows the album cover with the title, the artist and a
+  "Play the EP" button above the list; every card carries its cover as a
+  thumbnail (a grid: cover left, text right, player and buttons across).
+  When a track ends the next one starts, so the EP plays through.
+- `build-tracks.mjs` copies `covers/web/album.jpg` next to the track covers;
+  `index.json` carries each track's cover. The static test server learned the
+  JPEG type. A headless-Chrome quirk (the first player painting its narrow
+  layout until any scroll) is countered by re-applying the controls attribute
+  after render; the box model was verified correct at 390 px.
+
 ## Open inputs
 
-- Lisa's ElevenLabs prompt does not know the Listening room topic yet
-  (Lisa's owner).
+- Lisa's prompt: the whole-prompt replacement is drafted for AG
+  (`crypto/content/2026-09-12-lisa-listening-room-update.md`), to be sent by
+  the founder.
 - Upload the covers to Suno (per song) and, if the EP goes to a distributor,
   the album cover. Release posts on X with the holder disclosure; the commit.
 - An illustrated cover variant needs OpenArt credits; the renderer can take a

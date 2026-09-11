@@ -100,6 +100,9 @@ for (const t of tracks) {
 if (failures) { console.error(failures, "quote check failure(s); nothing written"); process.exit(1); }
 
 tracks.sort((a, b) => Number(a.meta.track) - Number(b.meta.track));
+// the album cover for the band on the page (drawn by covers/render-covers.mjs, 1500 px JPEG)
+const albumSrc = join(ep, "covers", "web", "album.jpg");
+if (existsSync(albumSrc)) { copyFileSync(albumSrc, join(out, "album.jpg")); console.log("album cover copied"); } else console.warn("no album cover at", albumSrc);
 const index = [];
 tracks.forEach((t, i) => {
   const m = t.meta, n = Number(m.section), title = sectionTitle(n);

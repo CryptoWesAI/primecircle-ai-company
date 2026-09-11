@@ -130,6 +130,19 @@
   @media (max-width:900px){.notes{grid-template-columns:1fr;gap:10px}.note{padding:14px}.note h3{font-size:16px}}
   .track audio{width:100%;margin-top:2px;color-scheme:dark}
   .track .hook{margin:0;color:var(--dim);font-size:14px;font-style:italic}
+  /* the listening room: the album row above the list, a cover on every card */
+  .album-row{display:flex;gap:22px;align-items:center;margin:26px auto 4px;max-width:760px;text-align:left}
+  .album-cover{width:200px;height:200px;border-radius:12px;border:1px solid var(--edge);flex:0 0 auto;background:#05070A}
+  .album-meta .n{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  .album-meta h3{margin:6px 0 8px;font-size:24px;line-height:1.2}
+  .album-meta p{margin:0 0 12px;color:var(--dim);font-size:15px}
+  .track{display:grid;grid-template-columns:128px minmax(0,1fr);column-gap:18px;row-gap:8px;align-items:start}
+  .track .cover{grid-column:1;grid-row:1/4;width:128px;height:128px;border-radius:10px;border:1px solid var(--edge);object-fit:cover;background:#05070A}
+  .track .n,.track h3,.track .hook{grid-column:2}
+  .track .player,.track .acts{grid-column:1/-1;min-width:0}
+  .track .player audio{display:block;width:100%;min-width:0}
+  @media (max-width:640px){.album-row{flex-direction:column;align-items:flex-start;gap:14px}.album-cover{width:160px;height:160px}}
+  @media (max-width:480px){.track{grid-template-columns:96px minmax(0,1fr)}.track .cover{width:96px;height:96px}}
   /* the letterbox: one card per letter, the receipt folded under it */
   .mail{display:flex;flex-direction:column;gap:14px;margin-top:22px;text-align:left;max-width:78ch}
   .letter{border:1px solid var(--edge);border-radius:12px;padding:20px;background:rgba(5,7,10,.35)}
@@ -1352,6 +1365,10 @@
     <div class="eyebrow">The listening room</div>
     <h2>The whitepaper, sung. Six sections, one artist, every quoted line the paper's own.</h2>
     <p class="lede">An EP made from the Sable whitepaper: each track takes one section and raps its sentences verbatim, hooks included. Composed with Suno by <span translate="no">OG THE MOGI</span>, a community member's artist. Press play here, or open a track for the lyrics with every quoted line marked and sourced. On the map, a planet with a track carries a note.</p>
+    <div class="album-row" id="album-row">
+      <img class="album-cover" src="tracks/album.jpg" width="1500" height="1500" alt="The album cover: the whitepaper's solar system, the six planets with a track lit" loading="lazy">
+      <div class="album-meta"><span class="n">The whitepaper EP · September 2026</span><h3>Compute You Can Prove</h3><p>Six tracks by <span translate="no">OG THE MOGI</span>. Every quoted line is the whitepaper's own; the sections are planets 01, 03, 05, 07, 08 and 13 on the map.</p><button type="button" class="pill fill" id="tracks-playall">Play the EP</button></div>
+    </div>
     <div class="notes" id="tracks-list" aria-live="polite"><p class="quiet">Loading the tracks…</p></div>
     <p class="quiet center">Independent work by a community member who holds SABL. Not run by Sable Network. The music is generated; the quoted words are the whitepaper's. Nothing here is investment advice.</p>
   </section>

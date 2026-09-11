@@ -51,6 +51,12 @@ await p.evaluate(()=>window.SABLE_ORRERY.select(0)); await wait(400);
 ok(await p.evaluate(()=>/Hear this section/.test(document.getElementById('orr-side').textContent)),"planet 01 offers its track");
 await p.evaluate(()=>window.SABLE_ORRERY.select(1)); await wait(300);
 ok(await p.evaluate(()=>!/Hear this section/.test(document.getElementById('orr-side').textContent)),"planet 02 has no track yet");
+// covers on the listening room
+await p.click('#rail a[data-topic="listening"]'); await wait(600);
+ok(await p.evaluate(()=>document.querySelectorAll('#tracks-list article.track img.cover').length===6),"six track covers on the cards");
+ok(await p.evaluate(()=>{const i=document.querySelector('#listening img.album-cover');return !!i&&i.getAttribute('src')==='tracks/album.jpg'&&!!document.getElementById('tracks-playall');}),"album cover and Play the EP above the list");
+ok(base.startsWith("file:")||await p.evaluate(()=>fetch('tracks/album.jpg',{method:'HEAD'}).then(r=>r.ok&&/image\/jpeg/.test(r.headers.get('content-type')||''))),"album cover served as jpeg");
+ok(!(await p.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth)),"no overflow with covers");
 // the ident
 ok(await p.evaluate(()=>typeof window.SABLE_SOUND.ident==='function'),"the sound system has the ident");
 ok(base.startsWith("file:")||await p.evaluate(()=>fetch('sable-ident.mp3',{method:'HEAD'}).then(r=>r.ok&&/audio/.test(r.headers.get('content-type')||''))),"the ident file is served as audio");
