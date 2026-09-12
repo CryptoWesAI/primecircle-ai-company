@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SABL moves to Robinhood Chain: a blueprint for a migration that keeps every holder and every promise · Sable Observatory</title>
+<meta name="description" content="On 12 September the Sable team announced that SABL moves to Robinhood Chain, details to follow. A community blueprint for the mechanism: why a one-way burn-and-mint with no deadline fits this token better than a snapshot or a two-way bridge, ten steps that carry the whitepaper's fixed-supply promise across, the traps to skip, and what the Observatory offers to help. Opinion, with a dated fact base.">
+<link rel="canonical" href="https://sable.primecircle.cloud/notes/sabl-migration.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Sable Observatory">
+<meta property="og:title" content="SABL moves to Robinhood Chain: a blueprint for a migration that keeps every holder and every promise">
+<meta property="og:description" content="On 12 September the Sable team announced that SABL moves to Robinhood Chain, details to follow. A community blueprint for the mechanism: why a one-way burn-and-mint with no deadline fits this token better than a snapshot or a two-way bridge, ten steps that carry the whitepaper's fixed-supply promise across, the traps to skip, and what the Observatory offers to help. Opinion, with a dated fact base.">
+<meta property="og:url" content="https://sable.primecircle.cloud/notes/sabl-migration.html">
+<meta property="og:image" content="https://sable.primecircle.cloud/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@0PTIMUS_ONE">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05070A">
+<style>
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/ibm-plex-mono-400.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;src:url(/fonts/ibm-plex-mono-500.woff2) format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/ibm-plex-mono-600.woff2) format("woff2")}
+:root{--void:#05070A;--ink:#0A1118;--text:#E8F2F8;--dim:#8FA3B0;--dim2:#4C6070;--cyan:#18BFFF;--cyan-soft:#72DCFF;--moon:#FF7A59;--edge:rgba(114,220,255,.14);--edge2:rgba(114,220,255,.28);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;--mono:"IBM Plex Mono","SF Mono","Roboto Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+html{background:var(--void)}
+body{margin:0;background:radial-gradient(1200px 700px at 50% -10%,#0E1C28 0%,var(--ink) 45%,var(--void) 100%);color:var(--text);font-family:var(--sans);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--cyan-soft);overflow-wrap:anywhere} a:hover{color:var(--cyan)}
+.paper{overflow-wrap:anywhere}
+.top{display:flex;align-items:center;gap:18px;padding:18px 28px;border-bottom:1px solid var(--edge);font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+.top .brand{color:var(--text);text-decoration:none;letter-spacing:.24em;font-weight:600} .top .brand span{color:var(--cyan)}
+.top .back{margin-left:auto;color:var(--cyan-soft);text-decoration:none;white-space:nowrap} .top .back:hover{text-decoration:underline}
+.paper{max-width:76ch;margin:0 auto;padding:48px 28px 64px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);margin-bottom:18px}
+h1{font-size:clamp(28px,4.2vw,40px);line-height:1.15;margin:0 0 22px;letter-spacing:-.01em}
+h3{font-size:22px;margin:40px 0 12px;padding-top:22px;border-top:1px solid var(--edge)}
+h4{font-size:18px;margin:26px 0 8px}
+p{margin:0 0 16px}
+.paper > p:first-of-type{color:var(--dim);font-size:15px}
+.paper > p:first-of-type em{font-style:normal}
+ul,ol{padding-left:24px;margin:0 0 18px} li{margin:0 0 8px} li::marker{color:var(--cyan);font-family:var(--mono)}
+strong{color:var(--text)}
+code{font-family:var(--mono);font-size:.85em;background:rgba(114,220,255,.08);border:1px solid var(--edge);border-radius:4px;padding:1px 5px;word-break:break-all}
+hr{border:0;border-top:1px solid var(--edge);margin:32px 0}
+.paper h3:last-of-type ~ ul{font-size:14px;color:var(--dim)} .paper h3:last-of-type ~ ul a{word-break:break-all}
+.acts{display:flex;gap:12px;flex-wrap:wrap;margin:36px 0 0}
+.pill{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;padding:12px 22px;border-radius:999px;border:1px solid var(--edge2);color:var(--text);background:rgba(5,7,10,.5);text-decoration:none}
+.pill.fill{background:var(--cyan);color:#04121A;border-color:var(--cyan);font-weight:600} .pill:hover{border-color:var(--cyan-soft);text-decoration:none}
+.foot{max-width:76ch;margin:0 auto;padding:22px 28px 48px;border-top:1px solid var(--edge);font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.7}
+@media (max-width:640px){.top{padding:14px 16px;gap:10px;font-size:10px}.top .sub{display:none}.paper{padding:32px 18px 48px}body{font-size:16px}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="/">PRIME <span>CIRCLE</span></a><span class="sub">Sable Observatory · independent</span><a class="back" href="/#reading">← The reading room</a></header>
+<main class="paper">
+<div class="eyebrow">The reading room · 12 Sep 2026</div>
+<h1>SABL moves to Robinhood Chain: a blueprint for a migration that keeps every holder and every promise</h1>
+<p><em>12 September 2026. Written by a community member who holds SABL and runs the independent Sable Observatory at sable.primecircle.cloud. Not run by Sable Network. Facts are dated and sourced; where I give an opinion, I say so.</em></p>
+<p>On 12 September the Sable team announced on X that &quot;Sable is moving to Robinhood Chain&quot;, chain 4663, after &quot;the last week looking at where we want to build $SABL long term&quot;, with &quot;more details on the migration and what it means for the community soon&quot;. Two days ago I wrote here about the bridge poll. A full migration is a cleaner answer than a bridge, and I think the team has picked a chain that fits what Sable is building: agents that pay for compute in dollars, on a chain whose stablecoin is USDG, whose wallet support already reaches Solana users through Phantom, and where Robinhood is opening trading to AI agents.</p>
+<p>The decision is public. The mechanism is not yet. That is the good moment for the community to think alongside the team, so this piece is a blueprint: what a migration looks like when it keeps every holder and every promise the whitepaper made, and what the Observatory can do to help.</p>
+<h3>1. What is verified, 12 September 2026</h3>
+<ul>
+<li><strong>The token.</strong> Mint <code>DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump</code>, 6 decimals. Supply 958,360,940.99 SABL, down from the 1,000,000,000 it launched with; the rest has been burned. Mint authority and freeze authority are both gone, exactly as the whitepaper says. Read from the Solana RPC at 18:26 UTC.</li>
+<li><strong>The market.</strong> Price $0.000221, liquidity about $45.7K in one PumpSwap pool, market cap about $212K, 24 hour volume about $125K. DexScreener, 18:26 UTC. The token graduated from pump.fun, so the pool's LP tokens are burned and the pool cannot be withdrawn by anyone, the team included.</li>
+<li><strong>The announcement.</strong> Posted by @sablenetwork on X on 12 September at 17:43 UTC (<a href="https://x.com/sablenetwork/status/2098829794276221119" rel="noopener">x.com/sablenetwork/status/2098829794276221119</a>). It names the chain and the focus, &quot;privacy, AI, agents, RWAs&quot;, and promises details on the migration later. Nothing on buildsable.com or in whitepaper v2.0 yet at 18:30 UTC, which is normal for a decision announced hours ago.</li>
+<li><strong>The copycats.</strong> The Observatory's counterfeit watch found two tokens called SABL on Robinhood Chain on 11 September, with $42 and $19 of liquidity, and one called SABLE on 12 September at 09:56 UTC with a pool of about $9.7K. None of them is Sable Network's token. The watch runs every hour and will keep flagging them, which is one way the community can cover the team's flank during the move.</li>
+<li><strong>The wallets.</strong> Phantom has supported Robinhood Chain since 23 July 2026, so most Solana holders already have an address on 4663 inside the wallet they use today. MetaMask works by adding the network by hand: RPC rpc.mainnet.chain.robinhood.com, chain ID 4663, gas in ETH.</li>
+<li><strong>The chain.</strong> An Arbitrum chain settling to Ethereum, ETH as gas, 100 millisecond blocks, built with Offchain Labs, public mainnet since 1 July 2026.</li>
+<li><strong>Not measured.</strong> The number of holders and the share held by the largest wallets. Every public Solana RPC refuses that query without a paid key. A migration plan should know these numbers; the team does, I do not.</li>
+</ul>
+<h3>2. The two sentences worth carrying across</h3>
+<p>The whitepaper says two things about SABL that holders bought on. First: &quot;fixed supply, mint and freeze authority revoked&quot;. Second, since 2 September: &quot;paying in SABL burns it and earns a discount&quot;. A migration that carries both sentences to the new chain unchanged is a move, not a relaunch, and holders will read it that way. Everything below is built so that both stay true on 4663.</p>
+<h3>3. Three ways to move a token</h3>
+<p><strong>A snapshot and an airdrop.</strong> Freeze a block height, map every Solana address to an address on 4663, mint the new token to the mapped addresses. It is the fastest design and the one most teams reach for first. For SABL it has two costs. A Solana address is not an EVM address, so every holder would have to register one before the block, and everyone who buys on Solana after the snapshot holds a token that leads nowhere. A deadline turns a migration into a race, and the people who lose the race are the small holders who read the news late, the ones a community token exists for.</p>
+<p><strong>A two-way bridge.</strong> Real SABL locked in an escrow on Solana, a wrapped SABL minted on 4663, redeemable both ways. The standard tools are LayerZero's OFT and Wormhole's Native Token Transfers. Because SABL's mint authority is revoked, the only fitting mode on Solana is lock and unlock (LayerZero calls it the OFT Adapter, Wormhole calls it hub and spoke). That keeps two live markets forever and a bridge contract as a permanent thing to defend. Multichain in July 2023 and the Secret Network Axelar bridge in June 2026, where an infinite mint went unnoticed for a week, show the cost when that defence fails. It also leaves the real token on Solana, which is not what the team announced.</p>
+<p><strong>A one-way burn and mint with no deadline.</strong> A holder burns SABL on Solana in a transaction that names a destination address on 4663. A verifier proves the burn to a minter on 4663, which mints the same amount. Supply on the new chain can never exceed what was burned on the old one, and nobody is ever stranded: Solana SABL remains a valid ticket for as long as the contract exists. Render did this from Ethereum to Solana from November 2023 with no closing date, and the two markets stayed aligned by arbitrage. Helium moved to Solana in April 2023 in one shot with an automatic state migration; that worked because Helium controlled the source chain. Sable does not control Solana, so Render's path is the closer precedent.</p>
+<p>My opinion: the third one. It is the design that lets the team say, truthfully, that the supply on Robinhood Chain is exactly the supply that left Solana, and that no holder was left behind.</p>
+<h3>4. The blueprint, in order</h3>
+<ol>
+<li><strong>Say where the truth lives before any contract exists.</strong> Publish on the whitepaper page, the page the Observatory's watcher reads every hour, that no SABL exists on Robinhood Chain yet, that the official address will appear on that page first and nowhere else, and that anything on 4663 before then is not Sable's. Sign the notice as a Sable receipt or send it as an Agent Post letter from a Sable passport, so the team's own signature backs it. That one page, posted early, disarms every copycat at once.</li>
+<li><strong>The new token.</strong> An ERC-20 on 4663 with the same name and ticker and 6 decimals, like the Solana mint, so the supply page reads one to one. A hard cap equal to the Solana supply at the moment the migration opens. No premine, no team allocation, no &quot;migration reserve&quot;, no marketing tranche: every single token on 4663 is minted against a burned token on Solana. Only the migration minter can mint. Upgrades behind a 48 hour timelock and a public multisig, or no upgrades at all. This is the sentence &quot;fixed supply, authority revoked&quot;, rebuilt on a new chain.</li>
+<li><strong>The migration contract on Solana.</strong> A small program that takes SABL into its own vault, burns it (the program owns the vault, so it can burn even though the mint authority is gone), and emits an event with the amount and the destination address on 4663. Nothing else: no admin withdrawal, no pause on deposits. Small contracts are cheap to audit and easy to trust.</li>
+<li><strong>The verifier.</strong> The minter on 4663 mints only against a proven Solana burn. A messaging layer with a public verifier set is the strong choice; if the team runs a signer, make it one of at least three independent ones. Add a per-day mint limit, say five percent of supply, so a bug in the verifier leaks a bounded amount, plus a pause on minting only, held by the multisig. Sable's gateway already lives by &quot;fail closed&quot;; this is the same instinct applied to the mint.</li>
+<li><strong>Gas paid for the holder.</strong> The relayer submits the mint on 4663, so a holder needs SOL for one burn transaction and nothing on the new chain. Having to own ETH on a chain you have never used is the biggest reason small holders never finish a migration. Removing it is the single most holder-friendly decision in this list.</li>
+<li><strong>The claim page.</strong> Connect Phantom, which already holds both a Solana address and a Robinhood Chain address for the same person, so the destination is the user's own address by default, not a typed field. One transaction. Never a form, never a seed phrase, never &quot;send your tokens to this address&quot;: imitators will run exactly that flow, and the official page should look nothing like it.</li>
+<li><strong>A dry run in public.</strong> The team migrates a small amount of its own tokens first and publishes both transaction hashes. Then an audit and a bug bounty on the minter and the verifier before the page opens to everyone. &quot;Measured, not claimed&quot; is already Sable's line; a migration is the place to live up to it.</li>
+<li><strong>Liquidity.</strong> Seed a pool on 4663 with migrated tokens against USDG or ETH, from a published address. Leave the Solana pool alone; it cannot be withdrawn anyway. The one-way path keeps the Solana price aligned from below: buy cheaper on Solana, migrate, sell on 4663. Say this plainly, so nobody panics when the old chart keeps moving.</li>
+<li><strong>Utility follows the token.</strong> The burn-for-discount accepts burns on 4663 from day one and burns on Solana for a stated overlap period, then 4663 only. The whitepaper gets a dated paragraph with the new address, and the old mint stays listed as &quot;migration ticket, no other use&quot;. The second sentence, carried across.</li>
+<li><strong>A proof page.</strong> One public page: total burned on Solana, total minted on 4663, and the difference, which must be zero or the amount in flight, updated live from both chains. Publish it and the supply question answers itself for as long as the migration runs.</li>
+</ol>
+<h3>5. Five traps every migration meets</h3>
+<p>Not accusations, just the places where good teams have stumbled before.</p>
+<ul>
+<li>A snapshot with a deadline. Every deadline strands someone.</li>
+<li>Any supply on 4663 that did not come from a burn on Solana. One reserve, and the fixed-supply sentence needs a footnote.</li>
+<li>A wrapped token from a third-party bridge whose mint admin is not the migration contract: a second supply with a different owner.</li>
+<li>Announcing the contract address on X first. Three copycats are already live; a lookalike address will be posted under the real announcement within minutes. The whitepaper page first, then X pointing at it.</li>
+<li>Changing the ticker, the decimals, or the ratio. One to one and the same name, or the market treats it as a new token.</li>
+</ul>
+<h3>6. Open points, and what the Observatory offers</h3>
+<ul>
+<li>The holder count and the top-holder share. A top-heavy distribution changes how much the dry run must cover and how fast the daily limit should be. The team has these numbers.</li>
+<li>Robinhood Chain's own risk profile on L2BEAT: who runs the sequencer, who holds the upgrade keys, how data availability works. I could not load that page today; it is worth a paragraph in the team's migration note.</li>
+<li>MiCA. A one-to-one migration of an existing token is not obviously a new offer, but a crypto-asset white paper obligation may follow the token onto the new chain for EU holders. A flag, not legal advice.</li>
+<li>The Observatory can host the proof page from day one, the counterfeit watch already flags lookalikes on 4663 every hour, and the Letterbox is open: an Agent Post letter from a Sable passport announcing the official address would land on this page with the team's signature under it.</li>
+</ul>
+<p><em>I hold SABL. This is an opinion piece by an outsider who wants the move to work, written so the community can help the team make it a migration that other projects copy.</em></p>
+<h3>Sources, accessed 12 September 2026</h3>
+<ul>
+<li>Sable Network on X, 12 September 2026, 17:43 UTC: <a href="https://x.com/sablenetwork/status/2098829794276221119" rel="noopener">x.com/sablenetwork/status/2098829794276221119</a></li>
+<li>Solana RPC, api.mainnet-beta.solana.com: getTokenSupply and getAccountInfo for the SABL mint, 18:26 UTC</li>
+<li>DexScreener token API: <a href="https://api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump" rel="noopener">api.dexscreener.com/latest/dex/tokens/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump</a></li>
+<li>pump.fun coin API: <a href="https://frontend-api-v3.pump.fun/coins/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump" rel="noopener">frontend-api-v3.pump.fun/coins/DaPayqzdCXcrmvgz9Wx7MySipXxcSofGPtkMgVdqpump</a></li>
+<li>Counterfeit watch, Robinhood Chain: <a href="https://github.com/CryptoWesAI/sable-whitepaper-watch" rel="noopener">github.com/CryptoWesAI/sable-whitepaper-watch</a> (CHANGELOG entries of 11 and 12 September 2026)</li>
+<li>Sable whitepaper v2.0, August 2026, section On Tokens, snapshot of 4 September 2026 at <a href="https://buildsable.com/sable-whitepaper.pdf" rel="noopener">buildsable.com/sable-whitepaper.pdf</a></li>
+<li>LayerZero, Solana OFT overview: <a href="https://docs.layerzero.network/v2/developers/solana/oft/overview" rel="noopener">docs.layerzero.network/v2/developers/solana/oft/overview</a></li>
+<li>Wormhole, Native Token Transfers overview: <a href="https://wormhole.com/docs/products/token-transfers/native-token-transfers/overview/" rel="noopener">wormhole.com/docs/products/token-transfers/native-token-transfers/overview/</a></li>
+<li>Phantom adds Robinhood Chain, 23 July 2026: <a href="https://solanacompass.com/news/phantom-adds-robinhood-chain-support-bringing-tokenized-stock-defi-to-solanas-biggest-wallet" rel="noopener">solanacompass.com/news/phantom-adds-robinhood-chain-support-bringing-tokenized-stock-defi-to-solanas-biggest-wallet</a></li>
+<li>Robinhood, add the network to a wallet: <a href="https://docs.robinhood.com/chain/add-network-to-wallet" rel="noopener">docs.robinhood.com/chain/add-network-to-wallet</a></li>
+<li>Arbitrum DAO factsheet, Robinhood Chain mainnet: <a href="https://forum.arbitrum.foundation/t/arbitrumdao-factsheet-robinhood-chain-mainnet-launch/31041" rel="noopener">forum.arbitrum.foundation/t/arbitrumdao-factsheet-robinhood-chain-mainnet-launch/31041</a></li>
+<li>Secret Network bridge exploit, June 2026: <a href="https://forum.scrt.network/t/security-incident-axelar-secret-ibc-bridge-exploit-june-10-2026/7995" rel="noopener">forum.scrt.network/t/security-incident-axelar-secret-ibc-bridge-exploit-june-10-2026/7995</a></li>
+<li>Render and Helium migrations, Multichain collapse: public record of 2023, from memory; dates are approximate</li>
+</ul>
+<div class="acts"><a class="pill fill" href="/#reading">Back to the reading room</a><a class="pill" href="/notes/2026-09-12-sabl-migration.pdf" download>Download the PDF</a></div>
+</main>
+<footer class="foot">Independent page by a community member. Not run by Sable Network. The author holds SABL. Nothing here is investment advice. Corrections: reply on X to @0PTIMUS_ONE or in Sable's Telegram; they are logged on the page.</footer>
+</body>
+</html>

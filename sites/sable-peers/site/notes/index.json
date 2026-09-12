@@ -1,5 +1,13 @@
 [
   {
+    "slug": "sabl-migration",
+    "title": "SABL moves to Robinhood Chain: a blueprint for a migration that keeps every holder and every promise",
+    "date": "2026-09-12",
+    "summary": "On 12 September the Sable team announced that SABL moves to Robinhood Chain, details to follow. A community blueprint for the mechanism: why a one-way burn-and-mint with no deadline fits this token better than a snapshot or a two-way bridge, ten steps that carry the whitepaper's fixed-supply promise across, the traps to skip, and what the Observatory offers to help. Opinion, with a dated fact base.",
+    "pdf": "2026-09-12-sabl-migration.pdf",
+    "words": 2165
+  },
+  {
     "slug": "robinhood-chain-bridge",
     "title": "Should Sable bridge to Robinhood Chain? What the poll is really asking",
     "date": "2026-09-10",

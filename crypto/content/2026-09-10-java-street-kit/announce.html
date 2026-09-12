@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gatekeeper Java announcement card</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root { --ink:#0A1118; --cyan:#18BFFF; --cyan-soft:#72DCFF; --moon:#FF7A59; --paper:#F4F7FA; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { background:var(--ink); color:var(--paper); font-family:"IBM Plex Mono", ui-monospace, Consolas, monospace; }
+  .card { width:1200px; height:675px; position:relative; overflow:hidden; background:var(--ink); padding:52px 64px 92px; display:flex; gap:48px; }
+  .card::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse 60% 70% at 78% 40%, rgba(24,191,255,.14), transparent 70%); }
+  .left { flex:1 1 auto; display:flex; flex-direction:column; position:relative; }
+  .kicker { color:var(--cyan-soft); font-size:18px; letter-spacing:.14em; text-transform:uppercase; }
+  h1 { font-size:88px; line-height:.95; font-weight:600; letter-spacing:-.02em; color:#fff; margin-top:14px; }
+  h1 span { color:var(--cyan); }
+  .lead { margin-top:26px; font-size:24px; line-height:1.4; max-width:640px; }
+  .lead .id { color:var(--cyan-soft); display:block; }
+  .soon { margin-top:auto; display:inline-flex; align-items:center; gap:14px; border:2px solid var(--moon); border-radius:14px; padding:14px 18px; font-size:22px; line-height:1.3; color:#fff; width:fit-content; }
+  .soon b { color:var(--moon); font-weight:600; }
+  .right { flex:0 0 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; position:relative; }
+  .qrbox { background:#fff; border-radius:22px; padding:18px; width:290px; height:290px; }
+  .qrbox img, .qrbox canvas { width:254px !important; height:254px !important; display:block; }
+  .url { font-size:26px; color:var(--cyan); font-weight:500; }
+  .phone { position:absolute; right:-8px; bottom:-150px; width:150px; height:310px; border-radius:24px; background:#05090E; border:3px solid #1E2C38; padding:6px; opacity:.95; display:none; }
+  .foot { position:absolute; left:64px; right:64px; bottom:30px; font-size:15px; color:#B9C6D2; display:flex; justify-content:space-between; gap:24px; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="left">
+    <div class="kicker">A 60-second game · Game 60 detik</div>
+    <h1>GATEKEEPER<br><span>× JAWA</span></h1>
+    <p class="lead">The Java board is open. Play, film your run, post it with #GatekeeperJava and tag @Sablenetwork.<span class="id">Papan Jawa terbuka. Main, rekam permainanmu, unggah dengan #GatekeeperJava dan tag @Sablenetwork.</span></p>
+    <div class="soon"><b>Prize + contest dates: soon.</b> Hadiah + periode kontes: segera.</div>
+  </div>
+  <div class="right">
+    <div class="qrbox"><div data-qr></div></div>
+    <div class="url">sable.primecircle.cloud/java</div>
+  </div>
+  <div class="foot"><span>Free. No account, no wallet. · Gratis, tanpa akun.</span><span>Independent site by a SABL holder, not affiliated with Sable Network.</span></div>
+</div>
+<script>
+  new QRCode(document.querySelector("[data-qr]"), { text: "https://sable.primecircle.cloud/?src=java#play", width: 508, height: 508, correctLevel: QRCode.CorrectLevel.M, colorDark: "#0A1118", colorLight: "#ffffff" });
+  window.__ready = true;
+</script>
+</body>
+</html>
