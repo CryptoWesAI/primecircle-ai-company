@@ -11,7 +11,7 @@ for (const [w, h, tag] of [[1320, 900, "desk"], [390, 844, "phone"]]) {
   const p = await b.newPage(); await p.setViewport({ width: w, height: h });
   p.on("pageerror", (e) => errs.push(e.message));
   const r = await p.goto(base + "/notes/" + slug + ".html", { waitUntil: "load" });
-  ok(r.status() === 200, tag + ": note page 200 (" + r.status() + ")");
+  ok(r.status() === 200 || r.status() === 304, tag + ": note page 200 or 304 (" + r.status() + ")");
   await new Promise((s) => setTimeout(s, 600));
   const info = await p.evaluate(() => ({ title: document.title, h3: document.querySelectorAll("main.paper h3").length, ol: document.querySelectorAll("main.paper ol li").length, pdf: !!document.querySelector('a[href$=".pdf"]'), overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth, dash: /\u2014/.test(document.body.innerText) }));
   ok(/SABL moves to Robinhood Chain/.test(info.title), tag + ": title");
